@@ -1,0 +1,7 @@
+*.nogit
+*.pyc
+*.egg-info
+__pycache__/
+build/
+dist/
+!*.jar

@@ -15,6 +15,15 @@ def _return_py5surface(f):
 
 
 class Py5Surface:
+    """new template no description.
+
+    Underlying Java class: PSurface.PSurface
+
+    Notes
+    -----
+
+    new template no description.
+"""
 
     def __init__(self, psurface, pimage_cache):
         self._instance = psurface
@@ -22,6 +31,8 @@ class Py5Surface:
 
     def get_native(self) -> Any:
         """new template no description.
+
+        Underlying Java method: PSurface.getNative
 
         Notes
         -----
@@ -33,6 +44,8 @@ class Py5Surface:
     def is_stopped(self) -> bool:
         """new template no description.
 
+        Underlying Java method: PSurface.isStopped
+
         Notes
         -----
 
@@ -42,6 +55,8 @@ class Py5Surface:
 
     def open_link(self, url: str, /) -> bool:
         """new template no description.
+
+        Underlying Java method: PSurface.openLink
 
         Parameters
         ----------
@@ -59,6 +74,8 @@ class Py5Surface:
     def pause_thread(self) -> None:
         """new template no description.
 
+        Underlying Java method: PSurface.pauseThread
+
         Notes
         -----
 
@@ -69,6 +86,8 @@ class Py5Surface:
     def resume_thread(self) -> None:
         """new template no description.
 
+        Underlying Java method: PSurface.resumeThread
+
         Notes
         -----
 
@@ -78,6 +97,8 @@ class Py5Surface:
 
     def set_always_on_top(self, always: bool, /) -> None:
         """new template no description.
+
+        Underlying Java method: PSurface.setAlwaysOnTop
 
         Parameters
         ----------
@@ -95,6 +116,8 @@ class Py5Surface:
     def set_icon(self, icon: Py5Image, /) -> None:
         """new template no description.
 
+        Underlying Java method: PSurface.setIcon
+
         Parameters
         ----------
 
@@ -110,6 +133,8 @@ class Py5Surface:
 
     def set_location(self, x: int, y: int, /) -> None:
         """new template no description.
+
+        Underlying Java method: PSurface.setLocation
 
         Parameters
         ----------
@@ -130,6 +155,8 @@ class Py5Surface:
     def set_resizable(self, resizable: bool, /) -> None:
         """new template no description.
 
+        Underlying Java method: PSurface.setResizable
+
         Parameters
         ----------
 
@@ -145,6 +172,8 @@ class Py5Surface:
 
     def set_size(self, width: int, height: int, /) -> None:
         """new template no description.
+
+        Underlying Java method: PSurface.setSize
 
         Parameters
         ----------
@@ -165,6 +194,8 @@ class Py5Surface:
     def set_title(self, title: str, /) -> None:
         """new template no description.
 
+        Underlying Java method: PSurface.setTitle
+
         Parameters
         ----------
 
@@ -181,6 +212,8 @@ class Py5Surface:
     def set_visible(self, visible: bool, /) -> None:
         """new template no description.
 
+        Underlying Java method: PSurface.setVisible
+
         Parameters
         ----------
 
@@ -196,6 +229,8 @@ class Py5Surface:
 
     def stop_thread(self) -> bool:
         """new template no description.
+
+        Underlying Java method: PSurface.stopThread
 
         Notes
         -----

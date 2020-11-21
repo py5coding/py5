@@ -33,6 +33,7 @@ from . import reference
 _Py5Applet = jpype.JClass('py5.core.Py5Applet')
 
 try:
+    __IPYTHON__  # type: ignore
     _in_ipython_session = True
 except NameError:
     _in_ipython_session = False
@@ -41,6 +42,15 @@ logger = logging.getLogger(__name__)
 
 
 class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
+    """new template no description.
+
+    Underlying Java class: PApplet.PApplet
+
+    Notes
+    -----
+
+    new template no description.
+"""
 
     _cls = _Py5Applet
 
@@ -119,9 +129,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
             # wait no more than 1 second for any shutdown tasks to complete
             time_waited = 0
-            while not hasattr(
-                    self,
-                    '_shutdown_complete') and time_waited < 1.0:
+            while time_waited < 1.0:
                 pause = 0.01
                 time_waited += pause
                 time.sleep(pause)
@@ -294,11 +302,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                    filename: Union[str,
                                    Path],
                    format: str = None,
+                   drop_alpha: bool = True,
                    **params) -> None:
         """new template no description.
 
         Parameters
         ----------
+
+        drop_alpha: bool
+            missing variable description
 
         filename: Union[str, Path]
             missing variable description
@@ -314,7 +326,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         new template no description.
 """
-        self.save(self._insert_frame(str(filename)), format, **params)
+        self.save(
+            self._insert_frame(
+                str(filename)),
+            format=format,
+            drop_alpha=drop_alpha,
+            **params)
 
     # *** Py5Image methods ***
 
@@ -630,6 +647,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_args(self) -> List[str]:
         """new template no description.
 
+        Underlying Java field: PApplet.args
+
         Notes
         -----
 
@@ -640,6 +659,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def _get_display_height(self) -> int:
         """System variable that stores the height of the entire screen display.
+
+        Underlying Java field: PApplet.displayHeight
 
         Notes
         -----
@@ -653,6 +674,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_display_width(self) -> int:
         """System variable that stores the width of the entire screen display.
 
+        Underlying Java field: PApplet.displayWidth
+
         Notes
         -----
 
@@ -665,6 +688,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_finished(self) -> bool:
         """new template no description.
 
+        Underlying Java field: PApplet.finished
+
         Notes
         -----
 
@@ -676,6 +701,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_focused(self) -> bool:
         """Confirms if a Processing program is "focused," meaning that it is active and
         will accept mouse or keyboard input.
+
+        Underlying Java field: PApplet.focused
 
         Notes
         -----
@@ -691,6 +718,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The system variable ``frame_count`` contains the number of frames that have been
         displayed since the program started.
 
+        Underlying Java field: PApplet.frameCount
+
         Notes
         -----
 
@@ -703,6 +732,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def _get_height(self) -> int:
         """System variable that stores the height of the display window.
+
+        Underlying Java field: PApplet.height
 
         Notes
         -----
@@ -718,6 +749,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_java_platform(self) -> int:
         """new template no description.
 
+        Underlying Java field: PApplet.javaPlatform
+
         Notes
         -----
 
@@ -728,6 +761,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def _get_java_version(self) -> float:
         """new template no description.
+
+        Underlying Java field: PApplet.javaVersion
 
         Notes
         -----
@@ -740,6 +775,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_java_version_name(self) -> str:
         """new template no description.
 
+        Underlying Java field: PApplet.javaVersionName
+
         Notes
         -----
 
@@ -751,6 +788,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_key(self) -> chr:
         """The system variable ``key`` always contains the value of the most recent key on
         the keyboard that was used (either pressed or released).
+
+        Underlying Java field: PApplet.key
 
         Notes
         -----
@@ -776,6 +815,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_key_code(self) -> int:
         """The variable ``key_code`` is used to detect special keys such as the arrow keys
         (UP, DOWN, LEFT, and RIGHT) as well as ALT, CONTROL, and SHIFT.
+
+        Underlying Java field: PApplet.keyCode
 
         Notes
         -----
@@ -814,6 +855,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ``mouse_button`` is set to either ``LEFT``, ``RIGHT``, or ``CENTER``, depending
         on which button is pressed.
 
+        Underlying Java field: PApplet.mouseButton
+
         Notes
         -----
 
@@ -830,6 +873,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_mouse_x(self) -> int:
         """The system variable ``mouse_x`` always contains the current horizontal
         coordinate of the mouse.
+
+        Underlying Java field: PApplet.mouseX
 
         Notes
         -----
@@ -850,6 +895,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The system variable ``mouse_y`` always contains the current vertical coordinate
         of the mouse.
 
+        Underlying Java field: PApplet.mouseY
+
         Notes
         -----
 
@@ -869,6 +916,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """When ``pixel_density(2)`` is used to make use of a high resolution display
         (called a Retina display on OS X or high-dpi on Windows and Linux), the width
         and height of the sketch do not change, but the number of pixels is doubled.
+
+        Underlying Java field: PApplet.pixelHeight
 
         Notes
         -----
@@ -891,6 +940,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         (called a Retina display on OS X or high-dpi on Windows and Linux), the width
         and height of the sketch do not change, but the number of pixels is doubled.
 
+        Underlying Java field: PApplet.pixelWidth
+
         Notes
         -----
 
@@ -910,6 +961,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_pixels(self) -> JArray(JInt):
         """The ``pixels[]`` array contains the values for all the pixels in the display
         window.
+
+        Underlying Java field: PApplet.pixels
 
         Notes
         -----
@@ -935,6 +988,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_pmouse_x(self) -> int:
         """The system variable ``pmouse_x`` always contains the horizontal position of the
         mouse in the frame previous to the current frame.
+
+        Underlying Java field: PApplet.pmouseX
 
         Notes
         -----
@@ -964,6 +1019,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The system variable ``pmouse_y`` always contains the vertical position of the
         mouse in the frame previous to the current frame.
 
+        Underlying Java field: PApplet.pmouseY
+
         Notes
         -----
 
@@ -979,6 +1036,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def _get_width(self) -> int:
         """System variable that stores the width of the display window.
 
+        Underlying Java field: PApplet.width
+
         Notes
         -----
 
@@ -992,6 +1051,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def alpha(self, rgb: int, /) -> float:
         """Extracts the alpha value from a color.
+
+        Underlying Java method: PApplet.alpha
 
         Parameters
         ----------
@@ -1009,6 +1070,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def ambient(self, gray: float, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
+
+        Underlying Java method: PApplet.ambient
 
         Methods
         -------
@@ -1054,6 +1117,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def ambient(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
+        Underlying Java method: PApplet.ambient
+
         Methods
         -------
 
@@ -1098,6 +1163,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def ambient(self, rgb: int, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
+        Underlying Java method: PApplet.ambient
+
         Methods
         -------
 
@@ -1140,6 +1207,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def ambient(self, *args):
         """Sets the ambient reflectance for shapes drawn to the screen.
+
+        Underlying Java method: PApplet.ambient
 
         Methods
         -------
@@ -1184,6 +1253,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def ambient_light(self, v1: float, v2: float, v3: float, /) -> None:
         """Adds an ambient light.
+
+        Underlying Java method: PApplet.ambientLight
 
         Methods
         -------
@@ -1233,6 +1304,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                       x: float, y: float, z: float, /) -> None:
         """Adds an ambient light.
 
+        Underlying Java method: PApplet.ambientLight
+
         Methods
         -------
 
@@ -1278,6 +1351,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def ambient_light(self, *args):
         """Adds an ambient light.
+
+        Underlying Java method: PApplet.ambientLight
 
         Methods
         -------
@@ -1326,6 +1401,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def apply_matrix(self, n00: float, n01: float, n02: float,
                      n10: float, n11: float, n12: float, /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
+
+        Underlying Java method: PApplet.applyMatrix
 
         Methods
         -------
@@ -1426,6 +1503,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
+        Underlying Java method: PApplet.applyMatrix
+
         Methods
         -------
 
@@ -1506,6 +1585,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
+
+        Underlying Java method: PApplet.applyMatrix
 
         Methods
         -------
@@ -1588,6 +1669,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
+        Underlying Java method: PApplet.applyMatrix
+
         Methods
         -------
 
@@ -1667,6 +1750,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def apply_matrix(self, *args):
         """Multiplies the current matrix by the one specified through the parameters.
+
+        Underlying Java method: PApplet.applyMatrix
 
         Methods
         -------
@@ -1750,6 +1835,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             start: float, stop: float, /) -> None:
         """Draws an arc to the screen.
 
+        Underlying Java method: PApplet.arc
+
         Methods
         -------
 
@@ -1808,6 +1895,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             start: float, stop: float, mode: int, /) -> None:
         """Draws an arc to the screen.
 
+        Underlying Java method: PApplet.arc
+
         Methods
         -------
 
@@ -1863,6 +1952,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def arc(self, *args):
         """Draws an arc to the screen.
+
+        Underlying Java method: PApplet.arc
 
         Methods
         -------
@@ -1921,6 +2012,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def background(self, gray: float, /) -> None:
         """The ``background()`` function sets the color used for the background of the
         Processing window.
+
+        Underlying Java method: PApplet.background
 
         Methods
         -------
@@ -1984,6 +2077,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         Processing window.
 
+        Underlying Java method: PApplet.background
+
         Methods
         -------
 
@@ -2045,6 +2140,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def background(self, v1: float, v2: float, v3: float, /) -> None:
         """The ``background()`` function sets the color used for the background of the
         Processing window.
+
+        Underlying Java method: PApplet.background
 
         Methods
         -------
@@ -2109,6 +2206,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         Processing window.
 
+        Underlying Java method: PApplet.background
+
         Methods
         -------
 
@@ -2170,6 +2269,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def background(self, rgb: int, /) -> None:
         """The ``background()`` function sets the color used for the background of the
         Processing window.
+
+        Underlying Java method: PApplet.background
 
         Methods
         -------
@@ -2233,6 +2334,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         Processing window.
 
+        Underlying Java method: PApplet.background
+
         Methods
         -------
 
@@ -2295,6 +2398,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         Processing window.
 
+        Underlying Java method: PApplet.background
+
         Methods
         -------
 
@@ -2355,6 +2460,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def background(self, *args):
         """The ``background()`` function sets the color used for the background of the
         Processing window.
+
+        Underlying Java method: PApplet.background
 
         Methods
         -------
@@ -2417,6 +2524,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
         customization of the camera space.
 
+        Underlying Java method: PApplet.beginCamera
+
         Notes
         -----
 
@@ -2441,6 +2550,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Use the ``begin_contour()`` and ``end_contour()`` function to create negative
         shapes within shapes such as the center of the letter 'O'.
 
+        Underlying Java method: PApplet.beginContour
+
         Notes
         -----
 
@@ -2462,6 +2573,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def begin_raw(self, renderer: str, filename: str, /) -> Py5Graphics:
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
         commands.
+
+        Underlying Java method: PApplet.beginRaw
 
         Methods
         -------
@@ -2516,6 +2629,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
         commands.
 
+        Underlying Java method: PApplet.beginRaw
+
         Methods
         -------
 
@@ -2568,6 +2683,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def begin_raw(self, *args):
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
         commands.
+
+        Underlying Java method: PApplet.beginRaw
 
         Methods
         -------
@@ -2622,6 +2739,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window.
 
+        Underlying Java method: PApplet.beginRecord
+
         Methods
         -------
 
@@ -2664,6 +2783,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def begin_record(self, recorder: Py5Graphics, /) -> None:
         """Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window.
+
+        Underlying Java method: PApplet.beginRecord
 
         Methods
         -------
@@ -2708,6 +2829,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window.
 
+        Underlying Java method: PApplet.beginRecord
+
         Methods
         -------
 
@@ -2750,6 +2873,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def begin_shape(self) -> None:
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
+
+        Underlying Java method: PApplet.beginShape
 
         Methods
         -------
@@ -2797,6 +2922,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
 
+        Underlying Java method: PApplet.beginShape
+
         Methods
         -------
 
@@ -2841,6 +2968,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def begin_shape(self, *args):
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
+
+        Underlying Java method: PApplet.beginShape
 
         Methods
         -------
@@ -2887,6 +3016,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def bezier(self, x1: float, y1: float, x2: float, y2: float,
                x3: float, y3: float, x4: float, y4: float, /) -> None:
         """Draws a Bezier curve on the screen.
+
+        Underlying Java method: PApplet.bezier
 
         Methods
         -------
@@ -2953,6 +3084,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Draws a Bezier curve on the screen.
 
+        Underlying Java method: PApplet.bezier
+
         Methods
         -------
 
@@ -3015,6 +3148,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def bezier(self, *args):
         """Draws a Bezier curve on the screen.
+
+        Underlying Java method: PApplet.bezier
 
         Methods
         -------
@@ -3079,6 +3214,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def bezier_detail(self, detail: int, /) -> None:
         """Sets the resolution at which Beziers display.
 
+        Underlying Java method: PApplet.bezierDetail
+
         Parameters
         ----------
 
@@ -3097,6 +3234,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def bezier_point(self, a: float, b: float, c: float,
                      d: float, t: float, /) -> float:
         """Evaluates the Bezier at point t for points a, b, c, d.
+
+        Underlying Java method: PApplet.bezierPoint
 
         Parameters
         ----------
@@ -3130,6 +3269,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                        d: float, t: float, /) -> float:
         """Calculates the tangent of a point on a Bezier curve.
 
+        Underlying Java method: PApplet.bezierTangent
+
         Parameters
         ----------
 
@@ -3160,6 +3301,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def bezier_vertex(self, x2: float, y2: float, x3: float,
                       y3: float, x4: float, y4: float, /) -> None:
         """Specifies vertex coordinates for Bezier curves.
+
+        Underlying Java method: PApplet.bezierVertex
 
         Methods
         -------
@@ -3218,6 +3361,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                       y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
+        Underlying Java method: PApplet.bezierVertex
+
         Methods
         -------
 
@@ -3272,6 +3417,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def bezier_vertex(self, *args):
         """Specifies vertex coordinates for Bezier curves.
+
+        Underlying Java method: PApplet.bezierVertex
 
         Methods
         -------
@@ -3329,6 +3476,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.bezierVertices
+
         Parameters
         ----------
 
@@ -3347,6 +3496,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               dy: int, dw: int, dh: int, mode: int, /) -> None:
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
+
+        Underlying Java method: PApplet.blend
 
         Methods
         -------
@@ -3443,6 +3594,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
+        Underlying Java method: PApplet.blend
+
         Methods
         -------
 
@@ -3536,6 +3689,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
+        Underlying Java method: PApplet.blend
+
         Methods
         -------
 
@@ -3628,6 +3783,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def blend_mode(self, mode: int, /) -> None:
         """Blends the pixels in the display window according to a defined mode.
 
+        Underlying Java method: PApplet.blendMode
+
         Parameters
         ----------
 
@@ -3675,6 +3832,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def blue(self, rgb: int, /) -> float:
         """Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
+        Underlying Java method: PApplet.blue
+
         Parameters
         ----------
 
@@ -3702,6 +3861,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def box(self, size: float, /) -> None:
         """A box is an extruded rectangle.
+
+        Underlying Java method: PApplet.box
 
         Methods
         -------
@@ -3738,6 +3899,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def box(self, w: float, h: float, d: float, /) -> None:
         """A box is an extruded rectangle.
 
+        Underlying Java method: PApplet.box
+
         Methods
         -------
 
@@ -3771,6 +3934,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def box(self, *args):
         """A box is an extruded rectangle.
+
+        Underlying Java method: PApplet.box
 
         Methods
         -------
@@ -3806,6 +3971,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def brightness(self, rgb: int, /) -> float:
         """Extracts the brightness value from a color.
 
+        Underlying Java method: PApplet.brightness
+
         Parameters
         ----------
 
@@ -3823,6 +3990,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def camera(self) -> None:
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
+
+        Underlying Java method: PApplet.camera
 
         Methods
         -------
@@ -3893,6 +4062,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
+        Underlying Java method: PApplet.camera
+
         Methods
         -------
 
@@ -3950,6 +4121,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
+        Underlying Java method: PApplet.camera
+
         Methods
         -------
 
@@ -4006,6 +4179,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def circle(self, x: float, y: float, extent: float, /) -> None:
         """Draws a circle to the screen.
 
+        Underlying Java method: PApplet.circle
+
         Parameters
         ----------
 
@@ -4030,6 +4205,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def clear(self) -> None:
         """Clears the pixels within a buffer.
 
+        Underlying Java method: PApplet.clear
+
         Notes
         -----
 
@@ -4044,6 +4221,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def clip(self, a: float, b: float, c: float, d: float, /) -> None:
         """Limits the rendering to the boundaries of a rectangle defined by the parameters.
+
+        Underlying Java method: PApplet.clip
 
         Parameters
         ----------
@@ -4072,6 +4251,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color(self, fgray: float, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
+
+        Underlying Java method: PApplet.color
 
         Methods
         -------
@@ -4149,6 +4330,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def color(self, fgray: float, falpha: float, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
 
+        Underlying Java method: PApplet.color
+
         Methods
         -------
 
@@ -4224,6 +4407,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color(self, v1: float, v2: float, v3: float, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
+
+        Underlying Java method: PApplet.color
 
         Methods
         -------
@@ -4301,6 +4486,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def color(self, v1: float, v2: float, v3: float, alpha: float, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
 
+        Underlying Java method: PApplet.color
+
         Methods
         -------
 
@@ -4376,6 +4563,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color(self, gray: int, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
+
+        Underlying Java method: PApplet.color
 
         Methods
         -------
@@ -4453,6 +4642,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def color(self, gray: int, alpha: int, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
 
+        Underlying Java method: PApplet.color
+
         Methods
         -------
 
@@ -4528,6 +4719,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color(self, v1: int, v2: int, v3: int, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
+
+        Underlying Java method: PApplet.color
 
         Methods
         -------
@@ -4605,6 +4798,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def color(self, v1: int, v2: int, v3: int, alpha: int, /) -> int:
         """Creates colors for storing in variables of the ``color`` datatype.
 
+        Underlying Java method: PApplet.color
+
         Methods
         -------
 
@@ -4679,6 +4874,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def color(self, *args):
         """Creates colors for storing in variables of the ``color`` datatype.
+
+        Underlying Java method: PApplet.color
 
         Methods
         -------
@@ -4756,6 +4953,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def color_mode(self, mode: int, /) -> None:
         """Changes the way Processing interprets color data.
 
+        Underlying Java method: PApplet.colorMode
+
         Methods
         -------
 
@@ -4812,6 +5011,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color_mode(self, mode: int, max: float, /) -> None:
         """Changes the way Processing interprets color data.
+
+        Underlying Java method: PApplet.colorMode
 
         Methods
         -------
@@ -4871,6 +5072,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                    max2: float, max3: float, /) -> None:
         """Changes the way Processing interprets color data.
 
+        Underlying Java method: PApplet.colorMode
+
         Methods
         -------
 
@@ -4929,6 +5132,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                    max3: float, max_a: float, /) -> None:
         """Changes the way Processing interprets color data.
 
+        Underlying Java method: PApplet.colorMode
+
         Methods
         -------
 
@@ -4984,6 +5189,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def color_mode(self, *args):
         """Changes the way Processing interprets color data.
+
+        Underlying Java method: PApplet.colorMode
 
         Methods
         -------
@@ -5043,6 +5250,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Copies a region of pixels from the display window to another area of the display
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
+
+        Underlying Java method: PApplet.copy
 
         Methods
         -------
@@ -5104,6 +5313,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
+        Underlying Java method: PApplet.copy
+
         Methods
         -------
 
@@ -5164,6 +5375,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
+        Underlying Java method: PApplet.copy
+
         Methods
         -------
 
@@ -5223,6 +5436,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
+        Underlying Java method: PApplet.copy
+
         Methods
         -------
 
@@ -5281,6 +5496,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Dynamically converts a font to the format used by Processing from a .ttf or .otf
         file inside the sketch's "data" folder or a font that's installed elsewhere on
         the computer.
+
+        Underlying Java method: PApplet.createFont
 
         Methods
         -------
@@ -5342,6 +5559,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Dynamically converts a font to the format used by Processing from a .ttf or .otf
         file inside the sketch's "data" folder or a font that's installed elsewhere on
         the computer.
+
+        Underlying Java method: PApplet.createFont
 
         Methods
         -------
@@ -5405,6 +5624,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         file inside the sketch's "data" folder or a font that's installed elsewhere on
         the computer.
 
+        Underlying Java method: PApplet.createFont
+
         Methods
         -------
 
@@ -5466,6 +5687,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         file inside the sketch's "data" folder or a font that's installed elsewhere on
         the computer.
 
+        Underlying Java method: PApplet.createFont
+
         Methods
         -------
 
@@ -5524,6 +5747,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def create_graphics(self, w: int, h: int, /) -> Py5Graphics:
         """Creates and returns a new ``Py5Graphics`` object.
+
+        Underlying Java method: PApplet.createGraphics
 
         Methods
         -------
@@ -5590,6 +5815,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def create_graphics(self, w: int, h: int, renderer: str, /) -> Py5Graphics:
         """Creates and returns a new ``Py5Graphics`` object.
+
+        Underlying Java method: PApplet.createGraphics
 
         Methods
         -------
@@ -5658,6 +5885,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                         path: str, /) -> Py5Graphics:
         """Creates and returns a new ``Py5Graphics`` object.
 
+        Underlying Java method: PApplet.createGraphics
+
         Methods
         -------
 
@@ -5723,6 +5952,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @_return_py5graphics
     def create_graphics(self, *args):
         """Creates and returns a new ``Py5Graphics`` object.
+
+        Underlying Java method: PApplet.createGraphics
 
         Methods
         -------
@@ -5790,6 +6021,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def create_image(self, w: int, h: int, format: int, /) -> Py5Image:
         """Creates a new PImage (the datatype for storing images).
 
+        Underlying Java method: PApplet.createImage
+
         Parameters
         ----------
 
@@ -5821,6 +6054,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def create_shape(self) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
+
+        Underlying Java method: PApplet.createShape
 
         Methods
         -------
@@ -5877,6 +6112,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def create_shape(self, type: int, /) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
+        Underlying Java method: PApplet.createShape
+
         Methods
         -------
 
@@ -5932,6 +6169,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def create_shape(self, kind: int, /, *p: float) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
+        Underlying Java method: PApplet.createShape
+
         Methods
         -------
 
@@ -5986,6 +6225,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @_return_py5shape
     def create_shape(self, *args):
         """The ``create_shape()`` function is used to define a new shape.
+
+        Underlying Java method: PApplet.createShape
 
         Methods
         -------
@@ -6043,6 +6284,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
+        Underlying Java method: PApplet.cursor
+
         Methods
         -------
 
@@ -6089,6 +6332,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def cursor(self, kind: int, /) -> None:
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
+
+        Underlying Java method: PApplet.cursor
 
         Methods
         -------
@@ -6137,6 +6382,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
+        Underlying Java method: PApplet.cursor
+
         Methods
         -------
 
@@ -6184,6 +6431,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
+        Underlying Java method: PApplet.cursor
+
         Methods
         -------
 
@@ -6229,6 +6478,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def cursor(self, *args):
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
+
+        Underlying Java method: PApplet.cursor
 
         Methods
         -------
@@ -6276,6 +6527,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def curve(self, x1: float, y1: float, x2: float, y2: float,
               x3: float, y3: float, x4: float, y4: float, /) -> None:
         """Draws a curved line on the screen.
+
+        Underlying Java method: PApplet.curve
 
         Methods
         -------
@@ -6343,6 +6596,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Draws a curved line on the screen.
 
+        Underlying Java method: PApplet.curve
+
         Methods
         -------
 
@@ -6406,6 +6661,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def curve(self, *args):
         """Draws a curved line on the screen.
+
+        Underlying Java method: PApplet.curve
 
         Methods
         -------
@@ -6471,6 +6728,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def curve_detail(self, detail: int, /) -> None:
         """Sets the resolution at which curves display.
 
+        Underlying Java method: PApplet.curveDetail
+
         Parameters
         ----------
 
@@ -6489,6 +6748,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def curve_point(self, a: float, b: float, c: float,
                     d: float, t: float, /) -> float:
         """Evaluates the curve at point ``t`` for points ``a``, ``b``, ``c``, ``d``.
+
+        Underlying Java method: PApplet.curvePoint
 
         Parameters
         ----------
@@ -6524,6 +6785,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                       d: float, t: float, /) -> float:
         """Calculates the tangent of a point on a curve.
 
+        Underlying Java method: PApplet.curveTangent
+
         Parameters
         ----------
 
@@ -6553,6 +6816,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def curve_tightness(self, tightness: float, /) -> None:
         """Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
 
+        Underlying Java method: PApplet.curveTightness
+
         Parameters
         ----------
 
@@ -6575,6 +6840,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def curve_vertex(self, x: float, y: float, /) -> None:
         """Specifies vertex coordinates for curves.
+
+        Underlying Java method: PApplet.curveVertex
 
         Methods
         -------
@@ -6616,6 +6883,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def curve_vertex(self, x: float, y: float, z: float, /) -> None:
         """Specifies vertex coordinates for curves.
 
+        Underlying Java method: PApplet.curveVertex
+
         Methods
         -------
 
@@ -6654,6 +6923,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def curve_vertex(self, *args):
         """Specifies vertex coordinates for curves.
+
+        Underlying Java method: PApplet.curveVertex
 
         Methods
         -------
@@ -6695,6 +6966,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.curveVertices
+
         Parameters
         ----------
 
@@ -6712,6 +6985,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def day(cls) -> int:
         """Processing communicates with the clock on your computer.
 
+        Underlying Java method: PApplet.day
+
         Notes
         -----
 
@@ -6723,6 +6998,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def directional_light(self, v1: float, v2: float, v3: float,
                           nx: float, ny: float, nz: float, /) -> None:
         """Adds a directional light.
+
+        Underlying Java method: PApplet.directionalLight
 
         Parameters
         ----------
@@ -6767,6 +7044,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
         not.
 
+        Underlying Java method: PApplet.displayDensity
+
         Methods
         -------
 
@@ -6797,6 +7076,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
         not.
 
+        Underlying Java method: PApplet.displayDensity
+
         Methods
         -------
 
@@ -6826,6 +7107,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
         not.
 
+        Underlying Java method: PApplet.displayDensity
+
         Methods
         -------
 
@@ -6852,6 +7135,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def ellipse(self, a: float, b: float, c: float, d: float, /) -> None:
         """Draws an ellipse (oval) to the screen.
+
+        Underlying Java method: PApplet.ellipse
 
         Parameters
         ----------
@@ -6881,6 +7166,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def ellipse_mode(self, mode: int, /) -> None:
         """Modifies the location from which ellipses are drawn by changing the way in which
         parameters given to ``ellipse()`` are intepreted.
+
+        Underlying Java method: PApplet.ellipseMode
 
         Parameters
         ----------
@@ -6919,6 +7206,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def emissive(self, gray: float, /) -> None:
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
+
+        Underlying Java method: PApplet.emissive
 
         Methods
         -------
@@ -6961,6 +7250,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
+        Underlying Java method: PApplet.emissive
+
         Methods
         -------
 
@@ -7002,6 +7293,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
+        Underlying Java method: PApplet.emissive
+
         Methods
         -------
 
@@ -7041,6 +7334,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def emissive(self, *args):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
+
+        Underlying Java method: PApplet.emissive
 
         Methods
         -------
@@ -7082,6 +7377,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
         customization of the camera space.
 
+        Underlying Java method: PApplet.endCamera
+
         Notes
         -----
 
@@ -7094,6 +7391,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def end_contour(self) -> None:
         """Use the ``begin_contour()`` and ``end_contour()`` function to create negative
         shapes within shapes such as the center of the letter 'O'.
+
+        Underlying Java method: PApplet.endContour
 
         Notes
         -----
@@ -7115,6 +7414,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def end_raw(self) -> None:
         """Complement to ``begin_raw()``; they must always be used together.
 
+        Underlying Java method: PApplet.endRaw
+
         Notes
         -----
 
@@ -7125,6 +7426,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def end_record(self) -> None:
         """Stops the recording process started by ``begin_record()`` and closes the file.
+
+        Underlying Java method: PApplet.endRecord
 
         Notes
         -----
@@ -7137,6 +7440,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def end_shape(self) -> None:
         """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
         be called after ``begin_shape()``.
+
+        Underlying Java method: PApplet.endShape
 
         Methods
         -------
@@ -7168,6 +7473,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
         be called after ``begin_shape()``.
 
+        Underlying Java method: PApplet.endShape
+
         Methods
         -------
 
@@ -7197,6 +7504,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
         be called after ``begin_shape()``.
 
+        Underlying Java method: PApplet.endShape
+
         Methods
         -------
 
@@ -7223,18 +7532,32 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         return self._instance.endShape(*args)
 
     def exit_sketch(self) -> None:
-        """new template no description.
+        """Quits/stops/exits the program.
+
+        Underlying Java method: PApplet.exit
 
         Notes
         -----
 
-        new template no description.
+        Quits/stops/exits the program. Programs without a ``draw()`` function stop
+        automatically after the last line has run, but programs with ``draw()`` run
+        continuously until the program is manually stopped or ``exit()`` is run.
+
+        Rather than terminating immediately, ``exit()`` will cause the sketch to exit
+        after ``draw()`` has completed (or after ``setup()`` completes if called during
+        the ``setup()`` function).
+
+        For Java programmers, this is *not* the same as System.``exit()``. Further,
+        System.``exit()`` should not be used because closing out an application while
+        ``draw()`` is running may cause a crash (particularly with P3D).
 """
         return self._instance.exit()
 
     @overload
     def fill(self, gray: float, /) -> None:
         """Sets the color used to fill shapes.
+
+        Underlying Java method: PApplet.fill
 
         Methods
         -------
@@ -7298,6 +7621,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def fill(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
+        Underlying Java method: PApplet.fill
+
         Methods
         -------
 
@@ -7359,6 +7684,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def fill(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the color used to fill shapes.
+
+        Underlying Java method: PApplet.fill
 
         Methods
         -------
@@ -7422,6 +7749,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def fill(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
+        Underlying Java method: PApplet.fill
+
         Methods
         -------
 
@@ -7483,6 +7812,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def fill(self, rgb: int, /) -> None:
         """Sets the color used to fill shapes.
+
+        Underlying Java method: PApplet.fill
 
         Methods
         -------
@@ -7546,6 +7877,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def fill(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
+        Underlying Java method: PApplet.fill
+
         Methods
         -------
 
@@ -7606,6 +7939,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def fill(self, *args):
         """Sets the color used to fill shapes.
+
+        Underlying Java method: PApplet.fill
 
         Methods
         -------
@@ -7668,6 +8003,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def apply_filter(self, kind: int, /) -> None:
         """Filters the display window using a preset filter or with a custom shader.
+
+        Underlying Java method: PApplet.filter
 
         Methods
         -------
@@ -7735,6 +8072,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def apply_filter(self, kind: int, param: float, /) -> None:
         """Filters the display window using a preset filter or with a custom shader.
 
+        Underlying Java method: PApplet.filter
+
         Methods
         -------
 
@@ -7801,6 +8140,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def apply_filter(self, shader: Py5Shader, /) -> None:
         """Filters the display window using a preset filter or with a custom shader.
 
+        Underlying Java method: PApplet.filter
+
         Methods
         -------
 
@@ -7865,6 +8206,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def apply_filter(self, *args):
         """Filters the display window using a preset filter or with a custom shader.
+
+        Underlying Java method: PApplet.filter
 
         Methods
         -------
@@ -7931,6 +8274,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def frame_rate(self, fps: float, /) -> None:
         """Specifies the number of frames to be displayed every second.
 
+        Underlying Java method: PApplet.frameRate
+
         Parameters
         ----------
 
@@ -7951,6 +8296,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def frustum(self, left: float, right: float, bottom: float,
                 top: float, near: float, far: float, /) -> None:
         """Sets a perspective matrix as defined by the parameters.
+
+        Underlying Java method: PApplet.frustum
 
         Parameters
         ----------
@@ -8002,6 +8349,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def full_screen(self) -> None:
         """This function is new for Processing 3.0.
 
+        Underlying Java method: PApplet.fullScreen
+
         Methods
         -------
 
@@ -8045,6 +8394,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def full_screen(self, display: int, /) -> None:
         """This function is new for Processing 3.0.
+
+        Underlying Java method: PApplet.fullScreen
 
         Methods
         -------
@@ -8090,6 +8441,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def full_screen(self, renderer: str, /) -> None:
         """This function is new for Processing 3.0.
 
+        Underlying Java method: PApplet.fullScreen
+
         Methods
         -------
 
@@ -8134,6 +8487,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def full_screen(self, renderer: str, display: int, /) -> None:
         """This function is new for Processing 3.0.
 
+        Underlying Java method: PApplet.fullScreen
+
         Methods
         -------
 
@@ -8176,6 +8531,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def full_screen(self, *args):
         """This function is new for Processing 3.0.
+
+        Underlying Java method: PApplet.fullScreen
 
         Methods
         -------
@@ -8220,6 +8577,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def get(self) -> Py5Image:
         """Reads the color of any pixel or grabs a section of an image.
+
+        Underlying Java method: PApplet.get
 
         Methods
         -------
@@ -8276,6 +8635,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def get(self, x: int, y: int, /) -> int:
         """Reads the color of any pixel or grabs a section of an image.
 
+        Underlying Java method: PApplet.get
+
         Methods
         -------
 
@@ -8330,6 +8691,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def get(self, x: int, y: int, w: int, h: int, /) -> Py5Image:
         """Reads the color of any pixel or grabs a section of an image.
+
+        Underlying Java method: PApplet.get
 
         Methods
         -------
@@ -8386,6 +8749,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def get(self, *args):
         """Reads the color of any pixel or grabs a section of an image.
 
+        Underlying Java method: PApplet.get
+
         Methods
         -------
 
@@ -8440,6 +8805,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def get_frame_rate(self) -> float:
         """new template no description.
 
+        Underlying Java method: PApplet.getFrameRate
+
         Notes
         -----
 
@@ -8451,6 +8818,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def get_graphics(self) -> Py5Graphics:
         """new template no description.
 
+        Underlying Java method: PApplet.getGraphics
+
         Notes
         -----
 
@@ -8461,6 +8830,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def get_matrix(self) -> NDArray[(Any, Any), Float]:
         """new template no description.
+
+        Underlying Java method: PApplet.getMatrix
 
         Methods
         -------
@@ -8492,6 +8863,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             2, 3), Float], /) -> NDArray[(2, 3), Float]:
         """new template no description.
 
+        Underlying Java method: PApplet.getMatrix
+
         Methods
         -------
 
@@ -8522,6 +8895,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             4, 4), Float], /) -> NDArray[(4, 4), Float]:
         """new template no description.
 
+        Underlying Java method: PApplet.getMatrix
+
         Methods
         -------
 
@@ -8550,6 +8925,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @ _get_matrix_wrapper
     def get_matrix(self, *args):
         """new template no description.
+
+        Underlying Java method: PApplet.getMatrix
 
         Methods
         -------
@@ -8580,6 +8957,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def get_surface(self) -> Py5Surface:
         """new template no description.
 
+        Underlying Java method: PApplet.getSurface
+
         Notes
         -----
 
@@ -8589,6 +8968,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def green(self, rgb: int, /) -> float:
         """Extracts the green value from a color, scaled to match current ``color_mode()``.
+
+        Underlying Java method: PApplet.green
 
         Parameters
         ----------
@@ -8618,6 +8999,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def hint(self, which: int, /) -> None:
         """This function is used to enable or disable special features that control how
         graphics are drawn.
+
+        Underlying Java method: PApplet.hint
 
         Parameters
         ----------
@@ -8712,6 +9095,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def hour(cls) -> int:
         """Processing communicates with the clock on your computer.
 
+        Underlying Java method: PApplet.hour
+
         Notes
         -----
 
@@ -8722,6 +9107,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def hue(self, rgb: int, /) -> float:
         """Extracts the hue value from a color.
+
+        Underlying Java method: PApplet.hue
 
         Parameters
         ----------
@@ -8739,6 +9126,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def image(self, img: Py5Image, a: float, b: float, /) -> None:
         """The ``image()`` function draws an image to the display window.
+
+        Underlying Java method: PApplet.image
 
         Methods
         -------
@@ -8804,6 +9193,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               c: float, d: float, /) -> None:
         """The ``image()`` function draws an image to the display window.
 
+        Underlying Java method: PApplet.image
+
         Methods
         -------
 
@@ -8868,6 +9259,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               d: float, u1: int, v1: int, u2: int, v2: int, /) -> None:
         """The ``image()`` function draws an image to the display window.
 
+        Underlying Java method: PApplet.image
+
         Methods
         -------
 
@@ -8929,6 +9322,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def image(self, *args):
         """The ``image()`` function draws an image to the display window.
+
+        Underlying Java method: PApplet.image
 
         Methods
         -------
@@ -8993,6 +9388,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Modifies the location from which images are drawn by changing the way in which
         parameters given to ``image()`` are intepreted.
 
+        Underlying Java method: PApplet.imageMode
+
         Parameters
         ----------
 
@@ -9026,6 +9423,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def is_key_pressed(self) -> bool:
         """new template no description.
 
+        Underlying Java method: PApplet.isKeyPressed
+
         Notes
         -----
 
@@ -9035,6 +9434,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def is_mouse_pressed(self) -> bool:
         """new template no description.
+
+        Underlying Java method: PApplet.isMousePressed
 
         Notes
         -----
@@ -9046,6 +9447,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def lerp_color(self, c1: int, c2: int, amt: float, /) -> int:
         """Calculates a color between two colors at a specific increment.
+
+        Underlying Java method: PApplet.lerpColor
 
         Methods
         -------
@@ -9088,6 +9491,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def lerp_color(self, c1: int, c2: int, amt: float, mode: int, /) -> int:
         """Calculates a color between two colors at a specific increment.
 
+        Underlying Java method: PApplet.lerpColor
+
         Methods
         -------
 
@@ -9127,6 +9532,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
+
+        Underlying Java method: PApplet.lerpColor
 
         Methods
         -------
@@ -9169,6 +9576,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                       quadratic: float, /) -> None:
         """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
+        Underlying Java method: PApplet.lightFalloff
+
         Parameters
         ----------
 
@@ -9203,6 +9612,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def light_specular(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the specular color for lights.
 
+        Underlying Java method: PApplet.lightSpecular
+
         Parameters
         ----------
 
@@ -9230,6 +9641,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def lights(self) -> None:
         """Sets the default ambient light, directional light, falloff, and specular values.
 
+        Underlying Java method: PApplet.lights
+
         Notes
         -----
 
@@ -9245,6 +9658,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def line(self, x1: float, y1: float, x2: float, y2: float, /) -> None:
         """Draws a line (a direct path between two points) to the screen.
+
+        Underlying Java method: PApplet.line
 
         Methods
         -------
@@ -9294,6 +9709,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              x2: float, y2: float, z2: float, /) -> None:
         """Draws a line (a direct path between two points) to the screen.
 
+        Underlying Java method: PApplet.line
+
         Methods
         -------
 
@@ -9339,6 +9756,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def line(self, *args):
         """Draws a line (a direct path between two points) to the screen.
+
+        Underlying Java method: PApplet.line
 
         Methods
         -------
@@ -9386,6 +9805,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def lines(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.lines
+
         Parameters
         ----------
 
@@ -9402,6 +9823,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @_load_py5font
     def load_font(self, filename: str, /) -> Py5Font:
         """Loads a .vlw formatted font into a ``Py5Font`` object.
+
+        Underlying Java method: PApplet.loadFont
 
         Parameters
         ----------
@@ -9448,6 +9871,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def load_pixels(self) -> None:
         """Loads the pixel data of the current display window into the ``pixels[]`` array.
 
+        Underlying Java method: PApplet.loadPixels
+
         Notes
         -----
 
@@ -9461,6 +9886,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def load_shader(self, frag_filename: str, /) -> Py5Shader:
         """Loads a shader into the PShader object.
+
+        Underlying Java method: PApplet.loadShader
 
         Methods
         -------
@@ -9503,6 +9930,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                     vert_filename: str, /) -> Py5Shader:
         """Loads a shader into the PShader object.
 
+        Underlying Java method: PApplet.loadShader
+
         Methods
         -------
 
@@ -9543,6 +9972,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def load_shader(self, *args):
         """Loads a shader into the PShader object.
 
+        Underlying Java method: PApplet.loadShader
+
         Methods
         -------
 
@@ -9582,6 +10013,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def load_shape(self, filename: str, /) -> Py5Shape:
         """Loads geometry into a variable of type ``Py5Shape``.
+
+        Underlying Java method: PApplet.loadShape
 
         Methods
         -------
@@ -9625,6 +10058,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def load_shape(self, filename: str, options: str, /) -> Py5Shape:
         """Loads geometry into a variable of type ``Py5Shape``.
 
+        Underlying Java method: PApplet.loadShape
+
         Methods
         -------
 
@@ -9666,6 +10101,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @_load_py5shape
     def load_shape(self, *args):
         """Loads geometry into a variable of type ``Py5Shape``.
+
+        Underlying Java method: PApplet.loadShape
 
         Methods
         -------
@@ -9709,6 +10146,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """By default, Processing loops through ``draw()`` continuously, executing the code
         within it.
 
+        Underlying Java method: PApplet.loop
+
         Notes
         -----
 
@@ -9721,6 +10160,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def millis(self) -> int:
         """Returns the number of milliseconds (thousandths of a second) since starting the
         program.
+
+        Underlying Java method: PApplet.millis
 
         Notes
         -----
@@ -9735,6 +10176,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def minute(cls) -> int:
         """Processing communicates with the clock on your computer.
 
+        Underlying Java method: PApplet.minute
+
         Notes
         -----
 
@@ -9745,6 +10188,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def model_x(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
+
+        Underlying Java method: PApplet.modelX
 
         Parameters
         ----------
@@ -9778,6 +10223,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def model_y(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
+        Underlying Java method: PApplet.modelY
+
         Parameters
         ----------
 
@@ -9809,6 +10256,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def model_z(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
+
+        Underlying Java method: PApplet.modelZ
 
         Parameters
         ----------
@@ -9843,6 +10292,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def month(cls) -> int:
         """Processing communicates with the clock on your computer.
 
+        Underlying Java method: PApplet.month
+
         Notes
         -----
 
@@ -9854,6 +10305,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def no_clip(self) -> None:
         """Disables the clipping previously started by the ``clip()`` function.
 
+        Underlying Java method: PApplet.noClip
+
         Notes
         -----
 
@@ -9863,6 +10316,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def no_cursor(self) -> None:
         """Hides the cursor from view.
+
+        Underlying Java method: PApplet.noCursor
 
         Notes
         -----
@@ -9875,6 +10330,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def no_fill(self) -> None:
         """Disables filling geometry.
 
+        Underlying Java method: PApplet.noFill
+
         Notes
         -----
 
@@ -9885,6 +10342,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def no_lights(self) -> None:
         """Disable all lighting.
+
+        Underlying Java method: PApplet.noLights
 
         Notes
         -----
@@ -9898,6 +10357,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def no_loop(self) -> None:
         """Stops Processing from continuously executing the code within ``draw()``.
+
+        Underlying Java method: PApplet.noLoop
 
         Notes
         -----
@@ -9924,6 +10385,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.
 
+        Underlying Java method: PApplet.noSmooth
+
         Notes
         -----
 
@@ -9941,6 +10404,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def no_stroke(self) -> None:
         """Disables drawing the stroke (outline).
 
+        Underlying Java method: PApplet.noStroke
+
         Notes
         -----
 
@@ -9951,6 +10416,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def no_texture(self) -> None:
         """new template no description.
+
+        Underlying Java method: PApplet.noTexture
 
         Notes
         -----
@@ -9963,6 +10430,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Removes the current fill value for displaying images and reverts to displaying
         images with their original hues.
 
+        Underlying Java method: PApplet.noTint
+
         Notes
         -----
 
@@ -9971,397 +10440,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 """
         return self._instance.noTint()
 
-    @overload
-    def noise(self, x: float, /) -> float:
-        """Returns the Perlin noise value at specified coordinates.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise(x: float) -> float
-         * noise(x: float, y: float) -> float
-         * noise(x: float, y: float, z: float) -> float
-
-        Parameters
-        ----------
-
-        x: float
-            x-coordinate in noise space
-
-        y: float
-            y-coordinate in noise space
-
-        z: float
-            z-coordinate in noise space
-
-        Notes
-        -----
-
-        Returns the Perlin noise value at specified coordinates. Perlin noise is a
-        random sequence generator producing a more natural, harmonic succession of
-        numbers than that of the standard ``random()`` function. It was developed by Ken
-        Perlin in the 1980s and has been used in graphical applications to generate
-        procedural textures, shapes, terrains, and other seemingly organic forms.
-
-        In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-        n-dimensional space, in which each pair of coordinates corresponds to a fixed
-        semi-random value (fixed only for the lifespan of the program). The resulting
-        value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-        noise, depending on the number of coordinates given. The noise value can be
-        animated by moving through the noise space, as demonstrated in the first example
-        above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, Perlin noise is computed over several octaves which are added together
-        for the final result.
-
-        Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
-        of the coordinates doesn't matter as such; only the *distance* between
-        successive coordinates is important (such as when using ``noise()`` within a
-        loop). As a general rule, the smaller the difference between coordinates, the
-        smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-        applications, but this will differ depending on use.
-
-        There have been debates over the accuracy of the implementation of noise in
-        Processing. For clarification, it's an implementation of "classic Perlin noise"
-        from 1983, and not the newer "simplex noise" method from 2001.
-"""
-        pass
-
-    @overload
-    def noise(self, x: float, y: float, /) -> float:
-        """Returns the Perlin noise value at specified coordinates.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise(x: float) -> float
-         * noise(x: float, y: float) -> float
-         * noise(x: float, y: float, z: float) -> float
-
-        Parameters
-        ----------
-
-        x: float
-            x-coordinate in noise space
-
-        y: float
-            y-coordinate in noise space
-
-        z: float
-            z-coordinate in noise space
-
-        Notes
-        -----
-
-        Returns the Perlin noise value at specified coordinates. Perlin noise is a
-        random sequence generator producing a more natural, harmonic succession of
-        numbers than that of the standard ``random()`` function. It was developed by Ken
-        Perlin in the 1980s and has been used in graphical applications to generate
-        procedural textures, shapes, terrains, and other seemingly organic forms.
-
-        In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-        n-dimensional space, in which each pair of coordinates corresponds to a fixed
-        semi-random value (fixed only for the lifespan of the program). The resulting
-        value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-        noise, depending on the number of coordinates given. The noise value can be
-        animated by moving through the noise space, as demonstrated in the first example
-        above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, Perlin noise is computed over several octaves which are added together
-        for the final result.
-
-        Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
-        of the coordinates doesn't matter as such; only the *distance* between
-        successive coordinates is important (such as when using ``noise()`` within a
-        loop). As a general rule, the smaller the difference between coordinates, the
-        smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-        applications, but this will differ depending on use.
-
-        There have been debates over the accuracy of the implementation of noise in
-        Processing. For clarification, it's an implementation of "classic Perlin noise"
-        from 1983, and not the newer "simplex noise" method from 2001.
-"""
-        pass
-
-    @overload
-    def noise(self, x: float, y: float, z: float, /) -> float:
-        """Returns the Perlin noise value at specified coordinates.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise(x: float) -> float
-         * noise(x: float, y: float) -> float
-         * noise(x: float, y: float, z: float) -> float
-
-        Parameters
-        ----------
-
-        x: float
-            x-coordinate in noise space
-
-        y: float
-            y-coordinate in noise space
-
-        z: float
-            z-coordinate in noise space
-
-        Notes
-        -----
-
-        Returns the Perlin noise value at specified coordinates. Perlin noise is a
-        random sequence generator producing a more natural, harmonic succession of
-        numbers than that of the standard ``random()`` function. It was developed by Ken
-        Perlin in the 1980s and has been used in graphical applications to generate
-        procedural textures, shapes, terrains, and other seemingly organic forms.
-
-        In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-        n-dimensional space, in which each pair of coordinates corresponds to a fixed
-        semi-random value (fixed only for the lifespan of the program). The resulting
-        value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-        noise, depending on the number of coordinates given. The noise value can be
-        animated by moving through the noise space, as demonstrated in the first example
-        above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, Perlin noise is computed over several octaves which are added together
-        for the final result.
-
-        Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
-        of the coordinates doesn't matter as such; only the *distance* between
-        successive coordinates is important (such as when using ``noise()`` within a
-        loop). As a general rule, the smaller the difference between coordinates, the
-        smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-        applications, but this will differ depending on use.
-
-        There have been debates over the accuracy of the implementation of noise in
-        Processing. For clarification, it's an implementation of "classic Perlin noise"
-        from 1983, and not the newer "simplex noise" method from 2001.
-"""
-        pass
-
-    def noise(self, *args):
-        """Returns the Perlin noise value at specified coordinates.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise(x: float) -> float
-         * noise(x: float, y: float) -> float
-         * noise(x: float, y: float, z: float) -> float
-
-        Parameters
-        ----------
-
-        x: float
-            x-coordinate in noise space
-
-        y: float
-            y-coordinate in noise space
-
-        z: float
-            z-coordinate in noise space
-
-        Notes
-        -----
-
-        Returns the Perlin noise value at specified coordinates. Perlin noise is a
-        random sequence generator producing a more natural, harmonic succession of
-        numbers than that of the standard ``random()`` function. It was developed by Ken
-        Perlin in the 1980s and has been used in graphical applications to generate
-        procedural textures, shapes, terrains, and other seemingly organic forms.
-
-        In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-        n-dimensional space, in which each pair of coordinates corresponds to a fixed
-        semi-random value (fixed only for the lifespan of the program). The resulting
-        value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-        noise, depending on the number of coordinates given. The noise value can be
-        animated by moving through the noise space, as demonstrated in the first example
-        above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, Perlin noise is computed over several octaves which are added together
-        for the final result.
-
-        Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
-        of the coordinates doesn't matter as such; only the *distance* between
-        successive coordinates is important (such as when using ``noise()`` within a
-        loop). As a general rule, the smaller the difference between coordinates, the
-        smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-        applications, but this will differ depending on use.
-
-        There have been debates over the accuracy of the implementation of noise in
-        Processing. For clarification, it's an implementation of "classic Perlin noise"
-        from 1983, and not the newer "simplex noise" method from 2001.
-"""
-        return self._instance.noise(*args)
-
-    @overload
-    def noise_detail(self, lod: int, /) -> None:
-        """Adjusts the character and level of detail produced by the Perlin noise function.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise_detail(lod: int) -> None
-         * noise_detail(lod: int, falloff: float) -> None
-
-        Parameters
-        ----------
-
-        falloff: float
-            falloff factor for each octave
-
-        lod: int
-            number of octaves to be used by the noise
-
-        Notes
-        -----
-
-        Adjusts the character and level of detail produced by the Perlin noise function.
-        Similar to harmonics in physics, noise is computed over several octaves. Lower
-        octaves contribute more to the output signal and as such define the overall
-        intensity of the noise, whereas higher octaves create finer-grained details in
-        the noise sequence.
-
-        By default, noise is computed over 4 octaves with each octave contributing
-        exactly half than its predecessor, starting at 50% strength for the first
-        octave. This falloff amount can be changed by adding an additional function
-        parameter. For example, a falloff factor of 0.75 means each octave will now have
-        75% impact (25% less) of the previous lower octave. While any number between 0.0
-        and 1.0 is valid, note that values greater than 0.5 may result in ``noise()``
-        returning values greater than 1.0.
-
-        By changing these parameters, the signal created by the ``noise()`` function can
-        be adapted to fit very specific needs and characteristics.
-"""
-        pass
-
-    @overload
-    def noise_detail(self, lod: int, falloff: float, /) -> None:
-        """Adjusts the character and level of detail produced by the Perlin noise function.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise_detail(lod: int) -> None
-         * noise_detail(lod: int, falloff: float) -> None
-
-        Parameters
-        ----------
-
-        falloff: float
-            falloff factor for each octave
-
-        lod: int
-            number of octaves to be used by the noise
-
-        Notes
-        -----
-
-        Adjusts the character and level of detail produced by the Perlin noise function.
-        Similar to harmonics in physics, noise is computed over several octaves. Lower
-        octaves contribute more to the output signal and as such define the overall
-        intensity of the noise, whereas higher octaves create finer-grained details in
-        the noise sequence.
-
-        By default, noise is computed over 4 octaves with each octave contributing
-        exactly half than its predecessor, starting at 50% strength for the first
-        octave. This falloff amount can be changed by adding an additional function
-        parameter. For example, a falloff factor of 0.75 means each octave will now have
-        75% impact (25% less) of the previous lower octave. While any number between 0.0
-        and 1.0 is valid, note that values greater than 0.5 may result in ``noise()``
-        returning values greater than 1.0.
-
-        By changing these parameters, the signal created by the ``noise()`` function can
-        be adapted to fit very specific needs and characteristics.
-"""
-        pass
-
-    def noise_detail(self, *args):
-        """Adjusts the character and level of detail produced by the Perlin noise function.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * noise_detail(lod: int) -> None
-         * noise_detail(lod: int, falloff: float) -> None
-
-        Parameters
-        ----------
-
-        falloff: float
-            falloff factor for each octave
-
-        lod: int
-            number of octaves to be used by the noise
-
-        Notes
-        -----
-
-        Adjusts the character and level of detail produced by the Perlin noise function.
-        Similar to harmonics in physics, noise is computed over several octaves. Lower
-        octaves contribute more to the output signal and as such define the overall
-        intensity of the noise, whereas higher octaves create finer-grained details in
-        the noise sequence.
-
-        By default, noise is computed over 4 octaves with each octave contributing
-        exactly half than its predecessor, starting at 50% strength for the first
-        octave. This falloff amount can be changed by adding an additional function
-        parameter. For example, a falloff factor of 0.75 means each octave will now have
-        75% impact (25% less) of the previous lower octave. While any number between 0.0
-        and 1.0 is valid, note that values greater than 0.5 may result in ``noise()``
-        returning values greater than 1.0.
-
-        By changing these parameters, the signal created by the ``noise()`` function can
-        be adapted to fit very specific needs and characteristics.
-"""
-        return self._instance.noiseDetail(*args)
-
-    def noise_seed(self, seed: int, /) -> None:
-        """Sets the seed value for ``noise()``.
-
-        Parameters
-        ----------
-
-        seed: int
-            seed value
-
-        Notes
-        -----
-
-        Sets the seed value for ``noise()``. By default, ``noise()`` produces different
-        results each time the program is run. Set the ``seed`` parameter to a constant
-        to return the same pseudo-random numbers each time the software is run.
-"""
-        return self._instance.noiseSeed(seed)
-
     def normal(self, nx: float, ny: float, nz: float, /) -> None:
         """Sets the current normal vector.
+
+        Underlying Java method: PApplet.normal
 
         Parameters
         ----------
@@ -10390,6 +10472,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def ortho(self) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
+
+        Underlying Java method: PApplet.ortho
 
         Methods
         -------
@@ -10439,6 +10523,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               bottom: float, top: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
+        Underlying Java method: PApplet.ortho
+
         Methods
         -------
 
@@ -10487,6 +10573,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               top: float, near: float, far: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
+        Underlying Java method: PApplet.ortho
+
         Methods
         -------
 
@@ -10532,6 +10620,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def ortho(self, *args):
         """Sets an orthographic projection and defines a parallel clipping volume.
+
+        Underlying Java method: PApplet.ortho
 
         Methods
         -------
@@ -10579,6 +10669,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def pause(self) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.pause
+
         Notes
         -----
 
@@ -10590,6 +10682,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def perspective(self) -> None:
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
+
+        Underlying Java method: PApplet.perspective
 
         Methods
         -------
@@ -10635,6 +10729,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
+        Underlying Java method: PApplet.perspective
+
         Methods
         -------
 
@@ -10677,6 +10773,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
+        Underlying Java method: PApplet.perspective
+
         Methods
         -------
 
@@ -10718,6 +10816,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def pixel_density(self, density: int, /) -> None:
         """This function is new with Processing 3.0.
 
+        Underlying Java method: PApplet.pixelDensity
+
         Parameters
         ----------
 
@@ -10750,6 +10850,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def point(self, x: float, y: float, /) -> None:
         """Draws a point, a coordinate in space at the dimension of one pixel.
+
+        Underlying Java method: PApplet.point
 
         Methods
         -------
@@ -10797,6 +10899,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def point(self, x: float, y: float, z: float, /) -> None:
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
+        Underlying Java method: PApplet.point
+
         Methods
         -------
 
@@ -10841,6 +10945,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def point(self, *args):
         """Draws a point, a coordinate in space at the dimension of one pixel.
+
+        Underlying Java method: PApplet.point
 
         Methods
         -------
@@ -10888,6 +10994,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                     x: float, y: float, z: float, /) -> None:
         """Adds a point light.
 
+        Underlying Java method: PApplet.pointLight
+
         Parameters
         ----------
 
@@ -10924,6 +11032,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def points(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.points
+
         Parameters
         ----------
 
@@ -10940,6 +11050,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def pop(self) -> None:
         """The ``pop()`` function restores the previous drawing style settings and
         transformations after ``push()`` has changed them.
+
+        Underlying Java method: PApplet.pop
 
         Notes
         -----
@@ -10968,6 +11080,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def pop_matrix(self) -> None:
         """Pops the current transformation matrix off the matrix stack.
 
+        Underlying Java method: PApplet.popMatrix
+
         Notes
         -----
 
@@ -10984,6 +11098,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """The ``push_style()`` function saves the current style settings and
         ``pop_style()`` restores the prior settings; these functions are always used
         together.
+
+        Underlying Java method: PApplet.popStyle
 
         Notes
         -----
@@ -11002,6 +11118,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Prints the current camera matrix to the Console (the text window at the bottom
         of Processing).
 
+        Underlying Java method: PApplet.printCamera
+
         Notes
         -----
 
@@ -11013,6 +11131,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def print_matrix(self) -> None:
         """Prints the current matrix to the Console (the text window at the bottom of
         Processing).
+
+        Underlying Java method: PApplet.printMatrix
 
         Notes
         -----
@@ -11026,6 +11146,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Prints the current projection matrix to the Console (the text window at the
         bottom of Processing).
 
+        Underlying Java method: PApplet.printProjection
+
         Notes
         -----
 
@@ -11037,6 +11159,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def push(self) -> None:
         """The ``push()`` function saves the current drawing style settings and
         transformations, while ``pop()`` restores these settings.
+
+        Underlying Java method: PApplet.push
 
         Notes
         -----
@@ -11066,6 +11190,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
+        Underlying Java method: PApplet.pushMatrix
+
         Notes
         -----
 
@@ -11082,6 +11208,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def push_style(self) -> None:
         """The ``push_style()`` function saves the current style settings and
         ``pop_style()`` restores the prior settings.
+
+        Underlying Java method: PApplet.pushStyle
 
         Notes
         -----
@@ -11107,6 +11235,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def quad(self, x1: float, y1: float, x2: float, y2: float,
              x3: float, y3: float, x4: float, y4: float, /) -> None:
         """A quad is a quadrilateral, a four sided polygon.
+
+        Underlying Java method: PApplet.quad
 
         Parameters
         ----------
@@ -11149,6 +11279,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def quadratic_vertex(self, cx: float, cy: float,
                          x3: float, y3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
+
+        Underlying Java method: PApplet.quadraticVertex
 
         Methods
         -------
@@ -11199,6 +11331,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                          x3: float, y3: float, z3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
+        Underlying Java method: PApplet.quadraticVertex
+
         Methods
         -------
 
@@ -11245,6 +11379,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def quadratic_vertex(self, *args):
         """Specifies vertex coordinates for quadratic Bezier curves.
+
+        Underlying Java method: PApplet.quadraticVertex
 
         Methods
         -------
@@ -11294,6 +11430,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.quadraticVertices
+
         Parameters
         ----------
 
@@ -11308,153 +11446,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         return self._instance.quadraticVertices(coordinates)
 
     @overload
-    def random(self, high: float, /) -> float:
-        """Generates random numbers.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
-
-        Parameters
-        ----------
-
-        high: float
-            upper limit
-
-        low: float
-            lower limit
-
-        Notes
-        -----
-
-        Generates random numbers. Each time the ``random()`` function is called, it
-        returns an unexpected value within the specified range. If only one parameter is
-        passed to the function, it will return a float between zero and the value of the
-        ``high`` parameter. For example, ``random(5)`` returns values between 0 and 5
-        (starting at zero, and up to, but not including, 5).
-
-        If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function.
-"""
-        pass
-
-    @overload
-    def random(self, low: float, high: float, /) -> float:
-        """Generates random numbers.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
-
-        Parameters
-        ----------
-
-        high: float
-            upper limit
-
-        low: float
-            lower limit
-
-        Notes
-        -----
-
-        Generates random numbers. Each time the ``random()`` function is called, it
-        returns an unexpected value within the specified range. If only one parameter is
-        passed to the function, it will return a float between zero and the value of the
-        ``high`` parameter. For example, ``random(5)`` returns values between 0 and 5
-        (starting at zero, and up to, but not including, 5).
-
-        If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function.
-"""
-        pass
-
-    def random(self, *args):
-        """Generates random numbers.
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
-
-        Parameters
-        ----------
-
-        high: float
-            upper limit
-
-        low: float
-            lower limit
-
-        Notes
-        -----
-
-        Generates random numbers. Each time the ``random()`` function is called, it
-        returns an unexpected value within the specified range. If only one parameter is
-        passed to the function, it will return a float between zero and the value of the
-        ``high`` parameter. For example, ``random(5)`` returns values between 0 and 5
-        (starting at zero, and up to, but not including, 5).
-
-        If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function.
-"""
-        return self._instance.random(*args)
-
-    def random_gaussian(self) -> float:
-        """Returns a float from a random series of numbers having a mean of 0 and standard
-        deviation of 1.
-
-        Notes
-        -----
-
-        Returns a float from a random series of numbers having a mean of 0 and standard
-        deviation of 1. Each time the ``random_gaussian()`` function is called, it
-        returns a number fitting a Gaussian, or normal, distribution. There is
-        theoretically no minimum or maximum value that ``random_gaussian()`` might
-        return. Rather, there is just a very low probability that values far from the
-        mean will be returned; and a higher probability that numbers near the mean will
-        be returned.
-"""
-        return self._instance.randomGaussian()
-
-    def random_seed(self, seed: int, /) -> None:
-        """Sets the seed value for ``random()``.
-
-        Parameters
-        ----------
-
-        seed: int
-            seed value
-
-        Notes
-        -----
-
-        Sets the seed value for ``random()``. By default, ``random()`` produces
-        different results each time the program is run. Set the ``seed`` parameter to a
-        constant to return the same pseudo-random numbers each time the software is run.
-"""
-        return self._instance.randomSeed(seed)
-
-    @overload
     def rect(self, a: float, b: float, c: float, d: float, /) -> None:
         """Draws a rectangle to the screen.
+
+        Underlying Java method: PApplet.rect
 
         Methods
         -------
@@ -11519,6 +11514,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              d: float, r: float, /) -> None:
         """Draws a rectangle to the screen.
 
+        Underlying Java method: PApplet.rect
+
         Methods
         -------
 
@@ -11582,6 +11579,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              tl: float, tr: float, br: float, bl: float, /) -> None:
         """Draws a rectangle to the screen.
 
+        Underlying Java method: PApplet.rect
+
         Methods
         -------
 
@@ -11642,6 +11641,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def rect(self, *args):
         """Draws a rectangle to the screen.
+
+        Underlying Java method: PApplet.rect
 
         Methods
         -------
@@ -11705,6 +11706,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Modifies the location from which rectangles are drawn by changing the way in
         which parameters given to ``rect()`` are intepreted.
 
+        Underlying Java method: PApplet.rectMode
+
         Parameters
         ----------
 
@@ -11741,6 +11744,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def red(self, rgb: int, /) -> float:
         """Extracts the red value from a color, scaled to match current ``color_mode()``.
 
+        Underlying Java method: PApplet.red
+
         Parameters
         ----------
 
@@ -11768,6 +11773,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def redraw(self) -> None:
         """Executes the code within ``draw()`` one time.
 
+        Underlying Java method: PApplet.redraw
+
         Notes
         -----
 
@@ -11787,6 +11794,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def reset_matrix(self) -> None:
         """Replaces the current matrix with the identity matrix.
 
+        Underlying Java method: PApplet.resetMatrix
+
         Notes
         -----
 
@@ -11798,6 +11807,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def reset_shader(self) -> None:
         """Restores the default shaders.
+
+        Underlying Java method: PApplet.resetShader
 
         Methods
         -------
@@ -11825,6 +11836,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def reset_shader(self, kind: int, /) -> None:
         """Restores the default shaders.
 
+        Underlying Java method: PApplet.resetShader
+
         Methods
         -------
 
@@ -11849,6 +11862,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def reset_shader(self, *args):
         """Restores the default shaders.
+
+        Underlying Java method: PApplet.resetShader
 
         Methods
         -------
@@ -11875,6 +11890,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def resume(self) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.resume
+
         Notes
         -----
 
@@ -11885,6 +11902,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def rotate(self, angle: float, /) -> None:
         """Rotates the amount specified by the ``angle`` parameter.
+
+        Underlying Java method: PApplet.rotate
 
         Methods
         -------
@@ -11934,6 +11953,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def rotate(self, angle: float, x: float, y: float, z: float, /) -> None:
         """Rotates the amount specified by the ``angle`` parameter.
 
+        Underlying Java method: PApplet.rotate
+
         Methods
         -------
 
@@ -11980,6 +12001,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def rotate(self, *args):
         """Rotates the amount specified by the ``angle`` parameter.
+
+        Underlying Java method: PApplet.rotate
 
         Methods
         -------
@@ -12028,6 +12051,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def rotate_x(self, angle: float, /) -> None:
         """Rotates around the x-axis the amount specified by the ``angle`` parameter.
 
+        Underlying Java method: PApplet.rotateX
+
         Parameters
         ----------
 
@@ -12053,6 +12078,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def rotate_y(self, angle: float, /) -> None:
         """Rotates around the y-axis the amount specified by the ``angle`` parameter.
+
+        Underlying Java method: PApplet.rotateY
 
         Parameters
         ----------
@@ -12080,6 +12107,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def rotate_z(self, angle: float, /) -> None:
         """Rotates around the z-axis the amount specified by the ``angle`` parameter.
 
+        Underlying Java method: PApplet.rotateZ
+
         Parameters
         ----------
 
@@ -12106,6 +12135,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def saturation(self, rgb: int, /) -> float:
         """Extracts the saturation value from a color.
 
+        Underlying Java method: PApplet.saturation
+
         Parameters
         ----------
 
@@ -12123,6 +12154,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def scale(self, s: float, /) -> None:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
+
+        Underlying Java method: PApplet.scale
 
         Methods
         -------
@@ -12171,6 +12204,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
+        Underlying Java method: PApplet.scale
+
         Methods
         -------
 
@@ -12218,6 +12253,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
+        Underlying Java method: PApplet.scale
+
         Methods
         -------
 
@@ -12263,6 +12300,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def scale(self, *args):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
+
+        Underlying Java method: PApplet.scale
 
         Methods
         -------
@@ -12311,6 +12350,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
+        Underlying Java method: PApplet.screenX
+
         Methods
         -------
 
@@ -12344,6 +12385,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
+        Underlying Java method: PApplet.screenX
+
         Methods
         -------
 
@@ -12375,6 +12418,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def screen_x(self, *args):
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
+
+        Underlying Java method: PApplet.screenX
 
         Methods
         -------
@@ -12409,6 +12454,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
+        Underlying Java method: PApplet.screenY
+
         Methods
         -------
 
@@ -12442,6 +12489,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
+        Underlying Java method: PApplet.screenY
+
         Methods
         -------
 
@@ -12473,6 +12522,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def screen_y(self, *args):
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
+
+        Underlying Java method: PApplet.screenY
 
         Methods
         -------
@@ -12506,6 +12557,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Z value for where it
         will appear on a (two-dimensional) screen.
 
+        Underlying Java method: PApplet.screenZ
+
         Parameters
         ----------
 
@@ -12530,6 +12583,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def second(cls) -> int:
         """Processing communicates with the clock on your computer.
 
+        Underlying Java method: PApplet.second
+
         Notes
         -----
 
@@ -12541,6 +12596,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def set_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """new template no description.
+
+        Underlying Java method: PApplet.setMatrix
 
         Methods
         -------
@@ -12570,6 +12627,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def set_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.setMatrix
+
         Methods
         -------
 
@@ -12596,6 +12655,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def set_matrix(self, *args):
         """new template no description.
+
+        Underlying Java method: PApplet.setMatrix
 
         Methods
         -------
@@ -12624,6 +12685,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def shader(self, shader: Py5Shader, /) -> None:
         """Applies the shader specified by the parameters.
+
+        Underlying Java method: PApplet.shader
 
         Methods
         -------
@@ -12654,6 +12717,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def shader(self, shader: Py5Shader, kind: int, /) -> None:
         """Applies the shader specified by the parameters.
 
+        Underlying Java method: PApplet.shader
+
         Methods
         -------
 
@@ -12681,6 +12746,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def shader(self, *args):
         """Applies the shader specified by the parameters.
+
+        Underlying Java method: PApplet.shader
 
         Methods
         -------
@@ -12710,6 +12777,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def shape(self, shape: Py5Shape, /) -> None:
         """Draws shapes to the display window.
+
+        Underlying Java method: PApplet.shape
 
         Methods
         -------
@@ -12761,6 +12830,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def shape(self, shape: Py5Shape, x: float, y: float, /) -> None:
         """Draws shapes to the display window.
+
+        Underlying Java method: PApplet.shape
 
         Methods
         -------
@@ -12814,6 +12885,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
               b: float, c: float, d: float, /) -> None:
         """Draws shapes to the display window.
 
+        Underlying Java method: PApplet.shape
+
         Methods
         -------
 
@@ -12863,6 +12936,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def shape(self, *args):
         """Draws shapes to the display window.
+
+        Underlying Java method: PApplet.shape
 
         Methods
         -------
@@ -12914,6 +12989,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def shape_mode(self, mode: int, /) -> None:
         """Modifies the location from which shapes draw.
 
+        Underlying Java method: PApplet.shapeMode
+
         Parameters
         ----------
 
@@ -12939,6 +13016,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def shear_x(self, angle: float, /) -> None:
         """Shears a shape around the x-axis the amount specified by the ``angle``
         parameter.
+
+        Underlying Java method: PApplet.shearX
 
         Parameters
         ----------
@@ -12969,6 +13048,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Shears a shape around the y-axis the amount specified by the ``angle``
         parameter.
 
+        Underlying Java method: PApplet.shearY
+
         Parameters
         ----------
 
@@ -12997,6 +13078,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def shininess(self, shine: float, /) -> None:
         """Sets the amount of gloss in the surface of shapes.
 
+        Underlying Java method: PApplet.shininess
+
         Parameters
         ----------
 
@@ -13015,6 +13098,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def size(self, width: int, height: int, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
+
+        Underlying Java method: PApplet.size
 
         Methods
         -------
@@ -13104,6 +13189,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def size(self, width: int, height: int, renderer: str, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
+
+        Underlying Java method: PApplet.size
 
         Methods
         -------
@@ -13195,6 +13282,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              renderer: str, path: str, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
 
+        Underlying Java method: PApplet.size
+
         Methods
         -------
 
@@ -13282,6 +13371,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def size(self, *args):
         """Defines the dimension of the display window width and height in units of pixels.
+
+        Underlying Java method: PApplet.size
 
         Methods
         -------
@@ -13372,6 +13463,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def sketch_path(self) -> str:
         """new template no description.
 
+        Underlying Java method: PApplet.sketchPath
+
         Methods
         -------
 
@@ -13397,6 +13490,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def sketch_path(self, where: str, /) -> str:
         """new template no description.
 
+        Underlying Java method: PApplet.sketchPath
+
         Methods
         -------
 
@@ -13420,6 +13515,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def sketch_path(self, *args):
         """new template no description.
+
+        Underlying Java method: PApplet.sketchPath
 
         Methods
         -------
@@ -13445,6 +13542,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def smooth(self) -> None:
         """Draws all geometry with smooth (anti-aliased) edges.
+
+        Underlying Java method: PApplet.smooth
 
         Methods
         -------
@@ -13495,6 +13594,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def smooth(self, level: int, /) -> None:
         """Draws all geometry with smooth (anti-aliased) edges.
 
+        Underlying Java method: PApplet.smooth
+
         Methods
         -------
 
@@ -13542,6 +13643,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def smooth(self, *args):
         """Draws all geometry with smooth (anti-aliased) edges.
+
+        Underlying Java method: PApplet.smooth
 
         Methods
         -------
@@ -13593,6 +13696,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
+        Underlying Java method: PApplet.specular
+
         Methods
         -------
 
@@ -13635,6 +13740,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def specular(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
+
+        Underlying Java method: PApplet.specular
 
         Methods
         -------
@@ -13679,6 +13786,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
+        Underlying Java method: PApplet.specular
+
         Methods
         -------
 
@@ -13721,6 +13830,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
+        Underlying Java method: PApplet.specular
+
         Methods
         -------
 
@@ -13762,6 +13873,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def sphere(self, r: float, /) -> None:
         """A sphere is a hollow ball made from tessellated triangles.
 
+        Underlying Java method: PApplet.sphere
+
         Parameters
         ----------
 
@@ -13779,6 +13892,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def sphere_detail(self, res: int, /) -> None:
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
+
+        Underlying Java method: PApplet.sphereDetail
 
         Methods
         -------
@@ -13822,6 +13937,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
+        Underlying Java method: PApplet.sphereDetail
+
         Methods
         -------
 
@@ -13862,6 +13979,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def sphere_detail(self, *args):
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
+
+        Underlying Java method: PApplet.sphereDetail
 
         Methods
         -------
@@ -13915,6 +14034,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             concentration: float,
             /) -> None:
         """Adds a spot light.
+
+        Underlying Java method: PApplet.spotLight
 
         Parameters
         ----------
@@ -13971,6 +14092,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def square(self, x: float, y: float, extent: float, /) -> None:
         """Draws a square to the screen.
 
+        Underlying Java method: PApplet.square
+
         Parameters
         ----------
 
@@ -13997,6 +14120,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def start(self) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.start
+
         Notes
         -----
 
@@ -14006,6 +14131,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def stop(self) -> None:
         """new template no description.
+
+        Underlying Java method: PApplet.stop
 
         Notes
         -----
@@ -14017,6 +14144,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def stroke(self, gray: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
+
+        Underlying Java method: PApplet.stroke
 
         Methods
         -------
@@ -14081,6 +14210,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def stroke(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
+        Underlying Java method: PApplet.stroke
+
         Methods
         -------
 
@@ -14143,6 +14274,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def stroke(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
+
+        Underlying Java method: PApplet.stroke
 
         Methods
         -------
@@ -14207,6 +14340,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def stroke(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
+        Underlying Java method: PApplet.stroke
+
         Methods
         -------
 
@@ -14269,6 +14404,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def stroke(self, rgb: int, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
+
+        Underlying Java method: PApplet.stroke
 
         Methods
         -------
@@ -14333,6 +14470,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def stroke(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
+        Underlying Java method: PApplet.stroke
+
         Methods
         -------
 
@@ -14394,6 +14533,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def stroke(self, *args):
         """Sets the color used to draw lines and borders around shapes.
+
+        Underlying Java method: PApplet.stroke
 
         Methods
         -------
@@ -14457,6 +14598,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def stroke_cap(self, cap: int, /) -> None:
         """Sets the style for rendering line endings.
 
+        Underlying Java method: PApplet.strokeCap
+
         Parameters
         ----------
 
@@ -14478,6 +14621,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def stroke_join(self, join: int, /) -> None:
         """Sets the style of the joints which connect line segments.
 
+        Underlying Java method: PApplet.strokeJoin
+
         Parameters
         ----------
 
@@ -14496,6 +14641,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def stroke_weight(self, weight: float, /) -> None:
         """Sets the width of the stroke used for lines, points, and the border around
         shapes.
+
+        Underlying Java method: PApplet.strokeWeight
 
         Parameters
         ----------
@@ -14519,6 +14666,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text(self, c: chr, x: float, y: float, /) -> None:
         """Draws text to the screen.
+
+        Underlying Java method: PApplet.text
 
         Methods
         -------
@@ -14607,6 +14756,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text(self, c: chr, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
+
+        Underlying Java method: PApplet.text
 
         Methods
         -------
@@ -14697,6 +14848,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              stop: int, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
+        Underlying Java method: PApplet.text
+
         Methods
         -------
 
@@ -14786,6 +14939,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              stop: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
+        Underlying Java method: PApplet.text
+
         Methods
         -------
 
@@ -14873,6 +15028,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text(self, num: float, x: float, y: float, /) -> None:
         """Draws text to the screen.
+
+        Underlying Java method: PApplet.text
 
         Methods
         -------
@@ -14962,6 +15119,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text(self, num: float, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
+        Underlying Java method: PApplet.text
+
         Methods
         -------
 
@@ -15049,6 +15208,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text(self, num: int, x: float, y: float, /) -> None:
         """Draws text to the screen.
+
+        Underlying Java method: PApplet.text
 
         Methods
         -------
@@ -15138,6 +15299,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text(self, num: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
+        Underlying Java method: PApplet.text
+
         Methods
         -------
 
@@ -15226,6 +15389,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text(self, str: str, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
+        Underlying Java method: PApplet.text
+
         Methods
         -------
 
@@ -15313,6 +15478,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text(self, str: str, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
+
+        Underlying Java method: PApplet.text
 
         Methods
         -------
@@ -15403,6 +15570,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
              x2: float, y2: float, /) -> None:
         """Draws text to the screen.
 
+        Underlying Java method: PApplet.text
+
         Methods
         -------
 
@@ -15490,6 +15659,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @_text_fix_str
     def text(self, *args):
         """Draws text to the screen.
+
+        Underlying Java method: PApplet.text
 
         Methods
         -------
@@ -15579,6 +15750,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_align(self, align_x: int, /) -> None:
         """Sets the current alignment for drawing text.
 
+        Underlying Java method: PApplet.textAlign
+
         Methods
         -------
 
@@ -15627,6 +15800,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_align(self, align_x: int, align_y: int, /) -> None:
         """Sets the current alignment for drawing text.
 
+        Underlying Java method: PApplet.textAlign
+
         Methods
         -------
 
@@ -15673,6 +15848,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def text_align(self, *args):
         """Sets the current alignment for drawing text.
+
+        Underlying Java method: PApplet.textAlign
 
         Methods
         -------
@@ -15721,6 +15898,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_ascent(self) -> float:
         """Returns ascent of the current font at its current size.
 
+        Underlying Java method: PApplet.textAscent
+
         Notes
         -----
 
@@ -15731,6 +15910,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def text_descent(self) -> float:
         """Returns descent of the current font at its current size.
+
+        Underlying Java method: PApplet.textDescent
 
         Notes
         -----
@@ -15743,6 +15924,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text_font(self, which: Py5Font, /) -> None:
         """Sets the current font that will be drawn with the ``text()`` function.
+
+        Underlying Java method: PApplet.textFont
 
         Methods
         -------
@@ -15782,6 +15965,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_font(self, which: Py5Font, size: float, /) -> None:
         """Sets the current font that will be drawn with the ``text()`` function.
 
+        Underlying Java method: PApplet.textFont
+
         Methods
         -------
 
@@ -15818,6 +16003,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def text_font(self, *args):
         """Sets the current font that will be drawn with the ``text()`` function.
+
+        Underlying Java method: PApplet.textFont
 
         Methods
         -------
@@ -15856,6 +16043,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_leading(self, leading: float, /) -> None:
         """Sets the spacing between lines of text in units of pixels.
 
+        Underlying Java method: PApplet.textLeading
+
         Parameters
         ----------
 
@@ -15876,6 +16065,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_mode(self, mode: int, /) -> None:
         """Sets the way text draws to the screen, either as texture maps or as vector
         geometry.
+
+        Underlying Java method: PApplet.textMode
 
         Parameters
         ----------
@@ -15906,6 +16097,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_size(self, size: float, /) -> None:
         """Sets the current font size.
 
+        Underlying Java method: PApplet.textSize
+
         Parameters
         ----------
 
@@ -15923,6 +16116,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text_width(self, c: chr, /) -> float:
         """Calculates and returns the width of any character or text string.
+
+        Underlying Java method: PApplet.textWidth
 
         Methods
         -------
@@ -15963,6 +16158,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                    start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
+        Underlying Java method: PApplet.textWidth
+
         Methods
         -------
 
@@ -16000,6 +16197,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def text_width(self, str: str, /) -> float:
         """Calculates and returns the width of any character or text string.
+
+        Underlying Java method: PApplet.textWidth
 
         Methods
         -------
@@ -16039,6 +16238,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def text_width(self, *args):
         """Calculates and returns the width of any character or text string.
 
+        Underlying Java method: PApplet.textWidth
+
         Methods
         -------
 
@@ -16076,6 +16277,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def texture(self, image: Py5Image, /) -> None:
         """Sets a texture to be applied to vertex points.
 
+        Underlying Java method: PApplet.texture
+
         Parameters
         ----------
 
@@ -16096,6 +16299,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def texture_mode(self, mode: int, /) -> None:
         """Sets the coordinate space for texture mapping.
+
+        Underlying Java method: PApplet.textureMode
 
         Parameters
         ----------
@@ -16120,6 +16325,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def texture_wrap(self, wrap: int, /) -> None:
         """Defines if textures repeat or draw once within a texture map.
 
+        Underlying Java method: PApplet.textureWrap
+
         Parameters
         ----------
 
@@ -16138,6 +16345,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def tint(self, gray: float, /) -> None:
         """Sets the fill value for displaying images.
+
+        Underlying Java method: PApplet.tint
 
         Methods
         -------
@@ -16203,6 +16412,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def tint(self, gray: float, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
+        Underlying Java method: PApplet.tint
+
         Methods
         -------
 
@@ -16266,6 +16477,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def tint(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the fill value for displaying images.
+
+        Underlying Java method: PApplet.tint
 
         Methods
         -------
@@ -16331,6 +16544,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def tint(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
+        Underlying Java method: PApplet.tint
+
         Methods
         -------
 
@@ -16394,6 +16609,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def tint(self, rgb: int, /) -> None:
         """Sets the fill value for displaying images.
+
+        Underlying Java method: PApplet.tint
 
         Methods
         -------
@@ -16459,6 +16676,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def tint(self, rgb: int, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
+        Underlying Java method: PApplet.tint
+
         Methods
         -------
 
@@ -16521,6 +16740,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def tint(self, *args):
         """Sets the fill value for displaying images.
+
+        Underlying Java method: PApplet.tint
 
         Methods
         -------
@@ -16586,6 +16807,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def translate(self, x: float, y: float, /) -> None:
         """Specifies an amount to displace objects within the display window.
 
+        Underlying Java method: PApplet.translate
+
         Methods
         -------
 
@@ -16628,6 +16851,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def translate(self, x: float, y: float, z: float, /) -> None:
         """Specifies an amount to displace objects within the display window.
 
+        Underlying Java method: PApplet.translate
+
         Methods
         -------
 
@@ -16668,6 +16893,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def translate(self, *args):
         """Specifies an amount to displace objects within the display window.
+
+        Underlying Java method: PApplet.translate
 
         Methods
         -------
@@ -16711,6 +16938,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                  y2: float, x3: float, y3: float, /) -> None:
         """A triangle is a plane created by connecting three points.
 
+        Underlying Java method: PApplet.triangle
+
         Parameters
         ----------
 
@@ -16744,6 +16973,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def update_pixels(self) -> None:
         """Updates the display window with the data in the ``pixels[]`` array.
+
+        Underlying Java method: PApplet.updatePixels
 
         Methods
         -------
@@ -16782,6 +17013,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def update_pixels(self, x1: int, y1: int, x2: int, y2: int, /) -> None:
         """Updates the display window with the data in the ``pixels[]`` array.
 
+        Underlying Java method: PApplet.updatePixels
+
         Methods
         -------
 
@@ -16817,6 +17050,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def update_pixels(self, *args):
         """Updates the display window with the data in the ``pixels[]`` array.
+
+        Underlying Java method: PApplet.updatePixels
 
         Methods
         -------
@@ -16854,6 +17089,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def vertex(self, x: float, y: float, /) -> None:
         """All shapes are constructed by connecting a series of vertices.
+
+        Underlying Java method: PApplet.vertex
 
         Methods
         -------
@@ -16910,6 +17147,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def vertex(self, x: float, y: float, z: float, /) -> None:
         """All shapes are constructed by connecting a series of vertices.
 
+        Underlying Java method: PApplet.vertex
+
         Methods
         -------
 
@@ -16964,6 +17203,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def vertex(self, x: float, y: float, u: float, v: float, /) -> None:
         """All shapes are constructed by connecting a series of vertices.
+
+        Underlying Java method: PApplet.vertex
 
         Methods
         -------
@@ -17021,6 +17262,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                u: float, v: float, /) -> None:
         """All shapes are constructed by connecting a series of vertices.
 
+        Underlying Java method: PApplet.vertex
+
         Methods
         -------
 
@@ -17076,6 +17319,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def vertex(self, v: NDArray[(Any,), Float], /) -> None:
         """All shapes are constructed by connecting a series of vertices.
 
+        Underlying Java method: PApplet.vertex
+
         Methods
         -------
 
@@ -17129,6 +17374,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def vertex(self, *args):
         """All shapes are constructed by connecting a series of vertices.
+
+        Underlying Java method: PApplet.vertex
 
         Methods
         -------
@@ -17184,6 +17431,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     def vertices(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PApplet.vertices
+
         Parameters
         ----------
 
@@ -17200,6 +17449,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @classmethod
     def year(cls) -> int:
         """Processing communicates with the clock on your computer.
+
+        Underlying Java method: PApplet.year
 
         Notes
         -----

@@ -97,12 +97,19 @@ class PixelMixin:
             self._np_pixels[:, :, 1:] = array[:, :, :3]
         self.update_np_pixels()
 
-    def save(self, filename: Union[str, Path],
-             format: str = None, **params) -> None:
+    def save(self,
+             filename: Union[str,
+                             Path],
+             format: str = None,
+             drop_alpha: bool = True,
+             **params) -> None:
         """new template no description.
 
         Parameters
         ----------
+
+        drop_alpha: bool
+            missing variable description
 
         filename: Union[str, Path]
             missing variable description
@@ -118,12 +125,8 @@ class PixelMixin:
 
         new template no description.
 """
-        filename = self._instance.savePath(str(filename))
+        filename = Path(str(self._instance.savePath(str(filename))))
         self.load_np_pixels()
-        arr = np.roll(self.np_pixels, -1, axis=2)
-        Image.fromarray(
-            arr,
-            mode='RGBA').save(
-            str(filename),
-            format=format,
-            **params)
+        arr = self.np_pixels[:, :, 1:] if drop_alpha else np.roll(
+            self.np_pixels, -1, axis=2)
+        Image.fromarray(arr).save(filename, format=format, **params)

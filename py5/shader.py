@@ -61,6 +61,20 @@ def _py5shader_set_wrapper(f):
 
 
 class Py5Shader(Py5Base):
+    """This class encapsulates a GLSL shader program, including a vertex and a fragment
+    shader.
+
+    Underlying Java class: PShader.PShader
+
+    Notes
+    -----
+
+    This class encapsulates a GLSL shader program, including a vertex and a fragment
+    shader. It's compatible with the P2D and P3D renderers, but not with the default
+    renderer. Use the ``load_shader()`` function to load your shader code. [Note:
+    It's strongly encouraged to use ``load_shader()`` to create a PShader object,
+    rather than calling the PShader constructor manually.]
+"""
 
     def __init__(self, pshader):
         self._instance = pshader
@@ -70,6 +84,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, x: bool, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -84,6 +197,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -96,6 +308,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, x: bool, y: bool, z: bool, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -110,6 +421,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -122,6 +532,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, vec: JArray(JBoolean), /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -137,6 +646,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -149,6 +757,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, x: float, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -163,6 +870,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -175,6 +981,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, x: float, y: float, z: float, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -190,6 +1095,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -202,6 +1206,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, vec: NDArray[(Any,), Float], /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -217,6 +1320,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -229,6 +1431,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, x: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -243,6 +1544,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -255,6 +1655,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, x: int, y: int, z: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -269,6 +1768,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -281,6 +1879,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, vec: JArray(JInt), /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -295,6 +1992,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -307,6 +2103,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, tex: Py5Image, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -321,6 +2216,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -333,6 +2327,105 @@ class Py5Shader(Py5Base):
     def set(self, name: str, mat: NDArray[(4, 4), Float], /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----
@@ -348,6 +2441,105 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
         Notes
         -----
 
@@ -360,6 +2552,105 @@ class Py5Shader(Py5Base):
     def set(self, *args):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
+
+        Underlying Java method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
+         * set(name: str, tex: Py5Image) -> None
+         * set(name: str, vec: JArray(JBoolean)) -> None
+         * set(name: str, vec: JArray(JInt)) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
+         * set(name: str, vec: NDArray[(Any,), Float]) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
+         * set(name: str, x: bool) -> None
+         * set(name: str, x: bool, y: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
+         * set(name: str, x: float) -> None
+         * set(name: str, x: float, y: float) -> None
+         * set(name: str, x: float, y: float, z: float) -> None
+         * set(name: str, x: float, y: float, z: float, w: float) -> None
+         * set(name: str, x: int) -> None
+         * set(name: str, x: int, y: int) -> None
+         * set(name: str, x: int, y: int, z: int) -> None
+         * set(name: str, x: int, y: int, z: int, w: int) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
+            missing variable description
+
+        mat: NDArray[(2, 3), Float]
+            matrix of values
+
+        mat: NDArray[(4, 4), Float]
+            matrix of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the matrix is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: JArray(JInt)
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        vec: NDArray[(Any,), Float]
+            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
 
         Notes
         -----

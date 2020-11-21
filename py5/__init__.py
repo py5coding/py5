@@ -43,7 +43,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.3a2'
+__version__ = '0.3a3'
 
 logger = logging.getLogger(__name__)
 
@@ -266,6 +266,8 @@ width: int = None
 def alpha(rgb: int, /) -> float:
     """Extracts the alpha value from a color.
 
+    Underlying Java method: PApplet.alpha
+
     Parameters
     ----------
 
@@ -283,6 +285,8 @@ def alpha(rgb: int, /) -> float:
 @overload
 def ambient(gray: float, /) -> None:
     """Sets the ambient reflectance for shapes drawn to the screen.
+
+    Underlying Java method: PApplet.ambient
 
     Methods
     -------
@@ -329,6 +333,8 @@ def ambient(gray: float, /) -> None:
 def ambient(v1: float, v2: float, v3: float, /) -> None:
     """Sets the ambient reflectance for shapes drawn to the screen.
 
+    Underlying Java method: PApplet.ambient
+
     Methods
     -------
 
@@ -374,6 +380,8 @@ def ambient(v1: float, v2: float, v3: float, /) -> None:
 def ambient(rgb: int, /) -> None:
     """Sets the ambient reflectance for shapes drawn to the screen.
 
+    Underlying Java method: PApplet.ambient
+
     Methods
     -------
 
@@ -417,6 +425,8 @@ def ambient(rgb: int, /) -> None:
 
 def ambient(*args):
     """Sets the ambient reflectance for shapes drawn to the screen.
+
+    Underlying Java method: PApplet.ambient
 
     Methods
     -------
@@ -462,6 +472,8 @@ def ambient(*args):
 @overload
 def ambient_light(v1: float, v2: float, v3: float, /) -> None:
     """Adds an ambient light.
+
+    Underlying Java method: PApplet.ambientLight
 
     Methods
     -------
@@ -512,6 +524,8 @@ def ambient_light(v1: float, v2: float, v3: float,
                   x: float, y: float, z: float, /) -> None:
     """Adds an ambient light.
 
+    Underlying Java method: PApplet.ambientLight
+
     Methods
     -------
 
@@ -558,6 +572,8 @@ def ambient_light(v1: float, v2: float, v3: float,
 
 def ambient_light(*args):
     """Adds an ambient light.
+
+    Underlying Java method: PApplet.ambientLight
 
     Methods
     -------
@@ -607,6 +623,8 @@ def ambient_light(*args):
 def apply_matrix(n00: float, n01: float, n02: float,
                  n10: float, n11: float, n12: float, /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
+
+    Underlying Java method: PApplet.applyMatrix
 
     Methods
     -------
@@ -707,6 +725,8 @@ def apply_matrix(
         /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
+    Underlying Java method: PApplet.applyMatrix
+
     Methods
     -------
 
@@ -788,6 +808,8 @@ def apply_matrix(
 @overload
 def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
+
+    Underlying Java method: PApplet.applyMatrix
 
     Methods
     -------
@@ -871,6 +893,8 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
 def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
+    Underlying Java method: PApplet.applyMatrix
+
     Methods
     -------
 
@@ -951,6 +975,8 @@ def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
 
 def apply_matrix(*args):
     """Multiplies the current matrix by the one specified through the parameters.
+
+    Underlying Java method: PApplet.applyMatrix
 
     Methods
     -------
@@ -1035,6 +1061,8 @@ def arc(a: float, b: float, c: float, d: float,
         start: float, stop: float, /) -> None:
     """Draws an arc to the screen.
 
+    Underlying Java method: PApplet.arc
+
     Methods
     -------
 
@@ -1094,6 +1122,8 @@ def arc(a: float, b: float, c: float, d: float,
         start: float, stop: float, mode: int, /) -> None:
     """Draws an arc to the screen.
 
+    Underlying Java method: PApplet.arc
+
     Methods
     -------
 
@@ -1150,6 +1180,8 @@ def arc(a: float, b: float, c: float, d: float,
 
 def arc(*args):
     """Draws an arc to the screen.
+
+    Underlying Java method: PApplet.arc
 
     Methods
     -------
@@ -1209,6 +1241,8 @@ def arc(*args):
 def background(gray: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
+
+    Underlying Java method: PApplet.background
 
     Methods
     -------
@@ -1273,6 +1307,8 @@ def background(gray: float, alpha: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
 
+    Underlying Java method: PApplet.background
+
     Methods
     -------
 
@@ -1335,6 +1371,8 @@ def background(gray: float, alpha: float, /) -> None:
 def background(v1: float, v2: float, v3: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
+
+    Underlying Java method: PApplet.background
 
     Methods
     -------
@@ -1399,6 +1437,8 @@ def background(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
 
+    Underlying Java method: PApplet.background
+
     Methods
     -------
 
@@ -1461,6 +1501,8 @@ def background(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 def background(rgb: int, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
+
+    Underlying Java method: PApplet.background
 
     Methods
     -------
@@ -1525,6 +1567,8 @@ def background(rgb: int, alpha: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
 
+    Underlying Java method: PApplet.background
+
     Methods
     -------
 
@@ -1588,6 +1632,8 @@ def background(image: Py5Image, /) -> None:
     """The ``background()`` function sets the color used for the background of the
     Processing window.
 
+    Underlying Java method: PApplet.background
+
     Methods
     -------
 
@@ -1649,6 +1695,8 @@ def background(image: Py5Image, /) -> None:
 def background(*args):
     """The ``background()`` function sets the color used for the background of the
     Processing window.
+
+    Underlying Java method: PApplet.background
 
     Methods
     -------
@@ -1712,6 +1760,8 @@ def begin_camera() -> None:
     """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
     customization of the camera space.
 
+    Underlying Java method: PApplet.beginCamera
+
     Notes
     -----
 
@@ -1737,6 +1787,8 @@ def begin_contour() -> None:
     """Use the ``begin_contour()`` and ``end_contour()`` function to create negative
     shapes within shapes such as the center of the letter 'O'.
 
+    Underlying Java method: PApplet.beginContour
+
     Notes
     -----
 
@@ -1759,6 +1811,8 @@ def begin_contour() -> None:
 def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
     """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
+
+    Underlying Java method: PApplet.beginRaw
 
     Methods
     -------
@@ -1814,6 +1868,8 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
     """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
+    Underlying Java method: PApplet.beginRaw
+
     Methods
     -------
 
@@ -1866,6 +1922,8 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
 def begin_raw(*args):
     """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
+
+    Underlying Java method: PApplet.beginRaw
 
     Methods
     -------
@@ -1921,6 +1979,8 @@ def begin_record(renderer: str, filename: str, /) -> Py5Graphics:
     """Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window.
 
+    Underlying Java method: PApplet.beginRecord
+
     Methods
     -------
 
@@ -1965,6 +2025,8 @@ def begin_record(recorder: Py5Graphics, /) -> None:
     """Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window.
 
+    Underlying Java method: PApplet.beginRecord
+
     Methods
     -------
 
@@ -2007,6 +2069,8 @@ def begin_record(recorder: Py5Graphics, /) -> None:
 def begin_record(*args):
     """Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window.
+
+    Underlying Java method: PApplet.beginRecord
 
     Methods
     -------
@@ -2051,6 +2115,8 @@ def begin_record(*args):
 def begin_shape() -> None:
     """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
+
+    Underlying Java method: PApplet.beginShape
 
     Methods
     -------
@@ -2099,6 +2165,8 @@ def begin_shape(kind: int, /) -> None:
     """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
+    Underlying Java method: PApplet.beginShape
+
     Methods
     -------
 
@@ -2144,6 +2212,8 @@ def begin_shape(kind: int, /) -> None:
 def begin_shape(*args):
     """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
+
+    Underlying Java method: PApplet.beginShape
 
     Methods
     -------
@@ -2191,6 +2261,8 @@ def begin_shape(*args):
 def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
            y3: float, x4: float, y4: float, /) -> None:
     """Draws a Bezier curve on the screen.
+
+    Underlying Java method: PApplet.bezier
 
     Methods
     -------
@@ -2258,6 +2330,8 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
            x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
     """Draws a Bezier curve on the screen.
 
+    Underlying Java method: PApplet.bezier
+
     Methods
     -------
 
@@ -2321,6 +2395,8 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
 
 def bezier(*args):
     """Draws a Bezier curve on the screen.
+
+    Underlying Java method: PApplet.bezier
 
     Methods
     -------
@@ -2386,6 +2462,8 @@ def bezier(*args):
 def bezier_detail(detail: int, /) -> None:
     """Sets the resolution at which Beziers display.
 
+    Underlying Java method: PApplet.bezierDetail
+
     Parameters
     ----------
 
@@ -2404,6 +2482,8 @@ def bezier_detail(detail: int, /) -> None:
 
 def bezier_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     """Evaluates the Bezier at point t for points a, b, c, d.
+
+    Underlying Java method: PApplet.bezierPoint
 
     Parameters
     ----------
@@ -2438,6 +2518,8 @@ def bezier_tangent(a: float, b: float, c: float,
                    d: float, t: float, /) -> float:
     """Calculates the tangent of a point on a Bezier curve.
 
+    Underlying Java method: PApplet.bezierTangent
+
     Parameters
     ----------
 
@@ -2469,6 +2551,8 @@ def bezier_tangent(a: float, b: float, c: float,
 def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
                   x4: float, y4: float, /) -> None:
     """Specifies vertex coordinates for Bezier curves.
+
+    Underlying Java method: PApplet.bezierVertex
 
     Methods
     -------
@@ -2528,6 +2612,8 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
                   y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
     """Specifies vertex coordinates for Bezier curves.
 
+    Underlying Java method: PApplet.bezierVertex
+
     Methods
     -------
 
@@ -2583,6 +2669,8 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
 
 def bezier_vertex(*args):
     """Specifies vertex coordinates for Bezier curves.
+
+    Underlying Java method: PApplet.bezierVertex
 
     Methods
     -------
@@ -2640,6 +2728,8 @@ def bezier_vertex(*args):
 def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.bezierVertices
+
     Parameters
     ----------
 
@@ -2659,6 +2749,8 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
           dy: int, dw: int, dh: int, mode: int, /) -> None:
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
+
+    Underlying Java method: PApplet.blend
 
     Methods
     -------
@@ -2756,6 +2848,8 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
+    Underlying Java method: PApplet.blend
+
     Methods
     -------
 
@@ -2850,6 +2944,8 @@ def blend(*args):
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
+    Underlying Java method: PApplet.blend
+
     Methods
     -------
 
@@ -2943,6 +3039,8 @@ def blend(*args):
 def blend_mode(mode: int, /) -> None:
     """Blends the pixels in the display window according to a defined mode.
 
+    Underlying Java method: PApplet.blendMode
+
     Parameters
     ----------
 
@@ -2991,6 +3089,8 @@ def blend_mode(mode: int, /) -> None:
 def blue(rgb: int, /) -> float:
     """Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
+    Underlying Java method: PApplet.blue
+
     Parameters
     ----------
 
@@ -3019,6 +3119,8 @@ def blue(rgb: int, /) -> float:
 @overload
 def box(size: float, /) -> None:
     """A box is an extruded rectangle.
+
+    Underlying Java method: PApplet.box
 
     Methods
     -------
@@ -3056,6 +3158,8 @@ def box(size: float, /) -> None:
 def box(w: float, h: float, d: float, /) -> None:
     """A box is an extruded rectangle.
 
+    Underlying Java method: PApplet.box
+
     Methods
     -------
 
@@ -3090,6 +3194,8 @@ def box(w: float, h: float, d: float, /) -> None:
 
 def box(*args):
     """A box is an extruded rectangle.
+
+    Underlying Java method: PApplet.box
 
     Methods
     -------
@@ -3126,6 +3232,8 @@ def box(*args):
 def brightness(rgb: int, /) -> float:
     """Extracts the brightness value from a color.
 
+    Underlying Java method: PApplet.brightness
+
     Parameters
     ----------
 
@@ -3144,6 +3252,8 @@ def brightness(rgb: int, /) -> float:
 def camera() -> None:
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
+
+    Underlying Java method: PApplet.camera
 
     Methods
     -------
@@ -3205,6 +3315,8 @@ def camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: 
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
 
+    Underlying Java method: PApplet.camera
+
     Methods
     -------
 
@@ -3263,6 +3375,8 @@ def camera(*args):
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
 
+    Underlying Java method: PApplet.camera
+
     Methods
     -------
 
@@ -3320,6 +3434,8 @@ def camera(*args):
 def circle(x: float, y: float, extent: float, /) -> None:
     """Draws a circle to the screen.
 
+    Underlying Java method: PApplet.circle
+
     Parameters
     ----------
 
@@ -3345,6 +3461,8 @@ def circle(x: float, y: float, extent: float, /) -> None:
 def clear() -> None:
     """Clears the pixels within a buffer.
 
+    Underlying Java method: PApplet.clear
+
     Notes
     -----
 
@@ -3360,6 +3478,8 @@ def clear() -> None:
 
 def clip(a: float, b: float, c: float, d: float, /) -> None:
     """Limits the rendering to the boundaries of a rectangle defined by the parameters.
+
+    Underlying Java method: PApplet.clip
 
     Parameters
     ----------
@@ -3389,6 +3509,8 @@ def clip(a: float, b: float, c: float, d: float, /) -> None:
 @overload
 def color(fgray: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
+
+    Underlying Java method: PApplet.color
 
     Methods
     -------
@@ -3467,6 +3589,8 @@ def color(fgray: float, /) -> int:
 def color(fgray: float, falpha: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
 
+    Underlying Java method: PApplet.color
+
     Methods
     -------
 
@@ -3543,6 +3667,8 @@ def color(fgray: float, falpha: float, /) -> int:
 @overload
 def color(v1: float, v2: float, v3: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
+
+    Underlying Java method: PApplet.color
 
     Methods
     -------
@@ -3621,6 +3747,8 @@ def color(v1: float, v2: float, v3: float, /) -> int:
 def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
 
+    Underlying Java method: PApplet.color
+
     Methods
     -------
 
@@ -3697,6 +3825,8 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
 @overload
 def color(gray: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
+
+    Underlying Java method: PApplet.color
 
     Methods
     -------
@@ -3775,6 +3905,8 @@ def color(gray: int, /) -> int:
 def color(gray: int, alpha: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
 
+    Underlying Java method: PApplet.color
+
     Methods
     -------
 
@@ -3851,6 +3983,8 @@ def color(gray: int, alpha: int, /) -> int:
 @overload
 def color(v1: int, v2: int, v3: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
+
+    Underlying Java method: PApplet.color
 
     Methods
     -------
@@ -3929,6 +4063,8 @@ def color(v1: int, v2: int, v3: int, /) -> int:
 def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype.
 
+    Underlying Java method: PApplet.color
+
     Methods
     -------
 
@@ -4004,6 +4140,8 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
 
 def color(*args):
     """Creates colors for storing in variables of the ``color`` datatype.
+
+    Underlying Java method: PApplet.color
 
     Methods
     -------
@@ -4082,6 +4220,8 @@ def color(*args):
 def color_mode(mode: int, /) -> None:
     """Changes the way Processing interprets color data.
 
+    Underlying Java method: PApplet.colorMode
+
     Methods
     -------
 
@@ -4140,6 +4280,8 @@ def color_mode(mode: int, /) -> None:
 def color_mode(mode: int, max: float, /) -> None:
     """Changes the way Processing interprets color data.
 
+    Underlying Java method: PApplet.colorMode
+
     Methods
     -------
 
@@ -4197,6 +4339,8 @@ def color_mode(mode: int, max: float, /) -> None:
 @overload
 def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
     """Changes the way Processing interprets color data.
+
+    Underlying Java method: PApplet.colorMode
 
     Methods
     -------
@@ -4257,6 +4401,8 @@ def color_mode(mode: int, max1: float, max2: float,
                max3: float, max_a: float, /) -> None:
     """Changes the way Processing interprets color data.
 
+    Underlying Java method: PApplet.colorMode
+
     Methods
     -------
 
@@ -4313,6 +4459,8 @@ def color_mode(mode: int, max1: float, max2: float,
 
 def color_mode(*args):
     """Changes the way Processing interprets color data.
+
+    Underlying Java method: PApplet.colorMode
 
     Methods
     -------
@@ -4373,6 +4521,8 @@ def copy() -> Py5Image:
     """Copies a region of pixels from the display window to another area of the display
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
+
+    Underlying Java method: PApplet.copy
 
     Methods
     -------
@@ -4435,6 +4585,8 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
 
+    Underlying Java method: PApplet.copy
+
     Methods
     -------
 
@@ -4496,6 +4648,8 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
 
+    Underlying Java method: PApplet.copy
+
     Methods
     -------
 
@@ -4554,6 +4708,8 @@ def copy(*args):
     """Copies a region of pixels from the display window to another area of the display
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
+
+    Underlying Java method: PApplet.copy
 
     Methods
     -------
@@ -4614,6 +4770,8 @@ def create_font(name: str, size: float, /) -> Py5Font:
     """Dynamically converts a font to the format used by Processing from a .ttf or .otf
     file inside the sketch's "data" folder or a font that's installed elsewhere on
     the computer.
+
+    Underlying Java method: PApplet.createFont
 
     Methods
     -------
@@ -4676,6 +4834,8 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
     """Dynamically converts a font to the format used by Processing from a .ttf or .otf
     file inside the sketch's "data" folder or a font that's installed elsewhere on
     the computer.
+
+    Underlying Java method: PApplet.createFont
 
     Methods
     -------
@@ -4740,6 +4900,8 @@ def create_font(name: str, size: float, smooth: bool,
     file inside the sketch's "data" folder or a font that's installed elsewhere on
     the computer.
 
+    Underlying Java method: PApplet.createFont
+
     Methods
     -------
 
@@ -4801,6 +4963,8 @@ def create_font(*args):
     file inside the sketch's "data" folder or a font that's installed elsewhere on
     the computer.
 
+    Underlying Java method: PApplet.createFont
+
     Methods
     -------
 
@@ -4860,6 +5024,8 @@ def create_font(*args):
 @overload
 def create_graphics(w: int, h: int, /) -> Py5Graphics:
     """Creates and returns a new ``Py5Graphics`` object.
+
+    Underlying Java method: PApplet.createGraphics
 
     Methods
     -------
@@ -4927,6 +5093,8 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
 @overload
 def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
     """Creates and returns a new ``Py5Graphics`` object.
+
+    Underlying Java method: PApplet.createGraphics
 
     Methods
     -------
@@ -4996,6 +5164,8 @@ def create_graphics(w: int, h: int, renderer: str,
                     path: str, /) -> Py5Graphics:
     """Creates and returns a new ``Py5Graphics`` object.
 
+    Underlying Java method: PApplet.createGraphics
+
     Methods
     -------
 
@@ -5061,6 +5231,8 @@ def create_graphics(w: int, h: int, renderer: str,
 
 def create_graphics(*args):
     """Creates and returns a new ``Py5Graphics`` object.
+
+    Underlying Java method: PApplet.createGraphics
 
     Methods
     -------
@@ -5128,6 +5300,8 @@ def create_graphics(*args):
 def create_image(w: int, h: int, format: int, /) -> Py5Image:
     """Creates a new PImage (the datatype for storing images).
 
+    Underlying Java method: PApplet.createImage
+
     Parameters
     ----------
 
@@ -5160,6 +5334,8 @@ def create_image(w: int, h: int, format: int, /) -> Py5Image:
 @overload
 def create_shape() -> Py5Shape:
     """The ``create_shape()`` function is used to define a new shape.
+
+    Underlying Java method: PApplet.createShape
 
     Methods
     -------
@@ -5217,6 +5393,8 @@ def create_shape() -> Py5Shape:
 def create_shape(type: int, /) -> Py5Shape:
     """The ``create_shape()`` function is used to define a new shape.
 
+    Underlying Java method: PApplet.createShape
+
     Methods
     -------
 
@@ -5273,6 +5451,8 @@ def create_shape(type: int, /) -> Py5Shape:
 def create_shape(kind: int, /, *p: float) -> Py5Shape:
     """The ``create_shape()`` function is used to define a new shape.
 
+    Underlying Java method: PApplet.createShape
+
     Methods
     -------
 
@@ -5327,6 +5507,8 @@ def create_shape(kind: int, /, *p: float) -> Py5Shape:
 
 def create_shape(*args):
     """The ``create_shape()`` function is used to define a new shape.
+
+    Underlying Java method: PApplet.createShape
 
     Methods
     -------
@@ -5385,6 +5567,8 @@ def cursor() -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
+    Underlying Java method: PApplet.cursor
+
     Methods
     -------
 
@@ -5432,6 +5616,8 @@ def cursor() -> None:
 def cursor(kind: int, /) -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
+
+    Underlying Java method: PApplet.cursor
 
     Methods
     -------
@@ -5481,6 +5667,8 @@ def cursor(img: Py5Image, /) -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
+    Underlying Java method: PApplet.cursor
+
     Methods
     -------
 
@@ -5529,6 +5717,8 @@ def cursor(img: Py5Image, x: int, y: int, /) -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
+    Underlying Java method: PApplet.cursor
+
     Methods
     -------
 
@@ -5575,6 +5765,8 @@ def cursor(img: Py5Image, x: int, y: int, /) -> None:
 def cursor(*args):
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
+
+    Underlying Java method: PApplet.cursor
 
     Methods
     -------
@@ -5623,6 +5815,8 @@ def cursor(*args):
 def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
           y3: float, x4: float, y4: float, /) -> None:
     """Draws a curved line on the screen.
+
+    Underlying Java method: PApplet.curve
 
     Methods
     -------
@@ -5691,6 +5885,8 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
           x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
     """Draws a curved line on the screen.
 
+    Underlying Java method: PApplet.curve
+
     Methods
     -------
 
@@ -5755,6 +5951,8 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
 
 def curve(*args):
     """Draws a curved line on the screen.
+
+    Underlying Java method: PApplet.curve
 
     Methods
     -------
@@ -5821,6 +6019,8 @@ def curve(*args):
 def curve_detail(detail: int, /) -> None:
     """Sets the resolution at which curves display.
 
+    Underlying Java method: PApplet.curveDetail
+
     Parameters
     ----------
 
@@ -5839,6 +6039,8 @@ def curve_detail(detail: int, /) -> None:
 
 def curve_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     """Evaluates the curve at point ``t`` for points ``a``, ``b``, ``c``, ``d``.
+
+    Underlying Java method: PApplet.curvePoint
 
     Parameters
     ----------
@@ -5875,6 +6077,8 @@ def curve_tangent(a: float, b: float, c: float,
                   d: float, t: float, /) -> float:
     """Calculates the tangent of a point on a curve.
 
+    Underlying Java method: PApplet.curveTangent
+
     Parameters
     ----------
 
@@ -5905,6 +6109,8 @@ def curve_tangent(a: float, b: float, c: float,
 def curve_tightness(tightness: float, /) -> None:
     """Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
 
+    Underlying Java method: PApplet.curveTightness
+
     Parameters
     ----------
 
@@ -5928,6 +6134,8 @@ def curve_tightness(tightness: float, /) -> None:
 @overload
 def curve_vertex(x: float, y: float, /) -> None:
     """Specifies vertex coordinates for curves.
+
+    Underlying Java method: PApplet.curveVertex
 
     Methods
     -------
@@ -5970,6 +6178,8 @@ def curve_vertex(x: float, y: float, /) -> None:
 def curve_vertex(x: float, y: float, z: float, /) -> None:
     """Specifies vertex coordinates for curves.
 
+    Underlying Java method: PApplet.curveVertex
+
     Methods
     -------
 
@@ -6009,6 +6219,8 @@ def curve_vertex(x: float, y: float, z: float, /) -> None:
 
 def curve_vertex(*args):
     """Specifies vertex coordinates for curves.
+
+    Underlying Java method: PApplet.curveVertex
 
     Methods
     -------
@@ -6050,6 +6262,8 @@ def curve_vertex(*args):
 def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.curveVertices
+
     Parameters
     ----------
 
@@ -6067,6 +6281,8 @@ def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def day() -> int:
     """Processing communicates with the clock on your computer.
 
+    Underlying Java method: PApplet.day
+
     Notes
     -----
 
@@ -6079,6 +6295,8 @@ def day() -> int:
 def directional_light(v1: float, v2: float, v3: float,
                       nx: float, ny: float, nz: float, /) -> None:
     """Adds a directional light.
+
+    Underlying Java method: PApplet.directionalLight
 
     Parameters
     ----------
@@ -6124,6 +6342,8 @@ def display_density() -> int:
     (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
     not.
 
+    Underlying Java method: PApplet.displayDensity
+
     Methods
     -------
 
@@ -6155,6 +6375,8 @@ def display_density(display: int, /) -> int:
     (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
     not.
 
+    Underlying Java method: PApplet.displayDensity
+
     Methods
     -------
 
@@ -6185,6 +6407,8 @@ def display_density(*args):
     (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
     not.
 
+    Underlying Java method: PApplet.displayDensity
+
     Methods
     -------
 
@@ -6212,6 +6436,8 @@ def display_density(*args):
 
 def ellipse(a: float, b: float, c: float, d: float, /) -> None:
     """Draws an ellipse (oval) to the screen.
+
+    Underlying Java method: PApplet.ellipse
 
     Parameters
     ----------
@@ -6242,6 +6468,8 @@ def ellipse(a: float, b: float, c: float, d: float, /) -> None:
 def ellipse_mode(mode: int, /) -> None:
     """Modifies the location from which ellipses are drawn by changing the way in which
     parameters given to ``ellipse()`` are intepreted.
+
+    Underlying Java method: PApplet.ellipseMode
 
     Parameters
     ----------
@@ -6281,6 +6509,8 @@ def ellipse_mode(mode: int, /) -> None:
 def emissive(gray: float, /) -> None:
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
+
+    Underlying Java method: PApplet.emissive
 
     Methods
     -------
@@ -6324,6 +6554,8 @@ def emissive(v1: float, v2: float, v3: float, /) -> None:
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
 
+    Underlying Java method: PApplet.emissive
+
     Methods
     -------
 
@@ -6366,6 +6598,8 @@ def emissive(rgb: int, /) -> None:
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
 
+    Underlying Java method: PApplet.emissive
+
     Methods
     -------
 
@@ -6406,6 +6640,8 @@ def emissive(rgb: int, /) -> None:
 def emissive(*args):
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
+
+    Underlying Java method: PApplet.emissive
 
     Methods
     -------
@@ -6448,6 +6684,8 @@ def end_camera() -> None:
     """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
     customization of the camera space.
 
+    Underlying Java method: PApplet.endCamera
+
     Notes
     -----
 
@@ -6461,6 +6699,8 @@ def end_camera() -> None:
 def end_contour() -> None:
     """Use the ``begin_contour()`` and ``end_contour()`` function to create negative
     shapes within shapes such as the center of the letter 'O'.
+
+    Underlying Java method: PApplet.endContour
 
     Notes
     -----
@@ -6483,6 +6723,8 @@ def end_contour() -> None:
 def end_raw() -> None:
     """Complement to ``begin_raw()``; they must always be used together.
 
+    Underlying Java method: PApplet.endRaw
+
     Notes
     -----
 
@@ -6494,6 +6736,8 @@ def end_raw() -> None:
 
 def end_record() -> None:
     """Stops the recording process started by ``begin_record()`` and closes the file.
+
+    Underlying Java method: PApplet.endRecord
 
     Notes
     -----
@@ -6507,6 +6751,8 @@ def end_record() -> None:
 def end_shape() -> None:
     """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
     be called after ``begin_shape()``.
+
+    Underlying Java method: PApplet.endShape
 
     Methods
     -------
@@ -6539,6 +6785,8 @@ def end_shape(mode: int, /) -> None:
     """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
     be called after ``begin_shape()``.
 
+    Underlying Java method: PApplet.endShape
+
     Methods
     -------
 
@@ -6569,6 +6817,8 @@ def end_shape(*args):
     """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
     be called after ``begin_shape()``.
 
+    Underlying Java method: PApplet.endShape
+
     Methods
     -------
 
@@ -6596,12 +6846,24 @@ def end_shape(*args):
 
 
 def exit_sketch() -> None:
-    """new template no description.
+    """Quits/stops/exits the program.
+
+    Underlying Java method: PApplet.exit
 
     Notes
     -----
 
-    new template no description.
+    Quits/stops/exits the program. Programs without a ``draw()`` function stop
+    automatically after the last line has run, but programs with ``draw()`` run
+    continuously until the program is manually stopped or ``exit()`` is run.
+
+    Rather than terminating immediately, ``exit()`` will cause the sketch to exit
+    after ``draw()`` has completed (or after ``setup()`` completes if called during
+    the ``setup()`` function).
+
+    For Java programmers, this is *not* the same as System.``exit()``. Further,
+    System.``exit()`` should not be used because closing out an application while
+    ``draw()`` is running may cause a crash (particularly with P3D).
 """
     return _py5sketch.exit_sketch()
 
@@ -6609,6 +6871,8 @@ def exit_sketch() -> None:
 @overload
 def fill(gray: float, /) -> None:
     """Sets the color used to fill shapes.
+
+    Underlying Java method: PApplet.fill
 
     Methods
     -------
@@ -6673,6 +6937,8 @@ def fill(gray: float, /) -> None:
 def fill(gray: float, alpha: float, /) -> None:
     """Sets the color used to fill shapes.
 
+    Underlying Java method: PApplet.fill
+
     Methods
     -------
 
@@ -6735,6 +7001,8 @@ def fill(gray: float, alpha: float, /) -> None:
 @overload
 def fill(v1: float, v2: float, v3: float, /) -> None:
     """Sets the color used to fill shapes.
+
+    Underlying Java method: PApplet.fill
 
     Methods
     -------
@@ -6799,6 +7067,8 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
 def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """Sets the color used to fill shapes.
 
+    Underlying Java method: PApplet.fill
+
     Methods
     -------
 
@@ -6861,6 +7131,8 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 @overload
 def fill(rgb: int, /) -> None:
     """Sets the color used to fill shapes.
+
+    Underlying Java method: PApplet.fill
 
     Methods
     -------
@@ -6925,6 +7197,8 @@ def fill(rgb: int, /) -> None:
 def fill(rgb: int, alpha: float, /) -> None:
     """Sets the color used to fill shapes.
 
+    Underlying Java method: PApplet.fill
+
     Methods
     -------
 
@@ -6986,6 +7260,8 @@ def fill(rgb: int, alpha: float, /) -> None:
 
 def fill(*args):
     """Sets the color used to fill shapes.
+
+    Underlying Java method: PApplet.fill
 
     Methods
     -------
@@ -7049,6 +7325,8 @@ def fill(*args):
 @overload
 def apply_filter(kind: int, /) -> None:
     """Filters the display window using a preset filter or with a custom shader.
+
+    Underlying Java method: PApplet.filter
 
     Methods
     -------
@@ -7117,6 +7395,8 @@ def apply_filter(kind: int, /) -> None:
 def apply_filter(kind: int, param: float, /) -> None:
     """Filters the display window using a preset filter or with a custom shader.
 
+    Underlying Java method: PApplet.filter
+
     Methods
     -------
 
@@ -7184,6 +7464,8 @@ def apply_filter(kind: int, param: float, /) -> None:
 def apply_filter(shader: Py5Shader, /) -> None:
     """Filters the display window using a preset filter or with a custom shader.
 
+    Underlying Java method: PApplet.filter
+
     Methods
     -------
 
@@ -7249,6 +7531,8 @@ def apply_filter(shader: Py5Shader, /) -> None:
 
 def apply_filter(*args):
     """Filters the display window using a preset filter or with a custom shader.
+
+    Underlying Java method: PApplet.filter
 
     Methods
     -------
@@ -7316,6 +7600,8 @@ def apply_filter(*args):
 def frame_rate(fps: float, /) -> None:
     """Specifies the number of frames to be displayed every second.
 
+    Underlying Java method: PApplet.frameRate
+
     Parameters
     ----------
 
@@ -7337,6 +7623,8 @@ def frame_rate(fps: float, /) -> None:
 def frustum(left: float, right: float, bottom: float,
             top: float, near: float, far: float, /) -> None:
     """Sets a perspective matrix as defined by the parameters.
+
+    Underlying Java method: PApplet.frustum
 
     Parameters
     ----------
@@ -7389,6 +7677,8 @@ def frustum(left: float, right: float, bottom: float,
 def full_screen() -> None:
     """This function is new for Processing 3.0.
 
+    Underlying Java method: PApplet.fullScreen
+
     Methods
     -------
 
@@ -7433,6 +7723,8 @@ def full_screen() -> None:
 @overload
 def full_screen(display: int, /) -> None:
     """This function is new for Processing 3.0.
+
+    Underlying Java method: PApplet.fullScreen
 
     Methods
     -------
@@ -7479,6 +7771,8 @@ def full_screen(display: int, /) -> None:
 def full_screen(renderer: str, /) -> None:
     """This function is new for Processing 3.0.
 
+    Underlying Java method: PApplet.fullScreen
+
     Methods
     -------
 
@@ -7524,6 +7818,8 @@ def full_screen(renderer: str, /) -> None:
 def full_screen(renderer: str, display: int, /) -> None:
     """This function is new for Processing 3.0.
 
+    Underlying Java method: PApplet.fullScreen
+
     Methods
     -------
 
@@ -7567,6 +7863,8 @@ def full_screen(renderer: str, display: int, /) -> None:
 
 def full_screen(*args):
     """This function is new for Processing 3.0.
+
+    Underlying Java method: PApplet.fullScreen
 
     Methods
     -------
@@ -7612,6 +7910,8 @@ def full_screen(*args):
 @overload
 def get() -> Py5Image:
     """Reads the color of any pixel or grabs a section of an image.
+
+    Underlying Java method: PApplet.get
 
     Methods
     -------
@@ -7669,6 +7969,8 @@ def get() -> Py5Image:
 def get(x: int, y: int, /) -> int:
     """Reads the color of any pixel or grabs a section of an image.
 
+    Underlying Java method: PApplet.get
+
     Methods
     -------
 
@@ -7725,6 +8027,8 @@ def get(x: int, y: int, /) -> int:
 def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
     """Reads the color of any pixel or grabs a section of an image.
 
+    Underlying Java method: PApplet.get
+
     Methods
     -------
 
@@ -7779,6 +8083,8 @@ def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
 
 def get(*args):
     """Reads the color of any pixel or grabs a section of an image.
+
+    Underlying Java method: PApplet.get
 
     Methods
     -------
@@ -7835,6 +8141,8 @@ def get(*args):
 def get_frame_rate() -> float:
     """new template no description.
 
+    Underlying Java method: PApplet.getFrameRate
+
     Notes
     -----
 
@@ -7845,6 +8153,8 @@ def get_frame_rate() -> float:
 
 def get_graphics() -> Py5Graphics:
     """new template no description.
+
+    Underlying Java method: PApplet.getGraphics
 
     Notes
     -----
@@ -7857,6 +8167,8 @@ def get_graphics() -> Py5Graphics:
 @overload
 def get_matrix() -> NDArray[(Any, Any), Float]:
     """new template no description.
+
+    Underlying Java method: PApplet.getMatrix
 
     Methods
     -------
@@ -7888,6 +8200,8 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
 def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
     """new template no description.
 
+    Underlying Java method: PApplet.getMatrix
+
     Methods
     -------
 
@@ -7918,6 +8232,8 @@ def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
 def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
     """new template no description.
 
+    Underlying Java method: PApplet.getMatrix
+
     Methods
     -------
 
@@ -7946,6 +8262,8 @@ def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
 
 def get_matrix(*args):
     """new template no description.
+
+    Underlying Java method: PApplet.getMatrix
 
     Methods
     -------
@@ -7976,6 +8294,8 @@ def get_matrix(*args):
 def get_surface() -> Py5Surface:
     """new template no description.
 
+    Underlying Java method: PApplet.getSurface
+
     Notes
     -----
 
@@ -7986,6 +8306,8 @@ def get_surface() -> Py5Surface:
 
 def green(rgb: int, /) -> float:
     """Extracts the green value from a color, scaled to match current ``color_mode()``.
+
+    Underlying Java method: PApplet.green
 
     Parameters
     ----------
@@ -8016,6 +8338,8 @@ def green(rgb: int, /) -> float:
 def hint(which: int, /) -> None:
     """This function is used to enable or disable special features that control how
     graphics are drawn.
+
+    Underlying Java method: PApplet.hint
 
     Parameters
     ----------
@@ -8110,6 +8434,8 @@ def hint(which: int, /) -> None:
 def hour() -> int:
     """Processing communicates with the clock on your computer.
 
+    Underlying Java method: PApplet.hour
+
     Notes
     -----
 
@@ -8121,6 +8447,8 @@ def hour() -> int:
 
 def hue(rgb: int, /) -> float:
     """Extracts the hue value from a color.
+
+    Underlying Java method: PApplet.hue
 
     Parameters
     ----------
@@ -8139,6 +8467,8 @@ def hue(rgb: int, /) -> float:
 @overload
 def image(img: Py5Image, a: float, b: float, /) -> None:
     """The ``image()`` function draws an image to the display window.
+
+    Underlying Java method: PApplet.image
 
     Methods
     -------
@@ -8203,6 +8533,8 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
 @overload
 def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
     """The ``image()`` function draws an image to the display window.
+
+    Underlying Java method: PApplet.image
 
     Methods
     -------
@@ -8269,6 +8601,8 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
           u1: int, v1: int, u2: int, v2: int, /) -> None:
     """The ``image()`` function draws an image to the display window.
 
+    Underlying Java method: PApplet.image
+
     Methods
     -------
 
@@ -8331,6 +8665,8 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
 
 def image(*args):
     """The ``image()`` function draws an image to the display window.
+
+    Underlying Java method: PApplet.image
 
     Methods
     -------
@@ -8396,6 +8732,8 @@ def image_mode(mode: int, /) -> None:
     """Modifies the location from which images are drawn by changing the way in which
     parameters given to ``image()`` are intepreted.
 
+    Underlying Java method: PApplet.imageMode
+
     Parameters
     ----------
 
@@ -8430,6 +8768,8 @@ def image_mode(mode: int, /) -> None:
 def is_key_pressed() -> bool:
     """new template no description.
 
+    Underlying Java method: PApplet.isKeyPressed
+
     Notes
     -----
 
@@ -8440,6 +8780,8 @@ def is_key_pressed() -> bool:
 
 def is_mouse_pressed() -> bool:
     """new template no description.
+
+    Underlying Java method: PApplet.isMousePressed
 
     Notes
     -----
@@ -8452,6 +8794,8 @@ def is_mouse_pressed() -> bool:
 @overload
 def lerp_color(c1: int, c2: int, amt: float, /) -> int:
     """Calculates a color between two colors at a specific increment.
+
+    Underlying Java method: PApplet.lerpColor
 
     Methods
     -------
@@ -8495,6 +8839,8 @@ def lerp_color(c1: int, c2: int, amt: float, /) -> int:
 def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
     """Calculates a color between two colors at a specific increment.
 
+    Underlying Java method: PApplet.lerpColor
+
     Methods
     -------
 
@@ -8535,6 +8881,8 @@ def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
 
 def lerp_color(*args):
     """Calculates a color between two colors at a specific increment.
+
+    Underlying Java method: PApplet.lerpColor
 
     Methods
     -------
@@ -8577,6 +8925,8 @@ def lerp_color(*args):
 def light_falloff(constant: float, linear: float, quadratic: float, /) -> None:
     """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
+    Underlying Java method: PApplet.lightFalloff
+
     Parameters
     ----------
 
@@ -8612,6 +8962,8 @@ def light_falloff(constant: float, linear: float, quadratic: float, /) -> None:
 def light_specular(v1: float, v2: float, v3: float, /) -> None:
     """Sets the specular color for lights.
 
+    Underlying Java method: PApplet.lightSpecular
+
     Parameters
     ----------
 
@@ -8640,6 +8992,8 @@ def light_specular(v1: float, v2: float, v3: float, /) -> None:
 def lights() -> None:
     """Sets the default ambient light, directional light, falloff, and specular values.
 
+    Underlying Java method: PApplet.lights
+
     Notes
     -----
 
@@ -8656,6 +9010,8 @@ def lights() -> None:
 @overload
 def line(x1: float, y1: float, x2: float, y2: float, /) -> None:
     """Draws a line (a direct path between two points) to the screen.
+
+    Underlying Java method: PApplet.line
 
     Methods
     -------
@@ -8706,6 +9062,8 @@ def line(x1: float, y1: float, z1: float, x2: float,
          y2: float, z2: float, /) -> None:
     """Draws a line (a direct path between two points) to the screen.
 
+    Underlying Java method: PApplet.line
+
     Methods
     -------
 
@@ -8752,6 +9110,8 @@ def line(x1: float, y1: float, z1: float, x2: float,
 
 def line(*args):
     """Draws a line (a direct path between two points) to the screen.
+
+    Underlying Java method: PApplet.line
 
     Methods
     -------
@@ -8800,6 +9160,8 @@ def line(*args):
 def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.lines
+
     Parameters
     ----------
 
@@ -8816,6 +9178,8 @@ def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
 
 def load_font(filename: str, /) -> Py5Font:
     """Loads a .vlw formatted font into a ``Py5Font`` object.
+
+    Underlying Java method: PApplet.loadFont
 
     Parameters
     ----------
@@ -8863,6 +9227,8 @@ def load_font(filename: str, /) -> Py5Font:
 def load_pixels() -> None:
     """Loads the pixel data of the current display window into the ``pixels[]`` array.
 
+    Underlying Java method: PApplet.loadPixels
+
     Notes
     -----
 
@@ -8877,6 +9243,8 @@ def load_pixels() -> None:
 @overload
 def load_shader(frag_filename: str, /) -> Py5Shader:
     """Loads a shader into the PShader object.
+
+    Underlying Java method: PApplet.loadShader
 
     Methods
     -------
@@ -8919,6 +9287,8 @@ def load_shader(frag_filename: str, /) -> Py5Shader:
 def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
     """Loads a shader into the PShader object.
 
+    Underlying Java method: PApplet.loadShader
+
     Methods
     -------
 
@@ -8958,6 +9328,8 @@ def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
 
 def load_shader(*args):
     """Loads a shader into the PShader object.
+
+    Underlying Java method: PApplet.loadShader
 
     Methods
     -------
@@ -8999,6 +9371,8 @@ def load_shader(*args):
 @overload
 def load_shape(filename: str, /) -> Py5Shape:
     """Loads geometry into a variable of type ``Py5Shape``.
+
+    Underlying Java method: PApplet.loadShape
 
     Methods
     -------
@@ -9043,6 +9417,8 @@ def load_shape(filename: str, /) -> Py5Shape:
 def load_shape(filename: str, options: str, /) -> Py5Shape:
     """Loads geometry into a variable of type ``Py5Shape``.
 
+    Underlying Java method: PApplet.loadShape
+
     Methods
     -------
 
@@ -9084,6 +9460,8 @@ def load_shape(filename: str, options: str, /) -> Py5Shape:
 
 def load_shape(*args):
     """Loads geometry into a variable of type ``Py5Shape``.
+
+    Underlying Java method: PApplet.loadShape
 
     Methods
     -------
@@ -9128,6 +9506,8 @@ def loop() -> None:
     """By default, Processing loops through ``draw()`` continuously, executing the code
     within it.
 
+    Underlying Java method: PApplet.loop
+
     Notes
     -----
 
@@ -9142,6 +9522,8 @@ def millis() -> int:
     """Returns the number of milliseconds (thousandths of a second) since starting the
     program.
 
+    Underlying Java method: PApplet.millis
+
     Notes
     -----
 
@@ -9155,6 +9537,8 @@ def millis() -> int:
 def minute() -> int:
     """Processing communicates with the clock on your computer.
 
+    Underlying Java method: PApplet.minute
+
     Notes
     -----
 
@@ -9166,6 +9550,8 @@ def minute() -> int:
 
 def model_x(x: float, y: float, z: float, /) -> float:
     """Returns the three-dimensional X, Y, Z position in model space.
+
+    Underlying Java method: PApplet.modelX
 
     Parameters
     ----------
@@ -9200,6 +9586,8 @@ def model_x(x: float, y: float, z: float, /) -> float:
 def model_y(x: float, y: float, z: float, /) -> float:
     """Returns the three-dimensional X, Y, Z position in model space.
 
+    Underlying Java method: PApplet.modelY
+
     Parameters
     ----------
 
@@ -9232,6 +9620,8 @@ def model_y(x: float, y: float, z: float, /) -> float:
 
 def model_z(x: float, y: float, z: float, /) -> float:
     """Returns the three-dimensional X, Y, Z position in model space.
+
+    Underlying Java method: PApplet.modelZ
 
     Parameters
     ----------
@@ -9266,6 +9656,8 @@ def model_z(x: float, y: float, z: float, /) -> float:
 def month() -> int:
     """Processing communicates with the clock on your computer.
 
+    Underlying Java method: PApplet.month
+
     Notes
     -----
 
@@ -9278,6 +9670,8 @@ def month() -> int:
 def no_clip() -> None:
     """Disables the clipping previously started by the ``clip()`` function.
 
+    Underlying Java method: PApplet.noClip
+
     Notes
     -----
 
@@ -9288,6 +9682,8 @@ def no_clip() -> None:
 
 def no_cursor() -> None:
     """Hides the cursor from view.
+
+    Underlying Java method: PApplet.noCursor
 
     Notes
     -----
@@ -9301,6 +9697,8 @@ def no_cursor() -> None:
 def no_fill() -> None:
     """Disables filling geometry.
 
+    Underlying Java method: PApplet.noFill
+
     Notes
     -----
 
@@ -9312,6 +9710,8 @@ def no_fill() -> None:
 
 def no_lights() -> None:
     """Disable all lighting.
+
+    Underlying Java method: PApplet.noLights
 
     Notes
     -----
@@ -9326,6 +9726,8 @@ def no_lights() -> None:
 
 def no_loop() -> None:
     """Stops Processing from continuously executing the code within ``draw()``.
+
+    Underlying Java method: PApplet.noLoop
 
     Notes
     -----
@@ -9353,6 +9755,8 @@ def no_smooth() -> None:
     """Draws all geometry and fonts with jagged (aliased) edges and images with hard
     edges between the pixels when enlarged rather than interpolating pixels.
 
+    Underlying Java method: PApplet.noSmooth
+
     Notes
     -----
 
@@ -9371,6 +9775,8 @@ def no_smooth() -> None:
 def no_stroke() -> None:
     """Disables drawing the stroke (outline).
 
+    Underlying Java method: PApplet.noStroke
+
     Notes
     -----
 
@@ -9382,6 +9788,8 @@ def no_stroke() -> None:
 
 def no_texture() -> None:
     """new template no description.
+
+    Underlying Java method: PApplet.noTexture
 
     Notes
     -----
@@ -9395,6 +9803,8 @@ def no_tint() -> None:
     """Removes the current fill value for displaying images and reverts to displaying
     images with their original hues.
 
+    Underlying Java method: PApplet.noTint
+
     Notes
     -----
 
@@ -9404,405 +9814,10 @@ def no_tint() -> None:
     return _py5sketch.no_tint()
 
 
-@overload
-def noise(x: float, /) -> float:
-    """Returns the Perlin noise value at specified coordinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float) -> float
-     * noise(x: float, y: float) -> float
-     * noise(x: float, y: float, z: float) -> float
-
-    Parameters
-    ----------
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Returns the Perlin noise value at specified coordinates. Perlin noise is a
-    random sequence generator producing a more natural, harmonic succession of
-    numbers than that of the standard ``random()`` function. It was developed by Ken
-    Perlin in the 1980s and has been used in graphical applications to generate
-    procedural textures, shapes, terrains, and other seemingly organic forms.
-
-    In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-    n-dimensional space, in which each pair of coordinates corresponds to a fixed
-    semi-random value (fixed only for the lifespan of the program). The resulting
-    value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-    noise, depending on the number of coordinates given. The noise value can be
-    animated by moving through the noise space, as demonstrated in the first example
-    above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, Perlin noise is computed over several octaves which are added together
-    for the final result.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the *distance* between
-    successive coordinates is important (such as when using ``noise()`` within a
-    loop). As a general rule, the smaller the difference between coordinates, the
-    smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-    applications, but this will differ depending on use.
-
-    There have been debates over the accuracy of the implementation of noise in
-    Processing. For clarification, it's an implementation of "classic Perlin noise"
-    from 1983, and not the newer "simplex noise" method from 2001.
-"""
-    pass
-
-
-@overload
-def noise(x: float, y: float, /) -> float:
-    """Returns the Perlin noise value at specified coordinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float) -> float
-     * noise(x: float, y: float) -> float
-     * noise(x: float, y: float, z: float) -> float
-
-    Parameters
-    ----------
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Returns the Perlin noise value at specified coordinates. Perlin noise is a
-    random sequence generator producing a more natural, harmonic succession of
-    numbers than that of the standard ``random()`` function. It was developed by Ken
-    Perlin in the 1980s and has been used in graphical applications to generate
-    procedural textures, shapes, terrains, and other seemingly organic forms.
-
-    In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-    n-dimensional space, in which each pair of coordinates corresponds to a fixed
-    semi-random value (fixed only for the lifespan of the program). The resulting
-    value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-    noise, depending on the number of coordinates given. The noise value can be
-    animated by moving through the noise space, as demonstrated in the first example
-    above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, Perlin noise is computed over several octaves which are added together
-    for the final result.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the *distance* between
-    successive coordinates is important (such as when using ``noise()`` within a
-    loop). As a general rule, the smaller the difference between coordinates, the
-    smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-    applications, but this will differ depending on use.
-
-    There have been debates over the accuracy of the implementation of noise in
-    Processing. For clarification, it's an implementation of "classic Perlin noise"
-    from 1983, and not the newer "simplex noise" method from 2001.
-"""
-    pass
-
-
-@overload
-def noise(x: float, y: float, z: float, /) -> float:
-    """Returns the Perlin noise value at specified coordinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float) -> float
-     * noise(x: float, y: float) -> float
-     * noise(x: float, y: float, z: float) -> float
-
-    Parameters
-    ----------
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Returns the Perlin noise value at specified coordinates. Perlin noise is a
-    random sequence generator producing a more natural, harmonic succession of
-    numbers than that of the standard ``random()`` function. It was developed by Ken
-    Perlin in the 1980s and has been used in graphical applications to generate
-    procedural textures, shapes, terrains, and other seemingly organic forms.
-
-    In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-    n-dimensional space, in which each pair of coordinates corresponds to a fixed
-    semi-random value (fixed only for the lifespan of the program). The resulting
-    value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-    noise, depending on the number of coordinates given. The noise value can be
-    animated by moving through the noise space, as demonstrated in the first example
-    above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, Perlin noise is computed over several octaves which are added together
-    for the final result.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the *distance* between
-    successive coordinates is important (such as when using ``noise()`` within a
-    loop). As a general rule, the smaller the difference between coordinates, the
-    smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-    applications, but this will differ depending on use.
-
-    There have been debates over the accuracy of the implementation of noise in
-    Processing. For clarification, it's an implementation of "classic Perlin noise"
-    from 1983, and not the newer "simplex noise" method from 2001.
-"""
-    pass
-
-
-def noise(*args):
-    """Returns the Perlin noise value at specified coordinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float) -> float
-     * noise(x: float, y: float) -> float
-     * noise(x: float, y: float, z: float) -> float
-
-    Parameters
-    ----------
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Returns the Perlin noise value at specified coordinates. Perlin noise is a
-    random sequence generator producing a more natural, harmonic succession of
-    numbers than that of the standard ``random()`` function. It was developed by Ken
-    Perlin in the 1980s and has been used in graphical applications to generate
-    procedural textures, shapes, terrains, and other seemingly organic forms.
-
-    In contrast to the ``random()`` function, Perlin noise is defined in an infinite
-    n-dimensional space, in which each pair of coordinates corresponds to a fixed
-    semi-random value (fixed only for the lifespan of the program). The resulting
-    value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D
-    noise, depending on the number of coordinates given. The noise value can be
-    animated by moving through the noise space, as demonstrated in the first example
-    above. The 2nd and 3rd dimensions can also be interpreted as time.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, Perlin noise is computed over several octaves which are added together
-    for the final result.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the *distance* between
-    successive coordinates is important (such as when using ``noise()`` within a
-    loop). As a general rule, the smaller the difference between coordinates, the
-    smoother the resulting noise sequence. Steps of 0.005-0.03 work best for most
-    applications, but this will differ depending on use.
-
-    There have been debates over the accuracy of the implementation of noise in
-    Processing. For clarification, it's an implementation of "classic Perlin noise"
-    from 1983, and not the newer "simplex noise" method from 2001.
-"""
-    return _py5sketch.noise(*args)
-
-
-@overload
-def noise_detail(lod: int, /) -> None:
-    """Adjusts the character and level of detail produced by the Perlin noise function.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise_detail(lod: int) -> None
-     * noise_detail(lod: int, falloff: float) -> None
-
-    Parameters
-    ----------
-
-    falloff: float
-        falloff factor for each octave
-
-    lod: int
-        number of octaves to be used by the noise
-
-    Notes
-    -----
-
-    Adjusts the character and level of detail produced by the Perlin noise function.
-    Similar to harmonics in physics, noise is computed over several octaves. Lower
-    octaves contribute more to the output signal and as such define the overall
-    intensity of the noise, whereas higher octaves create finer-grained details in
-    the noise sequence.
-
-    By default, noise is computed over 4 octaves with each octave contributing
-    exactly half than its predecessor, starting at 50% strength for the first
-    octave. This falloff amount can be changed by adding an additional function
-    parameter. For example, a falloff factor of 0.75 means each octave will now have
-    75% impact (25% less) of the previous lower octave. While any number between 0.0
-    and 1.0 is valid, note that values greater than 0.5 may result in ``noise()``
-    returning values greater than 1.0.
-
-    By changing these parameters, the signal created by the ``noise()`` function can
-    be adapted to fit very specific needs and characteristics.
-"""
-    pass
-
-
-@overload
-def noise_detail(lod: int, falloff: float, /) -> None:
-    """Adjusts the character and level of detail produced by the Perlin noise function.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise_detail(lod: int) -> None
-     * noise_detail(lod: int, falloff: float) -> None
-
-    Parameters
-    ----------
-
-    falloff: float
-        falloff factor for each octave
-
-    lod: int
-        number of octaves to be used by the noise
-
-    Notes
-    -----
-
-    Adjusts the character and level of detail produced by the Perlin noise function.
-    Similar to harmonics in physics, noise is computed over several octaves. Lower
-    octaves contribute more to the output signal and as such define the overall
-    intensity of the noise, whereas higher octaves create finer-grained details in
-    the noise sequence.
-
-    By default, noise is computed over 4 octaves with each octave contributing
-    exactly half than its predecessor, starting at 50% strength for the first
-    octave. This falloff amount can be changed by adding an additional function
-    parameter. For example, a falloff factor of 0.75 means each octave will now have
-    75% impact (25% less) of the previous lower octave. While any number between 0.0
-    and 1.0 is valid, note that values greater than 0.5 may result in ``noise()``
-    returning values greater than 1.0.
-
-    By changing these parameters, the signal created by the ``noise()`` function can
-    be adapted to fit very specific needs and characteristics.
-"""
-    pass
-
-
-def noise_detail(*args):
-    """Adjusts the character and level of detail produced by the Perlin noise function.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise_detail(lod: int) -> None
-     * noise_detail(lod: int, falloff: float) -> None
-
-    Parameters
-    ----------
-
-    falloff: float
-        falloff factor for each octave
-
-    lod: int
-        number of octaves to be used by the noise
-
-    Notes
-    -----
-
-    Adjusts the character and level of detail produced by the Perlin noise function.
-    Similar to harmonics in physics, noise is computed over several octaves. Lower
-    octaves contribute more to the output signal and as such define the overall
-    intensity of the noise, whereas higher octaves create finer-grained details in
-    the noise sequence.
-
-    By default, noise is computed over 4 octaves with each octave contributing
-    exactly half than its predecessor, starting at 50% strength for the first
-    octave. This falloff amount can be changed by adding an additional function
-    parameter. For example, a falloff factor of 0.75 means each octave will now have
-    75% impact (25% less) of the previous lower octave. While any number between 0.0
-    and 1.0 is valid, note that values greater than 0.5 may result in ``noise()``
-    returning values greater than 1.0.
-
-    By changing these parameters, the signal created by the ``noise()`` function can
-    be adapted to fit very specific needs and characteristics.
-"""
-    return _py5sketch.noise_detail(*args)
-
-
-def noise_seed(seed: int, /) -> None:
-    """Sets the seed value for ``noise()``.
-
-    Parameters
-    ----------
-
-    seed: int
-        seed value
-
-    Notes
-    -----
-
-    Sets the seed value for ``noise()``. By default, ``noise()`` produces different
-    results each time the program is run. Set the ``seed`` parameter to a constant
-    to return the same pseudo-random numbers each time the software is run.
-"""
-    return _py5sketch.noise_seed(seed)
-
-
 def normal(nx: float, ny: float, nz: float, /) -> None:
     """Sets the current normal vector.
+
+    Underlying Java method: PApplet.normal
 
     Parameters
     ----------
@@ -9832,6 +9847,8 @@ def normal(nx: float, ny: float, nz: float, /) -> None:
 @overload
 def ortho() -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
+
+    Underlying Java method: PApplet.ortho
 
     Methods
     -------
@@ -9880,6 +9897,8 @@ def ortho() -> None:
 @overload
 def ortho(left: float, right: float, bottom: float, top: float, /) -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
+
+    Underlying Java method: PApplet.ortho
 
     Methods
     -------
@@ -9930,6 +9949,8 @@ def ortho(left: float, right: float, bottom: float,
           top: float, near: float, far: float, /) -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
 
+    Underlying Java method: PApplet.ortho
+
     Methods
     -------
 
@@ -9976,6 +9997,8 @@ def ortho(left: float, right: float, bottom: float,
 
 def ortho(*args):
     """Sets an orthographic projection and defines a parallel clipping volume.
+
+    Underlying Java method: PApplet.ortho
 
     Methods
     -------
@@ -10024,6 +10047,8 @@ def ortho(*args):
 def pause() -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.pause
+
     Notes
     -----
 
@@ -10036,6 +10061,8 @@ def pause() -> None:
 def perspective() -> None:
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
+
+    Underlying Java method: PApplet.perspective
 
     Methods
     -------
@@ -10082,6 +10109,8 @@ def perspective(fovy: float, aspect: float,
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
 
+    Underlying Java method: PApplet.perspective
+
     Methods
     -------
 
@@ -10125,6 +10154,8 @@ def perspective(*args):
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
 
+    Underlying Java method: PApplet.perspective
+
     Methods
     -------
 
@@ -10167,6 +10198,8 @@ def perspective(*args):
 def pixel_density(density: int, /) -> None:
     """This function is new with Processing 3.0.
 
+    Underlying Java method: PApplet.pixelDensity
+
     Parameters
     ----------
 
@@ -10200,6 +10233,8 @@ def pixel_density(density: int, /) -> None:
 @overload
 def point(x: float, y: float, /) -> None:
     """Draws a point, a coordinate in space at the dimension of one pixel.
+
+    Underlying Java method: PApplet.point
 
     Methods
     -------
@@ -10248,6 +10283,8 @@ def point(x: float, y: float, /) -> None:
 def point(x: float, y: float, z: float, /) -> None:
     """Draws a point, a coordinate in space at the dimension of one pixel.
 
+    Underlying Java method: PApplet.point
+
     Methods
     -------
 
@@ -10293,6 +10330,8 @@ def point(x: float, y: float, z: float, /) -> None:
 
 def point(*args):
     """Draws a point, a coordinate in space at the dimension of one pixel.
+
+    Underlying Java method: PApplet.point
 
     Methods
     -------
@@ -10341,6 +10380,8 @@ def point_light(v1: float, v2: float, v3: float,
                 x: float, y: float, z: float, /) -> None:
     """Adds a point light.
 
+    Underlying Java method: PApplet.pointLight
+
     Parameters
     ----------
 
@@ -10378,6 +10419,8 @@ def point_light(v1: float, v2: float, v3: float,
 def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.points
+
     Parameters
     ----------
 
@@ -10395,6 +10438,8 @@ def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def pop() -> None:
     """The ``pop()`` function restores the previous drawing style settings and
     transformations after ``push()`` has changed them.
+
+    Underlying Java method: PApplet.pop
 
     Notes
     -----
@@ -10424,6 +10469,8 @@ def pop() -> None:
 def pop_matrix() -> None:
     """Pops the current transformation matrix off the matrix stack.
 
+    Underlying Java method: PApplet.popMatrix
+
     Notes
     -----
 
@@ -10441,6 +10488,8 @@ def pop_style() -> None:
     """The ``push_style()`` function saves the current style settings and
     ``pop_style()`` restores the prior settings; these functions are always used
     together.
+
+    Underlying Java method: PApplet.popStyle
 
     Notes
     -----
@@ -10460,6 +10509,8 @@ def print_camera() -> None:
     """Prints the current camera matrix to the Console (the text window at the bottom
     of Processing).
 
+    Underlying Java method: PApplet.printCamera
+
     Notes
     -----
 
@@ -10472,6 +10523,8 @@ def print_camera() -> None:
 def print_matrix() -> None:
     """Prints the current matrix to the Console (the text window at the bottom of
     Processing).
+
+    Underlying Java method: PApplet.printMatrix
 
     Notes
     -----
@@ -10486,6 +10539,8 @@ def print_projection() -> None:
     """Prints the current projection matrix to the Console (the text window at the
     bottom of Processing).
 
+    Underlying Java method: PApplet.printProjection
+
     Notes
     -----
 
@@ -10498,6 +10553,8 @@ def print_projection() -> None:
 def push() -> None:
     """The ``push()`` function saves the current drawing style settings and
     transformations, while ``pop()`` restores these settings.
+
+    Underlying Java method: PApplet.push
 
     Notes
     -----
@@ -10528,6 +10585,8 @@ def push() -> None:
 def push_matrix() -> None:
     """Pushes the current transformation matrix onto the matrix stack.
 
+    Underlying Java method: PApplet.pushMatrix
+
     Notes
     -----
 
@@ -10545,6 +10604,8 @@ def push_matrix() -> None:
 def push_style() -> None:
     """The ``push_style()`` function saves the current style settings and
     ``pop_style()`` restores the prior settings.
+
+    Underlying Java method: PApplet.pushStyle
 
     Notes
     -----
@@ -10571,6 +10632,8 @@ def push_style() -> None:
 def quad(x1: float, y1: float, x2: float, y2: float, x3: float,
          y3: float, x4: float, y4: float, /) -> None:
     """A quad is a quadrilateral, a four sided polygon.
+
+    Underlying Java method: PApplet.quad
 
     Parameters
     ----------
@@ -10613,6 +10676,8 @@ def quad(x1: float, y1: float, x2: float, y2: float, x3: float,
 @overload
 def quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None:
     """Specifies vertex coordinates for quadratic Bezier curves.
+
+    Underlying Java method: PApplet.quadraticVertex
 
     Methods
     -------
@@ -10664,6 +10729,8 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
                      x3: float, y3: float, z3: float, /) -> None:
     """Specifies vertex coordinates for quadratic Bezier curves.
 
+    Underlying Java method: PApplet.quadraticVertex
+
     Methods
     -------
 
@@ -10711,6 +10778,8 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
 
 def quadratic_vertex(*args):
     """Specifies vertex coordinates for quadratic Bezier curves.
+
+    Underlying Java method: PApplet.quadraticVertex
 
     Methods
     -------
@@ -10760,6 +10829,8 @@ def quadratic_vertex(*args):
 def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.quadraticVertices
+
     Parameters
     ----------
 
@@ -10775,158 +10846,10 @@ def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
 
 
 @overload
-def random(high: float, /) -> float:
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. If only one parameter is
-    passed to the function, it will return a float between zero and the value of the
-    ``high`` parameter. For example, ``random(5)`` returns values between 0 and 5
-    (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function.
-"""
-    pass
-
-
-@overload
-def random(low: float, high: float, /) -> float:
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. If only one parameter is
-    passed to the function, it will return a float between zero and the value of the
-    ``high`` parameter. For example, ``random(5)`` returns values between 0 and 5
-    (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function.
-"""
-    pass
-
-
-def random(*args):
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. If only one parameter is
-    passed to the function, it will return a float between zero and the value of the
-    ``high`` parameter. For example, ``random(5)`` returns values between 0 and 5
-    (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function.
-"""
-    return _py5sketch.random(*args)
-
-
-def random_gaussian() -> float:
-    """Returns a float from a random series of numbers having a mean of 0 and standard
-    deviation of 1.
-
-    Notes
-    -----
-
-    Returns a float from a random series of numbers having a mean of 0 and standard
-    deviation of 1. Each time the ``random_gaussian()`` function is called, it
-    returns a number fitting a Gaussian, or normal, distribution. There is
-    theoretically no minimum or maximum value that ``random_gaussian()`` might
-    return. Rather, there is just a very low probability that values far from the
-    mean will be returned; and a higher probability that numbers near the mean will
-    be returned.
-"""
-    return _py5sketch.random_gaussian()
-
-
-def random_seed(seed: int, /) -> None:
-    """Sets the seed value for ``random()``.
-
-    Parameters
-    ----------
-
-    seed: int
-        seed value
-
-    Notes
-    -----
-
-    Sets the seed value for ``random()``. By default, ``random()`` produces
-    different results each time the program is run. Set the ``seed`` parameter to a
-    constant to return the same pseudo-random numbers each time the software is run.
-"""
-    return _py5sketch.random_seed(seed)
-
-
-@overload
 def rect(a: float, b: float, c: float, d: float, /) -> None:
     """Draws a rectangle to the screen.
+
+    Underlying Java method: PApplet.rect
 
     Methods
     -------
@@ -10990,6 +10913,8 @@ def rect(a: float, b: float, c: float, d: float, /) -> None:
 @overload
 def rect(a: float, b: float, c: float, d: float, r: float, /) -> None:
     """Draws a rectangle to the screen.
+
+    Underlying Java method: PApplet.rect
 
     Methods
     -------
@@ -11055,6 +10980,8 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
          tr: float, br: float, bl: float, /) -> None:
     """Draws a rectangle to the screen.
 
+    Underlying Java method: PApplet.rect
+
     Methods
     -------
 
@@ -11116,6 +11043,8 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
 
 def rect(*args):
     """Draws a rectangle to the screen.
+
+    Underlying Java method: PApplet.rect
 
     Methods
     -------
@@ -11180,6 +11109,8 @@ def rect_mode(mode: int, /) -> None:
     """Modifies the location from which rectangles are drawn by changing the way in
     which parameters given to ``rect()`` are intepreted.
 
+    Underlying Java method: PApplet.rectMode
+
     Parameters
     ----------
 
@@ -11217,6 +11148,8 @@ def rect_mode(mode: int, /) -> None:
 def red(rgb: int, /) -> float:
     """Extracts the red value from a color, scaled to match current ``color_mode()``.
 
+    Underlying Java method: PApplet.red
+
     Parameters
     ----------
 
@@ -11245,6 +11178,8 @@ def red(rgb: int, /) -> float:
 def redraw() -> None:
     """Executes the code within ``draw()`` one time.
 
+    Underlying Java method: PApplet.redraw
+
     Notes
     -----
 
@@ -11265,6 +11200,8 @@ def redraw() -> None:
 def reset_matrix() -> None:
     """Replaces the current matrix with the identity matrix.
 
+    Underlying Java method: PApplet.resetMatrix
+
     Notes
     -----
 
@@ -11277,6 +11214,8 @@ def reset_matrix() -> None:
 @overload
 def reset_shader() -> None:
     """Restores the default shaders.
+
+    Underlying Java method: PApplet.resetShader
 
     Methods
     -------
@@ -11305,6 +11244,8 @@ def reset_shader() -> None:
 def reset_shader(kind: int, /) -> None:
     """Restores the default shaders.
 
+    Underlying Java method: PApplet.resetShader
+
     Methods
     -------
 
@@ -11330,6 +11271,8 @@ def reset_shader(kind: int, /) -> None:
 
 def reset_shader(*args):
     """Restores the default shaders.
+
+    Underlying Java method: PApplet.resetShader
 
     Methods
     -------
@@ -11357,6 +11300,8 @@ def reset_shader(*args):
 def resume() -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.resume
+
     Notes
     -----
 
@@ -11368,6 +11313,8 @@ def resume() -> None:
 @overload
 def rotate(angle: float, /) -> None:
     """Rotates the amount specified by the ``angle`` parameter.
+
+    Underlying Java method: PApplet.rotate
 
     Methods
     -------
@@ -11418,6 +11365,8 @@ def rotate(angle: float, /) -> None:
 def rotate(angle: float, x: float, y: float, z: float, /) -> None:
     """Rotates the amount specified by the ``angle`` parameter.
 
+    Underlying Java method: PApplet.rotate
+
     Methods
     -------
 
@@ -11465,6 +11414,8 @@ def rotate(angle: float, x: float, y: float, z: float, /) -> None:
 
 def rotate(*args):
     """Rotates the amount specified by the ``angle`` parameter.
+
+    Underlying Java method: PApplet.rotate
 
     Methods
     -------
@@ -11514,6 +11465,8 @@ def rotate(*args):
 def rotate_x(angle: float, /) -> None:
     """Rotates around the x-axis the amount specified by the ``angle`` parameter.
 
+    Underlying Java method: PApplet.rotateX
+
     Parameters
     ----------
 
@@ -11540,6 +11493,8 @@ def rotate_x(angle: float, /) -> None:
 
 def rotate_y(angle: float, /) -> None:
     """Rotates around the y-axis the amount specified by the ``angle`` parameter.
+
+    Underlying Java method: PApplet.rotateY
 
     Parameters
     ----------
@@ -11568,6 +11523,8 @@ def rotate_y(angle: float, /) -> None:
 def rotate_z(angle: float, /) -> None:
     """Rotates around the z-axis the amount specified by the ``angle`` parameter.
 
+    Underlying Java method: PApplet.rotateZ
+
     Parameters
     ----------
 
@@ -11595,6 +11552,8 @@ def rotate_z(angle: float, /) -> None:
 def saturation(rgb: int, /) -> float:
     """Extracts the saturation value from a color.
 
+    Underlying Java method: PApplet.saturation
+
     Parameters
     ----------
 
@@ -11613,6 +11572,8 @@ def saturation(rgb: int, /) -> float:
 def scale(s: float, /) -> None:
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
+
+    Underlying Java method: PApplet.scale
 
     Methods
     -------
@@ -11662,6 +11623,8 @@ def scale(x: float, y: float, /) -> None:
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
 
+    Underlying Java method: PApplet.scale
+
     Methods
     -------
 
@@ -11710,6 +11673,8 @@ def scale(x: float, y: float, z: float, /) -> None:
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
 
+    Underlying Java method: PApplet.scale
+
     Methods
     -------
 
@@ -11756,6 +11721,8 @@ def scale(x: float, y: float, z: float, /) -> None:
 def scale(*args):
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
+
+    Underlying Java method: PApplet.scale
 
     Methods
     -------
@@ -11805,6 +11772,8 @@ def screen_x(x: float, y: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
 
+    Underlying Java method: PApplet.screenX
+
     Methods
     -------
 
@@ -11839,6 +11808,8 @@ def screen_x(x: float, y: float, z: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
 
+    Underlying Java method: PApplet.screenX
+
     Methods
     -------
 
@@ -11871,6 +11842,8 @@ def screen_x(x: float, y: float, z: float, /) -> float:
 def screen_x(*args):
     """Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
+
+    Underlying Java method: PApplet.screenX
 
     Methods
     -------
@@ -11906,6 +11879,8 @@ def screen_y(x: float, y: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
 
+    Underlying Java method: PApplet.screenY
+
     Methods
     -------
 
@@ -11940,6 +11915,8 @@ def screen_y(x: float, y: float, z: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
 
+    Underlying Java method: PApplet.screenY
+
     Methods
     -------
 
@@ -11972,6 +11949,8 @@ def screen_y(x: float, y: float, z: float, /) -> float:
 def screen_y(*args):
     """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
+
+    Underlying Java method: PApplet.screenY
 
     Methods
     -------
@@ -12006,6 +11985,8 @@ def screen_z(x: float, y: float, z: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the Z value for where it
     will appear on a (two-dimensional) screen.
 
+    Underlying Java method: PApplet.screenZ
+
     Parameters
     ----------
 
@@ -12030,6 +12011,8 @@ def screen_z(x: float, y: float, z: float, /) -> float:
 def second() -> int:
     """Processing communicates with the clock on your computer.
 
+    Underlying Java method: PApplet.second
+
     Notes
     -----
 
@@ -12042,6 +12025,8 @@ def second() -> int:
 @overload
 def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
     """new template no description.
+
+    Underlying Java method: PApplet.setMatrix
 
     Methods
     -------
@@ -12072,6 +12057,8 @@ def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
 def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.setMatrix
+
     Methods
     -------
 
@@ -12099,6 +12086,8 @@ def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
 
 def set_matrix(*args):
     """new template no description.
+
+    Underlying Java method: PApplet.setMatrix
 
     Methods
     -------
@@ -12128,6 +12117,8 @@ def set_matrix(*args):
 @overload
 def shader(shader: Py5Shader, /) -> None:
     """Applies the shader specified by the parameters.
+
+    Underlying Java method: PApplet.shader
 
     Methods
     -------
@@ -12159,6 +12150,8 @@ def shader(shader: Py5Shader, /) -> None:
 def shader(shader: Py5Shader, kind: int, /) -> None:
     """Applies the shader specified by the parameters.
 
+    Underlying Java method: PApplet.shader
+
     Methods
     -------
 
@@ -12187,6 +12180,8 @@ def shader(shader: Py5Shader, kind: int, /) -> None:
 
 def shader(*args):
     """Applies the shader specified by the parameters.
+
+    Underlying Java method: PApplet.shader
 
     Methods
     -------
@@ -12217,6 +12212,8 @@ def shader(*args):
 @overload
 def shape(shape: Py5Shape, /) -> None:
     """Draws shapes to the display window.
+
+    Underlying Java method: PApplet.shape
 
     Methods
     -------
@@ -12270,6 +12267,8 @@ def shape(shape: Py5Shape, /) -> None:
 def shape(shape: Py5Shape, x: float, y: float, /) -> None:
     """Draws shapes to the display window.
 
+    Underlying Java method: PApplet.shape
+
     Methods
     -------
 
@@ -12322,6 +12321,8 @@ def shape(shape: Py5Shape, x: float, y: float, /) -> None:
 def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
     """Draws shapes to the display window.
 
+    Underlying Java method: PApplet.shape
+
     Methods
     -------
 
@@ -12372,6 +12373,8 @@ def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
 
 def shape(*args):
     """Draws shapes to the display window.
+
+    Underlying Java method: PApplet.shape
 
     Methods
     -------
@@ -12424,6 +12427,8 @@ def shape(*args):
 def shape_mode(mode: int, /) -> None:
     """Modifies the location from which shapes draw.
 
+    Underlying Java method: PApplet.shapeMode
+
     Parameters
     ----------
 
@@ -12450,6 +12455,8 @@ def shape_mode(mode: int, /) -> None:
 def shear_x(angle: float, /) -> None:
     """Shears a shape around the x-axis the amount specified by the ``angle``
     parameter.
+
+    Underlying Java method: PApplet.shearX
 
     Parameters
     ----------
@@ -12481,6 +12488,8 @@ def shear_y(angle: float, /) -> None:
     """Shears a shape around the y-axis the amount specified by the ``angle``
     parameter.
 
+    Underlying Java method: PApplet.shearY
+
     Parameters
     ----------
 
@@ -12510,6 +12519,8 @@ def shear_y(angle: float, /) -> None:
 def shininess(shine: float, /) -> None:
     """Sets the amount of gloss in the surface of shapes.
 
+    Underlying Java method: PApplet.shininess
+
     Parameters
     ----------
 
@@ -12529,6 +12540,8 @@ def shininess(shine: float, /) -> None:
 @overload
 def size(width: int, height: int, /) -> None:
     """Defines the dimension of the display window width and height in units of pixels.
+
+    Underlying Java method: PApplet.size
 
     Methods
     -------
@@ -12620,6 +12633,8 @@ def size(width: int, height: int, /) -> None:
 def size(width: int, height: int, renderer: str, /) -> None:
     """Defines the dimension of the display window width and height in units of pixels.
 
+    Underlying Java method: PApplet.size
+
     Methods
     -------
 
@@ -12710,6 +12725,8 @@ def size(width: int, height: int, renderer: str, /) -> None:
 def size(width: int, height: int, renderer: str, path: str, /) -> None:
     """Defines the dimension of the display window width and height in units of pixels.
 
+    Underlying Java method: PApplet.size
+
     Methods
     -------
 
@@ -12798,6 +12815,8 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
 
 def size(*args):
     """Defines the dimension of the display window width and height in units of pixels.
+
+    Underlying Java method: PApplet.size
 
     Methods
     -------
@@ -12889,6 +12908,8 @@ def size(*args):
 def sketch_path() -> str:
     """new template no description.
 
+    Underlying Java method: PApplet.sketchPath
+
     Methods
     -------
 
@@ -12915,6 +12936,8 @@ def sketch_path() -> str:
 def sketch_path(where: str, /) -> str:
     """new template no description.
 
+    Underlying Java method: PApplet.sketchPath
+
     Methods
     -------
 
@@ -12939,6 +12962,8 @@ def sketch_path(where: str, /) -> str:
 
 def sketch_path(*args):
     """new template no description.
+
+    Underlying Java method: PApplet.sketchPath
 
     Methods
     -------
@@ -12965,6 +12990,8 @@ def sketch_path(*args):
 @overload
 def smooth() -> None:
     """Draws all geometry with smooth (anti-aliased) edges.
+
+    Underlying Java method: PApplet.smooth
 
     Methods
     -------
@@ -13016,6 +13043,8 @@ def smooth() -> None:
 def smooth(level: int, /) -> None:
     """Draws all geometry with smooth (anti-aliased) edges.
 
+    Underlying Java method: PApplet.smooth
+
     Methods
     -------
 
@@ -13064,6 +13093,8 @@ def smooth(level: int, /) -> None:
 
 def smooth(*args):
     """Draws all geometry with smooth (anti-aliased) edges.
+
+    Underlying Java method: PApplet.smooth
 
     Methods
     -------
@@ -13116,6 +13147,8 @@ def specular(gray: float, /) -> None:
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
+    Underlying Java method: PApplet.specular
+
     Methods
     -------
 
@@ -13159,6 +13192,8 @@ def specular(gray: float, /) -> None:
 def specular(v1: float, v2: float, v3: float, /) -> None:
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
+
+    Underlying Java method: PApplet.specular
 
     Methods
     -------
@@ -13204,6 +13239,8 @@ def specular(rgb: int, /) -> None:
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
+    Underlying Java method: PApplet.specular
+
     Methods
     -------
 
@@ -13247,6 +13284,8 @@ def specular(*args):
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
+    Underlying Java method: PApplet.specular
+
     Methods
     -------
 
@@ -13289,6 +13328,8 @@ def specular(*args):
 def sphere(r: float, /) -> None:
     """A sphere is a hollow ball made from tessellated triangles.
 
+    Underlying Java method: PApplet.sphere
+
     Parameters
     ----------
 
@@ -13307,6 +13348,8 @@ def sphere(r: float, /) -> None:
 def sphere_detail(res: int, /) -> None:
     """Controls the detail used to render a sphere by adjusting the number of vertices
     of the sphere mesh.
+
+    Underlying Java method: PApplet.sphereDetail
 
     Methods
     -------
@@ -13351,6 +13394,8 @@ def sphere_detail(ures: int, vres: int, /) -> None:
     """Controls the detail used to render a sphere by adjusting the number of vertices
     of the sphere mesh.
 
+    Underlying Java method: PApplet.sphereDetail
+
     Methods
     -------
 
@@ -13393,6 +13438,8 @@ def sphere_detail(*args):
     """Controls the detail used to render a sphere by adjusting the number of vertices
     of the sphere mesh.
 
+    Underlying Java method: PApplet.sphereDetail
+
     Methods
     -------
 
@@ -13434,6 +13481,8 @@ def sphere_detail(*args):
 def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
                nx: float, ny: float, nz: float, angle: float, concentration: float, /) -> None:
     """Adds a spot light.
+
+    Underlying Java method: PApplet.spotLight
 
     Parameters
     ----------
@@ -13491,6 +13540,8 @@ def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
 def square(x: float, y: float, extent: float, /) -> None:
     """Draws a square to the screen.
 
+    Underlying Java method: PApplet.square
+
     Parameters
     ----------
 
@@ -13518,6 +13569,8 @@ def square(x: float, y: float, extent: float, /) -> None:
 def start() -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.start
+
     Notes
     -----
 
@@ -13528,6 +13581,8 @@ def start() -> None:
 
 def stop() -> None:
     """new template no description.
+
+    Underlying Java method: PApplet.stop
 
     Notes
     -----
@@ -13540,6 +13595,8 @@ def stop() -> None:
 @overload
 def stroke(gray: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
+
+    Underlying Java method: PApplet.stroke
 
     Methods
     -------
@@ -13605,6 +13662,8 @@ def stroke(gray: float, /) -> None:
 def stroke(gray: float, alpha: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
+    Underlying Java method: PApplet.stroke
+
     Methods
     -------
 
@@ -13668,6 +13727,8 @@ def stroke(gray: float, alpha: float, /) -> None:
 @overload
 def stroke(v1: float, v2: float, v3: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
+
+    Underlying Java method: PApplet.stroke
 
     Methods
     -------
@@ -13733,6 +13794,8 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
 def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
+    Underlying Java method: PApplet.stroke
+
     Methods
     -------
 
@@ -13796,6 +13859,8 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 @overload
 def stroke(rgb: int, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
+
+    Underlying Java method: PApplet.stroke
 
     Methods
     -------
@@ -13861,6 +13926,8 @@ def stroke(rgb: int, /) -> None:
 def stroke(rgb: int, alpha: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
+    Underlying Java method: PApplet.stroke
+
     Methods
     -------
 
@@ -13923,6 +13990,8 @@ def stroke(rgb: int, alpha: float, /) -> None:
 
 def stroke(*args):
     """Sets the color used to draw lines and borders around shapes.
+
+    Underlying Java method: PApplet.stroke
 
     Methods
     -------
@@ -13987,6 +14056,8 @@ def stroke(*args):
 def stroke_cap(cap: int, /) -> None:
     """Sets the style for rendering line endings.
 
+    Underlying Java method: PApplet.strokeCap
+
     Parameters
     ----------
 
@@ -14009,6 +14080,8 @@ def stroke_cap(cap: int, /) -> None:
 def stroke_join(join: int, /) -> None:
     """Sets the style of the joints which connect line segments.
 
+    Underlying Java method: PApplet.strokeJoin
+
     Parameters
     ----------
 
@@ -14028,6 +14101,8 @@ def stroke_join(join: int, /) -> None:
 def stroke_weight(weight: float, /) -> None:
     """Sets the width of the stroke used for lines, points, and the border around
     shapes.
+
+    Underlying Java method: PApplet.strokeWeight
 
     Parameters
     ----------
@@ -14052,6 +14127,8 @@ def stroke_weight(weight: float, /) -> None:
 @overload
 def text(c: chr, x: float, y: float, /) -> None:
     """Draws text to the screen.
+
+    Underlying Java method: PApplet.text
 
     Methods
     -------
@@ -14141,6 +14218,8 @@ def text(c: chr, x: float, y: float, /) -> None:
 @overload
 def text(c: chr, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
+
+    Underlying Java method: PApplet.text
 
     Methods
     -------
@@ -14232,6 +14311,8 @@ def text(chars: List[chr], start: int, stop: int,
          x: float, y: float, /) -> None:
     """Draws text to the screen.
 
+    Underlying Java method: PApplet.text
+
     Methods
     -------
 
@@ -14322,6 +14403,8 @@ def text(chars: List[chr], start: int, stop: int,
          x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
+    Underlying Java method: PApplet.text
+
     Methods
     -------
 
@@ -14410,6 +14493,8 @@ def text(chars: List[chr], start: int, stop: int,
 @overload
 def text(num: float, x: float, y: float, /) -> None:
     """Draws text to the screen.
+
+    Underlying Java method: PApplet.text
 
     Methods
     -------
@@ -14500,6 +14585,8 @@ def text(num: float, x: float, y: float, /) -> None:
 def text(num: float, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
+    Underlying Java method: PApplet.text
+
     Methods
     -------
 
@@ -14588,6 +14675,8 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
 @overload
 def text(num: int, x: float, y: float, /) -> None:
     """Draws text to the screen.
+
+    Underlying Java method: PApplet.text
 
     Methods
     -------
@@ -14678,6 +14767,8 @@ def text(num: int, x: float, y: float, /) -> None:
 def text(num: int, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
+    Underlying Java method: PApplet.text
+
     Methods
     -------
 
@@ -14766,6 +14857,8 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
 @overload
 def text(str: str, x: float, y: float, /) -> None:
     """Draws text to the screen.
+
+    Underlying Java method: PApplet.text
 
     Methods
     -------
@@ -14856,6 +14949,8 @@ def text(str: str, x: float, y: float, /) -> None:
 def text(str: str, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
+    Underlying Java method: PApplet.text
+
     Methods
     -------
 
@@ -14945,6 +15040,8 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
 def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
     """Draws text to the screen.
 
+    Underlying Java method: PApplet.text
+
     Methods
     -------
 
@@ -15032,6 +15129,8 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
 
 def text(*args):
     """Draws text to the screen.
+
+    Underlying Java method: PApplet.text
 
     Methods
     -------
@@ -15122,6 +15221,8 @@ def text(*args):
 def text_align(align_x: int, /) -> None:
     """Sets the current alignment for drawing text.
 
+    Underlying Java method: PApplet.textAlign
+
     Methods
     -------
 
@@ -15171,6 +15272,8 @@ def text_align(align_x: int, /) -> None:
 def text_align(align_x: int, align_y: int, /) -> None:
     """Sets the current alignment for drawing text.
 
+    Underlying Java method: PApplet.textAlign
+
     Methods
     -------
 
@@ -15218,6 +15321,8 @@ def text_align(align_x: int, align_y: int, /) -> None:
 
 def text_align(*args):
     """Sets the current alignment for drawing text.
+
+    Underlying Java method: PApplet.textAlign
 
     Methods
     -------
@@ -15267,6 +15372,8 @@ def text_align(*args):
 def text_ascent() -> float:
     """Returns ascent of the current font at its current size.
 
+    Underlying Java method: PApplet.textAscent
+
     Notes
     -----
 
@@ -15278,6 +15385,8 @@ def text_ascent() -> float:
 
 def text_descent() -> float:
     """Returns descent of the current font at its current size.
+
+    Underlying Java method: PApplet.textDescent
 
     Notes
     -----
@@ -15291,6 +15400,8 @@ def text_descent() -> float:
 @overload
 def text_font(which: Py5Font, /) -> None:
     """Sets the current font that will be drawn with the ``text()`` function.
+
+    Underlying Java method: PApplet.textFont
 
     Methods
     -------
@@ -15331,6 +15442,8 @@ def text_font(which: Py5Font, /) -> None:
 def text_font(which: Py5Font, size: float, /) -> None:
     """Sets the current font that will be drawn with the ``text()`` function.
 
+    Underlying Java method: PApplet.textFont
+
     Methods
     -------
 
@@ -15368,6 +15481,8 @@ def text_font(which: Py5Font, size: float, /) -> None:
 
 def text_font(*args):
     """Sets the current font that will be drawn with the ``text()`` function.
+
+    Underlying Java method: PApplet.textFont
 
     Methods
     -------
@@ -15407,6 +15522,8 @@ def text_font(*args):
 def text_leading(leading: float, /) -> None:
     """Sets the spacing between lines of text in units of pixels.
 
+    Underlying Java method: PApplet.textLeading
+
     Parameters
     ----------
 
@@ -15428,6 +15545,8 @@ def text_leading(leading: float, /) -> None:
 def text_mode(mode: int, /) -> None:
     """Sets the way text draws to the screen, either as texture maps or as vector
     geometry.
+
+    Underlying Java method: PApplet.textMode
 
     Parameters
     ----------
@@ -15459,6 +15578,8 @@ def text_mode(mode: int, /) -> None:
 def text_size(size: float, /) -> None:
     """Sets the current font size.
 
+    Underlying Java method: PApplet.textSize
+
     Parameters
     ----------
 
@@ -15477,6 +15598,8 @@ def text_size(size: float, /) -> None:
 @overload
 def text_width(c: chr, /) -> float:
     """Calculates and returns the width of any character or text string.
+
+    Underlying Java method: PApplet.textWidth
 
     Methods
     -------
@@ -15517,6 +15640,8 @@ def text_width(c: chr, /) -> float:
 def text_width(chars: List[chr], start: int, length: int, /) -> float:
     """Calculates and returns the width of any character or text string.
 
+    Underlying Java method: PApplet.textWidth
+
     Methods
     -------
 
@@ -15556,6 +15681,8 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
 def text_width(str: str, /) -> float:
     """Calculates and returns the width of any character or text string.
 
+    Underlying Java method: PApplet.textWidth
+
     Methods
     -------
 
@@ -15593,6 +15720,8 @@ def text_width(str: str, /) -> float:
 
 def text_width(*args):
     """Calculates and returns the width of any character or text string.
+
+    Underlying Java method: PApplet.textWidth
 
     Methods
     -------
@@ -15632,6 +15761,8 @@ def text_width(*args):
 def texture(image: Py5Image, /) -> None:
     """Sets a texture to be applied to vertex points.
 
+    Underlying Java method: PApplet.texture
+
     Parameters
     ----------
 
@@ -15653,6 +15784,8 @@ def texture(image: Py5Image, /) -> None:
 
 def texture_mode(mode: int, /) -> None:
     """Sets the coordinate space for texture mapping.
+
+    Underlying Java method: PApplet.textureMode
 
     Parameters
     ----------
@@ -15678,6 +15811,8 @@ def texture_mode(mode: int, /) -> None:
 def texture_wrap(wrap: int, /) -> None:
     """Defines if textures repeat or draw once within a texture map.
 
+    Underlying Java method: PApplet.textureWrap
+
     Parameters
     ----------
 
@@ -15697,6 +15832,8 @@ def texture_wrap(wrap: int, /) -> None:
 @overload
 def tint(gray: float, /) -> None:
     """Sets the fill value for displaying images.
+
+    Underlying Java method: PApplet.tint
 
     Methods
     -------
@@ -15763,6 +15900,8 @@ def tint(gray: float, /) -> None:
 def tint(gray: float, alpha: float, /) -> None:
     """Sets the fill value for displaying images.
 
+    Underlying Java method: PApplet.tint
+
     Methods
     -------
 
@@ -15827,6 +15966,8 @@ def tint(gray: float, alpha: float, /) -> None:
 @overload
 def tint(v1: float, v2: float, v3: float, /) -> None:
     """Sets the fill value for displaying images.
+
+    Underlying Java method: PApplet.tint
 
     Methods
     -------
@@ -15893,6 +16034,8 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
 def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """Sets the fill value for displaying images.
 
+    Underlying Java method: PApplet.tint
+
     Methods
     -------
 
@@ -15957,6 +16100,8 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 @overload
 def tint(rgb: int, /) -> None:
     """Sets the fill value for displaying images.
+
+    Underlying Java method: PApplet.tint
 
     Methods
     -------
@@ -16023,6 +16168,8 @@ def tint(rgb: int, /) -> None:
 def tint(rgb: int, alpha: float, /) -> None:
     """Sets the fill value for displaying images.
 
+    Underlying Java method: PApplet.tint
+
     Methods
     -------
 
@@ -16086,6 +16233,8 @@ def tint(rgb: int, alpha: float, /) -> None:
 
 def tint(*args):
     """Sets the fill value for displaying images.
+
+    Underlying Java method: PApplet.tint
 
     Methods
     -------
@@ -16152,6 +16301,8 @@ def tint(*args):
 def translate(x: float, y: float, /) -> None:
     """Specifies an amount to displace objects within the display window.
 
+    Underlying Java method: PApplet.translate
+
     Methods
     -------
 
@@ -16195,6 +16346,8 @@ def translate(x: float, y: float, /) -> None:
 def translate(x: float, y: float, z: float, /) -> None:
     """Specifies an amount to displace objects within the display window.
 
+    Underlying Java method: PApplet.translate
+
     Methods
     -------
 
@@ -16236,6 +16389,8 @@ def translate(x: float, y: float, z: float, /) -> None:
 
 def translate(*args):
     """Specifies an amount to displace objects within the display window.
+
+    Underlying Java method: PApplet.translate
 
     Methods
     -------
@@ -16280,6 +16435,8 @@ def triangle(x1: float, y1: float, x2: float, y2: float,
              x3: float, y3: float, /) -> None:
     """A triangle is a plane created by connecting three points.
 
+    Underlying Java method: PApplet.triangle
+
     Parameters
     ----------
 
@@ -16314,6 +16471,8 @@ def triangle(x1: float, y1: float, x2: float, y2: float,
 @overload
 def update_pixels() -> None:
     """Updates the display window with the data in the ``pixels[]`` array.
+
+    Underlying Java method: PApplet.updatePixels
 
     Methods
     -------
@@ -16353,6 +16512,8 @@ def update_pixels() -> None:
 def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
     """Updates the display window with the data in the ``pixels[]`` array.
 
+    Underlying Java method: PApplet.updatePixels
+
     Methods
     -------
 
@@ -16389,6 +16550,8 @@ def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
 
 def update_pixels(*args):
     """Updates the display window with the data in the ``pixels[]`` array.
+
+    Underlying Java method: PApplet.updatePixels
 
     Methods
     -------
@@ -16427,6 +16590,8 @@ def update_pixels(*args):
 @overload
 def vertex(x: float, y: float, /) -> None:
     """All shapes are constructed by connecting a series of vertices.
+
+    Underlying Java method: PApplet.vertex
 
     Methods
     -------
@@ -16484,6 +16649,8 @@ def vertex(x: float, y: float, /) -> None:
 def vertex(x: float, y: float, z: float, /) -> None:
     """All shapes are constructed by connecting a series of vertices.
 
+    Underlying Java method: PApplet.vertex
+
     Methods
     -------
 
@@ -16539,6 +16706,8 @@ def vertex(x: float, y: float, z: float, /) -> None:
 @overload
 def vertex(x: float, y: float, u: float, v: float, /) -> None:
     """All shapes are constructed by connecting a series of vertices.
+
+    Underlying Java method: PApplet.vertex
 
     Methods
     -------
@@ -16596,6 +16765,8 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
 def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
     """All shapes are constructed by connecting a series of vertices.
 
+    Underlying Java method: PApplet.vertex
+
     Methods
     -------
 
@@ -16652,6 +16823,8 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
 def vertex(v: NDArray[(Any,), Float], /) -> None:
     """All shapes are constructed by connecting a series of vertices.
 
+    Underlying Java method: PApplet.vertex
+
     Methods
     -------
 
@@ -16706,6 +16879,8 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
 
 def vertex(*args):
     """All shapes are constructed by connecting a series of vertices.
+
+    Underlying Java method: PApplet.vertex
 
     Methods
     -------
@@ -16762,6 +16937,8 @@ def vertex(*args):
 def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """new template no description.
 
+    Underlying Java method: PApplet.vertices
+
     Parameters
     ----------
 
@@ -16779,6 +16956,8 @@ def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def year() -> int:
     """Processing communicates with the clock on your computer.
 
+    Underlying Java method: PApplet.year
+
     Notes
     -----
 
@@ -16788,27 +16967,20 @@ def year() -> int:
     return Sketch.year()
 
 ##############################################################################
-# module functions from threads.py
+# module functions from data.py
 ##############################################################################
 
 
-def launch_thread(f: Callable, name: str = None,
-                  args: Tuple = None, kwargs: Dict = None) -> str:
+def load_json(filename: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
     """new template no description.
 
     Parameters
     ----------
 
-    args: Tuple
+    filename: Union[str, Path]
         missing variable description
 
-    f: Callable
-        missing variable description
-
-    kwargs: Dict
-        missing variable description
-
-    name: str
+    kwargs: Dict[str, Any]
         missing variable description
 
     Notes
@@ -16816,29 +16988,26 @@ def launch_thread(f: Callable, name: str = None,
 
     new template no description.
 """
-    return _py5sketch.launch_thread(f, name=name, args=args, kwargs=kwargs)
+    return Sketch.load_json(filename, **kwargs)
 
 
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        args: Tuple = None,
-        kwargs: Dict = None) -> Py5Promise:
+def save_json(json_data: Any,
+              filename: Union[str,
+                              Path],
+              **kwargs: Dict[str,
+                             Any]) -> None:
     """new template no description.
 
     Parameters
     ----------
 
-    args: Tuple
+    filename: Union[str, Path]
         missing variable description
 
-    f: Callable
+    json_data: Any
         missing variable description
 
-    kwargs: Dict
-        missing variable description
-
-    name: str
+    kwargs: Dict[str, Any]
         missing variable description
 
     Notes
@@ -16846,34 +17015,19 @@ def launch_promise_thread(
 
     new template no description.
 """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, args=args, kwargs=kwargs)
+    return Sketch.save_json(json_data, filename, **kwargs)
 
 
-def launch_repeating_thread(
-        f: Callable,
-        name: str = None,
-        time_delay: float = 0,
-        args: Tuple = None,
-        kwargs: Dict = None) -> str:
+def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
     """new template no description.
 
     Parameters
     ----------
 
-    args: Tuple
+    kwargs: Dict[str, Any]
         missing variable description
 
-    f: Callable
-        missing variable description
-
-    kwargs: Dict
-        missing variable description
-
-    name: str
-        missing variable description
-
-    time_delay: float
+    serialized_json: Any
         missing variable description
 
     Notes
@@ -16881,74 +17035,11 @@ def launch_repeating_thread(
 
     new template no description.
 """
-    return _py5sketch.launch_repeating_thread(
-        f, name=name, time_delay=time_delay, args=args, kwargs=kwargs)
+    return Sketch.parse_json(serialized_json, **kwargs)
 
 
-def has_thread(name: str) -> None:
-    """new template no description.
-
-    Parameters
-    ----------
-
-    name: str
-        missing variable description
-
-    Notes
-    -----
-
-    new template no description.
-"""
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """new template no description.
-
-    Parameters
-    ----------
-
-    name: str
-        missing variable description
-
-    wait: bool
-        missing variable description
-
-    Notes
-    -----
-
-    new template no description.
-"""
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """new template no description.
-
-    Parameters
-    ----------
-
-    wait: bool
-        missing variable description
-
-    Notes
-    -----
-
-    new template no description.
-"""
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """new template no description.
-
-    Notes
-    -----
-
-    new template no description.
-"""
-    return _py5sketch.list_threads()
-
+SIMPLEX_NOISE = 1
+PERLIN_NOISE = 2
 ##############################################################################
 # module functions from math.py
 ##############################################################################
@@ -17133,13 +17224,47 @@ def constrain(amt: float, low: float, high: float) -> float:
     return Sketch.constrain(amt, low, high)
 
 
-def dist(*args) -> float:
+def remap(
+        value: float,
+        start1: float,
+        stop1: float,
+        start2: float,
+        stop2: float) -> float:
     """new template no description.
 
     Parameters
     ----------
 
-    args
+    start1: float
+        missing variable description
+
+    start2: float
+        missing variable description
+
+    stop1: float
+        missing variable description
+
+    stop2: float
+        missing variable description
+
+    value: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.remap(value, start1, stop1, start2, stop2)
+
+
+def dist(*args: float) -> float:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    args: float
         missing variable description
 
     Notes
@@ -17173,13 +17298,13 @@ def lerp(start: float, stop: float, amt: float) -> float:
     return Sketch.lerp(start, stop, amt)
 
 
-def mag(*args) -> float:
+def mag(*args: float) -> float:
     """new template no description.
 
     Parameters
     ----------
 
-    args
+    args: float
         missing variable description
 
     Notes
@@ -17213,13 +17338,13 @@ def norm(value: float, start: float, stop: float) -> float:
     return Sketch.norm(value, start, stop)
 
 
-def sq(n: float) -> float:
+def sq(value: float) -> float:
     """new template no description.
 
     Parameters
     ----------
 
-    n: float
+    value: float
         missing variable description
 
     Notes
@@ -17227,23 +17352,492 @@ def sq(n: float) -> float:
 
     new template no description.
 """
-    return Sketch.sq(n)
+    return Sketch.sq(value)
+
+
+def sqrt(value: float) -> Union[float, complex]:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    value: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.sqrt(value)
+
+
+def floor(value: float) -> int:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    value: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.floor(value)
+
+
+def ceil(value: float) -> int:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    value: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.ceil(value)
+
+
+def exp(value: float) -> float:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    value: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.exp(value)
+
+
+def log(value: float) -> float:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    value: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.log(value)
+
+
+@overload
+def random(high: float) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random(high: float) -> float
+     * random(low: float, high: float) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    pass
+
+
+@overload
+def random(low: float, high: float) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random(high: float) -> float
+     * random(low: float, high: float) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    pass
+
+
+def random_seed(seed: int) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    seed: int
+        seed value
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.random_seed(seed)
+
+
+def random(*args: float) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random(high: float) -> float
+     * random(low: float, high: float) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.random(*args)
+
+
+def random_gaussian() -> float:
+    """new template no description.
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.random_gaussian()
+
+
+@overload
+def noise(x, **kwargs) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x, kwargs) -> float
+     * noise(x, y, kwargs) -> float
+     * noise(x, y, z, kwargs) -> float
+     * noise(x, y, z, w, kwargs) -> float
+
+    Parameters
+    ----------
+
+    kwargs
+        missing variable description
+
+    w
+        missing variable description
+
+    x
+        x-coordinate in noise space
+
+    y
+        y-coordinate in noise space
+
+    z
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    pass
+
+
+@overload
+def noise(x, y, **kwargs) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x, kwargs) -> float
+     * noise(x, y, kwargs) -> float
+     * noise(x, y, z, kwargs) -> float
+     * noise(x, y, z, w, kwargs) -> float
+
+    Parameters
+    ----------
+
+    kwargs
+        missing variable description
+
+    w
+        missing variable description
+
+    x
+        x-coordinate in noise space
+
+    y
+        y-coordinate in noise space
+
+    z
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    pass
+
+
+@overload
+def noise(x, y, z, **kwargs) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x, kwargs) -> float
+     * noise(x, y, kwargs) -> float
+     * noise(x, y, z, kwargs) -> float
+     * noise(x, y, z, w, kwargs) -> float
+
+    Parameters
+    ----------
+
+    kwargs
+        missing variable description
+
+    w
+        missing variable description
+
+    x
+        x-coordinate in noise space
+
+    y
+        y-coordinate in noise space
+
+    z
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    pass
+
+
+@overload
+def noise(x, y, z, w, **kwargs) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x, kwargs) -> float
+     * noise(x, y, kwargs) -> float
+     * noise(x, y, z, kwargs) -> float
+     * noise(x, y, z, w, kwargs) -> float
+
+    Parameters
+    ----------
+
+    kwargs
+        missing variable description
+
+    w
+        missing variable description
+
+    x
+        x-coordinate in noise space
+
+    y
+        y-coordinate in noise space
+
+    z
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    pass
+
+
+def noise(*args, **kwargs) -> float:
+    """new template no description.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x, kwargs) -> float
+     * noise(x, y, kwargs) -> float
+     * noise(x, y, z, kwargs) -> float
+     * noise(x, y, z, w, kwargs) -> float
+
+    Parameters
+    ----------
+
+    kwargs
+        missing variable description
+
+    w
+        missing variable description
+
+    x
+        x-coordinate in noise space
+
+    y
+        y-coordinate in noise space
+
+    z
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.noise(*args, **kwargs)
+
+
+def noise_mode(mode: int) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    mode: int
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.noise_mode(mode)
+
+
+def noise_detail(octaves: float = None, persistence: float = None,
+                 lacunarity: float = None) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    lacunarity: float
+        missing variable description
+
+    octaves: float
+        missing variable description
+
+    persistence: float
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.noise_detail(
+        octaves=octaves,
+        persistence=persistence,
+        lacunarity=lacunarity)
+
+
+def noise_seed(seed: float) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    seed: float
+        seed value
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return Sketch.noise_seed(seed)
 
 ##############################################################################
-# module functions from data.py
+# module functions from threads.py
 ##############################################################################
 
 
-def load_json(filename: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
+def launch_thread(f: Callable, name: str = None, daemon: bool = True,
+                  args: Tuple = None, kwargs: Dict = None) -> str:
     """new template no description.
 
     Parameters
     ----------
 
-    filename: Union[str, Path]
+    args: Tuple
         missing variable description
 
-    kwargs: Dict[str, Any]
+    daemon: bool
+        missing variable description
+
+    f: Callable
+        missing variable description
+
+    kwargs: Dict
+        missing variable description
+
+    name: str
         missing variable description
 
     Notes
@@ -17251,26 +17845,34 @@ def load_json(filename: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
 
     new template no description.
 """
-    return Sketch.load_json(filename, **kwargs)
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
 
 
-def save_json(json_data: Any,
-              filename: Union[str,
-                              Path],
-              **kwargs: Dict[str,
-                             Any]) -> None:
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> Py5Promise:
     """new template no description.
 
     Parameters
     ----------
 
-    filename: Union[str, Path]
+    args: Tuple
         missing variable description
 
-    json_data: Any
+    daemon: bool
         missing variable description
 
-    kwargs: Dict[str, Any]
+    f: Callable
+        missing variable description
+
+    kwargs: Dict
+        missing variable description
+
+    name: str
         missing variable description
 
     Notes
@@ -17278,19 +17880,34 @@ def save_json(json_data: Any,
 
     new template no description.
 """
-    return Sketch.save_json(json_data, filename, **kwargs)
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
 
 
-def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
+def launch_repeating_thread(f: Callable, name: str = None,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: Tuple = None, kwargs: Dict = None) -> str:
     """new template no description.
 
     Parameters
     ----------
 
-    kwargs: Dict[str, Any]
+    args: Tuple
         missing variable description
 
-    serialized_json: Any
+    daemon: bool
+        missing variable description
+
+    f: Callable
+        missing variable description
+
+    kwargs: Dict
+        missing variable description
+
+    name: str
+        missing variable description
+
+    time_delay: float
         missing variable description
 
     Notes
@@ -17298,7 +17915,78 @@ def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
 
     new template no description.
 """
-    return Sketch.parse_json(serialized_json, **kwargs)
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    name: str
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    name: str
+        missing variable description
+
+    wait: bool
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """new template no description.
+
+    Parameters
+    ----------
+
+    wait: bool
+        missing variable description
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """new template no description.
+
+    Notes
+    -----
+
+    new template no description.
+"""
+    return _py5sketch.list_threads()
 
 ##############################################################################
 # module functions from pixels.py
@@ -17350,11 +18038,15 @@ def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
     return _py5sketch.set_np_pixels(array, bands=bands)
 
 
-def save(filename: Union[str, Path], format: str = None, **params) -> None:
+def save(filename: Union[str, Path], format: str = None,
+         drop_alpha: bool = True, **params) -> None:
     """new template no description.
 
     Parameters
     ----------
+
+    drop_alpha: bool
+        missing variable description
 
     filename: Union[str, Path]
         missing variable description
@@ -17370,7 +18062,11 @@ def save(filename: Union[str, Path], format: str = None, **params) -> None:
 
     new template no description.
 """
-    return _py5sketch.save(filename, format=format, **params)
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        **params)
 
 ##############################################################################
 # module functions from sketch.py
@@ -17439,12 +18135,18 @@ def print_line_profiler_stats() -> None:
     return _py5sketch.print_line_profiler_stats()
 
 
-def save_frame(filename: Union[str, Path],
-               format: str = None, **params) -> None:
+def save_frame(filename: Union[str,
+                               Path],
+               format: str = None,
+               drop_alpha: bool = True,
+               **params) -> None:
     """new template no description.
 
     Parameters
     ----------
+
+    drop_alpha: bool
+        missing variable description
 
     filename: Union[str, Path]
         missing variable description
@@ -17460,7 +18162,11 @@ def save_frame(filename: Union[str, Path],
 
     new template no description.
 """
-    return _py5sketch.save_frame(filename, format=format, **params)
+    return _py5sketch.save_frame(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        **params)
 
 
 def create_image_from_numpy(

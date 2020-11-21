@@ -8,6 +8,7 @@ from typing import overload, List  # noqa
 from nptyping import NDArray, Float  # noqa
 
 from jpype import JException
+from jpype.types import JBoolean, JInt, JFloat
 
 from .pmath import _get_pvector_wrapper  # noqa
 
@@ -26,6 +27,25 @@ def _return_py5shape(f):
     return decorated
 
 
+def _py5shape_type_fixer(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        args = list(args)
+
+        def fix_type(arg):
+            if isinstance(arg, bool):
+                return JBoolean(arg)
+            elif isinstance(arg, int):
+                return JInt(arg)
+            elif isinstance(arg, float):
+                return JFloat(arg)
+            else:
+                return arg
+        args = [fix_type(a) for a in args]
+        return f(self_, *tuple(args))
+    return decorated
+
+
 def _load_py5shape(f):
     @functools.wraps(f)
     def decorated(self_, *args):
@@ -41,12 +61,37 @@ def _load_py5shape(f):
 
 
 class Py5Shape:
+    """Datatype for storing shapes.
+
+    Underlying Java class: PShape.PShape
+
+    Notes
+    -----
+
+    Datatype for storing shapes. Before a shape is used, it must be loaded with the
+    ``load_shape()`` or created with the ``create_shape()``. The ``shape()``
+    function is used to draw the shape to the display window. Processing can
+    currently load and display SVG (Scalable Vector Graphics) and OBJ shapes. OBJ
+    files can only be opened using the ``P3D`` renderer. The ``load_shape()``
+    function supports SVG files created with Inkscape and Adobe Illustrator. It is
+    not a full SVG implementation, but offers some straightforward support for
+    handling vector data.
+
+    The ``Py5Shape`` object contains a group of methods that can operate on the
+    shape data. Some of the methods are listed below, but the full list used for
+    creating and modifying shapes is available here in the Processing Javadoc.
+
+    To create a new shape, use the ``create_shape()`` function. Do not use the
+    syntax ``new Py5Shape()``.
+"""
 
     def __init__(self, pshape):
         self._instance = pshape
 
     def _get_depth(self) -> float:
         """new template no description.
+
+        Underlying Java field: PShape.depth
 
         Notes
         -----
@@ -59,6 +104,8 @@ class Py5Shape:
     def _get_height(self) -> float:
         """The height of the PShape document.
 
+        Underlying Java field: PShape.height
+
         Notes
         -----
 
@@ -69,6 +116,8 @@ class Py5Shape:
 
     def _get_width(self) -> float:
         """The width of the PShape document.
+
+        Underlying Java field: PShape.width
 
         Notes
         -----
@@ -81,6 +130,8 @@ class Py5Shape:
     @overload
     def add_child(self, who: Py5Shape, /) -> None:
         """Adds a child PShape to a parent PShape that is defined as a GROUP.
+
+        Underlying Java method: PShape.addChild
 
         Methods
         -------
@@ -112,6 +163,8 @@ class Py5Shape:
     def add_child(self, who: Py5Shape, idx: int, /) -> None:
         """Adds a child PShape to a parent PShape that is defined as a GROUP.
 
+        Underlying Java method: PShape.addChild
+
         Methods
         -------
 
@@ -140,6 +193,8 @@ class Py5Shape:
 
     def add_child(self, *args):
         """Adds a child PShape to a parent PShape that is defined as a GROUP.
+
+        Underlying Java method: PShape.addChild
 
         Methods
         -------
@@ -170,6 +225,8 @@ class Py5Shape:
     def add_name(self, nom: str, shape: Py5Shape, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.addName
+
         Parameters
         ----------
 
@@ -190,6 +247,8 @@ class Py5Shape:
     def apply_matrix(self, n00: float, n01: float, n02: float,
                      n10: float, n11: float, n12: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.applyMatrix
 
         Methods
         -------
@@ -287,6 +346,8 @@ class Py5Shape:
             /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.applyMatrix
+
         Methods
         -------
 
@@ -364,6 +425,8 @@ class Py5Shape:
     @overload
     def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.applyMatrix
 
         Methods
         -------
@@ -443,6 +506,8 @@ class Py5Shape:
     def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.applyMatrix
+
         Methods
         -------
 
@@ -519,6 +584,8 @@ class Py5Shape:
 
     def apply_matrix(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.applyMatrix
 
         Methods
         -------
@@ -598,6 +665,8 @@ class Py5Shape:
     def attrib(self, name: str, /, *values: bool) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.attrib
+
         Methods
         -------
 
@@ -632,6 +701,8 @@ class Py5Shape:
     @overload
     def attrib(self, name: str, /, *values: float) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.attrib
 
         Methods
         -------
@@ -668,6 +739,8 @@ class Py5Shape:
     def attrib(self, name: str, /, *values: int) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.attrib
+
         Methods
         -------
 
@@ -699,8 +772,11 @@ class Py5Shape:
 """
         pass
 
+    @_py5shape_type_fixer
     def attrib(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.attrib
 
         Methods
         -------
@@ -736,6 +812,8 @@ class Py5Shape:
     def attrib_color(self, name: str, color: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.attribColor
+
         Parameters
         ----------
 
@@ -755,6 +833,8 @@ class Py5Shape:
     def attrib_normal(self, name: str, nx: float,
                       ny: float, nz: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.attribNormal
 
         Parameters
         ----------
@@ -781,6 +861,8 @@ class Py5Shape:
     def attrib_position(self, name: str, x: float,
                         y: float, z: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.attribPosition
 
         Parameters
         ----------
@@ -809,6 +891,8 @@ class Py5Shape:
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
 
+        Underlying Java method: PShape.beginShape
+
         Methods
         -------
 
@@ -836,6 +920,8 @@ class Py5Shape:
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
 
+        Underlying Java method: PShape.beginShape
+
         Methods
         -------
 
@@ -862,6 +948,8 @@ class Py5Shape:
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
 
+        Underlying Java method: PShape.beginShape
+
         Methods
         -------
 
@@ -887,6 +975,8 @@ class Py5Shape:
     def bezier_detail(self, detail: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.bezierDetail
+
         Parameters
         ----------
 
@@ -902,6 +992,8 @@ class Py5Shape:
 
     def contains(self, x: float, y: float, /) -> bool:
         """new template no description.
+
+        Underlying Java method: PShape.contains
 
         Parameters
         ----------
@@ -922,6 +1014,8 @@ class Py5Shape:
     def disable_style(self) -> None:
         """Disables the shape's style data and uses Processing's current styles.
 
+        Underlying Java method: PShape.disableStyle
+
         Notes
         -----
 
@@ -932,6 +1026,8 @@ class Py5Shape:
 
     def enable_style(self) -> None:
         """Enables the shape's style data and ignores Processing's current styles.
+
+        Underlying Java method: PShape.enableStyle
 
         Notes
         -----
@@ -945,6 +1041,8 @@ class Py5Shape:
     def end_shape(self) -> None:
         """This method is used to complete a custom shape created with the
         ``create_shape()`` function.
+
+        Underlying Java method: PShape.endShape
 
         Methods
         -------
@@ -973,6 +1071,8 @@ class Py5Shape:
         """This method is used to complete a custom shape created with the
         ``create_shape()`` function.
 
+        Underlying Java method: PShape.endShape
+
         Methods
         -------
 
@@ -998,6 +1098,8 @@ class Py5Shape:
     def end_shape(self, *args):
         """This method is used to complete a custom shape created with the
         ``create_shape()`` function.
+
+        Underlying Java method: PShape.endShape
 
         Methods
         -------
@@ -1025,6 +1127,8 @@ class Py5Shape:
     def find_child(self, target: str, /) -> Py5Shape:
         """new template no description.
 
+        Underlying Java method: PShape.findChild
+
         Parameters
         ----------
 
@@ -1040,6 +1144,8 @@ class Py5Shape:
 
     def get_ambient(self, index: int, /) -> int:
         """new template no description.
+
+        Underlying Java method: PShape.getAmbient
 
         Parameters
         ----------
@@ -1057,6 +1163,8 @@ class Py5Shape:
     @overload
     def get_child(self, index: int, /) -> Py5Shape:
         """Extracts a child shape from a parent shape.
+
+        Underlying Java method: PShape.getChild
 
         Methods
         -------
@@ -1088,6 +1196,8 @@ class Py5Shape:
     def get_child(self, target: str, /) -> Py5Shape:
         """Extracts a child shape from a parent shape.
 
+        Underlying Java method: PShape.getChild
+
         Methods
         -------
 
@@ -1118,6 +1228,8 @@ class Py5Shape:
     def get_child(self, *args):
         """Extracts a child shape from a parent shape.
 
+        Underlying Java method: PShape.getChild
+
         Methods
         -------
 
@@ -1147,6 +1259,8 @@ class Py5Shape:
     def get_child_count(self) -> int:
         """Returns the number of children within the PShape.
 
+        Underlying Java method: PShape.getChildCount
+
         Notes
         -----
 
@@ -1156,6 +1270,8 @@ class Py5Shape:
 
     def get_child_index(self, who: Py5Shape, /) -> int:
         """new template no description.
+
+        Underlying Java method: PShape.getChildIndex
 
         Parameters
         ----------
@@ -1174,6 +1290,8 @@ class Py5Shape:
     def get_children(self) -> List[Py5Shape]:
         """new template no description.
 
+        Underlying Java method: PShape.getChildren
+
         Notes
         -----
 
@@ -1184,6 +1302,8 @@ class Py5Shape:
     def get_depth(self) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getDepth
+
         Notes
         -----
 
@@ -1193,6 +1313,8 @@ class Py5Shape:
 
     def get_emissive(self, index: int, /) -> int:
         """new template no description.
+
+        Underlying Java method: PShape.getEmissive
 
         Parameters
         ----------
@@ -1210,6 +1332,8 @@ class Py5Shape:
     def get_family(self) -> int:
         """new template no description.
 
+        Underlying Java method: PShape.getFamily
+
         Notes
         -----
 
@@ -1219,6 +1343,8 @@ class Py5Shape:
 
     def get_fill(self, index: int, /) -> int:
         """new template no description.
+
+        Underlying Java method: PShape.getFill
 
         Parameters
         ----------
@@ -1236,6 +1362,8 @@ class Py5Shape:
     def get_height(self) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getHeight
+
         Notes
         -----
 
@@ -1245,6 +1373,8 @@ class Py5Shape:
 
     def get_kind(self) -> int:
         """new template no description.
+
+        Underlying Java method: PShape.getKind
 
         Notes
         -----
@@ -1256,6 +1386,8 @@ class Py5Shape:
     def get_name(self) -> str:
         """new template no description.
 
+        Underlying Java method: PShape.getName
+
         Notes
         -----
 
@@ -1266,6 +1398,8 @@ class Py5Shape:
     @overload
     def get_normal(self, index: int, /) -> NDArray[(Any,), Float]:
         """new template no description.
+
+        Underlying Java method: PShape.getNormal
 
         Methods
         -------
@@ -1296,6 +1430,8 @@ class Py5Shape:
             Any,), Float], /) -> NDArray[(Any,), Float]:
         """new template no description.
 
+        Underlying Java method: PShape.getNormal
+
         Methods
         -------
 
@@ -1324,6 +1460,8 @@ class Py5Shape:
     def get_normal(self, *args):
         """new template no description.
 
+        Underlying Java method: PShape.getNormal
+
         Methods
         -------
 
@@ -1351,6 +1489,8 @@ class Py5Shape:
     def get_normal_x(self, index: int, /) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getNormalX
+
         Parameters
         ----------
 
@@ -1367,6 +1507,8 @@ class Py5Shape:
     def get_normal_y(self, index: int, /) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getNormalY
+
         Parameters
         ----------
 
@@ -1382,6 +1524,8 @@ class Py5Shape:
 
     def get_normal_z(self, index: int, /) -> float:
         """new template no description.
+
+        Underlying Java method: PShape.getNormalZ
 
         Parameters
         ----------
@@ -1400,6 +1544,8 @@ class Py5Shape:
     def get_parent(self) -> Py5Shape:
         """new template no description.
 
+        Underlying Java method: PShape.getParent
+
         Notes
         -----
 
@@ -1409,6 +1555,8 @@ class Py5Shape:
 
     def get_shininess(self, index: int, /) -> float:
         """new template no description.
+
+        Underlying Java method: PShape.getShininess
 
         Parameters
         ----------
@@ -1426,6 +1574,8 @@ class Py5Shape:
     def get_specular(self, index: int, /) -> int:
         """new template no description.
 
+        Underlying Java method: PShape.getSpecular
+
         Parameters
         ----------
 
@@ -1442,6 +1592,8 @@ class Py5Shape:
     def get_stroke(self, index: int, /) -> int:
         """new template no description.
 
+        Underlying Java method: PShape.getStroke
+
         Parameters
         ----------
 
@@ -1457,6 +1609,8 @@ class Py5Shape:
 
     def get_stroke_weight(self, index: int, /) -> float:
         """new template no description.
+
+        Underlying Java method: PShape.getStrokeWeight
 
         Parameters
         ----------
@@ -1475,6 +1629,8 @@ class Py5Shape:
     def get_tessellation(self) -> Py5Shape:
         """new template no description.
 
+        Underlying Java method: PShape.getTessellation
+
         Notes
         -----
 
@@ -1484,6 +1640,8 @@ class Py5Shape:
 
     def get_texture_u(self, index: int, /) -> float:
         """new template no description.
+
+        Underlying Java method: PShape.getTextureU
 
         Parameters
         ----------
@@ -1501,6 +1659,8 @@ class Py5Shape:
     def get_texture_v(self, index: int, /) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getTextureV
+
         Parameters
         ----------
 
@@ -1516,6 +1676,8 @@ class Py5Shape:
 
     def get_tint(self, index: int, /) -> int:
         """new template no description.
+
+        Underlying Java method: PShape.getTint
 
         Parameters
         ----------
@@ -1534,6 +1696,8 @@ class Py5Shape:
     def get_vertex(self, index: int, /) -> NDArray[(Any,), Float]:
         """The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
         point located at the position defined by the ``index`` parameter.
+
+        Underlying Java method: PShape.getVertex
 
         Methods
         -------
@@ -1569,6 +1733,8 @@ class Py5Shape:
         """The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
         point located at the position defined by the ``index`` parameter.
 
+        Underlying Java method: PShape.getVertex
+
         Methods
         -------
 
@@ -1602,6 +1768,8 @@ class Py5Shape:
         """The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
         point located at the position defined by the ``index`` parameter.
 
+        Underlying Java method: PShape.getVertex
+
         Methods
         -------
 
@@ -1634,6 +1802,8 @@ class Py5Shape:
         """The ``get_vertex_count()`` method returns the number of vertices that make up a
         PShape.
 
+        Underlying Java method: PShape.getVertexCount
+
         Notes
         -----
 
@@ -1645,6 +1815,8 @@ class Py5Shape:
 
     def get_vertex_x(self, index: int, /) -> float:
         """new template no description.
+
+        Underlying Java method: PShape.getVertexX
 
         Parameters
         ----------
@@ -1662,6 +1834,8 @@ class Py5Shape:
     def get_vertex_y(self, index: int, /) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getVertexY
+
         Parameters
         ----------
 
@@ -1677,6 +1851,8 @@ class Py5Shape:
 
     def get_vertex_z(self, index: int, /) -> float:
         """new template no description.
+
+        Underlying Java method: PShape.getVertexZ
 
         Parameters
         ----------
@@ -1694,6 +1870,8 @@ class Py5Shape:
     def get_width(self) -> float:
         """new template no description.
 
+        Underlying Java method: PShape.getWidth
+
         Notes
         -----
 
@@ -1703,6 +1881,8 @@ class Py5Shape:
 
     def is2d(self) -> bool:
         """new template no description.
+
+        Underlying Java method: PShape.is2D
 
         Notes
         -----
@@ -1714,6 +1894,8 @@ class Py5Shape:
     def is3d(self) -> bool:
         """new template no description.
 
+        Underlying Java method: PShape.is3D
+
         Notes
         -----
 
@@ -1723,6 +1905,8 @@ class Py5Shape:
 
     def is_closed(self) -> bool:
         """new template no description.
+
+        Underlying Java method: PShape.isClosed
 
         Notes
         -----
@@ -1734,6 +1918,8 @@ class Py5Shape:
     def is_visible(self) -> bool:
         """Returns a boolean value "true" if the image is set to be visible, "false" if
         not.
+
+        Underlying Java method: PShape.isVisible
 
         Notes
         -----
@@ -1749,6 +1935,8 @@ class Py5Shape:
 
     def remove_child(self, idx: int, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.removeChild
 
         Parameters
         ----------
@@ -1766,6 +1954,8 @@ class Py5Shape:
     def reset_matrix(self) -> None:
         """Replaces the current matrix of a shape with the identity matrix.
 
+        Underlying Java method: PShape.resetMatrix
+
         Notes
         -----
 
@@ -1777,6 +1967,8 @@ class Py5Shape:
     @overload
     def rotate(self, angle: float, /) -> None:
         """Rotates the shape the amount specified by the ``angle`` parameter.
+
+        Underlying Java method: PShape.rotate
 
         Methods
         -------
@@ -1821,6 +2013,8 @@ class Py5Shape:
     def rotate(self, angle: float, v0: float, v1: float, v2: float, /) -> None:
         """Rotates the shape the amount specified by the ``angle`` parameter.
 
+        Underlying Java method: PShape.rotate
+
         Methods
         -------
 
@@ -1862,6 +2056,8 @@ class Py5Shape:
 
     def rotate(self, *args):
         """Rotates the shape the amount specified by the ``angle`` parameter.
+
+        Underlying Java method: PShape.rotate
 
         Methods
         -------
@@ -1906,6 +2102,8 @@ class Py5Shape:
         """Rotates the shape around the x-axis the amount specified by the ``angle``
         parameter.
 
+        Underlying Java method: PShape.rotateX
+
         Parameters
         ----------
 
@@ -1934,6 +2132,8 @@ class Py5Shape:
     def rotate_y(self, angle: float, /) -> None:
         """Rotates the shape around the y-axis the amount specified by the ``angle``
         parameter.
+
+        Underlying Java method: PShape.rotateY
 
         Parameters
         ----------
@@ -1964,6 +2164,8 @@ class Py5Shape:
         """Rotates the shape around the z-axis the amount specified by the ``angle``
         parameter.
 
+        Underlying Java method: PShape.rotateZ
+
         Parameters
         ----------
 
@@ -1993,6 +2195,8 @@ class Py5Shape:
     def scale(self, s: float, /) -> None:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
+
+        Underlying Java method: PShape.scale
 
         Methods
         -------
@@ -2039,6 +2243,8 @@ class Py5Shape:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
+        Underlying Java method: PShape.scale
+
         Methods
         -------
 
@@ -2084,6 +2290,8 @@ class Py5Shape:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
+        Underlying Java method: PShape.scale
+
         Methods
         -------
 
@@ -2127,6 +2335,8 @@ class Py5Shape:
     def scale(self, *args):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
+
+        Underlying Java method: PShape.scale
 
         Methods
         -------
@@ -2172,6 +2382,8 @@ class Py5Shape:
     def set_ambient(self, ambient: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setAmbient
+
         Methods
         -------
 
@@ -2200,6 +2412,8 @@ class Py5Shape:
     def set_ambient(self, index: int, ambient: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setAmbient
+
         Methods
         -------
 
@@ -2226,6 +2440,8 @@ class Py5Shape:
 
     def set_ambient(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setAmbient
 
         Methods
         -------
@@ -2254,6 +2470,8 @@ class Py5Shape:
     @overload
     def set_attrib(self, name: str, index: int, /, *values: bool) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setAttrib
 
         Methods
         -------
@@ -2293,6 +2511,8 @@ class Py5Shape:
     def set_attrib(self, name: str, index: int, /, *values: float) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setAttrib
+
         Methods
         -------
 
@@ -2331,6 +2551,8 @@ class Py5Shape:
     def set_attrib(self, name: str, index: int, /, *values: int) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setAttrib
+
         Methods
         -------
 
@@ -2365,8 +2587,11 @@ class Py5Shape:
 """
         pass
 
+    @_py5shape_type_fixer
     def set_attrib(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setAttrib
 
         Methods
         -------
@@ -2406,6 +2631,8 @@ class Py5Shape:
     def set_emissive(self, emissive: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setEmissive
+
         Methods
         -------
 
@@ -2434,6 +2661,8 @@ class Py5Shape:
     def set_emissive(self, index: int, emissive: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setEmissive
+
         Methods
         -------
 
@@ -2460,6 +2689,8 @@ class Py5Shape:
 
     def set_emissive(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setEmissive
 
         Methods
         -------
@@ -2488,6 +2719,8 @@ class Py5Shape:
     @overload
     def set_fill(self, fill: bool, /) -> None:
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
+
+        Underlying Java method: PShape.setFill
 
         Methods
         -------
@@ -2527,6 +2760,8 @@ class Py5Shape:
     def set_fill(self, fill: int, /) -> None:
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
+        Underlying Java method: PShape.setFill
+
         Methods
         -------
 
@@ -2565,6 +2800,8 @@ class Py5Shape:
     def set_fill(self, index: int, fill: int, /) -> None:
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
+        Underlying Java method: PShape.setFill
+
         Methods
         -------
 
@@ -2599,8 +2836,11 @@ class Py5Shape:
 """
         pass
 
+    @_py5shape_type_fixer
     def set_fill(self, *args):
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
+
+        Underlying Java method: PShape.setFill
 
         Methods
         -------
@@ -2639,6 +2879,8 @@ class Py5Shape:
     def set_name(self, name: str, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setName
+
         Parameters
         ----------
 
@@ -2655,6 +2897,8 @@ class Py5Shape:
     def set_normal(self, index: int, nx: float,
                    ny: float, nz: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setNormal
 
         Parameters
         ----------
@@ -2681,6 +2925,8 @@ class Py5Shape:
     @overload
     def set_shininess(self, shine: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setShininess
 
         Methods
         -------
@@ -2710,6 +2956,8 @@ class Py5Shape:
     def set_shininess(self, index: int, shine: float, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setShininess
+
         Methods
         -------
 
@@ -2736,6 +2984,8 @@ class Py5Shape:
 
     def set_shininess(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setShininess
 
         Methods
         -------
@@ -2765,6 +3015,8 @@ class Py5Shape:
     def set_specular(self, specular: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setSpecular
+
         Methods
         -------
 
@@ -2793,6 +3045,8 @@ class Py5Shape:
     def set_specular(self, index: int, specular: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setSpecular
+
         Methods
         -------
 
@@ -2819,6 +3073,8 @@ class Py5Shape:
 
     def set_specular(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setSpecular
 
         Methods
         -------
@@ -2847,6 +3103,8 @@ class Py5Shape:
     @overload
     def set_stroke(self, stroke: bool, /) -> None:
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
+
+        Underlying Java method: PShape.setStroke
 
         Methods
         -------
@@ -2886,6 +3144,8 @@ class Py5Shape:
     def set_stroke(self, stroke: int, /) -> None:
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
+        Underlying Java method: PShape.setStroke
+
         Methods
         -------
 
@@ -2924,6 +3184,8 @@ class Py5Shape:
     def set_stroke(self, index: int, stroke: int, /) -> None:
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
+        Underlying Java method: PShape.setStroke
+
         Methods
         -------
 
@@ -2958,8 +3220,11 @@ class Py5Shape:
 """
         pass
 
+    @_py5shape_type_fixer
     def set_stroke(self, *args):
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
+
+        Underlying Java method: PShape.setStroke
 
         Methods
         -------
@@ -2998,6 +3263,8 @@ class Py5Shape:
     def set_stroke_cap(self, cap: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setStrokeCap
+
         Parameters
         ----------
 
@@ -3013,6 +3280,8 @@ class Py5Shape:
 
     def set_stroke_join(self, join: int, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setStrokeJoin
 
         Parameters
         ----------
@@ -3030,6 +3299,8 @@ class Py5Shape:
     @overload
     def set_stroke_weight(self, weight: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setStrokeWeight
 
         Methods
         -------
@@ -3059,6 +3330,8 @@ class Py5Shape:
     def set_stroke_weight(self, index: int, weight: float, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setStrokeWeight
+
         Methods
         -------
 
@@ -3085,6 +3358,8 @@ class Py5Shape:
 
     def set_stroke_weight(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setStrokeWeight
 
         Methods
         -------
@@ -3113,6 +3388,8 @@ class Py5Shape:
     def set_texture(self, tex: Py5Image, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setTexture
+
         Parameters
         ----------
 
@@ -3129,6 +3406,8 @@ class Py5Shape:
     def set_texture_mode(self, mode: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setTextureMode
+
         Parameters
         ----------
 
@@ -3144,6 +3423,8 @@ class Py5Shape:
 
     def set_texture_uv(self, index: int, u: float, v: float, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setTextureUV
 
         Parameters
         ----------
@@ -3167,6 +3448,8 @@ class Py5Shape:
     @overload
     def set_tint(self, tint: bool, /) -> None:
         """new template no description.
+
+        Underlying Java method: PShape.setTint
 
         Methods
         -------
@@ -3203,6 +3486,8 @@ class Py5Shape:
     def set_tint(self, fill: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setTint
+
         Methods
         -------
 
@@ -3238,6 +3523,8 @@ class Py5Shape:
     def set_tint(self, index: int, tint: int, /) -> None:
         """new template no description.
 
+        Underlying Java method: PShape.setTint
+
         Methods
         -------
 
@@ -3269,8 +3556,11 @@ class Py5Shape:
 """
         pass
 
+    @_py5shape_type_fixer
     def set_tint(self, *args):
         """new template no description.
+
+        Underlying Java method: PShape.setTint
 
         Methods
         -------
@@ -3307,6 +3597,8 @@ class Py5Shape:
     def set_vertex(self, index: int, x: float, y: float, /) -> None:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
+
+        Underlying Java method: PShape.setVertex
 
         Methods
         -------
@@ -3350,6 +3642,8 @@ class Py5Shape:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
+        Underlying Java method: PShape.setVertex
+
         Methods
         -------
 
@@ -3392,6 +3686,8 @@ class Py5Shape:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
+        Underlying Java method: PShape.setVertex
+
         Methods
         -------
 
@@ -3433,6 +3729,8 @@ class Py5Shape:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
+        Underlying Java method: PShape.setVertex
+
         Methods
         -------
 
@@ -3473,6 +3771,8 @@ class Py5Shape:
     def set_visible(self, visible: bool, /) -> None:
         """Sets the shape to be visible or invisible.
 
+        Underlying Java method: PShape.setVisible
+
         Parameters
         ----------
 
@@ -3494,6 +3794,8 @@ class Py5Shape:
     @overload
     def translate(self, x: float, y: float, /) -> None:
         """Specifies an amount to displace the shape.
+
+        Underlying Java method: PShape.translate
 
         Methods
         -------
@@ -3535,6 +3837,8 @@ class Py5Shape:
     def translate(self, x: float, y: float, z: float, /) -> None:
         """Specifies an amount to displace the shape.
 
+        Underlying Java method: PShape.translate
+
         Methods
         -------
 
@@ -3573,6 +3877,8 @@ class Py5Shape:
 
     def translate(self, *args):
         """Specifies an amount to displace the shape.
+
+        Underlying Java method: PShape.translate
 
         Methods
         -------

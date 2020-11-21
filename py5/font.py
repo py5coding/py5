@@ -43,6 +43,26 @@ def _return_list_str(f):
 
 
 class Py5Font:
+    """PFont is the font class for Processing.
+
+    Underlying Java class: PFont.PFont
+
+    Notes
+    -----
+
+    PFont is the font class for Processing. To create a font to use with Processing,
+    select "Create Font..." from the Tools menu. This will create a font in the
+    format Processing requires and also adds it to the current sketch's data
+    directory. Processing displays fonts using the .vlw font format, which uses
+    images for each letter, rather than defining them through vector data. The
+    ``load_font()`` function constructs a new font and ``text_font()`` makes a font
+    active. The ``list()`` method creates a list of the fonts installed on the
+    computer, which is useful information to use with the ``create_font()`` function
+    for dynamically converting fonts into a format to use with Processing.
+
+    To create a new font dynamically, use the ``create_font()`` function. Do not use
+    the syntax ``new Py5Font()``.
+"""
 
     _cls = jpype.JClass('processing.core.PFont')
     CHARSET = _cls.CHARSET
@@ -52,6 +72,8 @@ class Py5Font:
 
     def ascent(self) -> float:
         """new template no description.
+
+        Underlying Java method: PFont.ascent
 
         Notes
         -----
@@ -63,6 +85,8 @@ class Py5Font:
     def descent(self) -> float:
         """new template no description.
 
+        Underlying Java method: PFont.descent
+
         Notes
         -----
 
@@ -72,6 +96,8 @@ class Py5Font:
 
     def get_default_size(self) -> int:
         """new template no description.
+
+        Underlying Java method: PFont.getDefaultSize
 
         Notes
         -----
@@ -83,6 +109,8 @@ class Py5Font:
     def get_glyph_count(self) -> int:
         """new template no description.
 
+        Underlying Java method: PFont.getGlyphCount
+
         Notes
         -----
 
@@ -92,6 +120,8 @@ class Py5Font:
 
     def get_name(self) -> str:
         """new template no description.
+
+        Underlying Java method: PFont.getName
 
         Notes
         -----
@@ -103,6 +133,8 @@ class Py5Font:
     def get_post_script_name(self) -> str:
         """new template no description.
 
+        Underlying Java method: PFont.getPostScriptName
+
         Notes
         -----
 
@@ -113,6 +145,8 @@ class Py5Font:
     @overload
     def get_shape(self, ch: chr, /) -> Py5Shape:
         """new template no description.
+
+        Underlying Java method: PFont.getShape
 
         Methods
         -------
@@ -142,6 +176,8 @@ class Py5Font:
     def get_shape(self, ch: chr, detail: float, /) -> Py5Shape:
         """new template no description.
 
+        Underlying Java method: PFont.getShape
+
         Methods
         -------
 
@@ -170,6 +206,8 @@ class Py5Font:
     def get_shape(self, *args):
         """new template no description.
 
+        Underlying Java method: PFont.getShape
+
         Methods
         -------
 
@@ -197,6 +235,8 @@ class Py5Font:
     def get_size(self) -> int:
         """new template no description.
 
+        Underlying Java method: PFont.getSize
+
         Notes
         -----
 
@@ -207,6 +247,8 @@ class Py5Font:
     def is_smooth(self) -> bool:
         """new template no description.
 
+        Underlying Java method: PFont.isSmooth
+
         Notes
         -----
 
@@ -216,6 +258,8 @@ class Py5Font:
 
     def is_stream(self) -> bool:
         """new template no description.
+
+        Underlying Java method: PFont.isStream
 
         Notes
         -----
@@ -229,6 +273,8 @@ class Py5Font:
     def list(cls) -> List[str]:
         """Gets a list of the fonts installed on the system.
 
+        Underlying Java method: PFont.list
+
         Notes
         -----
 
@@ -241,6 +287,8 @@ class Py5Font:
     def set_subsetting(self) -> None:
         """new template no description.
 
+        Underlying Java method: PFont.setSubsetting
+
         Notes
         -----
 
@@ -250,6 +298,8 @@ class Py5Font:
 
     def width(self, c: chr, /) -> float:
         """new template no description.
+
+        Underlying Java method: PFont.width
 
         Parameters
         ----------

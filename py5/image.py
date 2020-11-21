@@ -21,6 +21,27 @@ def _return_py5image(f):
 
 
 class Py5Image(PixelMixin, Py5Base):
+    """Datatype for storing images.
+
+    Underlying Java class: PImage.PImage
+
+    Notes
+    -----
+
+    Datatype for storing images. Processing can display ``.gif``, ``.jpg``,
+    ``.tga``, and ``.png`` images. Images may be displayed in 2D and 3D space.
+    Before an image is used, it must be loaded with the ``load_image()`` function.
+    The ``Py5Image`` class contains fields for the ``width`` and ``height`` of the
+    image, as well as an array called ``pixels[]`` that contains the values for
+    every pixel in the image. The methods described below allow easy access to the
+    image's pixels and alpha channel and simplify the process of compositing.
+
+    Before using the ``pixels[]`` array, be sure to use the ``load_pixels()`` method
+    on the image to make sure that the pixel data is properly loaded.
+
+    To create a new image, use the ``create_image()`` function. Do not use the
+    syntax ``new Py5Image()``.
+"""
 
     def __init__(self, pimage):
         self._instance = pimage
@@ -65,6 +86,8 @@ class Py5Image(PixelMixin, Py5Base):
     def _get_height(self) -> int:
         """The height of the image in units of pixels.
 
+        Underlying Java field: PImage.height
+
         Notes
         -----
 
@@ -75,6 +98,8 @@ class Py5Image(PixelMixin, Py5Base):
 
     def _get_pixel_density(self) -> int:
         """This function is new with Processing 3.0.
+
+        Underlying Java method: PApplet.pixelDensity
 
         Parameters
         ----------
@@ -111,6 +136,8 @@ class Py5Image(PixelMixin, Py5Base):
         (called a Retina display on OS X or high-dpi on Windows and Linux), the width
         and height of the sketch do not change, but the number of pixels is doubled.
 
+        Underlying Java field: PApplet.pixelHeight
+
         Notes
         -----
 
@@ -132,6 +159,8 @@ class Py5Image(PixelMixin, Py5Base):
         (called a Retina display on OS X or high-dpi on Windows and Linux), the width
         and height of the sketch do not change, but the number of pixels is doubled.
 
+        Underlying Java field: PApplet.pixelWidth
+
         Notes
         -----
 
@@ -150,6 +179,8 @@ class Py5Image(PixelMixin, Py5Base):
 
     def _get_pixels(self) -> JArray(JInt):
         """The pixels[] array contains the values for all the pixels in the image.
+
+        Underlying Java field: PImage.pixels
 
         Notes
         -----
@@ -170,6 +201,8 @@ class Py5Image(PixelMixin, Py5Base):
     def _get_width(self) -> int:
         """The width of the image in units of pixels.
 
+        Underlying Java field: PImage.width
+
         Notes
         -----
 
@@ -182,6 +215,8 @@ class Py5Image(PixelMixin, Py5Base):
     def blend(self, sx: int, sy: int, sw: int, sh: int, dx: int,
               dy: int, dw: int, dh: int, mode: int, /) -> None:
         """Blends a region of pixels into the image specified by the ``img`` parameter.
+
+        Underlying Java method: PImage.blend
 
         Methods
         -------
@@ -278,6 +313,8 @@ class Py5Image(PixelMixin, Py5Base):
               dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None:
         """Blends a region of pixels into the image specified by the ``img`` parameter.
 
+        Underlying Java method: PImage.blend
+
         Methods
         -------
 
@@ -370,6 +407,8 @@ class Py5Image(PixelMixin, Py5Base):
 
     def blend(self, *args):
         """Blends a region of pixels into the image specified by the ``img`` parameter.
+
+        Underlying Java method: PImage.blend
 
         Methods
         -------
@@ -465,6 +504,8 @@ class Py5Image(PixelMixin, Py5Base):
     def copy(self) -> Py5Image:
         """Copies a region of pixels from one image into another.
 
+        Underlying Java method: PImage.copy
+
         Methods
         -------
 
@@ -521,6 +562,8 @@ class Py5Image(PixelMixin, Py5Base):
     def copy(self, sx: int, sy: int, sw: int, sh: int,
              dx: int, dy: int, dw: int, dh: int, /) -> None:
         """Copies a region of pixels from one image into another.
+
+        Underlying Java method: PImage.copy
 
         Methods
         -------
@@ -579,6 +622,8 @@ class Py5Image(PixelMixin, Py5Base):
              sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None:
         """Copies a region of pixels from one image into another.
 
+        Underlying Java method: PImage.copy
+
         Methods
         -------
 
@@ -633,6 +678,8 @@ class Py5Image(PixelMixin, Py5Base):
 
     def copy(self, *args):
         """Copies a region of pixels from one image into another.
+
+        Underlying Java method: PImage.copy
 
         Methods
         -------
@@ -702,6 +749,8 @@ class Py5Image(PixelMixin, Py5Base):
         blur is equivalent to Gaussian blur of radius 1. Larger values increase the
         blur.  ERODE Reduces the light areas. No parameter is used.  DILATE Increases
         the light areas. No parameter is used.
+
+        Underlying Java method: PImage.filter
 
         Methods
         -------
@@ -774,6 +823,8 @@ class Py5Image(PixelMixin, Py5Base):
         blur.  ERODE Reduces the light areas. No parameter is used.  DILATE Increases
         the light areas. No parameter is used.
 
+        Underlying Java method: PImage.filter
+
         Methods
         -------
 
@@ -844,6 +895,8 @@ class Py5Image(PixelMixin, Py5Base):
         blur.  ERODE Reduces the light areas. No parameter is used.  DILATE Increases
         the light areas. No parameter is used.
 
+        Underlying Java method: PImage.filter
+
         Methods
         -------
 
@@ -902,6 +955,8 @@ class Py5Image(PixelMixin, Py5Base):
     def get(self) -> Py5Image:
         """Reads the color of any pixel or grabs a section of an image.
 
+        Underlying Java method: PImage.get
+
         Methods
         -------
 
@@ -952,6 +1007,8 @@ class Py5Image(PixelMixin, Py5Base):
     @overload
     def get(self, x: int, y: int, /) -> int:
         """Reads the color of any pixel or grabs a section of an image.
+
+        Underlying Java method: PImage.get
 
         Methods
         -------
@@ -1004,6 +1061,8 @@ class Py5Image(PixelMixin, Py5Base):
     def get(self, x: int, y: int, w: int, h: int, /) -> Py5Image:
         """Reads the color of any pixel or grabs a section of an image.
 
+        Underlying Java method: PImage.get
+
         Methods
         -------
 
@@ -1053,6 +1112,8 @@ class Py5Image(PixelMixin, Py5Base):
 
     def get(self, *args):
         """Reads the color of any pixel or grabs a section of an image.
+
+        Underlying Java method: PImage.get
 
         Methods
         -------
@@ -1104,6 +1165,8 @@ class Py5Image(PixelMixin, Py5Base):
     def load_pixels(self) -> None:
         """Loads the pixel data for the image into its ``pixels[]`` array.
 
+        Underlying Java method: PImage.loadPixels
+
         Notes
         -----
 
@@ -1116,6 +1179,8 @@ class Py5Image(PixelMixin, Py5Base):
     def mask(self, mask_array: JArray(JInt), /) -> None:
         """Masks part of an image from displaying by loading another image and using it as
         an alpha channel.
+
+        Underlying Java method: PImage.mask
 
         Methods
         -------
@@ -1155,6 +1220,8 @@ class Py5Image(PixelMixin, Py5Base):
         """Masks part of an image from displaying by loading another image and using it as
         an alpha channel.
 
+        Underlying Java method: PImage.mask
+
         Methods
         -------
 
@@ -1191,6 +1258,8 @@ class Py5Image(PixelMixin, Py5Base):
     def mask(self, *args):
         """Masks part of an image from displaying by loading another image and using it as
         an alpha channel.
+
+        Underlying Java method: PImage.mask
 
         Methods
         -------
@@ -1229,6 +1298,8 @@ class Py5Image(PixelMixin, Py5Base):
     def update_pixels(self) -> None:
         """Updates the image with the data in its ``pixels[]`` array.
 
+        Underlying Java method: PImage.updatePixels
+
         Methods
         -------
 
@@ -1265,6 +1336,8 @@ class Py5Image(PixelMixin, Py5Base):
     def update_pixels(self, x: int, y: int, w: int, h: int, /) -> None:
         """Updates the image with the data in its ``pixels[]`` array.
 
+        Underlying Java method: PImage.updatePixels
+
         Methods
         -------
 
@@ -1299,6 +1372,8 @@ class Py5Image(PixelMixin, Py5Base):
 
     def update_pixels(self, *args):
         """Updates the image with the data in its ``pixels[]`` array.
+
+        Underlying Java method: PImage.updatePixels
 
         Methods
         -------

@@ -13,11 +13,9 @@ with open(Path('py5', '__init__.py')) as f:
 
 
 INSTALL_REQUIRES = [
-    'cairocffi>=1.1',
-    'cairosvg>=2.4',
     'jpype1>=1.0.1',
     'line_profiler>=2.1.2',
-    'matplotlib>=3.2',
+    'noise>=1.2.2',
     'nptyping>=1.3',
     'numpy>=1.18',
     'pandas>=1.0',
@@ -47,8 +45,13 @@ setup(
     },
     classifiers=[
         'Intended Audience :: Developers',
+        'Intended Audience :: Education',
+        'Intended Audience :: Science/Research',
+        'Topic :: Artistic Software',
+        'Topic :: Multimedia :: Graphics',
         'Development Status :: 3 - Alpha',
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+        'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Java',
     ],
 )

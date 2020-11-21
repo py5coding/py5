@@ -105,23 +105,23 @@ class ThreadsMixin:
 
         return args, kwargs
 
-    def _launch_py5thread(self, name, py5thread):
+    def _launch_py5thread(self, name, py5thread, daemon):
         if isinstance(py5thread, Py5RepeatingThread) and self.has_thread(name):
             self.stop_thread(name, wait=True)
 
-        t = threading.Thread(target=py5thread, name=name)
+        t = threading.Thread(name=name, target=py5thread, daemon=daemon)
         t.start()
         self._py5threads[t.name] = (t, py5thread)
 
         return t.name
 
     def _shutdown(self):
-        self.stop_all_threads(wait=True)
+        self.stop_all_threads(wait=False)
         super()._shutdown()
 
     # *** BEGIN METHODS ***
 
-    def launch_thread(self, f: Callable, name: str = None,
+    def launch_thread(self, f: Callable, name: str = None, daemon: bool = True,
                       args: Tuple = None, kwargs: Dict = None) -> str:
         """new template no description.
 
@@ -129,6 +129,9 @@ class ThreadsMixin:
         ----------
 
         args: Tuple
+            missing variable description
+
+        daemon: bool
             missing variable description
 
         f: Callable
@@ -146,12 +149,15 @@ class ThreadsMixin:
         new template no description.
 """
         args, kwargs = self._check_param_types(args, kwargs)
-        return self._launch_py5thread(name, Py5Thread(self, f, args, kwargs))
+        return self._launch_py5thread(
+            name, Py5Thread(
+                self, f, args, kwargs), daemon)
 
     def launch_promise_thread(
             self,
             f: Callable,
             name: str = None,
+            daemon: bool = True,
             args: Tuple = None,
             kwargs: Dict = None) -> Py5Promise:
         """new template no description.
@@ -160,6 +166,9 @@ class ThreadsMixin:
         ----------
 
         args: Tuple
+            missing variable description
+
+        daemon: bool
             missing variable description
 
         f: Callable
@@ -180,7 +189,7 @@ class ThreadsMixin:
         promise = Py5Promise()
         self._launch_py5thread(
             name, Py5PromiseThread(
-                self, f, promise, args, kwargs))
+                self, f, promise, args, kwargs), daemon)
         return promise
 
     def launch_repeating_thread(
@@ -188,6 +197,7 @@ class ThreadsMixin:
             f: Callable,
             name: str = None,
             time_delay: float = 0,
+            daemon: bool = True,
             args: Tuple = None,
             kwargs: Dict = None) -> str:
         """new template no description.
@@ -196,6 +206,9 @@ class ThreadsMixin:
         ----------
 
         args: Tuple
+            missing variable description
+
+        daemon: bool
             missing variable description
 
         f: Callable
@@ -218,7 +231,7 @@ class ThreadsMixin:
         args, kwargs = self._check_param_types(args, kwargs)
         return self._launch_py5thread(
             name, Py5RepeatingThread(
-                self, f, time_delay, args, kwargs))
+                self, f, time_delay, args, kwargs), daemon)
 
     def _remove_dead_threads(self):
         thread_names = list(self._py5threads.keys())

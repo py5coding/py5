@@ -13,7 +13,7 @@ class DataMixin:
     @classmethod
     def load_json(cls, filename: Union[str, Path],
                   **kwargs: Dict[str, Any]) -> Any:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -27,8 +27,9 @@ class DataMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         with open(filename, 'r') as f:
             return json.load(f, **kwargs)
 
@@ -39,7 +40,7 @@ class DataMixin:
                                   Path],
                   **kwargs: Dict[str,
                                  Any]) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -56,14 +57,15 @@ class DataMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         with open(filename, 'w') as f:
             json.dump(json_data, f, **kwargs)
 
     @classmethod
     def parse_json(cls, serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -77,6 +79,7 @@ class DataMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return json.loads(serialized_json, **kwargs)

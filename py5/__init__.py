@@ -43,7 +43,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.3a3'
+__version__ = '0.3a4'
 
 logger = logging.getLogger(__name__)
 
@@ -278,7 +278,7 @@ def alpha(rgb: int, /) -> float:
     -----
 
     Extracts the alpha value from a color.
-"""
+    """
     return _py5sketch.alpha(rgb)
 
 
@@ -293,9 +293,9 @@ def ambient(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * ambient(gray: float) -> None
-     * ambient(rgb: int) -> None
-     * ambient(v1: float, v2: float, v3: float) -> None
+     * ambient(gray: float, /) -> None
+     * ambient(rgb: int, /) -> None
+     * ambient(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -325,7 +325,7 @@ def ambient(gray: float, /) -> None:
     half of the green light to reflect. Used in combination with ``emissive()``,
     ``specular()``, and ``shininess()`` in setting the material properties of
     shapes.
-"""
+    """
     pass
 
 
@@ -340,9 +340,9 @@ def ambient(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * ambient(gray: float) -> None
-     * ambient(rgb: int) -> None
-     * ambient(v1: float, v2: float, v3: float) -> None
+     * ambient(gray: float, /) -> None
+     * ambient(rgb: int, /) -> None
+     * ambient(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -372,7 +372,7 @@ def ambient(v1: float, v2: float, v3: float, /) -> None:
     half of the green light to reflect. Used in combination with ``emissive()``,
     ``specular()``, and ``shininess()`` in setting the material properties of
     shapes.
-"""
+    """
     pass
 
 
@@ -387,9 +387,9 @@ def ambient(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * ambient(gray: float) -> None
-     * ambient(rgb: int) -> None
-     * ambient(v1: float, v2: float, v3: float) -> None
+     * ambient(gray: float, /) -> None
+     * ambient(rgb: int, /) -> None
+     * ambient(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -419,7 +419,7 @@ def ambient(rgb: int, /) -> None:
     half of the green light to reflect. Used in combination with ``emissive()``,
     ``specular()``, and ``shininess()`` in setting the material properties of
     shapes.
-"""
+    """
     pass
 
 
@@ -433,9 +433,9 @@ def ambient(*args):
 
     You can use any of the following signatures:
 
-     * ambient(gray: float) -> None
-     * ambient(rgb: int) -> None
-     * ambient(v1: float, v2: float, v3: float) -> None
+     * ambient(gray: float, /) -> None
+     * ambient(rgb: int, /) -> None
+     * ambient(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -465,7 +465,7 @@ def ambient(*args):
     half of the green light to reflect. Used in combination with ``emissive()``,
     ``specular()``, and ``shininess()`` in setting the material properties of
     shapes.
-"""
+    """
     return _py5sketch.ambient(*args)
 
 
@@ -480,8 +480,8 @@ def ambient_light(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * ambient_light(v1: float, v2: float, v3: float) -> None
-     * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float) -> None
+     * ambient_light(v1: float, v2: float, v3: float, /) -> None
+     * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -515,7 +515,7 @@ def ambient_light(v1: float, v2: float, v3: float, /) -> None:
     them to only have an effect the first time through the loop. The ``v1``, ``v2``,
     and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
     the current color mode.
-"""
+    """
     pass
 
 
@@ -531,8 +531,8 @@ def ambient_light(v1: float, v2: float, v3: float,
 
     You can use any of the following signatures:
 
-     * ambient_light(v1: float, v2: float, v3: float) -> None
-     * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float) -> None
+     * ambient_light(v1: float, v2: float, v3: float, /) -> None
+     * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -566,7 +566,7 @@ def ambient_light(v1: float, v2: float, v3: float,
     them to only have an effect the first time through the loop. The ``v1``, ``v2``,
     and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
     the current color mode.
-"""
+    """
     pass
 
 
@@ -580,8 +580,8 @@ def ambient_light(*args):
 
     You can use any of the following signatures:
 
-     * ambient_light(v1: float, v2: float, v3: float) -> None
-     * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float) -> None
+     * ambient_light(v1: float, v2: float, v3: float, /) -> None
+     * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -615,7 +615,7 @@ def ambient_light(*args):
     them to only have an effect the first time through the loop. The ``v1``, ``v2``,
     and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
     the current color mode.
-"""
+    """
     return _py5sketch.ambient_light(*args)
 
 
@@ -631,10 +631,10 @@ def apply_matrix(n00: float, n01: float, n02: float,
 
     You can use any of the following signatures:
 
-     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -700,7 +700,7 @@ def apply_matrix(n00: float, n01: float, n02: float,
     is very slow because it will try to calculate the inverse of the transform, so
     avoid it whenever possible. The equivalent function in OpenGL is
     ``gl_mult_matrix()``.
-"""
+    """
     pass
 
 
@@ -732,10 +732,10 @@ def apply_matrix(
 
     You can use any of the following signatures:
 
-     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -801,7 +801,7 @@ def apply_matrix(
     is very slow because it will try to calculate the inverse of the transform, so
     avoid it whenever possible. The equivalent function in OpenGL is
     ``gl_mult_matrix()``.
-"""
+    """
     pass
 
 
@@ -816,10 +816,10 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
 
     You can use any of the following signatures:
 
-     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -885,7 +885,7 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
     is very slow because it will try to calculate the inverse of the transform, so
     avoid it whenever possible. The equivalent function in OpenGL is
     ``gl_mult_matrix()``.
-"""
+    """
     pass
 
 
@@ -900,10 +900,10 @@ def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
 
     You can use any of the following signatures:
 
-     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -969,7 +969,7 @@ def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
     is very slow because it will try to calculate the inverse of the transform, so
     avoid it whenever possible. The equivalent function in OpenGL is
     ``gl_mult_matrix()``.
-"""
+    """
     pass
 
 
@@ -983,10 +983,10 @@ def apply_matrix(*args):
 
     You can use any of the following signatures:
 
-     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -1052,7 +1052,7 @@ def apply_matrix(*args):
     is very slow because it will try to calculate the inverse of the transform, so
     avoid it whenever possible. The equivalent function in OpenGL is
     ``gl_mult_matrix()``.
-"""
+    """
     return _py5sketch.apply_matrix(*args)
 
 
@@ -1068,8 +1068,8 @@ def arc(a: float, b: float, c: float, d: float,
 
     You can use any of the following signatures:
 
-     * arc(a: float, b: float, c: float, d: float, start: float, stop: float) -> None
-     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int) -> None
+     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None
+     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /) -> None
 
     Parameters
     ----------
@@ -1113,7 +1113,7 @@ def arc(a: float, b: float, c: float, d: float,
     For example, the shape may jitter on screen when rotating slowly. If you're
     having an issue with how arcs are rendered, you'll need to draw the arc yourself
     with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
-"""
+    """
     pass
 
 
@@ -1129,8 +1129,8 @@ def arc(a: float, b: float, c: float, d: float,
 
     You can use any of the following signatures:
 
-     * arc(a: float, b: float, c: float, d: float, start: float, stop: float) -> None
-     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int) -> None
+     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None
+     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /) -> None
 
     Parameters
     ----------
@@ -1174,7 +1174,7 @@ def arc(a: float, b: float, c: float, d: float,
     For example, the shape may jitter on screen when rotating slowly. If you're
     having an issue with how arcs are rendered, you'll need to draw the arc yourself
     with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
-"""
+    """
     pass
 
 
@@ -1188,8 +1188,8 @@ def arc(*args):
 
     You can use any of the following signatures:
 
-     * arc(a: float, b: float, c: float, d: float, start: float, stop: float) -> None
-     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int) -> None
+     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None
+     * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /) -> None
 
     Parameters
     ----------
@@ -1233,7 +1233,7 @@ def arc(*args):
     For example, the shape may jitter on screen when rotating slowly. If you're
     having an issue with how arcs are rendered, you'll need to draw the arc yourself
     with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
-"""
+    """
     return _py5sketch.arc(*args)
 
 
@@ -1249,13 +1249,13 @@ def background(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1298,7 +1298,7 @@ def background(gray: float, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1314,13 +1314,13 @@ def background(gray: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1363,7 +1363,7 @@ def background(gray: float, alpha: float, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1379,13 +1379,13 @@ def background(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1428,7 +1428,7 @@ def background(v1: float, v2: float, v3: float, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1444,13 +1444,13 @@ def background(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1493,7 +1493,7 @@ def background(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1509,13 +1509,13 @@ def background(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1558,7 +1558,7 @@ def background(rgb: int, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1574,13 +1574,13 @@ def background(rgb: int, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1623,7 +1623,7 @@ def background(rgb: int, alpha: float, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1639,13 +1639,13 @@ def background(image: Py5Image, /) -> None:
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1688,7 +1688,7 @@ def background(image: Py5Image, /) -> None:
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     pass
 
 
@@ -1703,13 +1703,13 @@ def background(*args):
 
     You can use any of the following signatures:
 
-     * background(gray: float) -> None
-     * background(gray: float, alpha: float) -> None
-     * background(image: Py5Image) -> None
-     * background(rgb: int) -> None
-     * background(rgb: int, alpha: float) -> None
-     * background(v1: float, v2: float, v3: float) -> None
-     * background(v1: float, v2: float, v3: float, alpha: float) -> None
+     * background(gray: float, /) -> None
+     * background(gray: float, alpha: float, /) -> None
+     * background(image: Py5Image, /) -> None
+     * background(rgb: int, /) -> None
+     * background(rgb: int, alpha: float, /) -> None
+     * background(v1: float, v2: float, v3: float, /) -> None
+     * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -1752,7 +1752,7 @@ def background(*args):
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
     ``Py5Graphics`` object and ``create_graphics()``.
-"""
+    """
     return _py5sketch.background(*args)
 
 
@@ -1779,7 +1779,7 @@ def begin_camera() -> None:
     affect the camera. ``begin_camera()`` should always be used with a following
     ``end_camera()`` and pairs of ``begin_camera()`` and ``end_camera()`` cannot be
     nested.
-"""
+    """
     return _py5sketch.begin_camera()
 
 
@@ -1803,7 +1803,7 @@ def begin_contour() -> None:
     and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
     not work within a ``begin_contour()``/``end_contour()`` pair. It is also not
     possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
-"""
+    """
     return _py5sketch.begin_contour()
 
 
@@ -1819,8 +1819,8 @@ def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
 
     You can use any of the following signatures:
 
-     * begin_raw(raw_graphics: Py5Graphics) -> None
-     * begin_raw(renderer: str, filename: str) -> Py5Graphics
+     * begin_raw(raw_graphics: Py5Graphics, /) -> None
+     * begin_raw(renderer: str, filename: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -1859,7 +1859,7 @@ def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
 
     See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
     information.
-"""
+    """
     pass
 
 
@@ -1875,8 +1875,8 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
 
     You can use any of the following signatures:
 
-     * begin_raw(raw_graphics: Py5Graphics) -> None
-     * begin_raw(renderer: str, filename: str) -> Py5Graphics
+     * begin_raw(raw_graphics: Py5Graphics, /) -> None
+     * begin_raw(renderer: str, filename: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -1915,7 +1915,7 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
 
     See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
     information.
-"""
+    """
     pass
 
 
@@ -1930,8 +1930,8 @@ def begin_raw(*args):
 
     You can use any of the following signatures:
 
-     * begin_raw(raw_graphics: Py5Graphics) -> None
-     * begin_raw(renderer: str, filename: str) -> Py5Graphics
+     * begin_raw(raw_graphics: Py5Graphics, /) -> None
+     * begin_raw(renderer: str, filename: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -1970,7 +1970,7 @@ def begin_raw(*args):
 
     See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
     information.
-"""
+    """
     return _py5sketch.begin_raw(*args)
 
 
@@ -1986,8 +1986,8 @@ def begin_record(renderer: str, filename: str, /) -> Py5Graphics:
 
     You can use any of the following signatures:
 
-     * begin_record(recorder: Py5Graphics) -> None
-     * begin_record(renderer: str, filename: str) -> Py5Graphics
+     * begin_record(recorder: Py5Graphics, /) -> None
+     * begin_record(renderer: str, filename: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -2016,7 +2016,7 @@ def begin_record(renderer: str, filename: str, /) -> Py5Graphics:
     recording to.
 
     ``begin_record()`` works only with the PDF and SVG renderers.
-"""
+    """
     pass
 
 
@@ -2032,8 +2032,8 @@ def begin_record(recorder: Py5Graphics, /) -> None:
 
     You can use any of the following signatures:
 
-     * begin_record(recorder: Py5Graphics) -> None
-     * begin_record(renderer: str, filename: str) -> Py5Graphics
+     * begin_record(recorder: Py5Graphics, /) -> None
+     * begin_record(renderer: str, filename: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -2062,7 +2062,7 @@ def begin_record(recorder: Py5Graphics, /) -> None:
     recording to.
 
     ``begin_record()`` works only with the PDF and SVG renderers.
-"""
+    """
     pass
 
 
@@ -2077,8 +2077,8 @@ def begin_record(*args):
 
     You can use any of the following signatures:
 
-     * begin_record(recorder: Py5Graphics) -> None
-     * begin_record(renderer: str, filename: str) -> Py5Graphics
+     * begin_record(recorder: Py5Graphics, /) -> None
+     * begin_record(renderer: str, filename: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -2107,7 +2107,7 @@ def begin_record(*args):
     recording to.
 
     ``begin_record()`` works only with the PDF and SVG renderers.
-"""
+    """
     return _py5sketch.begin_record(*args)
 
 
@@ -2124,7 +2124,7 @@ def begin_shape() -> None:
     You can use any of the following signatures:
 
      * begin_shape() -> None
-     * begin_shape(kind: int) -> None
+     * begin_shape(kind: int, /) -> None
 
     Parameters
     ----------
@@ -2156,7 +2156,7 @@ def begin_shape() -> None:
     per-vertex basis, but the default renderer does not. Settings such as
     ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
     while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
-"""
+    """
     pass
 
 
@@ -2173,7 +2173,7 @@ def begin_shape(kind: int, /) -> None:
     You can use any of the following signatures:
 
      * begin_shape() -> None
-     * begin_shape(kind: int) -> None
+     * begin_shape(kind: int, /) -> None
 
     Parameters
     ----------
@@ -2205,7 +2205,7 @@ def begin_shape(kind: int, /) -> None:
     per-vertex basis, but the default renderer does not. Settings such as
     ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
     while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
-"""
+    """
     pass
 
 
@@ -2221,7 +2221,7 @@ def begin_shape(*args):
     You can use any of the following signatures:
 
      * begin_shape() -> None
-     * begin_shape(kind: int) -> None
+     * begin_shape(kind: int, /) -> None
 
     Parameters
     ----------
@@ -2253,7 +2253,7 @@ def begin_shape(*args):
     per-vertex basis, but the default renderer does not. Settings such as
     ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
     while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
-"""
+    """
     return _py5sketch.begin_shape(*args)
 
 
@@ -2269,8 +2269,8 @@ def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
 
     You can use any of the following signatures:
 
-     * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -2321,7 +2321,7 @@ def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
     Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
     version requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     pass
 
 
@@ -2337,8 +2337,8 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
 
     You can use any of the following signatures:
 
-     * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -2389,7 +2389,7 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
     Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
     version requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     pass
 
 
@@ -2403,8 +2403,8 @@ def bezier(*args):
 
     You can use any of the following signatures:
 
-     * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -2455,7 +2455,7 @@ def bezier(*args):
     Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
     version requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     return _py5sketch.bezier(*args)
 
 
@@ -2476,7 +2476,7 @@ def bezier_detail(detail: int, /) -> None:
     Sets the resolution at which Beziers display. The default value is 20. This
     function is only useful when using the ``P3D`` renderer; the default ``P2D``
     renderer does not use this information.
-"""
+    """
     return _py5sketch.bezier_detail(detail)
 
 
@@ -2510,7 +2510,7 @@ def bezier_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     between 0 and 1, a and d are points on the curve, and b and c are the control
     points. This can be done once with the x coordinates and a second time with the
     y coordinates to get the location of a bezier curve at t.
-"""
+    """
     return _py5sketch.bezier_point(a, b, c, d, t)
 
 
@@ -2543,7 +2543,7 @@ def bezier_tangent(a: float, b: float, c: float,
 
     Calculates the tangent of a point on a Bezier curve. There is a good definition
     of *tangent* on Wikipedia.
-"""
+    """
     return _py5sketch.bezier_tangent(a, b, c, d, t)
 
 
@@ -2559,8 +2559,8 @@ def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
 
     You can use any of the following signatures:
 
-     * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -2603,7 +2603,7 @@ def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
     used between ``begin_shape()`` and ``end_shape()`` and only when there is no
     MODE parameter specified to ``begin_shape()``. Using the 3D version requires
     rendering with P3D (see the Environment reference for more information).
-"""
+    """
     pass
 
 
@@ -2619,8 +2619,8 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
 
     You can use any of the following signatures:
 
-     * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -2663,7 +2663,7 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
     used between ``begin_shape()`` and ``end_shape()`` and only when there is no
     MODE parameter specified to ``begin_shape()``. Using the 3D version requires
     rendering with P3D (see the Environment reference for more information).
-"""
+    """
     pass
 
 
@@ -2677,8 +2677,8 @@ def bezier_vertex(*args):
 
     You can use any of the following signatures:
 
-     * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -2721,12 +2721,12 @@ def bezier_vertex(*args):
     used between ``begin_shape()`` and ``end_shape()`` and only when there is no
     MODE parameter specified to ``begin_shape()``. Using the 3D version requires
     rendering with P3D (see the Environment reference for more information).
-"""
+    """
     return _py5sketch.bezier_vertex(*args)
 
 
 def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.bezierVertices
 
@@ -2739,8 +2739,10 @@ def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.bezier_vertices(coordinates)
 
 
@@ -2757,8 +2759,8 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
 
     You can use any of the following signatures:
 
-     * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-     * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+     * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+     * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
     Parameters
     ----------
@@ -2838,7 +2840,7 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
     ``src`` parameter is not used, the display window is used as the source image.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     pass
 
 
@@ -2855,8 +2857,8 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
 
     You can use any of the following signatures:
 
-     * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-     * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+     * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+     * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
     Parameters
     ----------
@@ -2936,7 +2938,7 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     ``src`` parameter is not used, the display window is used as the source image.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     pass
 
 
@@ -2951,8 +2953,8 @@ def blend(*args):
 
     You can use any of the following signatures:
 
-     * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-     * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+     * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+     * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
     Parameters
     ----------
@@ -3032,7 +3034,7 @@ def blend(*args):
     ``src`` parameter is not used, the display window is used as the source image.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     return _py5sketch.blend(*args)
 
 
@@ -3082,7 +3084,7 @@ def blend_mode(mode: int, /) -> None:
     However, unlike ``blend()``, the ``blend_mode()`` function does not support the
     following: HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN. On older hardware, the
     LIGHTEST, DARKEST, and DIFFERENCE modes might not be available as well.
-"""
+    """
     return _py5sketch.blend_mode(mode)
 
 
@@ -3112,7 +3114,7 @@ def blue(rgb: int, /) -> float:
 
     ``b1 = blue(c)   # simpler, but slower to calculate
     b2 = c & 0xFF  # very fast to calculate``
-"""
+    """
     return _py5sketch.blue(rgb)
 
 
@@ -3127,8 +3129,8 @@ def box(size: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * box(size: float) -> None
-     * box(w: float, h: float, d: float) -> None
+     * box(size: float, /) -> None
+     * box(w: float, h: float, d: float, /) -> None
 
     Parameters
     ----------
@@ -3150,7 +3152,7 @@ def box(size: float, /) -> None:
 
     A box is an extruded rectangle. A box with equal dimensions on all sides is a
     cube.
-"""
+    """
     pass
 
 
@@ -3165,8 +3167,8 @@ def box(w: float, h: float, d: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * box(size: float) -> None
-     * box(w: float, h: float, d: float) -> None
+     * box(size: float, /) -> None
+     * box(w: float, h: float, d: float, /) -> None
 
     Parameters
     ----------
@@ -3188,7 +3190,7 @@ def box(w: float, h: float, d: float, /) -> None:
 
     A box is an extruded rectangle. A box with equal dimensions on all sides is a
     cube.
-"""
+    """
     pass
 
 
@@ -3202,8 +3204,8 @@ def box(*args):
 
     You can use any of the following signatures:
 
-     * box(size: float) -> None
-     * box(w: float, h: float, d: float) -> None
+     * box(size: float, /) -> None
+     * box(w: float, h: float, d: float, /) -> None
 
     Parameters
     ----------
@@ -3225,7 +3227,7 @@ def box(*args):
 
     A box is an extruded rectangle. A box with equal dimensions on all sides is a
     cube.
-"""
+    """
     return _py5sketch.box(*args)
 
 
@@ -3244,7 +3246,7 @@ def brightness(rgb: int, /) -> float:
     -----
 
     Extracts the brightness value from a color.
-"""
+    """
     return _py5sketch.brightness(rgb)
 
 
@@ -3261,7 +3263,7 @@ def camera() -> None:
     You can use any of the following signatures:
 
      * camera() -> None
-     * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float) -> None
+     * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None
 
     Parameters
     ----------
@@ -3305,7 +3307,7 @@ def camera() -> None:
     tan(PI*30.0 / 180.0), width//2.0, height//2.0, 0, 0, 1, 0)``. This function is
     similar to ``glu_look_at()`` in OpenGL, but it first clears the current camera
     settings.
-"""
+    """
     pass
 
 
@@ -3323,7 +3325,7 @@ def camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: 
     You can use any of the following signatures:
 
      * camera() -> None
-     * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float) -> None
+     * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None
 
     Parameters
     ----------
@@ -3367,7 +3369,7 @@ def camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: 
     tan(PI*30.0 / 180.0), width//2.0, height//2.0, 0, 0, 1, 0)``. This function is
     similar to ``glu_look_at()`` in OpenGL, but it first clears the current camera
     settings.
-"""
+    """
     pass
 
 
@@ -3383,7 +3385,7 @@ def camera(*args):
     You can use any of the following signatures:
 
      * camera() -> None
-     * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float) -> None
+     * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None
 
     Parameters
     ----------
@@ -3427,7 +3429,7 @@ def camera(*args):
     tan(PI*30.0 / 180.0), width//2.0, height//2.0, 0, 0, 1, 0)``. This function is
     similar to ``glu_look_at()`` in OpenGL, but it first clears the current camera
     settings.
-"""
+    """
     return _py5sketch.camera(*args)
 
 
@@ -3454,7 +3456,7 @@ def circle(x: float, y: float, extent: float, /) -> None:
     Draws a circle to the screen. By default, the first two parameters set the
     location of the center, and the third sets the shape's width and height. The
     origin may be changed with the ``ellipse_mode()`` function.
-"""
+    """
     return _py5sketch.circle(x, y, extent)
 
 
@@ -3472,7 +3474,7 @@ def clear() -> None:
     created with ``create_graphics()`` can be entirely or partially transparent.
     This function clears everything in a ``Py5Graphics`` object to make all of the
     pixels 100% transparent.
-"""
+    """
     return _py5sketch.clear()
 
 
@@ -3502,7 +3504,7 @@ def clip(a: float, b: float, c: float, d: float, /) -> None:
     Limits the rendering to the boundaries of a rectangle defined by the parameters.
     The boundaries are drawn based on the state of the ``image_mode()`` fuction,
     either CORNER, CORNERS, or CENTER.
-"""
+    """
     return _py5sketch.clip(a, b, c, d)
 
 
@@ -3517,14 +3519,14 @@ def color(fgray: float, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -3581,7 +3583,7 @@ def color(fgray: float, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -3596,14 +3598,14 @@ def color(fgray: float, falpha: float, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -3660,7 +3662,7 @@ def color(fgray: float, falpha: float, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -3675,14 +3677,14 @@ def color(v1: float, v2: float, v3: float, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -3739,7 +3741,7 @@ def color(v1: float, v2: float, v3: float, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -3754,14 +3756,14 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -3818,7 +3820,7 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -3833,14 +3835,14 @@ def color(gray: int, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -3897,7 +3899,7 @@ def color(gray: int, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -3912,14 +3914,14 @@ def color(gray: int, alpha: int, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -3976,7 +3978,7 @@ def color(gray: int, alpha: int, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -3991,14 +3993,14 @@ def color(v1: int, v2: int, v3: int, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -4055,7 +4057,7 @@ def color(v1: int, v2: int, v3: int, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -4070,14 +4072,14 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -4134,7 +4136,7 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     pass
 
 
@@ -4148,14 +4150,14 @@ def color(*args):
 
     You can use any of the following signatures:
 
-     * color(fgray: float) -> int
-     * color(fgray: float, falpha: float) -> int
-     * color(gray: int) -> int
-     * color(gray: int, alpha: int) -> int
-     * color(v1: float, v2: float, v3: float) -> int
-     * color(v1: float, v2: float, v3: float, alpha: float) -> int
-     * color(v1: int, v2: int, v3: int) -> int
-     * color(v1: int, v2: int, v3: int, alpha: int) -> int
+     * color(fgray: float, /) -> int
+     * color(fgray: float, falpha: float, /) -> int
+     * color(gray: int, /) -> int
+     * color(gray: int, alpha: int, /) -> int
+     * color(v1: float, v2: float, v3: float, /) -> int
+     * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+     * color(v1: int, v2: int, v3: int, /) -> int
+     * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
     Parameters
     ----------
@@ -4212,7 +4214,7 @@ def color(*args):
 
     More about how colors are stored can be found in the reference for the color
     datatype.
-"""
+    """
     return _py5sketch.color(*args)
 
 
@@ -4227,10 +4229,10 @@ def color_mode(mode: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * color_mode(mode: int) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-     * color_mode(mode: int, max: float) -> None
+     * color_mode(mode: int, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+     * color_mode(mode: int, max: float, /) -> None
 
     Parameters
     ----------
@@ -4272,7 +4274,7 @@ def color_mode(mode: int, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of ``color_mode(RGB)``,
     write ``color_mode(RGB, 255, 255, 255)``.
-"""
+    """
     pass
 
 
@@ -4287,10 +4289,10 @@ def color_mode(mode: int, max: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * color_mode(mode: int) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-     * color_mode(mode: int, max: float) -> None
+     * color_mode(mode: int, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+     * color_mode(mode: int, max: float, /) -> None
 
     Parameters
     ----------
@@ -4332,7 +4334,7 @@ def color_mode(mode: int, max: float, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of ``color_mode(RGB)``,
     write ``color_mode(RGB, 255, 255, 255)``.
-"""
+    """
     pass
 
 
@@ -4347,10 +4349,10 @@ def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * color_mode(mode: int) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-     * color_mode(mode: int, max: float) -> None
+     * color_mode(mode: int, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+     * color_mode(mode: int, max: float, /) -> None
 
     Parameters
     ----------
@@ -4392,7 +4394,7 @@ def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of ``color_mode(RGB)``,
     write ``color_mode(RGB, 255, 255, 255)``.
-"""
+    """
     pass
 
 
@@ -4408,10 +4410,10 @@ def color_mode(mode: int, max1: float, max2: float,
 
     You can use any of the following signatures:
 
-     * color_mode(mode: int) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-     * color_mode(mode: int, max: float) -> None
+     * color_mode(mode: int, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+     * color_mode(mode: int, max: float, /) -> None
 
     Parameters
     ----------
@@ -4453,7 +4455,7 @@ def color_mode(mode: int, max1: float, max2: float,
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of ``color_mode(RGB)``,
     write ``color_mode(RGB, 255, 255, 255)``.
-"""
+    """
     pass
 
 
@@ -4467,10 +4469,10 @@ def color_mode(*args):
 
     You can use any of the following signatures:
 
-     * color_mode(mode: int) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-     * color_mode(mode: int, max: float) -> None
+     * color_mode(mode: int, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+     * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+     * color_mode(mode: int, max: float, /) -> None
 
     Parameters
     ----------
@@ -4512,7 +4514,7 @@ def color_mode(*args):
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of ``color_mode(RGB)``,
     write ``color_mode(RGB, 255, 255, 255)``.
-"""
+    """
     return _py5sketch.color_mode(*args)
 
 
@@ -4530,8 +4532,8 @@ def copy() -> Py5Image:
     You can use any of the following signatures:
 
      * copy() -> Py5Image
-     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
     Parameters
     ----------
@@ -4574,7 +4576,7 @@ def copy() -> Py5Image:
     the source image has an alpha channel set, it will be copied as well.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     pass
 
 
@@ -4593,8 +4595,8 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
     You can use any of the following signatures:
 
      * copy() -> Py5Image
-     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
     Parameters
     ----------
@@ -4637,7 +4639,7 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
     the source image has an alpha channel set, it will be copied as well.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     pass
 
 
@@ -4656,8 +4658,8 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     You can use any of the following signatures:
 
      * copy() -> Py5Image
-     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
     Parameters
     ----------
@@ -4700,7 +4702,7 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     the source image has an alpha channel set, it will be copied as well.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     pass
 
 
@@ -4717,8 +4719,8 @@ def copy(*args):
     You can use any of the following signatures:
 
      * copy() -> Py5Image
-     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+     * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+     * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
     Parameters
     ----------
@@ -4761,7 +4763,7 @@ def copy(*args):
     the source image has an alpha channel set, it will be copied as well.
 
     As of release 0149, this function ignores ``image_mode()``.
-"""
+    """
     return _py5sketch.copy(*args)
 
 
@@ -4778,9 +4780,9 @@ def create_font(name: str, size: float, /) -> Py5Font:
 
     You can use any of the following signatures:
 
-     * create_font(name: str, size: float) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr]) -> Py5Font
+     * create_font(name: str, size: float, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
 
     Parameters
     ----------
@@ -4825,7 +4827,7 @@ def create_font(name: str, size: float, /) -> Py5Font:
     but the results are poor when exporting if the sketch does not include the .otf
     or .ttf file, and the requested font is not available on the machine running the
     sketch.
-"""
+    """
     pass
 
 
@@ -4842,9 +4844,9 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
 
     You can use any of the following signatures:
 
-     * create_font(name: str, size: float) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr]) -> Py5Font
+     * create_font(name: str, size: float, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
 
     Parameters
     ----------
@@ -4889,7 +4891,7 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
     but the results are poor when exporting if the sketch does not include the .otf
     or .ttf file, and the requested font is not available on the machine running the
     sketch.
-"""
+    """
     pass
 
 
@@ -4907,9 +4909,9 @@ def create_font(name: str, size: float, smooth: bool,
 
     You can use any of the following signatures:
 
-     * create_font(name: str, size: float) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr]) -> Py5Font
+     * create_font(name: str, size: float, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
 
     Parameters
     ----------
@@ -4954,7 +4956,7 @@ def create_font(name: str, size: float, smooth: bool,
     but the results are poor when exporting if the sketch does not include the .otf
     or .ttf file, and the requested font is not available on the machine running the
     sketch.
-"""
+    """
     pass
 
 
@@ -4970,9 +4972,9 @@ def create_font(*args):
 
     You can use any of the following signatures:
 
-     * create_font(name: str, size: float) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr]) -> Py5Font
+     * create_font(name: str, size: float, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
 
     Parameters
     ----------
@@ -5017,7 +5019,7 @@ def create_font(*args):
     but the results are poor when exporting if the sketch does not include the .otf
     or .ttf file, and the requested font is not available on the machine running the
     sketch.
-"""
+    """
     return _py5sketch.create_font(*args)
 
 
@@ -5032,9 +5034,9 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
 
     You can use any of the following signatures:
 
-     * create_graphics(w: int, h: int) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str, path: str) -> Py5Graphics
+     * create_graphics(w: int, h: int, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, path: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -5086,7 +5088,7 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
     with ``create_graphics()`` can have transparency. This makes it possible to draw
     into a graphics and maintain the alpha channel. By using ``save()`` to write a
     PNG or TGA file, the transparency of the graphics object will be honored.
-"""
+    """
     pass
 
 
@@ -5101,9 +5103,9 @@ def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
 
     You can use any of the following signatures:
 
-     * create_graphics(w: int, h: int) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str, path: str) -> Py5Graphics
+     * create_graphics(w: int, h: int, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, path: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -5155,7 +5157,7 @@ def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
     with ``create_graphics()`` can have transparency. This makes it possible to draw
     into a graphics and maintain the alpha channel. By using ``save()`` to write a
     PNG or TGA file, the transparency of the graphics object will be honored.
-"""
+    """
     pass
 
 
@@ -5171,9 +5173,9 @@ def create_graphics(w: int, h: int, renderer: str,
 
     You can use any of the following signatures:
 
-     * create_graphics(w: int, h: int) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str, path: str) -> Py5Graphics
+     * create_graphics(w: int, h: int, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, path: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -5225,7 +5227,7 @@ def create_graphics(w: int, h: int, renderer: str,
     with ``create_graphics()`` can have transparency. This makes it possible to draw
     into a graphics and maintain the alpha channel. By using ``save()`` to write a
     PNG or TGA file, the transparency of the graphics object will be honored.
-"""
+    """
     pass
 
 
@@ -5239,9 +5241,9 @@ def create_graphics(*args):
 
     You can use any of the following signatures:
 
-     * create_graphics(w: int, h: int) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str) -> Py5Graphics
-     * create_graphics(w: int, h: int, renderer: str, path: str) -> Py5Graphics
+     * create_graphics(w: int, h: int, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics
+     * create_graphics(w: int, h: int, renderer: str, path: str, /) -> Py5Graphics
 
     Parameters
     ----------
@@ -5293,7 +5295,7 @@ def create_graphics(*args):
     with ``create_graphics()`` can have transparency. This makes it possible to draw
     into a graphics and maintain the alpha channel. By using ``save()`` to write a
     PNG or TGA file, the transparency of the graphics object will be honored.
-"""
+    """
     return _py5sketch.create_graphics(*args)
 
 
@@ -5327,7 +5329,7 @@ def create_image(w: int, h: int, format: int, /) -> Py5Image:
 
     Advanced users please note that ``create_image()`` should be used instead of the
     syntax ``new Py5Image()``.
-"""
+    """
     return _py5sketch.create_image(w, h, format)
 
 
@@ -5343,8 +5345,8 @@ def create_shape() -> Py5Shape:
     You can use any of the following signatures:
 
      * create_shape() -> Py5Shape
-     * create_shape(kind: int, p: float) -> Py5Shape
-     * create_shape(type: int) -> Py5Shape
+     * create_shape(kind: int, /, *p: float) -> Py5Shape
+     * create_shape(type: int, /) -> Py5Shape
 
     Parameters
     ----------
@@ -5385,7 +5387,7 @@ def create_shape() -> Py5Shape:
     methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
     The complete list of methods and fields for the PShape class are in the
     Processing Javadoc.
-"""
+    """
     pass
 
 
@@ -5401,8 +5403,8 @@ def create_shape(type: int, /) -> Py5Shape:
     You can use any of the following signatures:
 
      * create_shape() -> Py5Shape
-     * create_shape(kind: int, p: float) -> Py5Shape
-     * create_shape(type: int) -> Py5Shape
+     * create_shape(kind: int, /, *p: float) -> Py5Shape
+     * create_shape(type: int, /) -> Py5Shape
 
     Parameters
     ----------
@@ -5443,7 +5445,7 @@ def create_shape(type: int, /) -> Py5Shape:
     methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
     The complete list of methods and fields for the PShape class are in the
     Processing Javadoc.
-"""
+    """
     pass
 
 
@@ -5459,8 +5461,8 @@ def create_shape(kind: int, /, *p: float) -> Py5Shape:
     You can use any of the following signatures:
 
      * create_shape() -> Py5Shape
-     * create_shape(kind: int, p: float) -> Py5Shape
-     * create_shape(type: int) -> Py5Shape
+     * create_shape(kind: int, /, *p: float) -> Py5Shape
+     * create_shape(type: int, /) -> Py5Shape
 
     Parameters
     ----------
@@ -5501,7 +5503,7 @@ def create_shape(kind: int, /, *p: float) -> Py5Shape:
     methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
     The complete list of methods and fields for the PShape class are in the
     Processing Javadoc.
-"""
+    """
     pass
 
 
@@ -5516,8 +5518,8 @@ def create_shape(*args):
     You can use any of the following signatures:
 
      * create_shape() -> Py5Shape
-     * create_shape(kind: int, p: float) -> Py5Shape
-     * create_shape(type: int) -> Py5Shape
+     * create_shape(kind: int, /, *p: float) -> Py5Shape
+     * create_shape(type: int, /) -> Py5Shape
 
     Parameters
     ----------
@@ -5558,7 +5560,7 @@ def create_shape(*args):
     methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
     The complete list of methods and fields for the PShape class are in the
     Processing Javadoc.
-"""
+    """
     return _py5sketch.create_shape(*args)
 
 
@@ -5575,9 +5577,9 @@ def cursor() -> None:
     You can use any of the following signatures:
 
      * cursor() -> None
-     * cursor(img: Py5Image) -> None
-     * cursor(img: Py5Image, x: int, y: int) -> None
-     * cursor(kind: int) -> None
+     * cursor(img: Py5Image, /) -> None
+     * cursor(img: Py5Image, x: int, y: int, /) -> None
+     * cursor(kind: int, /) -> None
 
     Parameters
     ----------
@@ -5608,7 +5610,7 @@ def cursor() -> None:
     With the P2D and P3D renderers, a generic set of cursors are used because the
     OpenGL renderer doesn't have access to the default cursor images for each
     platform (Issue 3791).
-"""
+    """
     pass
 
 
@@ -5625,9 +5627,9 @@ def cursor(kind: int, /) -> None:
     You can use any of the following signatures:
 
      * cursor() -> None
-     * cursor(img: Py5Image) -> None
-     * cursor(img: Py5Image, x: int, y: int) -> None
-     * cursor(kind: int) -> None
+     * cursor(img: Py5Image, /) -> None
+     * cursor(img: Py5Image, x: int, y: int, /) -> None
+     * cursor(kind: int, /) -> None
 
     Parameters
     ----------
@@ -5658,7 +5660,7 @@ def cursor(kind: int, /) -> None:
     With the P2D and P3D renderers, a generic set of cursors are used because the
     OpenGL renderer doesn't have access to the default cursor images for each
     platform (Issue 3791).
-"""
+    """
     pass
 
 
@@ -5675,9 +5677,9 @@ def cursor(img: Py5Image, /) -> None:
     You can use any of the following signatures:
 
      * cursor() -> None
-     * cursor(img: Py5Image) -> None
-     * cursor(img: Py5Image, x: int, y: int) -> None
-     * cursor(kind: int) -> None
+     * cursor(img: Py5Image, /) -> None
+     * cursor(img: Py5Image, x: int, y: int, /) -> None
+     * cursor(kind: int, /) -> None
 
     Parameters
     ----------
@@ -5708,7 +5710,7 @@ def cursor(img: Py5Image, /) -> None:
     With the P2D and P3D renderers, a generic set of cursors are used because the
     OpenGL renderer doesn't have access to the default cursor images for each
     platform (Issue 3791).
-"""
+    """
     pass
 
 
@@ -5725,9 +5727,9 @@ def cursor(img: Py5Image, x: int, y: int, /) -> None:
     You can use any of the following signatures:
 
      * cursor() -> None
-     * cursor(img: Py5Image) -> None
-     * cursor(img: Py5Image, x: int, y: int) -> None
-     * cursor(kind: int) -> None
+     * cursor(img: Py5Image, /) -> None
+     * cursor(img: Py5Image, x: int, y: int, /) -> None
+     * cursor(kind: int, /) -> None
 
     Parameters
     ----------
@@ -5758,7 +5760,7 @@ def cursor(img: Py5Image, x: int, y: int, /) -> None:
     With the P2D and P3D renderers, a generic set of cursors are used because the
     OpenGL renderer doesn't have access to the default cursor images for each
     platform (Issue 3791).
-"""
+    """
     pass
 
 
@@ -5774,9 +5776,9 @@ def cursor(*args):
     You can use any of the following signatures:
 
      * cursor() -> None
-     * cursor(img: Py5Image) -> None
-     * cursor(img: Py5Image, x: int, y: int) -> None
-     * cursor(kind: int) -> None
+     * cursor(img: Py5Image, /) -> None
+     * cursor(img: Py5Image, x: int, y: int, /) -> None
+     * cursor(kind: int, /) -> None
 
     Parameters
     ----------
@@ -5807,7 +5809,7 @@ def cursor(*args):
     With the P2D and P3D renderers, a generic set of cursors are used because the
     OpenGL renderer doesn't have access to the default cursor images for each
     platform (Issue 3791).
-"""
+    """
     return _py5sketch.cursor(*args)
 
 
@@ -5823,8 +5825,8 @@ def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
 
     You can use any of the following signatures:
 
-     * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -5876,7 +5878,7 @@ def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
     provides control for the visual quality of the curve. The ``curve()`` function
     is an implementation of Catmull-Rom splines. Using the 3D version requires
     rendering with P3D (see the Environment reference for more information).
-"""
+    """
     pass
 
 
@@ -5892,8 +5894,8 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
 
     You can use any of the following signatures:
 
-     * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -5945,7 +5947,7 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
     provides control for the visual quality of the curve. The ``curve()`` function
     is an implementation of Catmull-Rom splines. Using the 3D version requires
     rendering with P3D (see the Environment reference for more information).
-"""
+    """
     pass
 
 
@@ -5959,8 +5961,8 @@ def curve(*args):
 
     You can use any of the following signatures:
 
-     * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-     * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+     * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+     * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
     Parameters
     ----------
@@ -6012,7 +6014,7 @@ def curve(*args):
     provides control for the visual quality of the curve. The ``curve()`` function
     is an implementation of Catmull-Rom splines. Using the 3D version requires
     rendering with P3D (see the Environment reference for more information).
-"""
+    """
     return _py5sketch.curve(*args)
 
 
@@ -6033,7 +6035,7 @@ def curve_detail(detail: int, /) -> None:
     Sets the resolution at which curves display. The default value is 20. This
     function is only useful when using the P3D renderer as the default P2D renderer
     does not use this information.
-"""
+    """
     return _py5sketch.curve_detail(detail)
 
 
@@ -6069,7 +6071,7 @@ def curve_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     on the curve. As seen in the example above, this can be used once with the ``x``
     coordinates and a second time with the ``y`` coordinates to get the location of
     a curve at ``t``.
-"""
+    """
     return _py5sketch.curve_point(a, b, c, d, t)
 
 
@@ -6102,7 +6104,7 @@ def curve_tangent(a: float, b: float, c: float,
 
     Calculates the tangent of a point on a curve. There's a good definition of
     *tangent* on Wikipedia.
-"""
+    """
     return _py5sketch.curve_tangent(a, b, c, d, t)
 
 
@@ -6127,7 +6129,7 @@ def curve_tightness(tightness: float, /) -> None:
     straight lines. Values within the range -5.0 and 5.0 will deform the curves but
     will leave them recognizable and as values increase in magnitude, they will
     continue to deform.
-"""
+    """
     return _py5sketch.curve_tightness(tightness)
 
 
@@ -6142,8 +6144,8 @@ def curve_vertex(x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * curve_vertex(x: float, y: float) -> None
-     * curve_vertex(x: float, y: float, z: float) -> None
+     * curve_vertex(x: float, y: float, /) -> None
+     * curve_vertex(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -6170,7 +6172,7 @@ def curve_vertex(x: float, y: float, /) -> None:
     function is an implementation of Catmull-Rom splines. Using the 3D version
     requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     pass
 
 
@@ -6185,8 +6187,8 @@ def curve_vertex(x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * curve_vertex(x: float, y: float) -> None
-     * curve_vertex(x: float, y: float, z: float) -> None
+     * curve_vertex(x: float, y: float, /) -> None
+     * curve_vertex(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -6213,7 +6215,7 @@ def curve_vertex(x: float, y: float, z: float, /) -> None:
     function is an implementation of Catmull-Rom splines. Using the 3D version
     requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     pass
 
 
@@ -6227,8 +6229,8 @@ def curve_vertex(*args):
 
     You can use any of the following signatures:
 
-     * curve_vertex(x: float, y: float) -> None
-     * curve_vertex(x: float, y: float, z: float) -> None
+     * curve_vertex(x: float, y: float, /) -> None
+     * curve_vertex(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -6255,12 +6257,12 @@ def curve_vertex(*args):
     function is an implementation of Catmull-Rom splines. Using the 3D version
     requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     return _py5sketch.curve_vertex(*args)
 
 
 def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.curveVertices
 
@@ -6273,8 +6275,10 @@ def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.curve_vertices(coordinates)
 
 
@@ -6288,7 +6292,7 @@ def day() -> int:
 
     Processing communicates with the clock on your computer. The ``day()`` function
     returns the current day as a value from 1 - 31.
-"""
+    """
     return Sketch.day()
 
 
@@ -6332,7 +6336,7 @@ def directional_light(v1: float, v2: float, v3: float,
     current color mode. The ``nx``, ``ny``, and ``nz`` parameters specify the
     direction the light is facing. For example, setting ``ny`` to -1 will cause the
     geometry to be lit from below (since the light would be facing directly upward).
-"""
+    """
     return _py5sketch.directional_light(v1, v2, v3, nx, ny, nz)
 
 
@@ -6350,7 +6354,7 @@ def display_density() -> int:
     You can use any of the following signatures:
 
      * display_density() -> int
-     * display_density(display: int) -> int
+     * display_density(display: int, /) -> int
 
     Parameters
     ----------
@@ -6365,7 +6369,7 @@ def display_density() -> int:
     (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
     not. This information is useful for a program to adapt to run at double the
     pixel density on a screen that supports it.
-"""
+    """
     pass
 
 
@@ -6383,7 +6387,7 @@ def display_density(display: int, /) -> int:
     You can use any of the following signatures:
 
      * display_density() -> int
-     * display_density(display: int) -> int
+     * display_density(display: int, /) -> int
 
     Parameters
     ----------
@@ -6398,7 +6402,7 @@ def display_density(display: int, /) -> int:
     (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
     not. This information is useful for a program to adapt to run at double the
     pixel density on a screen that supports it.
-"""
+    """
     pass
 
 
@@ -6415,7 +6419,7 @@ def display_density(*args):
     You can use any of the following signatures:
 
      * display_density() -> int
-     * display_density(display: int) -> int
+     * display_density(display: int, /) -> int
 
     Parameters
     ----------
@@ -6430,7 +6434,7 @@ def display_density(*args):
     (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
     not. This information is useful for a program to adapt to run at double the
     pixel density on a screen that supports it.
-"""
+    """
     return _py5sketch.display_density(*args)
 
 
@@ -6461,7 +6465,7 @@ def ellipse(a: float, b: float, c: float, d: float, /) -> None:
     a circle. By default, the first two parameters set the location, and the third
     and fourth parameters set the shape's width and height. The origin may be
     changed with the ``ellipse_mode()`` function.
-"""
+    """
     return _py5sketch.ellipse(a, b, c, d)
 
 
@@ -6501,7 +6505,7 @@ def ellipse_mode(mode: int, /) -> None:
 
     The parameter must be written in ALL CAPS because Processing is a case-sensitive
     language.
-"""
+    """
     return _py5sketch.ellipse_mode(mode)
 
 
@@ -6517,9 +6521,9 @@ def emissive(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * emissive(gray: float) -> None
-     * emissive(rgb: int) -> None
-     * emissive(v1: float, v2: float, v3: float) -> None
+     * emissive(gray: float, /) -> None
+     * emissive(rgb: int, /) -> None
+     * emissive(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -6545,7 +6549,7 @@ def emissive(gray: float, /) -> None:
     Sets the emissive color of the material used for drawing shapes drawn to the
     screen. Used in combination with ``ambient()``, ``specular()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     pass
 
 
@@ -6561,9 +6565,9 @@ def emissive(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * emissive(gray: float) -> None
-     * emissive(rgb: int) -> None
-     * emissive(v1: float, v2: float, v3: float) -> None
+     * emissive(gray: float, /) -> None
+     * emissive(rgb: int, /) -> None
+     * emissive(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -6589,7 +6593,7 @@ def emissive(v1: float, v2: float, v3: float, /) -> None:
     Sets the emissive color of the material used for drawing shapes drawn to the
     screen. Used in combination with ``ambient()``, ``specular()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     pass
 
 
@@ -6605,9 +6609,9 @@ def emissive(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * emissive(gray: float) -> None
-     * emissive(rgb: int) -> None
-     * emissive(v1: float, v2: float, v3: float) -> None
+     * emissive(gray: float, /) -> None
+     * emissive(rgb: int, /) -> None
+     * emissive(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -6633,7 +6637,7 @@ def emissive(rgb: int, /) -> None:
     Sets the emissive color of the material used for drawing shapes drawn to the
     screen. Used in combination with ``ambient()``, ``specular()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     pass
 
 
@@ -6648,9 +6652,9 @@ def emissive(*args):
 
     You can use any of the following signatures:
 
-     * emissive(gray: float) -> None
-     * emissive(rgb: int) -> None
-     * emissive(v1: float, v2: float, v3: float) -> None
+     * emissive(gray: float, /) -> None
+     * emissive(rgb: int, /) -> None
+     * emissive(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -6676,7 +6680,7 @@ def emissive(*args):
     Sets the emissive color of the material used for drawing shapes drawn to the
     screen. Used in combination with ``ambient()``, ``specular()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     return _py5sketch.emissive(*args)
 
 
@@ -6692,7 +6696,7 @@ def end_camera() -> None:
     The ``begin_camera()`` and ``end_camera()`` functions enable advanced
     customization of the camera space. Please see the reference for
     ``begin_camera()`` for a description of how the functions are used.
-"""
+    """
     return _py5sketch.end_camera()
 
 
@@ -6716,7 +6720,7 @@ def end_contour() -> None:
     and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
     not work within a ``begin_contour()``/``end_contour()`` pair. It is also not
     possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
-"""
+    """
     return _py5sketch.end_contour()
 
 
@@ -6730,7 +6734,7 @@ def end_raw() -> None:
 
     Complement to ``begin_raw()``; they must always be used together. See the
     ``begin_raw()`` reference for details.
-"""
+    """
     return _py5sketch.end_raw()
 
 
@@ -6743,7 +6747,7 @@ def end_record() -> None:
     -----
 
     Stops the recording process started by ``begin_record()`` and closes the file.
-"""
+    """
     return _py5sketch.end_record()
 
 
@@ -6760,7 +6764,7 @@ def end_shape() -> None:
     You can use any of the following signatures:
 
      * end_shape() -> None
-     * end_shape(mode: int) -> None
+     * end_shape(mode: int, /) -> None
 
     Parameters
     ----------
@@ -6776,7 +6780,7 @@ def end_shape() -> None:
     data defined since the previous call to ``begin_shape()`` is written into the
     image buffer. The constant CLOSE as the value for the MODE parameter to close
     the shape (to connect the beginning and the end).
-"""
+    """
     pass
 
 
@@ -6793,7 +6797,7 @@ def end_shape(mode: int, /) -> None:
     You can use any of the following signatures:
 
      * end_shape() -> None
-     * end_shape(mode: int) -> None
+     * end_shape(mode: int, /) -> None
 
     Parameters
     ----------
@@ -6809,7 +6813,7 @@ def end_shape(mode: int, /) -> None:
     data defined since the previous call to ``begin_shape()`` is written into the
     image buffer. The constant CLOSE as the value for the MODE parameter to close
     the shape (to connect the beginning and the end).
-"""
+    """
     pass
 
 
@@ -6825,7 +6829,7 @@ def end_shape(*args):
     You can use any of the following signatures:
 
      * end_shape() -> None
-     * end_shape(mode: int) -> None
+     * end_shape(mode: int, /) -> None
 
     Parameters
     ----------
@@ -6841,7 +6845,7 @@ def end_shape(*args):
     data defined since the previous call to ``begin_shape()`` is written into the
     image buffer. The constant CLOSE as the value for the MODE parameter to close
     the shape (to connect the beginning and the end).
-"""
+    """
     return _py5sketch.end_shape(*args)
 
 
@@ -6864,7 +6868,7 @@ def exit_sketch() -> None:
     For Java programmers, this is *not* the same as System.``exit()``. Further,
     System.``exit()`` should not be used because closing out an application while
     ``draw()`` is running may cause a crash (particularly with P3D).
-"""
+    """
     return _py5sketch.exit_sketch()
 
 
@@ -6879,12 +6883,12 @@ def fill(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -6929,7 +6933,7 @@ def fill(gray: float, /) -> None:
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     pass
 
 
@@ -6944,12 +6948,12 @@ def fill(gray: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -6994,7 +6998,7 @@ def fill(gray: float, alpha: float, /) -> None:
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     pass
 
 
@@ -7009,12 +7013,12 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -7059,7 +7063,7 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     pass
 
 
@@ -7074,12 +7078,12 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -7124,7 +7128,7 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     pass
 
 
@@ -7139,12 +7143,12 @@ def fill(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -7189,7 +7193,7 @@ def fill(rgb: int, /) -> None:
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     pass
 
 
@@ -7204,12 +7208,12 @@ def fill(rgb: int, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -7254,7 +7258,7 @@ def fill(rgb: int, alpha: float, /) -> None:
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     pass
 
 
@@ -7268,12 +7272,12 @@ def fill(*args):
 
     You can use any of the following signatures:
 
-     * fill(gray: float) -> None
-     * fill(gray: float, alpha: float) -> None
-     * fill(rgb: int) -> None
-     * fill(rgb: int, alpha: float) -> None
-     * fill(v1: float, v2: float, v3: float) -> None
-     * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+     * fill(gray: float, /) -> None
+     * fill(gray: float, alpha: float, /) -> None
+     * fill(rgb: int, /) -> None
+     * fill(rgb: int, alpha: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, /) -> None
+     * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -7318,7 +7322,7 @@ def fill(*args):
     255.
 
     To change the color of an image or a texture, use ``tint()``.
-"""
+    """
     return _py5sketch.fill(*args)
 
 
@@ -7333,9 +7337,9 @@ def apply_filter(kind: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * apply_filter(kind: int) -> None
-     * apply_filter(kind: int, param: float) -> None
-     * apply_filter(shader: Py5Shader) -> None
+     * apply_filter(kind: int, /) -> None
+     * apply_filter(kind: int, param: float, /) -> None
+     * apply_filter(shader: Py5Shader, /) -> None
 
     Parameters
     ----------
@@ -7387,7 +7391,7 @@ def apply_filter(kind: int, /) -> None:
 
     DILATE
     Increases the light areas. No parameter is used.
-"""
+    """
     pass
 
 
@@ -7402,9 +7406,9 @@ def apply_filter(kind: int, param: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * apply_filter(kind: int) -> None
-     * apply_filter(kind: int, param: float) -> None
-     * apply_filter(shader: Py5Shader) -> None
+     * apply_filter(kind: int, /) -> None
+     * apply_filter(kind: int, param: float, /) -> None
+     * apply_filter(shader: Py5Shader, /) -> None
 
     Parameters
     ----------
@@ -7456,7 +7460,7 @@ def apply_filter(kind: int, param: float, /) -> None:
 
     DILATE
     Increases the light areas. No parameter is used.
-"""
+    """
     pass
 
 
@@ -7471,9 +7475,9 @@ def apply_filter(shader: Py5Shader, /) -> None:
 
     You can use any of the following signatures:
 
-     * apply_filter(kind: int) -> None
-     * apply_filter(kind: int, param: float) -> None
-     * apply_filter(shader: Py5Shader) -> None
+     * apply_filter(kind: int, /) -> None
+     * apply_filter(kind: int, param: float, /) -> None
+     * apply_filter(shader: Py5Shader, /) -> None
 
     Parameters
     ----------
@@ -7525,7 +7529,7 @@ def apply_filter(shader: Py5Shader, /) -> None:
 
     DILATE
     Increases the light areas. No parameter is used.
-"""
+    """
     pass
 
 
@@ -7539,9 +7543,9 @@ def apply_filter(*args):
 
     You can use any of the following signatures:
 
-     * apply_filter(kind: int) -> None
-     * apply_filter(kind: int, param: float) -> None
-     * apply_filter(shader: Py5Shader) -> None
+     * apply_filter(kind: int, /) -> None
+     * apply_filter(kind: int, param: float, /) -> None
+     * apply_filter(shader: Py5Shader, /) -> None
 
     Parameters
     ----------
@@ -7593,7 +7597,7 @@ def apply_filter(*args):
 
     DILATE
     Increases the light areas. No parameter is used.
-"""
+    """
     return _py5sketch.apply_filter(*args)
 
 
@@ -7616,7 +7620,7 @@ def frame_rate(fps: float, /) -> None:
     the processor is not fast enough to maintain the specified rate, the frame rate
     will not be achieved. Setting the frame rate within ``setup()`` is recommended.
     The default rate is 60 frames per second.
-"""
+    """
     return _py5sketch.frame_rate(fps)
 
 
@@ -7669,7 +7673,7 @@ def frustum(left: float, right: float, bottom: float,
 
     Works like glFrustum, except it wipes out the current perspective matrix rather
     than multiplying itself with it.
-"""
+    """
     return _py5sketch.frustum(left, right, bottom, top, near, far)
 
 
@@ -7685,9 +7689,9 @@ def full_screen() -> None:
     You can use any of the following signatures:
 
      * full_screen() -> None
-     * full_screen(display: int) -> None
-     * full_screen(renderer: str) -> None
-     * full_screen(renderer: str, display: int) -> None
+     * full_screen(display: int, /) -> None
+     * full_screen(renderer: str, /) -> None
+     * full_screen(renderer: str, display: int, /) -> None
 
     Parameters
     ----------
@@ -7716,7 +7720,7 @@ def full_screen() -> None:
 
     Prior to Processing 3.0, a full-screen program was defined with
     ``size(display_width, display_height)``.
-"""
+    """
     pass
 
 
@@ -7732,9 +7736,9 @@ def full_screen(display: int, /) -> None:
     You can use any of the following signatures:
 
      * full_screen() -> None
-     * full_screen(display: int) -> None
-     * full_screen(renderer: str) -> None
-     * full_screen(renderer: str, display: int) -> None
+     * full_screen(display: int, /) -> None
+     * full_screen(renderer: str, /) -> None
+     * full_screen(renderer: str, display: int, /) -> None
 
     Parameters
     ----------
@@ -7763,7 +7767,7 @@ def full_screen(display: int, /) -> None:
 
     Prior to Processing 3.0, a full-screen program was defined with
     ``size(display_width, display_height)``.
-"""
+    """
     pass
 
 
@@ -7779,9 +7783,9 @@ def full_screen(renderer: str, /) -> None:
     You can use any of the following signatures:
 
      * full_screen() -> None
-     * full_screen(display: int) -> None
-     * full_screen(renderer: str) -> None
-     * full_screen(renderer: str, display: int) -> None
+     * full_screen(display: int, /) -> None
+     * full_screen(renderer: str, /) -> None
+     * full_screen(renderer: str, display: int, /) -> None
 
     Parameters
     ----------
@@ -7810,7 +7814,7 @@ def full_screen(renderer: str, /) -> None:
 
     Prior to Processing 3.0, a full-screen program was defined with
     ``size(display_width, display_height)``.
-"""
+    """
     pass
 
 
@@ -7826,9 +7830,9 @@ def full_screen(renderer: str, display: int, /) -> None:
     You can use any of the following signatures:
 
      * full_screen() -> None
-     * full_screen(display: int) -> None
-     * full_screen(renderer: str) -> None
-     * full_screen(renderer: str, display: int) -> None
+     * full_screen(display: int, /) -> None
+     * full_screen(renderer: str, /) -> None
+     * full_screen(renderer: str, display: int, /) -> None
 
     Parameters
     ----------
@@ -7857,7 +7861,7 @@ def full_screen(renderer: str, display: int, /) -> None:
 
     Prior to Processing 3.0, a full-screen program was defined with
     ``size(display_width, display_height)``.
-"""
+    """
     pass
 
 
@@ -7872,9 +7876,9 @@ def full_screen(*args):
     You can use any of the following signatures:
 
      * full_screen() -> None
-     * full_screen(display: int) -> None
-     * full_screen(renderer: str) -> None
-     * full_screen(renderer: str, display: int) -> None
+     * full_screen(display: int, /) -> None
+     * full_screen(renderer: str, /) -> None
+     * full_screen(renderer: str, display: int, /) -> None
 
     Parameters
     ----------
@@ -7903,7 +7907,7 @@ def full_screen(*args):
 
     Prior to Processing 3.0, a full-screen program was defined with
     ``size(display_width, display_height)``.
-"""
+    """
     return _py5sketch.full_screen(*args)
 
 
@@ -7919,8 +7923,8 @@ def get() -> Py5Image:
     You can use any of the following signatures:
 
      * get() -> Py5Image
-     * get(x: int, y: int) -> int
-     * get(x: int, y: int, w: int, h: int) -> Py5Image
+     * get(x: int, y: int, /) -> int
+     * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
     Parameters
     ----------
@@ -7961,7 +7965,7 @@ def get() -> Py5Image:
     as grabbing the data directly from ``pixels[]``. The equivalent statement to
     ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
     pixels[] for more information.
-"""
+    """
     pass
 
 
@@ -7977,8 +7981,8 @@ def get(x: int, y: int, /) -> int:
     You can use any of the following signatures:
 
      * get() -> Py5Image
-     * get(x: int, y: int) -> int
-     * get(x: int, y: int, w: int, h: int) -> Py5Image
+     * get(x: int, y: int, /) -> int
+     * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
     Parameters
     ----------
@@ -8019,7 +8023,7 @@ def get(x: int, y: int, /) -> int:
     as grabbing the data directly from ``pixels[]``. The equivalent statement to
     ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
     pixels[] for more information.
-"""
+    """
     pass
 
 
@@ -8035,8 +8039,8 @@ def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
     You can use any of the following signatures:
 
      * get() -> Py5Image
-     * get(x: int, y: int) -> int
-     * get(x: int, y: int, w: int, h: int) -> Py5Image
+     * get(x: int, y: int, /) -> int
+     * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
     Parameters
     ----------
@@ -8077,7 +8081,7 @@ def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
     as grabbing the data directly from ``pixels[]``. The equivalent statement to
     ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
     pixels[] for more information.
-"""
+    """
     pass
 
 
@@ -8092,8 +8096,8 @@ def get(*args):
     You can use any of the following signatures:
 
      * get() -> Py5Image
-     * get(x: int, y: int) -> int
-     * get(x: int, y: int, w: int, h: int) -> Py5Image
+     * get(x: int, y: int, /) -> int
+     * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
     Parameters
     ----------
@@ -8134,39 +8138,43 @@ def get(*args):
     as grabbing the data directly from ``pixels[]``. The equivalent statement to
     ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
     pixels[] for more information.
-"""
+    """
     return _py5sketch.get(*args)
 
 
 def get_frame_rate() -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getFrameRate
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.get_frame_rate()
 
 
 def get_graphics() -> Py5Graphics:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getGraphics
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.get_graphics()
 
 
 @overload
 def get_matrix() -> NDArray[(Any, Any), Float]:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8176,8 +8184,8 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
     You can use any of the following signatures:
 
      * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
     Parameters
     ----------
@@ -8191,14 +8199,16 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8208,8 +8218,8 @@ def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
     You can use any of the following signatures:
 
      * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
     Parameters
     ----------
@@ -8223,14 +8233,16 @@ def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8240,8 +8252,8 @@ def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
     You can use any of the following signatures:
 
      * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
     Parameters
     ----------
@@ -8255,13 +8267,15 @@ def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 def get_matrix(*args):
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8271,8 +8285,8 @@ def get_matrix(*args):
     You can use any of the following signatures:
 
      * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
     Parameters
     ----------
@@ -8286,21 +8300,25 @@ def get_matrix(*args):
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.get_matrix(*args)
 
 
 def get_surface() -> Py5Surface:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.getSurface
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.get_surface()
 
 
@@ -8331,7 +8349,7 @@ def green(rgb: int, /) -> float:
 
     ``g1 = green(c)  # simpler, but slower to calculate
     g2 = c >> 8 & 0xFF  # very fast to calculate``
-"""
+    """
     return _py5sketch.green(rgb)
 
 
@@ -8427,7 +8445,7 @@ def hint(which: int, /) -> None:
     ``ENABLE_STROKE_PERSPECTIVE``
     Enables stroke geometry (lines and points) to be affected by the perspective,
     meaning that they will look smaller as they move away from the camera.
-"""
+    """
     return _py5sketch.hint(which)
 
 
@@ -8441,7 +8459,7 @@ def hour() -> int:
 
     Processing communicates with the clock on your computer. The ``hour()`` function
     returns the current hour as a value from 0 - 23.
-"""
+    """
     return Sketch.hour()
 
 
@@ -8460,7 +8478,7 @@ def hue(rgb: int, /) -> float:
     -----
 
     Extracts the hue value from a color.
-"""
+    """
     return _py5sketch.hue(rgb)
 
 
@@ -8475,9 +8493,9 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * image(img: Py5Image, a: float, b: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+     * image(img: Py5Image, a: float, b: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
     Parameters
     ----------
@@ -8526,7 +8544,7 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
 
     The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
-"""
+    """
     pass
 
 
@@ -8541,9 +8559,9 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * image(img: Py5Image, a: float, b: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+     * image(img: Py5Image, a: float, b: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
     Parameters
     ----------
@@ -8592,7 +8610,7 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
 
     The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
-"""
+    """
     pass
 
 
@@ -8608,9 +8626,9 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
 
     You can use any of the following signatures:
 
-     * image(img: Py5Image, a: float, b: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+     * image(img: Py5Image, a: float, b: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
     Parameters
     ----------
@@ -8659,7 +8677,7 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
 
     The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
-"""
+    """
     pass
 
 
@@ -8673,9 +8691,9 @@ def image(*args):
 
     You can use any of the following signatures:
 
-     * image(img: Py5Image, a: float, b: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+     * image(img: Py5Image, a: float, b: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+     * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
     Parameters
     ----------
@@ -8724,7 +8742,7 @@ def image(*args):
 
     The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
-"""
+    """
     return _py5sketch.image(*args)
 
 
@@ -8761,33 +8779,37 @@ def image_mode(mode: int, /) -> None:
 
     The parameter must be written in ALL CAPS because Processing is a case-sensitive
     language.
-"""
+    """
     return _py5sketch.image_mode(mode)
 
 
 def is_key_pressed() -> bool:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.isKeyPressed
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.is_key_pressed()
 
 
 def is_mouse_pressed() -> bool:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.isMousePressed
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.is_mouse_pressed()
 
 
@@ -8802,8 +8824,8 @@ def lerp_color(c1: int, c2: int, amt: float, /) -> int:
 
     You can use any of the following signatures:
 
-     * lerp_color(c1: int, c2: int, amt: float) -> int
-     * lerp_color(c1: int, c2: int, amt: float, mode: int) -> int
+     * lerp_color(c1: int, c2: int, amt: float, /) -> int
+     * lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int
 
     Parameters
     ----------
@@ -8831,7 +8853,7 @@ def lerp_color(c1: int, c2: int, amt: float, /) -> int:
     An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
     at 1. This is different from the behavior of ``lerp()``, but necessary because
     otherwise numbers outside the range will produce strange and unexpected colors.
-"""
+    """
     pass
 
 
@@ -8846,8 +8868,8 @@ def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
 
     You can use any of the following signatures:
 
-     * lerp_color(c1: int, c2: int, amt: float) -> int
-     * lerp_color(c1: int, c2: int, amt: float, mode: int) -> int
+     * lerp_color(c1: int, c2: int, amt: float, /) -> int
+     * lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int
 
     Parameters
     ----------
@@ -8875,7 +8897,7 @@ def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
     An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
     at 1. This is different from the behavior of ``lerp()``, but necessary because
     otherwise numbers outside the range will produce strange and unexpected colors.
-"""
+    """
     pass
 
 
@@ -8889,8 +8911,8 @@ def lerp_color(*args):
 
     You can use any of the following signatures:
 
-     * lerp_color(c1: int, c2: int, amt: float) -> int
-     * lerp_color(c1: int, c2: int, amt: float, mode: int) -> int
+     * lerp_color(c1: int, c2: int, amt: float, /) -> int
+     * lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int
 
     Parameters
     ----------
@@ -8918,7 +8940,7 @@ def lerp_color(*args):
     An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
     at 1. This is different from the behavior of ``lerp()``, but necessary because
     otherwise numbers outside the range will produce strange and unexpected colors.
-"""
+    """
     return _py5sketch.lerp_color(*args)
 
 
@@ -8955,7 +8977,7 @@ def light_falloff(constant: float, linear: float, quadratic: float, /) -> None:
     lit ambiently with another color, you could use an ambient light with location
     and falloff. You can think of it as a point light that doesn't care which
     direction a surface is facing.
-"""
+    """
     return _py5sketch.light_falloff(constant, linear, quadratic)
 
 
@@ -8985,7 +9007,7 @@ def light_specular(v1: float, v2: float, v3: float, /) -> None:
     directions like a diffuse light) and is used for creating highlights. The
     specular quality of a light interacts with the specular material qualities set
     through the ``specular()`` and ``shininess()`` functions.
-"""
+    """
     return _py5sketch.light_specular(v1, v2, v3)
 
 
@@ -9003,7 +9025,7 @@ def lights() -> None:
     included in the ``draw()`` to remain persistent in a looping program. Placing
     them in the ``setup()`` of a looping program will cause them to only have an
     effect the first time through the loop.
-"""
+    """
     return _py5sketch.lights()
 
 
@@ -9018,8 +9040,8 @@ def line(x1: float, y1: float, x2: float, y2: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * line(x1: float, y1: float, x2: float, y2: float) -> None
-     * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> None
+     * line(x1: float, y1: float, x2: float, y2: float, /) -> None
+     * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None
 
     Parameters
     ----------
@@ -9053,7 +9075,7 @@ def line(x1: float, y1: float, x2: float, y2: float, /) -> None:
     function. The version with six parameters allows the line to be placed anywhere
     within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
     P3D parameter in combination with ``size()`` as shown in the above example.
-"""
+    """
     pass
 
 
@@ -9069,8 +9091,8 @@ def line(x1: float, y1: float, z1: float, x2: float,
 
     You can use any of the following signatures:
 
-     * line(x1: float, y1: float, x2: float, y2: float) -> None
-     * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> None
+     * line(x1: float, y1: float, x2: float, y2: float, /) -> None
+     * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None
 
     Parameters
     ----------
@@ -9104,7 +9126,7 @@ def line(x1: float, y1: float, z1: float, x2: float,
     function. The version with six parameters allows the line to be placed anywhere
     within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
     P3D parameter in combination with ``size()`` as shown in the above example.
-"""
+    """
     pass
 
 
@@ -9118,8 +9140,8 @@ def line(*args):
 
     You can use any of the following signatures:
 
-     * line(x1: float, y1: float, x2: float, y2: float) -> None
-     * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> None
+     * line(x1: float, y1: float, x2: float, y2: float, /) -> None
+     * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None
 
     Parameters
     ----------
@@ -9153,12 +9175,12 @@ def line(*args):
     function. The version with six parameters allows the line to be placed anywhere
     within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
     P3D parameter in combination with ``size()`` as shown in the above example.
-"""
+    """
     return _py5sketch.line(*args)
 
 
 def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.lines
 
@@ -9171,8 +9193,10 @@ def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.lines(coordinates)
 
 
@@ -9220,7 +9244,7 @@ def load_font(filename: str, /) -> Py5Font:
     used with the default renderer setting. This can be helpful when many font sizes
     are needed, or when using any renderer based on the default renderer, such as
     the PDF library.
-"""
+    """
     return _py5sketch.load_font(filename)
 
 
@@ -9236,7 +9260,7 @@ def load_pixels() -> None:
     This function must always be called before reading from or writing to
     ``pixels[]``. Subsequent changes to the display window will not be reflected in
     ``pixels`` until ``load_pixels()`` is called again.
-"""
+    """
     return _py5sketch.load_pixels()
 
 
@@ -9251,8 +9275,8 @@ def load_shader(frag_filename: str, /) -> Py5Shader:
 
     You can use any of the following signatures:
 
-     * load_shader(frag_filename: str) -> Py5Shader
-     * load_shader(frag_filename: str, vert_filename: str) -> Py5Shader
+     * load_shader(frag_filename: str, /) -> Py5Shader
+     * load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader
 
     Parameters
     ----------
@@ -9279,7 +9303,7 @@ def load_shader(frag_filename: str, /) -> Py5Shader:
     an error message will be printed to the console. The error message does not halt
     the program, however the null value may cause a NullPointerException if your
     code does not check whether the value returned is null.
-"""
+    """
     pass
 
 
@@ -9294,8 +9318,8 @@ def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
 
     You can use any of the following signatures:
 
-     * load_shader(frag_filename: str) -> Py5Shader
-     * load_shader(frag_filename: str, vert_filename: str) -> Py5Shader
+     * load_shader(frag_filename: str, /) -> Py5Shader
+     * load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader
 
     Parameters
     ----------
@@ -9322,7 +9346,7 @@ def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
     an error message will be printed to the console. The error message does not halt
     the program, however the null value may cause a NullPointerException if your
     code does not check whether the value returned is null.
-"""
+    """
     pass
 
 
@@ -9336,8 +9360,8 @@ def load_shader(*args):
 
     You can use any of the following signatures:
 
-     * load_shader(frag_filename: str) -> Py5Shader
-     * load_shader(frag_filename: str, vert_filename: str) -> Py5Shader
+     * load_shader(frag_filename: str, /) -> Py5Shader
+     * load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader
 
     Parameters
     ----------
@@ -9364,7 +9388,7 @@ def load_shader(*args):
     an error message will be printed to the console. The error message does not halt
     the program, however the null value may cause a NullPointerException if your
     code does not check whether the value returned is null.
-"""
+    """
     return _py5sketch.load_shader(*args)
 
 
@@ -9379,8 +9403,8 @@ def load_shape(filename: str, /) -> Py5Shape:
 
     You can use any of the following signatures:
 
-     * load_shape(filename: str) -> Py5Shape
-     * load_shape(filename: str, options: str) -> Py5Shape
+     * load_shape(filename: str, /) -> Py5Shape
+     * load_shape(filename: str, options: str, /) -> Py5Shape
 
     Parameters
     ----------
@@ -9409,7 +9433,7 @@ def load_shape(filename: str, /) -> Py5Shape:
     an error message will be printed to the console. The error message does not halt
     the program, however the null value may cause a NullPointerException if your
     code does not check whether the value returned is null.
-"""
+    """
     pass
 
 
@@ -9424,8 +9448,8 @@ def load_shape(filename: str, options: str, /) -> Py5Shape:
 
     You can use any of the following signatures:
 
-     * load_shape(filename: str) -> Py5Shape
-     * load_shape(filename: str, options: str) -> Py5Shape
+     * load_shape(filename: str, /) -> Py5Shape
+     * load_shape(filename: str, options: str, /) -> Py5Shape
 
     Parameters
     ----------
@@ -9454,7 +9478,7 @@ def load_shape(filename: str, options: str, /) -> Py5Shape:
     an error message will be printed to the console. The error message does not halt
     the program, however the null value may cause a NullPointerException if your
     code does not check whether the value returned is null.
-"""
+    """
     pass
 
 
@@ -9468,8 +9492,8 @@ def load_shape(*args):
 
     You can use any of the following signatures:
 
-     * load_shape(filename: str) -> Py5Shape
-     * load_shape(filename: str, options: str) -> Py5Shape
+     * load_shape(filename: str, /) -> Py5Shape
+     * load_shape(filename: str, options: str, /) -> Py5Shape
 
     Parameters
     ----------
@@ -9498,7 +9522,7 @@ def load_shape(*args):
     an error message will be printed to the console. The error message does not halt
     the program, however the null value may cause a NullPointerException if your
     code does not check whether the value returned is null.
-"""
+    """
     return _py5sketch.load_shape(*args)
 
 
@@ -9514,7 +9538,7 @@ def loop() -> None:
     By default, Processing loops through ``draw()`` continuously, executing the code
     within it. However, the ``draw()`` loop may be stopped by calling ``no_loop()``.
     In that case, the ``draw()`` loop can be resumed with ``loop()``.
-"""
+    """
     return _py5sketch.loop()
 
 
@@ -9530,7 +9554,7 @@ def millis() -> int:
     Returns the number of milliseconds (thousandths of a second) since starting the
     program. This information is often used for timing events and animation
     sequences.
-"""
+    """
     return _py5sketch.millis()
 
 
@@ -9544,7 +9568,7 @@ def minute() -> int:
 
     Processing communicates with the clock on your computer. The ``minute()``
     function returns the current minute as a value from 0 - 59.
-"""
+    """
     return Sketch.minute()
 
 
@@ -9579,7 +9603,7 @@ def model_x(x: float, y: float, z: float, /) -> float:
     translate and rotate commands. After ``pop_matrix()`` is called, those
     transformations no longer apply, but the (x, y, z) coordinate returned by the
     model functions is used to place another box in the same location.
-"""
+    """
     return _py5sketch.model_x(x, y, z)
 
 
@@ -9614,7 +9638,7 @@ def model_y(x: float, y: float, z: float, /) -> float:
     translate and rotate commands. After ``pop_matrix()`` is called, those
     transformations no longer apply, but the (x, y, z) coordinate returned by the
     model functions is used to place another box in the same location.
-"""
+    """
     return _py5sketch.model_y(x, y, z)
 
 
@@ -9649,7 +9673,7 @@ def model_z(x: float, y: float, z: float, /) -> float:
     translate and rotate commands. After ``pop_matrix()`` is called, those
     transformations no longer apply, but the (x, y, z) coordinate returned by the
     model functions is used to place another box in the same location.
-"""
+    """
     return _py5sketch.model_z(x, y, z)
 
 
@@ -9663,7 +9687,7 @@ def month() -> int:
 
     Processing communicates with the clock on your computer. The ``month()``
     function returns the current month as a value from 1 - 12.
-"""
+    """
     return Sketch.month()
 
 
@@ -9676,7 +9700,7 @@ def no_clip() -> None:
     -----
 
     Disables the clipping previously started by the ``clip()`` function.
-"""
+    """
     return _py5sketch.no_clip()
 
 
@@ -9690,7 +9714,7 @@ def no_cursor() -> None:
 
     Hides the cursor from view. Will not work when running the program in a web
     browser or in full screen (Present) mode.
-"""
+    """
     return _py5sketch.no_cursor()
 
 
@@ -9704,7 +9728,7 @@ def no_fill() -> None:
 
     Disables filling geometry. If both ``no_stroke()`` and ``no_fill()`` are called,
     nothing will be drawn to the screen.
-"""
+    """
     return _py5sketch.no_fill()
 
 
@@ -9720,7 +9744,7 @@ def no_lights() -> None:
     ``lights()`` function. This function can be used to disable lighting so that 2D
     geometry (which does not require lighting) can be drawn after a set of lighted
     3D geometry.
-"""
+    """
     return _py5sketch.no_lights()
 
 
@@ -9747,7 +9771,7 @@ def no_loop() -> None:
     Note that if the sketch is resized, ``redraw()`` will be called to update the
     sketch, even after ``no_loop()`` has been specified. Otherwise, the sketch would
     enter an odd state until ``loop()`` was called.
-"""
+    """
     return _py5sketch.no_loop()
 
 
@@ -9768,7 +9792,7 @@ def no_smooth() -> None:
     each sketch, either at the top of a sketch without a ``setup()``, or after the
     ``size()`` function when used in a sketch with ``setup()``. See the examples
     above for both scenarios.
-"""
+    """
     return _py5sketch.no_smooth()
 
 
@@ -9782,20 +9806,22 @@ def no_stroke() -> None:
 
     Disables drawing the stroke (outline). If both ``no_stroke()`` and ``no_fill()``
     are called, nothing will be drawn to the screen.
-"""
+    """
     return _py5sketch.no_stroke()
 
 
 def no_texture() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.noTexture
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.no_texture()
 
 
@@ -9810,7 +9836,7 @@ def no_tint() -> None:
 
     Removes the current fill value for displaying images and reverts to displaying
     images with their original hues.
-"""
+    """
     return _py5sketch.no_tint()
 
 
@@ -9840,7 +9866,7 @@ def normal(nx: float, ny: float, nz: float, /) -> None:
     automatically assign normals to shapes, but since that's imperfect, this is a
     better option when you want more control. This function is identical to
     ``gl_normal3f()`` in OpenGL.
-"""
+    """
     return _py5sketch.normal(nx, ny, nz)
 
 
@@ -9856,8 +9882,8 @@ def ortho() -> None:
     You can use any of the following signatures:
 
      * ortho() -> None
-     * ortho(left: float, right: float, bottom: float, top: float) -> None
-     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
     Parameters
     ----------
@@ -9890,7 +9916,7 @@ def ortho() -> None:
     and bottom are the minimum and maximum y values, and near and far are the
     minimum and maximum z values. If no parameters are given, the default is used:
     ortho(-width/2, width/2, -height/2, height/2).
-"""
+    """
     pass
 
 
@@ -9906,8 +9932,8 @@ def ortho(left: float, right: float, bottom: float, top: float, /) -> None:
     You can use any of the following signatures:
 
      * ortho() -> None
-     * ortho(left: float, right: float, bottom: float, top: float) -> None
-     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
     Parameters
     ----------
@@ -9940,7 +9966,7 @@ def ortho(left: float, right: float, bottom: float, top: float, /) -> None:
     and bottom are the minimum and maximum y values, and near and far are the
     minimum and maximum z values. If no parameters are given, the default is used:
     ortho(-width/2, width/2, -height/2, height/2).
-"""
+    """
     pass
 
 
@@ -9957,8 +9983,8 @@ def ortho(left: float, right: float, bottom: float,
     You can use any of the following signatures:
 
      * ortho() -> None
-     * ortho(left: float, right: float, bottom: float, top: float) -> None
-     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
     Parameters
     ----------
@@ -9991,7 +10017,7 @@ def ortho(left: float, right: float, bottom: float,
     and bottom are the minimum and maximum y values, and near and far are the
     minimum and maximum z values. If no parameters are given, the default is used:
     ortho(-width/2, width/2, -height/2, height/2).
-"""
+    """
     pass
 
 
@@ -10006,8 +10032,8 @@ def ortho(*args):
     You can use any of the following signatures:
 
      * ortho() -> None
-     * ortho(left: float, right: float, bottom: float, top: float) -> None
-     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+     * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
     Parameters
     ----------
@@ -10040,20 +10066,22 @@ def ortho(*args):
     and bottom are the minimum and maximum y values, and near and far are the
     minimum and maximum z values. If no parameters are given, the default is used:
     ortho(-width/2, width/2, -height/2, height/2).
-"""
+    """
     return _py5sketch.ortho(*args)
 
 
 def pause() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.pause
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.pause()
 
 
@@ -10070,7 +10098,7 @@ def perspective() -> None:
     You can use any of the following signatures:
 
      * perspective() -> None
-     * perspective(fovy: float, aspect: float, z_near: float, z_far: float) -> None
+     * perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None
 
     Parameters
     ----------
@@ -10099,7 +10127,7 @@ def perspective() -> None:
     version with four parameters allows the programmer to set the area precisely.
     The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
     cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-"""
+    """
     pass
 
 
@@ -10117,7 +10145,7 @@ def perspective(fovy: float, aspect: float,
     You can use any of the following signatures:
 
      * perspective() -> None
-     * perspective(fovy: float, aspect: float, z_near: float, z_far: float) -> None
+     * perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None
 
     Parameters
     ----------
@@ -10146,7 +10174,7 @@ def perspective(fovy: float, aspect: float,
     version with four parameters allows the programmer to set the area precisely.
     The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
     cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-"""
+    """
     pass
 
 
@@ -10162,7 +10190,7 @@ def perspective(*args):
     You can use any of the following signatures:
 
      * perspective() -> None
-     * perspective(fovy: float, aspect: float, z_near: float, z_far: float) -> None
+     * perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None
 
     Parameters
     ----------
@@ -10191,7 +10219,7 @@ def perspective(*args):
     version with four parameters allows the programmer to set the area precisely.
     The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
     cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-"""
+    """
     return _py5sketch.perspective(*args)
 
 
@@ -10226,7 +10254,7 @@ def pixel_density(density: int, /) -> None:
     To use variables as the arguments to ``pixel_density()`` function, place the
     ``pixel_density()`` function within the ``settings()`` function. There is more
     information about this on the ``settings()`` reference page.
-"""
+    """
     return _py5sketch.pixel_density(density)
 
 
@@ -10241,8 +10269,8 @@ def point(x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * point(x: float, y: float) -> None
-     * point(x: float, y: float, z: float) -> None
+     * point(x: float, y: float, /) -> None
+     * point(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -10275,7 +10303,7 @@ def point(x: float, y: float, /) -> None:
     screen, depending on the graphics settings of the computer. Workarounds include
     setting the pixel using ``set()`` or drawing the point using either ``circle()``
     or ``square()``.
-"""
+    """
     pass
 
 
@@ -10290,8 +10318,8 @@ def point(x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * point(x: float, y: float) -> None
-     * point(x: float, y: float, z: float) -> None
+     * point(x: float, y: float, /) -> None
+     * point(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -10324,7 +10352,7 @@ def point(x: float, y: float, z: float, /) -> None:
     screen, depending on the graphics settings of the computer. Workarounds include
     setting the pixel using ``set()`` or drawing the point using either ``circle()``
     or ``square()``.
-"""
+    """
     pass
 
 
@@ -10338,8 +10366,8 @@ def point(*args):
 
     You can use any of the following signatures:
 
-     * point(x: float, y: float) -> None
-     * point(x: float, y: float, z: float) -> None
+     * point(x: float, y: float, /) -> None
+     * point(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -10372,7 +10400,7 @@ def point(*args):
     screen, depending on the graphics settings of the computer. Workarounds include
     setting the pixel using ``set()`` or drawing the point using either ``circle()``
     or ``square()``.
-"""
+    """
     return _py5sketch.point(*args)
 
 
@@ -10412,12 +10440,12 @@ def point_light(v1: float, v2: float, v3: float,
     The ``v1``, ``v2``, and ``v3`` parameters are interpreted as either RGB or HSB
     values, depending on the current color mode. The ``x``, ``y``, and ``z``
     parameters set the position of the light.
-"""
+    """
     return _py5sketch.point_light(v1, v2, v3, x, y, z)
 
 
 def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.points
 
@@ -10430,8 +10458,10 @@ def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.points(coordinates)
 
 
@@ -10462,7 +10492,7 @@ def pop() -> None:
     ``pop_styles()``. The difference is that ``push()`` and ``pop()`` control both
     the transformations (rotate, scale, translate) and the drawing styles at the
     same time.
-"""
+    """
     return _py5sketch.pop()
 
 
@@ -10480,7 +10510,7 @@ def pop_matrix() -> None:
     ``pop_matrix()`` restores the prior coordinate system. ``push_matrix()`` and
     ``pop_matrix()`` are used in conjuction with the other transformation functions
     and may be embedded to control the scope of the transformations.
-"""
+    """
     return _py5sketch.pop_matrix()
 
 
@@ -10501,7 +10531,7 @@ def pop_style() -> None:
     current style information. The ``push_style()`` and ``pop_style()`` functions
     can be embedded to provide more control (see the second example above for a
     demonstration.)
-"""
+    """
     return _py5sketch.pop_style()
 
 
@@ -10516,7 +10546,7 @@ def print_camera() -> None:
 
     Prints the current camera matrix to the Console (the text window at the bottom
     of Processing).
-"""
+    """
     return _py5sketch.print_camera()
 
 
@@ -10531,7 +10561,7 @@ def print_matrix() -> None:
 
     Prints the current matrix to the Console (the text window at the bottom of
     Processing).
-"""
+    """
     return _py5sketch.print_matrix()
 
 
@@ -10546,7 +10576,7 @@ def print_projection() -> None:
 
     Prints the current projection matrix to the Console (the text window at the
     bottom of Processing).
-"""
+    """
     return _py5sketch.print_projection()
 
 
@@ -10578,7 +10608,7 @@ def push() -> None:
     ``pop_styles()``. The difference is that ``push()`` and ``pop()`` control both
     the transformations (rotate, scale, translate) and the drawing styles at the
     same time.
-"""
+    """
     return _py5sketch.push()
 
 
@@ -10597,7 +10627,7 @@ def push_matrix() -> None:
     ``push_matrix()`` and ``pop_matrix()`` are used in conjuction with the other
     transformation functions and may be embedded to control the scope of the
     transformations.
-"""
+    """
     return _py5sketch.push_matrix()
 
 
@@ -10625,7 +10655,7 @@ def push_style() -> None:
     ``shape_mode()``, ``color_mode()``, ``text_align()``, ``text_font()``,
     ``text_mode()``, ``text_size()``, ``text_leading()``, ``emissive()``,
     ``specular()``, ``shininess()``, ``ambient()``
-"""
+    """
     return _py5sketch.push_style()
 
 
@@ -10669,7 +10699,7 @@ def quad(x1: float, y1: float, x2: float, y2: float, x3: float,
     but the angles between its edges are not constrained to ninety degrees. The
     first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs
     should proceed clockwise or counter-clockwise around the defined shape.
-"""
+    """
     return _py5sketch.quad(x1, y1, x2, y2, x3, y3, x4, y4)
 
 
@@ -10684,8 +10714,8 @@ def quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float) -> None
-     * quadratic_vertex(cx: float, cy: float, x3: float, y3: float) -> None
+     * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+     * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
 
     Parameters
     ----------
@@ -10720,7 +10750,7 @@ def quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None:
     when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
     version requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     pass
 
 
@@ -10736,8 +10766,8 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
 
     You can use any of the following signatures:
 
-     * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float) -> None
-     * quadratic_vertex(cx: float, cy: float, x3: float, y3: float) -> None
+     * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+     * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
 
     Parameters
     ----------
@@ -10772,7 +10802,7 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
     when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
     version requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     pass
 
 
@@ -10786,8 +10816,8 @@ def quadratic_vertex(*args):
 
     You can use any of the following signatures:
 
-     * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float) -> None
-     * quadratic_vertex(cx: float, cy: float, x3: float, y3: float) -> None
+     * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+     * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
 
     Parameters
     ----------
@@ -10822,12 +10852,12 @@ def quadratic_vertex(*args):
     when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
     version requires rendering with P3D (see the Environment reference for more
     information).
-"""
+    """
     return _py5sketch.quadratic_vertex(*args)
 
 
 def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.quadraticVertices
 
@@ -10840,8 +10870,10 @@ def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.quadratic_vertices(coordinates)
 
 
@@ -10856,9 +10888,9 @@ def rect(a: float, b: float, c: float, d: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * rect(a: float, b: float, c: float, d: float) -> None
-     * rect(a: float, b: float, c: float, d: float, r: float) -> None
-     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+     * rect(a: float, b: float, c: float, d: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
     Parameters
     ----------
@@ -10906,7 +10938,7 @@ def rect(a: float, b: float, c: float, d: float, /) -> None:
     using eight parameters, the latter four set the radius of the arc at each corner
     separately, starting with the top-left corner and moving clockwise around the
     rectangle.
-"""
+    """
     pass
 
 
@@ -10921,9 +10953,9 @@ def rect(a: float, b: float, c: float, d: float, r: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * rect(a: float, b: float, c: float, d: float) -> None
-     * rect(a: float, b: float, c: float, d: float, r: float) -> None
-     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+     * rect(a: float, b: float, c: float, d: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
     Parameters
     ----------
@@ -10971,7 +11003,7 @@ def rect(a: float, b: float, c: float, d: float, r: float, /) -> None:
     using eight parameters, the latter four set the radius of the arc at each corner
     separately, starting with the top-left corner and moving clockwise around the
     rectangle.
-"""
+    """
     pass
 
 
@@ -10987,9 +11019,9 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
 
     You can use any of the following signatures:
 
-     * rect(a: float, b: float, c: float, d: float) -> None
-     * rect(a: float, b: float, c: float, d: float, r: float) -> None
-     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+     * rect(a: float, b: float, c: float, d: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
     Parameters
     ----------
@@ -11037,7 +11069,7 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
     using eight parameters, the latter four set the radius of the arc at each corner
     separately, starting with the top-left corner and moving clockwise around the
     rectangle.
-"""
+    """
     pass
 
 
@@ -11051,9 +11083,9 @@ def rect(*args):
 
     You can use any of the following signatures:
 
-     * rect(a: float, b: float, c: float, d: float) -> None
-     * rect(a: float, b: float, c: float, d: float, r: float) -> None
-     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+     * rect(a: float, b: float, c: float, d: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+     * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
     Parameters
     ----------
@@ -11101,7 +11133,7 @@ def rect(*args):
     using eight parameters, the latter four set the radius of the arc at each corner
     separately, starting with the top-left corner and moving clockwise around the
     rectangle.
-"""
+    """
     return _py5sketch.rect(*args)
 
 
@@ -11141,7 +11173,7 @@ def rect_mode(mode: int, /) -> None:
 
     The parameter must be written in ALL CAPS because Processing is a case-sensitive
     language.
-"""
+    """
     return _py5sketch.rect_mode(mode)
 
 
@@ -11171,7 +11203,7 @@ def red(rgb: int, /) -> float:
 
     ``r1 = red(c)  # simpler, but slower to calculate
     r2 = c >> 16 & 0xFF  # very fast to calculate``
-"""
+    """
     return _py5sketch.red(rgb)
 
 
@@ -11193,7 +11225,7 @@ def redraw() -> None:
 
     The ``redraw()`` function does not work properly when called inside ``draw()``.
     To enable/disable animations, use ``loop()`` and ``no_loop()``.
-"""
+    """
     return _py5sketch.redraw()
 
 
@@ -11207,7 +11239,7 @@ def reset_matrix() -> None:
 
     Replaces the current matrix with the identity matrix. The equivalent function in
     OpenGL is ``gl_load_identity()``.
-"""
+    """
     return _py5sketch.reset_matrix()
 
 
@@ -11223,7 +11255,7 @@ def reset_shader() -> None:
     You can use any of the following signatures:
 
      * reset_shader() -> None
-     * reset_shader(kind: int) -> None
+     * reset_shader(kind: int, /) -> None
 
     Parameters
     ----------
@@ -11236,7 +11268,7 @@ def reset_shader() -> None:
 
     Restores the default shaders. Code that runs after ``reset_shader()`` will not
     be affected by previously defined shaders.
-"""
+    """
     pass
 
 
@@ -11252,7 +11284,7 @@ def reset_shader(kind: int, /) -> None:
     You can use any of the following signatures:
 
      * reset_shader() -> None
-     * reset_shader(kind: int) -> None
+     * reset_shader(kind: int, /) -> None
 
     Parameters
     ----------
@@ -11265,7 +11297,7 @@ def reset_shader(kind: int, /) -> None:
 
     Restores the default shaders. Code that runs after ``reset_shader()`` will not
     be affected by previously defined shaders.
-"""
+    """
     pass
 
 
@@ -11280,7 +11312,7 @@ def reset_shader(*args):
     You can use any of the following signatures:
 
      * reset_shader() -> None
-     * reset_shader(kind: int) -> None
+     * reset_shader(kind: int, /) -> None
 
     Parameters
     ----------
@@ -11293,20 +11325,22 @@ def reset_shader(*args):
 
     Restores the default shaders. Code that runs after ``reset_shader()`` will not
     be affected by previously defined shaders.
-"""
+    """
     return _py5sketch.reset_shader(*args)
 
 
 def resume() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.resume
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.resume()
 
 
@@ -11321,8 +11355,8 @@ def rotate(angle: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * rotate(angle: float) -> None
-     * rotate(angle: float, x: float, y: float, z: float) -> None
+     * rotate(angle: float, /) -> None
+     * rotate(angle: float, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11357,7 +11391,7 @@ def rotate(angle: float, /) -> None:
     Technically, ``rotate()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by ``push_matrix()``
     and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -11372,8 +11406,8 @@ def rotate(angle: float, x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * rotate(angle: float) -> None
-     * rotate(angle: float, x: float, y: float, z: float) -> None
+     * rotate(angle: float, /) -> None
+     * rotate(angle: float, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11408,7 +11442,7 @@ def rotate(angle: float, x: float, y: float, z: float, /) -> None:
     Technically, ``rotate()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by ``push_matrix()``
     and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -11422,8 +11456,8 @@ def rotate(*args):
 
     You can use any of the following signatures:
 
-     * rotate(angle: float) -> None
-     * rotate(angle: float, x: float, y: float, z: float) -> None
+     * rotate(angle: float, /) -> None
+     * rotate(angle: float, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11458,7 +11492,7 @@ def rotate(*args):
     Technically, ``rotate()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by ``push_matrix()``
     and ``pop_matrix()``.
-"""
+    """
     return _py5sketch.rotate(*args)
 
 
@@ -11487,7 +11521,7 @@ def rotate_x(angle: float, /) -> None:
     If ``rotate_x()`` is run within the ``draw()``, the transformation is reset when
     the loop begins again. This function requires using P3D as a third parameter to
     ``size()`` as shown in the example above.
-"""
+    """
     return _py5sketch.rotate_x(angle)
 
 
@@ -11516,7 +11550,7 @@ def rotate_y(angle: float, /) -> None:
     If ``rotate_y()`` is run within the ``draw()``, the transformation is reset when
     the loop begins again. This function requires using P3D as a third parameter to
     ``size()`` as shown in the example above.
-"""
+    """
     return _py5sketch.rotate_y(angle)
 
 
@@ -11545,7 +11579,7 @@ def rotate_z(angle: float, /) -> None:
     If ``rotate_z()`` is run within the ``draw()``, the transformation is reset when
     the loop begins again. This function requires using P3D as a third parameter to
     ``size()`` as shown in the example above.
-"""
+    """
     return _py5sketch.rotate_z(angle)
 
 
@@ -11564,7 +11598,7 @@ def saturation(rgb: int, /) -> float:
     -----
 
     Extracts the saturation value from a color.
-"""
+    """
     return _py5sketch.saturation(rgb)
 
 
@@ -11580,9 +11614,9 @@ def scale(s: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * scale(s: float) -> None
-     * scale(x: float, y: float) -> None
-     * scale(x: float, y: float, z: float) -> None
+     * scale(s: float, /) -> None
+     * scale(x: float, y: float, /) -> None
+     * scale(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11614,7 +11648,7 @@ def scale(s: float, /) -> None:
     function with the ``z`` parameter requires using P3D as a parameter for
     ``size()``, as shown in the third example above. This function can be further
     controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -11630,9 +11664,9 @@ def scale(x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * scale(s: float) -> None
-     * scale(x: float, y: float) -> None
-     * scale(x: float, y: float, z: float) -> None
+     * scale(s: float, /) -> None
+     * scale(x: float, y: float, /) -> None
+     * scale(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11664,7 +11698,7 @@ def scale(x: float, y: float, /) -> None:
     function with the ``z`` parameter requires using P3D as a parameter for
     ``size()``, as shown in the third example above. This function can be further
     controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -11680,9 +11714,9 @@ def scale(x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * scale(s: float) -> None
-     * scale(x: float, y: float) -> None
-     * scale(x: float, y: float, z: float) -> None
+     * scale(s: float, /) -> None
+     * scale(x: float, y: float, /) -> None
+     * scale(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11714,7 +11748,7 @@ def scale(x: float, y: float, z: float, /) -> None:
     function with the ``z`` parameter requires using P3D as a parameter for
     ``size()``, as shown in the third example above. This function can be further
     controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -11729,9 +11763,9 @@ def scale(*args):
 
     You can use any of the following signatures:
 
-     * scale(s: float) -> None
-     * scale(x: float, y: float) -> None
-     * scale(x: float, y: float, z: float) -> None
+     * scale(s: float, /) -> None
+     * scale(x: float, y: float, /) -> None
+     * scale(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -11763,7 +11797,7 @@ def scale(*args):
     function with the ``z`` parameter requires using P3D as a parameter for
     ``size()``, as shown in the third example above. This function can be further
     controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     return _py5sketch.scale(*args)
 
 
@@ -11779,8 +11813,8 @@ def screen_x(x: float, y: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * screen_x(x: float, y: float) -> float
-     * screen_x(x: float, y: float, z: float) -> float
+     * screen_x(x: float, y: float, /) -> float
+     * screen_x(x: float, y: float, z: float, /) -> float
 
     Parameters
     ----------
@@ -11799,7 +11833,7 @@ def screen_x(x: float, y: float, /) -> float:
 
     Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     pass
 
 
@@ -11815,8 +11849,8 @@ def screen_x(x: float, y: float, z: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * screen_x(x: float, y: float) -> float
-     * screen_x(x: float, y: float, z: float) -> float
+     * screen_x(x: float, y: float, /) -> float
+     * screen_x(x: float, y: float, z: float, /) -> float
 
     Parameters
     ----------
@@ -11835,7 +11869,7 @@ def screen_x(x: float, y: float, z: float, /) -> float:
 
     Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     pass
 
 
@@ -11850,8 +11884,8 @@ def screen_x(*args):
 
     You can use any of the following signatures:
 
-     * screen_x(x: float, y: float) -> float
-     * screen_x(x: float, y: float, z: float) -> float
+     * screen_x(x: float, y: float, /) -> float
+     * screen_x(x: float, y: float, z: float, /) -> float
 
     Parameters
     ----------
@@ -11870,7 +11904,7 @@ def screen_x(*args):
 
     Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     return _py5sketch.screen_x(*args)
 
 
@@ -11886,8 +11920,8 @@ def screen_y(x: float, y: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * screen_y(x: float, y: float) -> float
-     * screen_y(x: float, y: float, z: float) -> float
+     * screen_y(x: float, y: float, /) -> float
+     * screen_y(x: float, y: float, z: float, /) -> float
 
     Parameters
     ----------
@@ -11906,7 +11940,7 @@ def screen_y(x: float, y: float, /) -> float:
 
     Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     pass
 
 
@@ -11922,8 +11956,8 @@ def screen_y(x: float, y: float, z: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * screen_y(x: float, y: float) -> float
-     * screen_y(x: float, y: float, z: float) -> float
+     * screen_y(x: float, y: float, /) -> float
+     * screen_y(x: float, y: float, z: float, /) -> float
 
     Parameters
     ----------
@@ -11942,7 +11976,7 @@ def screen_y(x: float, y: float, z: float, /) -> float:
 
     Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     pass
 
 
@@ -11957,8 +11991,8 @@ def screen_y(*args):
 
     You can use any of the following signatures:
 
-     * screen_y(x: float, y: float) -> float
-     * screen_y(x: float, y: float, z: float) -> float
+     * screen_y(x: float, y: float, /) -> float
+     * screen_y(x: float, y: float, z: float, /) -> float
 
     Parameters
     ----------
@@ -11977,7 +12011,7 @@ def screen_y(*args):
 
     Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     return _py5sketch.screen_y(*args)
 
 
@@ -12004,7 +12038,7 @@ def screen_z(x: float, y: float, z: float, /) -> float:
 
     Takes a three-dimensional X, Y, Z position and returns the Z value for where it
     will appear on a (two-dimensional) screen.
-"""
+    """
     return _py5sketch.screen_z(x, y, z)
 
 
@@ -12018,13 +12052,13 @@ def second() -> int:
 
     Processing communicates with the clock on your computer. The ``second()``
     function returns the current second as a value from 0 - 59.
-"""
+    """
     return Sketch.second()
 
 
 @overload
 def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.setMatrix
 
@@ -12033,8 +12067,8 @@ def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
 
     You can use any of the following signatures:
 
-     * set_matrix(source: NDArray[(2, 3), Float]) -> None
-     * set_matrix(source: NDArray[(4, 4), Float]) -> None
+     * set_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * set_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -12048,14 +12082,16 @@ def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.setMatrix
 
@@ -12064,8 +12100,8 @@ def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
 
     You can use any of the following signatures:
 
-     * set_matrix(source: NDArray[(2, 3), Float]) -> None
-     * set_matrix(source: NDArray[(4, 4), Float]) -> None
+     * set_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * set_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -12079,13 +12115,15 @@ def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 def set_matrix(*args):
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.setMatrix
 
@@ -12094,8 +12132,8 @@ def set_matrix(*args):
 
     You can use any of the following signatures:
 
-     * set_matrix(source: NDArray[(2, 3), Float]) -> None
-     * set_matrix(source: NDArray[(4, 4), Float]) -> None
+     * set_matrix(source: NDArray[(2, 3), Float], /) -> None
+     * set_matrix(source: NDArray[(4, 4), Float], /) -> None
 
     Parameters
     ----------
@@ -12109,8 +12147,10 @@ def set_matrix(*args):
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.set_matrix(*args)
 
 
@@ -12125,8 +12165,8 @@ def shader(shader: Py5Shader, /) -> None:
 
     You can use any of the following signatures:
 
-     * shader(shader: Py5Shader) -> None
-     * shader(shader: Py5Shader, kind: int) -> None
+     * shader(shader: Py5Shader, /) -> None
+     * shader(shader: Py5Shader, kind: int, /) -> None
 
     Parameters
     ----------
@@ -12142,7 +12182,7 @@ def shader(shader: Py5Shader, /) -> None:
 
     Applies the shader specified by the parameters. It's compatible with the P2D and
     P3D renderers, but not with the default renderer.
-"""
+    """
     pass
 
 
@@ -12157,8 +12197,8 @@ def shader(shader: Py5Shader, kind: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * shader(shader: Py5Shader) -> None
-     * shader(shader: Py5Shader, kind: int) -> None
+     * shader(shader: Py5Shader, /) -> None
+     * shader(shader: Py5Shader, kind: int, /) -> None
 
     Parameters
     ----------
@@ -12174,7 +12214,7 @@ def shader(shader: Py5Shader, kind: int, /) -> None:
 
     Applies the shader specified by the parameters. It's compatible with the P2D and
     P3D renderers, but not with the default renderer.
-"""
+    """
     pass
 
 
@@ -12188,8 +12228,8 @@ def shader(*args):
 
     You can use any of the following signatures:
 
-     * shader(shader: Py5Shader) -> None
-     * shader(shader: Py5Shader, kind: int) -> None
+     * shader(shader: Py5Shader, /) -> None
+     * shader(shader: Py5Shader, kind: int, /) -> None
 
     Parameters
     ----------
@@ -12205,7 +12245,7 @@ def shader(*args):
 
     Applies the shader specified by the parameters. It's compatible with the P2D and
     P3D renderers, but not with the default renderer.
-"""
+    """
     return _py5sketch.shader(*args)
 
 
@@ -12220,9 +12260,9 @@ def shape(shape: Py5Shape, /) -> None:
 
     You can use any of the following signatures:
 
-     * shape(shape: Py5Shape) -> None
-     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-     * shape(shape: Py5Shape, x: float, y: float) -> None
+     * shape(shape: Py5Shape, /) -> None
+     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+     * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
     Parameters
     ----------
@@ -12259,7 +12299,7 @@ def shape(shape: Py5Shape, /) -> None:
     shape is displayed at its original size unless the ``c`` and ``d`` parameters
     specify a different size. The ``shape_mode()`` function can be used to change
     the way these parameters are interpreted.
-"""
+    """
     pass
 
 
@@ -12274,9 +12314,9 @@ def shape(shape: Py5Shape, x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * shape(shape: Py5Shape) -> None
-     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-     * shape(shape: Py5Shape, x: float, y: float) -> None
+     * shape(shape: Py5Shape, /) -> None
+     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+     * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
     Parameters
     ----------
@@ -12313,7 +12353,7 @@ def shape(shape: Py5Shape, x: float, y: float, /) -> None:
     shape is displayed at its original size unless the ``c`` and ``d`` parameters
     specify a different size. The ``shape_mode()`` function can be used to change
     the way these parameters are interpreted.
-"""
+    """
     pass
 
 
@@ -12328,9 +12368,9 @@ def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * shape(shape: Py5Shape) -> None
-     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-     * shape(shape: Py5Shape, x: float, y: float) -> None
+     * shape(shape: Py5Shape, /) -> None
+     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+     * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
     Parameters
     ----------
@@ -12367,7 +12407,7 @@ def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
     shape is displayed at its original size unless the ``c`` and ``d`` parameters
     specify a different size. The ``shape_mode()`` function can be used to change
     the way these parameters are interpreted.
-"""
+    """
     pass
 
 
@@ -12381,9 +12421,9 @@ def shape(*args):
 
     You can use any of the following signatures:
 
-     * shape(shape: Py5Shape) -> None
-     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-     * shape(shape: Py5Shape, x: float, y: float) -> None
+     * shape(shape: Py5Shape, /) -> None
+     * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+     * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
     Parameters
     ----------
@@ -12420,7 +12460,7 @@ def shape(*args):
     shape is displayed at its original size unless the ``c`` and ``d`` parameters
     specify a different size. The ``shape_mode()`` function can be used to change
     the way these parameters are interpreted.
-"""
+    """
     return _py5sketch.shape(*args)
 
 
@@ -12448,7 +12488,7 @@ def shape_mode(mode: int, /) -> None:
     and forth parameters of ``shape()`` to specify the width and height. The
     parameter must be written in "ALL CAPS" because Processing is a case sensitive
     language.
-"""
+    """
     return _py5sketch.shape_mode(mode)
 
 
@@ -12480,7 +12520,7 @@ def shear_x(angle: float, /) -> None:
     Technically, ``shear_x()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by the
     ``push_matrix()`` and ``pop_matrix()`` functions.
-"""
+    """
     return _py5sketch.shear_x(angle)
 
 
@@ -12512,7 +12552,7 @@ def shear_y(angle: float, /) -> None:
     Technically, ``shear_y()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by the
     ``push_matrix()`` and ``pop_matrix()`` functions.
-"""
+    """
     return _py5sketch.shear_y(angle)
 
 
@@ -12533,7 +12573,7 @@ def shininess(shine: float, /) -> None:
     Sets the amount of gloss in the surface of shapes. Used in combination with
     ``ambient()``, ``specular()``, and ``emissive()`` in setting the material
     properties of shapes.
-"""
+    """
     return _py5sketch.shininess(shine)
 
 
@@ -12548,9 +12588,9 @@ def size(width: int, height: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * size(width: int, height: int) -> None
-     * size(width: int, height: int, renderer: str) -> None
-     * size(width: int, height: int, renderer: str, path: str) -> None
+     * size(width: int, height: int, /) -> None
+     * size(width: int, height: int, renderer: str, /) -> None
+     * size(width: int, height: int, renderer: str, path: str, /) -> None
 
     Parameters
     ----------
@@ -12625,7 +12665,7 @@ def size(width: int, height: int, /) -> None:
     place the ``size()`` function within the ``settings()`` function (instead of
     ``setup()``). There is more information about this on the ``settings()``
     reference page.
-"""
+    """
     pass
 
 
@@ -12640,9 +12680,9 @@ def size(width: int, height: int, renderer: str, /) -> None:
 
     You can use any of the following signatures:
 
-     * size(width: int, height: int) -> None
-     * size(width: int, height: int, renderer: str) -> None
-     * size(width: int, height: int, renderer: str, path: str) -> None
+     * size(width: int, height: int, /) -> None
+     * size(width: int, height: int, renderer: str, /) -> None
+     * size(width: int, height: int, renderer: str, path: str, /) -> None
 
     Parameters
     ----------
@@ -12717,7 +12757,7 @@ def size(width: int, height: int, renderer: str, /) -> None:
     place the ``size()`` function within the ``settings()`` function (instead of
     ``setup()``). There is more information about this on the ``settings()``
     reference page.
-"""
+    """
     pass
 
 
@@ -12732,9 +12772,9 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
 
     You can use any of the following signatures:
 
-     * size(width: int, height: int) -> None
-     * size(width: int, height: int, renderer: str) -> None
-     * size(width: int, height: int, renderer: str, path: str) -> None
+     * size(width: int, height: int, /) -> None
+     * size(width: int, height: int, renderer: str, /) -> None
+     * size(width: int, height: int, renderer: str, path: str, /) -> None
 
     Parameters
     ----------
@@ -12809,7 +12849,7 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
     place the ``size()`` function within the ``settings()`` function (instead of
     ``setup()``). There is more information about this on the ``settings()``
     reference page.
-"""
+    """
     pass
 
 
@@ -12823,9 +12863,9 @@ def size(*args):
 
     You can use any of the following signatures:
 
-     * size(width: int, height: int) -> None
-     * size(width: int, height: int, renderer: str) -> None
-     * size(width: int, height: int, renderer: str, path: str) -> None
+     * size(width: int, height: int, /) -> None
+     * size(width: int, height: int, renderer: str, /) -> None
+     * size(width: int, height: int, renderer: str, path: str, /) -> None
 
     Parameters
     ----------
@@ -12900,13 +12940,13 @@ def size(*args):
     place the ``size()`` function within the ``settings()`` function (instead of
     ``setup()``). There is more information about this on the ``settings()``
     reference page.
-"""
+    """
     return _py5sketch.size(*args)
 
 
 @overload
 def sketch_path() -> str:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.sketchPath
 
@@ -12916,7 +12956,7 @@ def sketch_path() -> str:
     You can use any of the following signatures:
 
      * sketch_path() -> str
-     * sketch_path(where: str) -> str
+     * sketch_path(where: str, /) -> str
 
     Parameters
     ----------
@@ -12927,14 +12967,16 @@ def sketch_path() -> str:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def sketch_path(where: str, /) -> str:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.sketchPath
 
@@ -12944,7 +12986,7 @@ def sketch_path(where: str, /) -> str:
     You can use any of the following signatures:
 
      * sketch_path() -> str
-     * sketch_path(where: str) -> str
+     * sketch_path(where: str, /) -> str
 
     Parameters
     ----------
@@ -12955,13 +12997,15 @@ def sketch_path(where: str, /) -> str:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 def sketch_path(*args):
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.sketchPath
 
@@ -12971,7 +13015,7 @@ def sketch_path(*args):
     You can use any of the following signatures:
 
      * sketch_path() -> str
-     * sketch_path(where: str) -> str
+     * sketch_path(where: str, /) -> str
 
     Parameters
     ----------
@@ -12982,8 +13026,10 @@ def sketch_path(*args):
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.sketch_path(*args)
 
 
@@ -12999,7 +13045,7 @@ def smooth() -> None:
     You can use any of the following signatures:
 
      * smooth() -> None
-     * smooth(level: int) -> None
+     * smooth(level: int, /) -> None
 
     Parameters
     ----------
@@ -13035,7 +13081,7 @@ def smooth() -> None:
     When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
     after the object is created with ``create_graphics()``, as shown in the
     Reference in the third example.
-"""
+    """
     pass
 
 
@@ -13051,7 +13097,7 @@ def smooth(level: int, /) -> None:
     You can use any of the following signatures:
 
      * smooth() -> None
-     * smooth(level: int) -> None
+     * smooth(level: int, /) -> None
 
     Parameters
     ----------
@@ -13087,7 +13133,7 @@ def smooth(level: int, /) -> None:
     When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
     after the object is created with ``create_graphics()``, as shown in the
     Reference in the third example.
-"""
+    """
     pass
 
 
@@ -13102,7 +13148,7 @@ def smooth(*args):
     You can use any of the following signatures:
 
      * smooth() -> None
-     * smooth(level: int) -> None
+     * smooth(level: int, /) -> None
 
     Parameters
     ----------
@@ -13138,7 +13184,7 @@ def smooth(*args):
     When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
     after the object is created with ``create_graphics()``, as shown in the
     Reference in the third example.
-"""
+    """
     return _py5sketch.smooth(*args)
 
 
@@ -13154,9 +13200,9 @@ def specular(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * specular(gray: float) -> None
-     * specular(rgb: int) -> None
-     * specular(v1: float, v2: float, v3: float) -> None
+     * specular(gray: float, /) -> None
+     * specular(rgb: int, /) -> None
+     * specular(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -13184,7 +13230,7 @@ def specular(gray: float, /) -> None:
     surface in a preferred direction (rather than bouncing in all directions like a
     diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     pass
 
 
@@ -13200,9 +13246,9 @@ def specular(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * specular(gray: float) -> None
-     * specular(rgb: int) -> None
-     * specular(v1: float, v2: float, v3: float) -> None
+     * specular(gray: float, /) -> None
+     * specular(rgb: int, /) -> None
+     * specular(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -13230,7 +13276,7 @@ def specular(v1: float, v2: float, v3: float, /) -> None:
     surface in a preferred direction (rather than bouncing in all directions like a
     diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     pass
 
 
@@ -13246,9 +13292,9 @@ def specular(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * specular(gray: float) -> None
-     * specular(rgb: int) -> None
-     * specular(v1: float, v2: float, v3: float) -> None
+     * specular(gray: float, /) -> None
+     * specular(rgb: int, /) -> None
+     * specular(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -13276,7 +13322,7 @@ def specular(rgb: int, /) -> None:
     surface in a preferred direction (rather than bouncing in all directions like a
     diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     pass
 
 
@@ -13291,9 +13337,9 @@ def specular(*args):
 
     You can use any of the following signatures:
 
-     * specular(gray: float) -> None
-     * specular(rgb: int) -> None
-     * specular(v1: float, v2: float, v3: float) -> None
+     * specular(gray: float, /) -> None
+     * specular(rgb: int, /) -> None
+     * specular(v1: float, v2: float, v3: float, /) -> None
 
     Parameters
     ----------
@@ -13321,7 +13367,7 @@ def specular(*args):
     surface in a preferred direction (rather than bouncing in all directions like a
     diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
     ``shininess()`` in setting the material properties of shapes.
-"""
+    """
     return _py5sketch.specular(*args)
 
 
@@ -13340,7 +13386,7 @@ def sphere(r: float, /) -> None:
     -----
 
     A sphere is a hollow ball made from tessellated triangles.
-"""
+    """
     return _py5sketch.sphere(r)
 
 
@@ -13356,8 +13402,8 @@ def sphere_detail(res: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * sphere_detail(res: int) -> None
-     * sphere_detail(ures: int, vres: int) -> None
+     * sphere_detail(res: int, /) -> None
+     * sphere_detail(ures: int, vres: int, /) -> None
 
     Parameters
     ----------
@@ -13385,7 +13431,7 @@ def sphere_detail(res: int, /) -> None:
     further away from the camera. To control the detail of the horizontal and
     vertical resolution independently, use the version of the functions with two
     parameters.
-"""
+    """
     pass
 
 
@@ -13401,8 +13447,8 @@ def sphere_detail(ures: int, vres: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * sphere_detail(res: int) -> None
-     * sphere_detail(ures: int, vres: int) -> None
+     * sphere_detail(res: int, /) -> None
+     * sphere_detail(ures: int, vres: int, /) -> None
 
     Parameters
     ----------
@@ -13430,7 +13476,7 @@ def sphere_detail(ures: int, vres: int, /) -> None:
     further away from the camera. To control the detail of the horizontal and
     vertical resolution independently, use the version of the functions with two
     parameters.
-"""
+    """
     pass
 
 
@@ -13445,8 +13491,8 @@ def sphere_detail(*args):
 
     You can use any of the following signatures:
 
-     * sphere_detail(res: int) -> None
-     * sphere_detail(ures: int, vres: int) -> None
+     * sphere_detail(res: int, /) -> None
+     * sphere_detail(ures: int, vres: int, /) -> None
 
     Parameters
     ----------
@@ -13474,7 +13520,7 @@ def sphere_detail(*args):
     further away from the camera. To control the detail of the horizontal and
     vertical resolution independently, use the version of the functions with two
     parameters.
-"""
+    """
     return _py5sketch.sphere_detail(*args)
 
 
@@ -13532,7 +13578,7 @@ def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
     the direction of light. The ``angle`` parameter affects angle of the spotlight
     cone, while ``concentration`` sets the bias of light focusing toward the center
     of that cone.
-"""
+    """
     return _py5sketch.spot_light(
         v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
 
@@ -13562,33 +13608,37 @@ def square(x: float, y: float, extent: float, /) -> None:
     parameters set the location of the upper-left corner, the third sets the width
     and height. The way these parameters are interpreted, however, may be changed
     with the ``rect_mode()`` function.
-"""
+    """
     return _py5sketch.square(x, y, extent)
 
 
 def start() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.start
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.start()
 
 
 def stop() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.stop
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.stop()
 
 
@@ -13603,12 +13653,12 @@ def stroke(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -13654,7 +13704,7 @@ def stroke(gray: float, /) -> None:
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     pass
 
 
@@ -13669,12 +13719,12 @@ def stroke(gray: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -13720,7 +13770,7 @@ def stroke(gray: float, alpha: float, /) -> None:
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     pass
 
 
@@ -13735,12 +13785,12 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -13786,7 +13836,7 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     pass
 
 
@@ -13801,12 +13851,12 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -13852,7 +13902,7 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     pass
 
 
@@ -13867,12 +13917,12 @@ def stroke(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -13918,7 +13968,7 @@ def stroke(rgb: int, /) -> None:
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     pass
 
 
@@ -13933,12 +13983,12 @@ def stroke(rgb: int, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -13984,7 +14034,7 @@ def stroke(rgb: int, alpha: float, /) -> None:
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     pass
 
 
@@ -13998,12 +14048,12 @@ def stroke(*args):
 
     You can use any of the following signatures:
 
-     * stroke(gray: float) -> None
-     * stroke(gray: float, alpha: float) -> None
-     * stroke(rgb: int) -> None
-     * stroke(rgb: int, alpha: float) -> None
-     * stroke(v1: float, v2: float, v3: float) -> None
-     * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+     * stroke(gray: float, /) -> None
+     * stroke(gray: float, alpha: float, /) -> None
+     * stroke(rgb: int, /) -> None
+     * stroke(rgb: int, alpha: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, /) -> None
+     * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -14049,7 +14099,7 @@ def stroke(*args):
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
     performance). See the ``hint()`` documentation for more details.
-"""
+    """
     return _py5sketch.stroke(*args)
 
 
@@ -14073,7 +14123,7 @@ def stroke_cap(cap: int, /) -> None:
 
     To make ``point()`` appear square, use ``stroke_cap(PROJECT)``. Using
     ``stroke_cap(SQUARE)`` (no cap) causes points to become invisible.
-"""
+    """
     return _py5sketch.stroke_cap(cap)
 
 
@@ -14094,7 +14144,7 @@ def stroke_join(join: int, /) -> None:
     Sets the style of the joints which connect line segments. These joints are
     either mitered, beveled, or rounded and specified with the corresponding
     parameters MITER, BEVEL, and ROUND. The default joint is MITER.
-"""
+    """
     return _py5sketch.stroke_join(join)
 
 
@@ -14120,7 +14170,7 @@ def stroke_weight(weight: float, /) -> None:
     screen, depending on the graphics settings of the computer. Workarounds include
     setting the pixel using ``set()`` or drawing the point using either ``circle()``
     or ``square()``.
-"""
+    """
     return _py5sketch.stroke_weight(weight)
 
 
@@ -14135,17 +14185,17 @@ def text(c: chr, x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14211,7 +14261,7 @@ def text(c: chr, x: float, y: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14226,17 +14276,17 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14302,7 +14352,7 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14318,17 +14368,17 @@ def text(chars: List[chr], start: int, stop: int,
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14394,7 +14444,7 @@ def text(chars: List[chr], start: int, stop: int,
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14410,17 +14460,17 @@ def text(chars: List[chr], start: int, stop: int,
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14486,7 +14536,7 @@ def text(chars: List[chr], start: int, stop: int,
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14501,17 +14551,17 @@ def text(num: float, x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14577,7 +14627,7 @@ def text(num: float, x: float, y: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14592,17 +14642,17 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14668,7 +14718,7 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14683,17 +14733,17 @@ def text(num: int, x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14759,7 +14809,7 @@ def text(num: int, x: float, y: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14774,17 +14824,17 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14850,7 +14900,7 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14865,17 +14915,17 @@ def text(str: str, x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -14941,7 +14991,7 @@ def text(str: str, x: float, y: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -14956,17 +15006,17 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -15032,7 +15082,7 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -15047,17 +15097,17 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -15123,7 +15173,7 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     pass
 
 
@@ -15137,17 +15187,17 @@ def text(*args):
 
     You can use any of the following signatures:
 
-     * text(c: chr, x: float, y: float) -> None
-     * text(c: chr, x: float, y: float, z: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-     * text(num: float, x: float, y: float) -> None
-     * text(num: float, x: float, y: float, z: float) -> None
-     * text(num: int, x: float, y: float) -> None
-     * text(num: int, x: float, y: float, z: float) -> None
-     * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-     * text(str: str, x: float, y: float) -> None
-     * text(str: str, x: float, y: float, z: float) -> None
+     * text(c: chr, x: float, y: float, /) -> None
+     * text(c: chr, x: float, y: float, z: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(num: float, x: float, y: float, /) -> None
+     * text(num: float, x: float, y: float, z: float, /) -> None
+     * text(num: int, x: float, y: float, /) -> None
+     * text(num: int, x: float, y: float, z: float, /) -> None
+     * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+     * text(str: str, x: float, y: float, /) -> None
+     * text(str: str, x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -15213,7 +15263,7 @@ def text(*args):
     Note that Processing now lets you call ``text()`` without first specifying a
     PFont with ``text_font()``. In that case, a generic sans-serif font will be used
     instead. (See the third example above.)
-"""
+    """
     return _py5sketch.text(*args)
 
 
@@ -15228,8 +15278,8 @@ def text_align(align_x: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * text_align(align_x: int) -> None
-     * text_align(align_x: int, align_y: int) -> None
+     * text_align(align_x: int, /) -> None
+     * text_align(align_x: int, align_y: int, /) -> None
 
     Parameters
     ----------
@@ -15264,7 +15314,7 @@ def text_align(align_x: int, /) -> None:
     a few pixels by hand so that the offset looks correct. To do this as less of a
     hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
     hack works even if you change the size of the font.
-"""
+    """
     pass
 
 
@@ -15279,8 +15329,8 @@ def text_align(align_x: int, align_y: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * text_align(align_x: int) -> None
-     * text_align(align_x: int, align_y: int) -> None
+     * text_align(align_x: int, /) -> None
+     * text_align(align_x: int, align_y: int, /) -> None
 
     Parameters
     ----------
@@ -15315,7 +15365,7 @@ def text_align(align_x: int, align_y: int, /) -> None:
     a few pixels by hand so that the offset looks correct. To do this as less of a
     hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
     hack works even if you change the size of the font.
-"""
+    """
     pass
 
 
@@ -15329,8 +15379,8 @@ def text_align(*args):
 
     You can use any of the following signatures:
 
-     * text_align(align_x: int) -> None
-     * text_align(align_x: int, align_y: int) -> None
+     * text_align(align_x: int, /) -> None
+     * text_align(align_x: int, align_y: int, /) -> None
 
     Parameters
     ----------
@@ -15365,7 +15415,7 @@ def text_align(*args):
     a few pixels by hand so that the offset looks correct. To do this as less of a
     hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
     hack works even if you change the size of the font.
-"""
+    """
     return _py5sketch.text_align(*args)
 
 
@@ -15379,7 +15429,7 @@ def text_ascent() -> float:
 
     Returns ascent of the current font at its current size. This information is
     useful for determining the height of the font above the baseline.
-"""
+    """
     return _py5sketch.text_ascent()
 
 
@@ -15393,7 +15443,7 @@ def text_descent() -> float:
 
     Returns descent of the current font at its current size. This information is
     useful for determining the height of the font below the baseline.
-"""
+    """
     return _py5sketch.text_descent()
 
 
@@ -15408,8 +15458,8 @@ def text_font(which: Py5Font, /) -> None:
 
     You can use any of the following signatures:
 
-     * text_font(which: Py5Font) -> None
-     * text_font(which: Py5Font, size: float) -> None
+     * text_font(which: Py5Font, /) -> None
+     * text_font(which: Py5Font, size: float, /) -> None
 
     Parameters
     ----------
@@ -15434,7 +15484,7 @@ def text_font(which: Py5Font, /) -> None:
     P3D renderers as well as with ``load_font()`` and vlw files), you should create
     fonts at the sizes that will be used most commonly. Using ``text_font()``
     without the size parameter will result in the cleanest type.
-"""
+    """
     pass
 
 
@@ -15449,8 +15499,8 @@ def text_font(which: Py5Font, size: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * text_font(which: Py5Font) -> None
-     * text_font(which: Py5Font, size: float) -> None
+     * text_font(which: Py5Font, /) -> None
+     * text_font(which: Py5Font, size: float, /) -> None
 
     Parameters
     ----------
@@ -15475,7 +15525,7 @@ def text_font(which: Py5Font, size: float, /) -> None:
     P3D renderers as well as with ``load_font()`` and vlw files), you should create
     fonts at the sizes that will be used most commonly. Using ``text_font()``
     without the size parameter will result in the cleanest type.
-"""
+    """
     pass
 
 
@@ -15489,8 +15539,8 @@ def text_font(*args):
 
     You can use any of the following signatures:
 
-     * text_font(which: Py5Font) -> None
-     * text_font(which: Py5Font, size: float) -> None
+     * text_font(which: Py5Font, /) -> None
+     * text_font(which: Py5Font, size: float, /) -> None
 
     Parameters
     ----------
@@ -15515,7 +15565,7 @@ def text_font(*args):
     P3D renderers as well as with ``load_font()`` and vlw files), you should create
     fonts at the sizes that will be used most commonly. Using ``text_font()``
     without the size parameter will result in the cleanest type.
-"""
+    """
     return _py5sketch.text_font(*args)
 
 
@@ -15538,7 +15588,7 @@ def text_leading(leading: float, /) -> None:
     the leading is reset by ``text_size()``. For example, if the leading is set to
     20 with ``text_leading(20)``, then if ``text_size(48)`` is run at a later point,
     the leading will be reset to the default for the text size of 48.
-"""
+    """
     return _py5sketch.text_leading(leading)
 
 
@@ -15571,7 +15621,7 @@ def text_mode(mode: int, /) -> None:
     ``PDF``. The ``SHAPE`` mode is not currently optimized for ``P3D``, so if
     recording shape data, use ``text_mode(MODEL)`` until you're ready to capture the
     geometry with ``begin_raw()``.
-"""
+    """
     return _py5sketch.text_mode(mode)
 
 
@@ -15591,7 +15641,7 @@ def text_size(size: float, /) -> None:
 
     Sets the current font size. This size will be used in all subsequent calls to
     the ``text()`` function. Font size is measured in units of pixels.
-"""
+    """
     return _py5sketch.text_size(size)
 
 
@@ -15606,9 +15656,9 @@ def text_width(c: chr, /) -> float:
 
     You can use any of the following signatures:
 
-     * text_width(c: chr) -> float
-     * text_width(chars: List[chr], start: int, length: int) -> float
-     * text_width(str: str) -> float
+     * text_width(c: chr, /) -> float
+     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(str: str, /) -> float
 
     Parameters
     ----------
@@ -15632,7 +15682,7 @@ def text_width(c: chr, /) -> float:
     -----
 
     Calculates and returns the width of any character or text string.
-"""
+    """
     pass
 
 
@@ -15647,9 +15697,9 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
 
     You can use any of the following signatures:
 
-     * text_width(c: chr) -> float
-     * text_width(chars: List[chr], start: int, length: int) -> float
-     * text_width(str: str) -> float
+     * text_width(c: chr, /) -> float
+     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(str: str, /) -> float
 
     Parameters
     ----------
@@ -15673,7 +15723,7 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
     -----
 
     Calculates and returns the width of any character or text string.
-"""
+    """
     pass
 
 
@@ -15688,9 +15738,9 @@ def text_width(str: str, /) -> float:
 
     You can use any of the following signatures:
 
-     * text_width(c: chr) -> float
-     * text_width(chars: List[chr], start: int, length: int) -> float
-     * text_width(str: str) -> float
+     * text_width(c: chr, /) -> float
+     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(str: str, /) -> float
 
     Parameters
     ----------
@@ -15714,7 +15764,7 @@ def text_width(str: str, /) -> float:
     -----
 
     Calculates and returns the width of any character or text string.
-"""
+    """
     pass
 
 
@@ -15728,9 +15778,9 @@ def text_width(*args):
 
     You can use any of the following signatures:
 
-     * text_width(c: chr) -> float
-     * text_width(chars: List[chr], start: int, length: int) -> float
-     * text_width(str: str) -> float
+     * text_width(c: chr, /) -> float
+     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(str: str, /) -> float
 
     Parameters
     ----------
@@ -15754,7 +15804,7 @@ def text_width(*args):
     -----
 
     Calculates and returns the width of any character or text string.
-"""
+    """
     return _py5sketch.text_width(*args)
 
 
@@ -15778,7 +15828,7 @@ def texture(image: Py5Image, /) -> None:
 
     When textures are in use, the fill color is ignored. Instead, use ``tint()`` to
     specify the color of the texture as it is applied to the shape.
-"""
+    """
     return _py5sketch.texture(image)
 
 
@@ -15804,7 +15854,7 @@ def texture_mode(mode: int, /) -> None:
     With ``IMAGE``, if an image is 100 x 200 pixels, mapping the image onto the
     entire size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
     The same mapping in ``NORMAL`` is (0,0) (1,0) (1,1) (0,1).
-"""
+    """
     return _py5sketch.texture_mode(mode)
 
 
@@ -15825,7 +15875,7 @@ def texture_wrap(wrap: int, /) -> None:
     Defines if textures repeat or draw once within a texture map. The two parameters
     are CLAMP (the default behavior) and REPEAT. This function only works with the
     P2D and P3D renderers.
-"""
+    """
     return _py5sketch.texture_wrap(wrap)
 
 
@@ -15840,12 +15890,12 @@ def tint(gray: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -15892,7 +15942,7 @@ def tint(gray: float, /) -> None:
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     pass
 
 
@@ -15907,12 +15957,12 @@ def tint(gray: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -15959,7 +16009,7 @@ def tint(gray: float, alpha: float, /) -> None:
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     pass
 
 
@@ -15974,12 +16024,12 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -16026,7 +16076,7 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     pass
 
 
@@ -16041,12 +16091,12 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -16093,7 +16143,7 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     pass
 
 
@@ -16108,12 +16158,12 @@ def tint(rgb: int, /) -> None:
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -16160,7 +16210,7 @@ def tint(rgb: int, /) -> None:
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     pass
 
 
@@ -16175,12 +16225,12 @@ def tint(rgb: int, alpha: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -16227,7 +16277,7 @@ def tint(rgb: int, alpha: float, /) -> None:
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     pass
 
 
@@ -16241,12 +16291,12 @@ def tint(*args):
 
     You can use any of the following signatures:
 
-     * tint(gray: float) -> None
-     * tint(gray: float, alpha: float) -> None
-     * tint(rgb: int) -> None
-     * tint(rgb: int, alpha: float) -> None
-     * tint(v1: float, v2: float, v3: float) -> None
-     * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+     * tint(gray: float, /) -> None
+     * tint(gray: float, alpha: float, /) -> None
+     * tint(rgb: int, /) -> None
+     * tint(rgb: int, alpha: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, /) -> None
+     * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
     Parameters
     ----------
@@ -16293,7 +16343,7 @@ def tint(*args):
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+    """
     return _py5sketch.tint(*args)
 
 
@@ -16308,8 +16358,8 @@ def translate(x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * translate(x: float, y: float) -> None
-     * translate(x: float, y: float, z: float) -> None
+     * translate(x: float, y: float, /) -> None
+     * translate(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -16338,7 +16388,7 @@ def translate(x: float, y: float, /) -> None:
     ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
     transformation is reset when the loop begins again. This function can be further
     controlled by using ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -16353,8 +16403,8 @@ def translate(x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * translate(x: float, y: float) -> None
-     * translate(x: float, y: float, z: float) -> None
+     * translate(x: float, y: float, /) -> None
+     * translate(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -16383,7 +16433,7 @@ def translate(x: float, y: float, z: float, /) -> None:
     ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
     transformation is reset when the loop begins again. This function can be further
     controlled by using ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     pass
 
 
@@ -16397,8 +16447,8 @@ def translate(*args):
 
     You can use any of the following signatures:
 
-     * translate(x: float, y: float) -> None
-     * translate(x: float, y: float, z: float) -> None
+     * translate(x: float, y: float, /) -> None
+     * translate(x: float, y: float, z: float, /) -> None
 
     Parameters
     ----------
@@ -16427,7 +16477,7 @@ def translate(*args):
     ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
     transformation is reset when the loop begins again. This function can be further
     controlled by using ``push_matrix()`` and ``pop_matrix()``.
-"""
+    """
     return _py5sketch.translate(*args)
 
 
@@ -16464,7 +16514,7 @@ def triangle(x1: float, y1: float, x2: float, y2: float,
     A triangle is a plane created by connecting three points. The first two
     arguments specify the first point, the middle two arguments specify the second
     point, and the last two arguments specify the third point.
-"""
+    """
     return _py5sketch.triangle(x1, y1, x2, y2, x3, y3)
 
 
@@ -16480,7 +16530,7 @@ def update_pixels() -> None:
     You can use any of the following signatures:
 
      * update_pixels() -> None
-     * update_pixels(x1: int, y1: int, x2: int, y2: int) -> None
+     * update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None
 
     Parameters
     ----------
@@ -16504,7 +16554,7 @@ def update_pixels() -> None:
     conjunction with ``load_pixels()``. If you're only reading pixels from the
     array, there's no need to call ``update_pixels()`` — updating is only necessary
     to apply changes.
-"""
+    """
     pass
 
 
@@ -16520,7 +16570,7 @@ def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
     You can use any of the following signatures:
 
      * update_pixels() -> None
-     * update_pixels(x1: int, y1: int, x2: int, y2: int) -> None
+     * update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None
 
     Parameters
     ----------
@@ -16544,7 +16594,7 @@ def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
     conjunction with ``load_pixels()``. If you're only reading pixels from the
     array, there's no need to call ``update_pixels()`` — updating is only necessary
     to apply changes.
-"""
+    """
     pass
 
 
@@ -16559,7 +16609,7 @@ def update_pixels(*args):
     You can use any of the following signatures:
 
      * update_pixels() -> None
-     * update_pixels(x1: int, y1: int, x2: int, y2: int) -> None
+     * update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None
 
     Parameters
     ----------
@@ -16583,7 +16633,7 @@ def update_pixels(*args):
     conjunction with ``load_pixels()``. If you're only reading pixels from the
     array, there's no need to call ``update_pixels()`` — updating is only necessary
     to apply changes.
-"""
+    """
     return _py5sketch.update_pixels(*args)
 
 
@@ -16598,11 +16648,11 @@ def vertex(x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float]) -> None
-     * vertex(x: float, y: float) -> None
-     * vertex(x: float, y: float, u: float, v: float) -> None
-     * vertex(x: float, y: float, z: float) -> None
-     * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(x: float, y: float, /) -> None
+     * vertex(x: float, y: float, u: float, v: float, /) -> None
+     * vertex(x: float, y: float, z: float, /) -> None
+     * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
     Parameters
     ----------
@@ -16641,7 +16691,7 @@ def vertex(x: float, y: float, /) -> None:
     coordinates set define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
     size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+    """
     pass
 
 
@@ -16656,11 +16706,11 @@ def vertex(x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float]) -> None
-     * vertex(x: float, y: float) -> None
-     * vertex(x: float, y: float, u: float, v: float) -> None
-     * vertex(x: float, y: float, z: float) -> None
-     * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(x: float, y: float, /) -> None
+     * vertex(x: float, y: float, u: float, v: float, /) -> None
+     * vertex(x: float, y: float, z: float, /) -> None
+     * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
     Parameters
     ----------
@@ -16699,7 +16749,7 @@ def vertex(x: float, y: float, z: float, /) -> None:
     coordinates set define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
     size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+    """
     pass
 
 
@@ -16714,11 +16764,11 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float]) -> None
-     * vertex(x: float, y: float) -> None
-     * vertex(x: float, y: float, u: float, v: float) -> None
-     * vertex(x: float, y: float, z: float) -> None
-     * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(x: float, y: float, /) -> None
+     * vertex(x: float, y: float, u: float, v: float, /) -> None
+     * vertex(x: float, y: float, z: float, /) -> None
+     * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
     Parameters
     ----------
@@ -16757,7 +16807,7 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
     coordinates set define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
     size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+    """
     pass
 
 
@@ -16772,11 +16822,11 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float]) -> None
-     * vertex(x: float, y: float) -> None
-     * vertex(x: float, y: float, u: float, v: float) -> None
-     * vertex(x: float, y: float, z: float) -> None
-     * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(x: float, y: float, /) -> None
+     * vertex(x: float, y: float, u: float, v: float, /) -> None
+     * vertex(x: float, y: float, z: float, /) -> None
+     * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
     Parameters
     ----------
@@ -16815,7 +16865,7 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
     coordinates set define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
     size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+    """
     pass
 
 
@@ -16830,11 +16880,11 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float]) -> None
-     * vertex(x: float, y: float) -> None
-     * vertex(x: float, y: float, u: float, v: float) -> None
-     * vertex(x: float, y: float, z: float) -> None
-     * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(x: float, y: float, /) -> None
+     * vertex(x: float, y: float, u: float, v: float, /) -> None
+     * vertex(x: float, y: float, z: float, /) -> None
+     * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
     Parameters
     ----------
@@ -16873,7 +16923,7 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
     coordinates set define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
     size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+    """
     pass
 
 
@@ -16887,11 +16937,11 @@ def vertex(*args):
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float]) -> None
-     * vertex(x: float, y: float) -> None
-     * vertex(x: float, y: float, u: float, v: float) -> None
-     * vertex(x: float, y: float, z: float) -> None
-     * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(x: float, y: float, /) -> None
+     * vertex(x: float, y: float, u: float, v: float, /) -> None
+     * vertex(x: float, y: float, z: float, /) -> None
+     * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
     Parameters
     ----------
@@ -16930,12 +16980,12 @@ def vertex(*args):
     coordinates set define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
     size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+    """
     return _py5sketch.vertex(*args)
 
 
 def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java method: PApplet.vertices
 
@@ -16948,8 +16998,10 @@ def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.vertices(coordinates)
 
 
@@ -16963,7 +17015,7 @@ def year() -> int:
 
     Processing communicates with the clock on your computer. The ``year()`` function
     returns the current year as an integer (2003, 2004, 2005, etc).
-"""
+    """
     return Sketch.year()
 
 ##############################################################################
@@ -16972,7 +17024,7 @@ def year() -> int:
 
 
 def load_json(filename: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -16986,8 +17038,10 @@ def load_json(filename: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.load_json(filename, **kwargs)
 
 
@@ -16996,7 +17050,7 @@ def save_json(json_data: Any,
                               Path],
               **kwargs: Dict[str,
                              Any]) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17013,13 +17067,15 @@ def save_json(json_data: Any,
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.save_json(json_data, filename, **kwargs)
 
 
 def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17033,8 +17089,10 @@ def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.parse_json(serialized_json, **kwargs)
 
 
@@ -17046,7 +17104,7 @@ PERLIN_NOISE = 2
 
 
 def sin(angle: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17057,13 +17115,15 @@ def sin(angle: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.sin(angle)
 
 
 def cos(angle: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17074,13 +17134,15 @@ def cos(angle: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.cos(angle)
 
 
 def tan(angle: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17091,13 +17153,15 @@ def tan(angle: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.tan(angle)
 
 
 def asin(value: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17108,13 +17172,15 @@ def asin(value: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.asin(value)
 
 
 def acos(value: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17125,13 +17191,15 @@ def acos(value: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.acos(value)
 
 
 def atan(value: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17142,13 +17210,15 @@ def atan(value: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.atan(value)
 
 
 def atan2(y: float, x: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17162,13 +17232,15 @@ def atan2(y: float, x: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.atan2(y, x)
 
 
 def degrees(radians: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17179,13 +17251,15 @@ def degrees(radians: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.degrees(radians)
 
 
 def radians(degrees: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17196,13 +17270,15 @@ def radians(degrees: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.radians(degrees)
 
 
 def constrain(amt: float, low: float, high: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17219,8 +17295,10 @@ def constrain(amt: float, low: float, high: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.constrain(amt, low, high)
 
 
@@ -17230,7 +17308,7 @@ def remap(
         stop1: float,
         start2: float,
         stop2: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17253,13 +17331,15 @@ def remap(
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.remap(value, start1, stop1, start2, stop2)
 
 
 def dist(*args: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17270,13 +17350,15 @@ def dist(*args: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.dist(*args)
 
 
 def lerp(start: float, stop: float, amt: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17293,13 +17375,15 @@ def lerp(start: float, stop: float, amt: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.lerp(start, stop, amt)
 
 
 def mag(*args: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17310,13 +17394,15 @@ def mag(*args: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.mag(*args)
 
 
 def norm(value: float, start: float, stop: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17333,13 +17419,15 @@ def norm(value: float, start: float, stop: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.norm(value, start, stop)
 
 
 def sq(value: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17350,13 +17438,15 @@ def sq(value: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.sq(value)
 
 
 def sqrt(value: float) -> Union[float, complex]:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17367,13 +17457,15 @@ def sqrt(value: float) -> Union[float, complex]:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.sqrt(value)
 
 
 def floor(value: float) -> int:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17384,13 +17476,15 @@ def floor(value: float) -> int:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.floor(value)
 
 
 def ceil(value: float) -> int:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17401,13 +17495,15 @@ def ceil(value: float) -> int:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.ceil(value)
 
 
 def exp(value: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17418,13 +17514,15 @@ def exp(value: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.exp(value)
 
 
 def log(value: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17435,14 +17533,16 @@ def log(value: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.log(value)
 
 
 @overload
 def random(high: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
@@ -17464,14 +17564,16 @@ def random(high: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def random(low: float, high: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
@@ -17493,13 +17595,15 @@ def random(low: float, high: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 def random_seed(seed: int) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17510,13 +17614,15 @@ def random_seed(seed: int) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.random_seed(seed)
 
 
 def random(*args: float) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
@@ -17538,35 +17644,39 @@ def random(*args: float) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.random(*args)
 
 
 def random_gaussian() -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.random_gaussian()
 
 
 @overload
 def noise(x, **kwargs) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
 
     You can use any of the following signatures:
 
-     * noise(x, kwargs) -> float
-     * noise(x, y, kwargs) -> float
-     * noise(x, y, z, kwargs) -> float
-     * noise(x, y, z, w, kwargs) -> float
+     * noise(x, **kwargs) -> float
+     * noise(x, y, **kwargs) -> float
+     * noise(x, y, z, **kwargs) -> float
+     * noise(x, y, z, w, **kwargs) -> float
 
     Parameters
     ----------
@@ -17589,24 +17699,26 @@ def noise(x, **kwargs) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def noise(x, y, **kwargs) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
 
     You can use any of the following signatures:
 
-     * noise(x, kwargs) -> float
-     * noise(x, y, kwargs) -> float
-     * noise(x, y, z, kwargs) -> float
-     * noise(x, y, z, w, kwargs) -> float
+     * noise(x, **kwargs) -> float
+     * noise(x, y, **kwargs) -> float
+     * noise(x, y, z, **kwargs) -> float
+     * noise(x, y, z, w, **kwargs) -> float
 
     Parameters
     ----------
@@ -17629,24 +17741,26 @@ def noise(x, y, **kwargs) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def noise(x, y, z, **kwargs) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
 
     You can use any of the following signatures:
 
-     * noise(x, kwargs) -> float
-     * noise(x, y, kwargs) -> float
-     * noise(x, y, z, kwargs) -> float
-     * noise(x, y, z, w, kwargs) -> float
+     * noise(x, **kwargs) -> float
+     * noise(x, y, **kwargs) -> float
+     * noise(x, y, z, **kwargs) -> float
+     * noise(x, y, z, w, **kwargs) -> float
 
     Parameters
     ----------
@@ -17669,24 +17783,26 @@ def noise(x, y, z, **kwargs) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 @overload
 def noise(x, y, z, w, **kwargs) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
 
     You can use any of the following signatures:
 
-     * noise(x, kwargs) -> float
-     * noise(x, y, kwargs) -> float
-     * noise(x, y, z, kwargs) -> float
-     * noise(x, y, z, w, kwargs) -> float
+     * noise(x, **kwargs) -> float
+     * noise(x, y, **kwargs) -> float
+     * noise(x, y, z, **kwargs) -> float
+     * noise(x, y, z, w, **kwargs) -> float
 
     Parameters
     ----------
@@ -17709,23 +17825,25 @@ def noise(x, y, z, w, **kwargs) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     pass
 
 
 def noise(*args, **kwargs) -> float:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Methods
     -------
 
     You can use any of the following signatures:
 
-     * noise(x, kwargs) -> float
-     * noise(x, y, kwargs) -> float
-     * noise(x, y, z, kwargs) -> float
-     * noise(x, y, z, w, kwargs) -> float
+     * noise(x, **kwargs) -> float
+     * noise(x, y, **kwargs) -> float
+     * noise(x, y, z, **kwargs) -> float
+     * noise(x, y, z, w, **kwargs) -> float
 
     Parameters
     ----------
@@ -17748,13 +17866,15 @@ def noise(*args, **kwargs) -> float:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.noise(*args, **kwargs)
 
 
 def noise_mode(mode: int) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17765,14 +17885,16 @@ def noise_mode(mode: int) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.noise_mode(mode)
 
 
 def noise_detail(octaves: float = None, persistence: float = None,
                  lacunarity: float = None) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17789,8 +17911,10 @@ def noise_detail(octaves: float = None, persistence: float = None,
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.noise_detail(
         octaves=octaves,
         persistence=persistence,
@@ -17798,7 +17922,7 @@ def noise_detail(octaves: float = None, persistence: float = None,
 
 
 def noise_seed(seed: float) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17809,8 +17933,10 @@ def noise_seed(seed: float) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return Sketch.noise_seed(seed)
 
 ##############################################################################
@@ -17820,7 +17946,7 @@ def noise_seed(seed: float) -> None:
 
 def launch_thread(f: Callable, name: str = None, daemon: bool = True,
                   args: Tuple = None, kwargs: Dict = None) -> str:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17843,8 +17969,10 @@ def launch_thread(f: Callable, name: str = None, daemon: bool = True,
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.launch_thread(
         f, name=name, daemon=daemon, args=args, kwargs=kwargs)
 
@@ -17855,7 +17983,7 @@ def launch_promise_thread(
         daemon: bool = True,
         args: Tuple = None,
         kwargs: Dict = None) -> Py5Promise:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17878,8 +18006,10 @@ def launch_promise_thread(
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.launch_promise_thread(
         f, name=name, daemon=daemon, args=args, kwargs=kwargs)
 
@@ -17887,7 +18017,7 @@ def launch_promise_thread(
 def launch_repeating_thread(f: Callable, name: str = None,
                             time_delay: float = 0, daemon: bool = True,
                             args: Tuple = None, kwargs: Dict = None) -> str:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17913,8 +18043,10 @@ def launch_repeating_thread(f: Callable, name: str = None,
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.launch_repeating_thread(
         f,
         name=name,
@@ -17925,7 +18057,7 @@ def launch_repeating_thread(f: Callable, name: str = None,
 
 
 def has_thread(name: str) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17936,13 +18068,15 @@ def has_thread(name: str) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.has_thread(name)
 
 
 def stop_thread(name: str, wait: bool = False) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17956,13 +18090,15 @@ def stop_thread(name: str, wait: bool = False) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.stop_thread(name, wait=wait)
 
 
 def stop_all_threads(wait: bool = False) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -17973,19 +18109,23 @@ def stop_all_threads(wait: bool = False) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.stop_all_threads(wait=wait)
 
 
 def list_threads() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.list_threads()
 
 ##############################################################################
@@ -17994,24 +18134,28 @@ def list_threads() -> None:
 
 
 def load_np_pixels() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.load_np_pixels()
 
 
 def update_np_pixels() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.update_np_pixels()
 
 
@@ -18019,7 +18163,7 @@ np_pixels: np.ndarray = None
 
 
 def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18033,14 +18177,20 @@ def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.set_np_pixels(array, bands=bands)
 
 
-def save(filename: Union[str, Path], format: str = None,
-         drop_alpha: bool = True, **params) -> None:
-    """new template no description.
+def save(filename: Union[str,
+                         Path],
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = True,
+         **params) -> None:
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18057,15 +18207,21 @@ def save(filename: Union[str, Path], format: str = None,
     params
         missing variable description
 
+    use_thread: bool
+        missing variable description
+
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.save(
         filename,
         format=format,
         drop_alpha=drop_alpha,
+        use_thread=use_thread,
         **params)
 
 ##############################################################################
@@ -18080,7 +18236,7 @@ is_dead_from_error: bool = None
 
 
 def hot_reload_draw(draw: Callable) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18091,13 +18247,15 @@ def hot_reload_draw(draw: Callable) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.hot_reload_draw(draw)
 
 
 def profile_functions(function_names: List[str]) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18108,30 +18266,36 @@ def profile_functions(function_names: List[str]) -> None:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.profile_functions(function_names)
 
 
 def profile_draw() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.profile_draw()
 
 
 def print_line_profiler_stats() -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.print_line_profiler_stats()
 
 
@@ -18139,8 +18303,9 @@ def save_frame(filename: Union[str,
                                Path],
                format: str = None,
                drop_alpha: bool = True,
+               use_thread: bool = True,
                **params) -> None:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18157,22 +18322,28 @@ def save_frame(filename: Union[str,
     params
         missing variable description
 
+    use_thread: bool
+        missing variable description
+
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.save_frame(
         filename,
         format=format,
         drop_alpha=drop_alpha,
+        use_thread=use_thread,
         **params)
 
 
 def create_image_from_numpy(
         numpy_image: NumpyImageArray,
         dst: Py5Image = None) -> Py5Image:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18186,13 +18357,15 @@ def create_image_from_numpy(
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.create_image_from_numpy(numpy_image, dst=dst)
 
 
 def convert_image(obj: Any, dst: Py5Image = None) -> Py5Image:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18206,13 +18379,15 @@ def convert_image(obj: Any, dst: Py5Image = None) -> Py5Image:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.convert_image(obj, dst=dst)
 
 
 def load_image(filename: Union[str, Path], dst: Py5Image = None) -> Py5Image:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18226,13 +18401,15 @@ def load_image(filename: Union[str, Path], dst: Py5Image = None) -> Py5Image:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.load_image(filename, dst=dst)
 
 
 def request_image(filename: Union[str, Path]) -> Py5Promise:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Parameters
     ----------
@@ -18243,36 +18420,56 @@ def request_image(filename: Union[str, Path]) -> Py5Promise:
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
     return _py5sketch.request_image(filename)
 
 
-def run_sketch(block: bool = not _in_ipython_session,
+def run_sketch(block: bool = None,
                py5_options: List = None,
                sketch_args: List = None) -> None:
-    """new template no description.
+    """Run the sketch.
 
     Parameters
     ----------
 
-    block: bool = False
-        missing variable description
+    block: bool = None
+        method returns immediately (False) or blocks until sketch exits (True)
 
     py5_options: List = None
-        missing variable description
+        command line arguments to pass to Processing as arguments
 
     sketch_args: List = None
-        missing variable description
+        command line arguments that become Sketch arguments
 
     Notes
     -----
 
-    new template no description.
-"""
+    Run the sketch. Code in the ``settings``, ``setup``, and ``draw`` functions will
+    be used to actualize your sketch.
+
+    Use the ``block`` parameter to specify if the call to ``run_sketch`` should
+    return immediately or block until the sketch exits. If the ``block`` parameter
+    is not specified, py5 will first attempt to determine if the sketch is running
+    in a Jupyter Notebook or an IPython shell. If it is, ``block`` will default to
+    ``False``, and ``True`` otherwise.
+
+    A list of strings passed to ``py5_options`` will be passed to the Processing
+    PApplet class as arguments to specify characteristics such as the window's
+    location on the screen. A list of strings passed to ``sketch_args`` will be
+    available to a running sketch using :doc:`args`. For example, if you launch a
+    sketch with ``py5.run_sketch(py5_options=['--location=400,300', '--display=1'],
+    sketch_args=['py5 is awesome'])``, the sketch window will appear at location
+    (400, 300) on your second monitor and ``py5.args`` will equal ``['py5 is
+    awesome']``."""
     # Before running the sketch, delete the module fields that need to be kept
     # uptodate. This will allow the module `__getattr__` function return the
     # proper values.
+    if block is None:
+        block = not _in_ipython_session
+
     try:
 
         global args

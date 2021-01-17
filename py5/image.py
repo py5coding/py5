@@ -41,7 +41,7 @@ class Py5Image(PixelMixin, Py5Base):
 
     To create a new image, use the ``create_image()`` function. Do not use the
     syntax ``new Py5Image()``.
-"""
+    """
 
     def __init__(self, pimage):
         self._instance = pimage
@@ -92,7 +92,7 @@ class Py5Image(PixelMixin, Py5Base):
         -----
 
         The height of the image in units of pixels.
-"""
+        """
         return self._instance.height
     height: int = property(fget=_get_height)
 
@@ -127,7 +127,7 @@ class Py5Image(PixelMixin, Py5Base):
         To use variables as the arguments to ``pixel_density()`` function, place the
         ``pixel_density()`` function within the ``settings()`` function. There is more
         information about this on the ``settings()`` reference page.
-"""
+        """
         return self._instance.pixelDensity
     pixel_density: int = property(fget=_get_pixel_density)
 
@@ -150,7 +150,7 @@ class Py5Image(PixelMixin, Py5Base):
         sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
         array, for instance, because the number of elements in the array will be
         ``pixel_width*pixel_height``, not ``width*height``.
-"""
+        """
         return self._instance.pixelHeight
     pixel_height: int = property(fget=_get_pixel_height)
 
@@ -173,7 +173,7 @@ class Py5Image(PixelMixin, Py5Base):
         sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
         array, for instance, because the number of elements in the array will be
         ``pixel_width*pixel_height``, not ``width*height``.
-"""
+        """
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
 
@@ -194,7 +194,7 @@ class Py5Image(PixelMixin, Py5Base):
         method. Failure to do so may result in a NullPointerException. After the array
         data has been modified, the ``update_pixels()`` method must be run to update the
         content of the display window.
-"""
+        """
         return self._instance.pixels
     pixels: JArray(JInt) = property(fget=_get_pixels)
 
@@ -207,7 +207,7 @@ class Py5Image(PixelMixin, Py5Base):
         -----
 
         The width of the image in units of pixels.
-"""
+        """
         return self._instance.width
     width: int = property(fget=_get_width)
 
@@ -223,8 +223,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
         Parameters
         ----------
@@ -305,7 +305,7 @@ class Py5Image(PixelMixin, Py5Base):
         ``src`` parameter is not used, the display window is used as the source image.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -320,8 +320,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
         Parameters
         ----------
@@ -402,7 +402,7 @@ class Py5Image(PixelMixin, Py5Base):
         ``src`` parameter is not used, the display window is used as the source image.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     def blend(self, *args):
@@ -415,8 +415,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
         Parameters
         ----------
@@ -497,8 +497,22 @@ class Py5Image(PixelMixin, Py5Base):
         ``src`` parameter is not used, the display window is used as the source image.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         return self._instance.blend(*args)
+
+    def check_alpha(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PImage.checkAlpha
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.checkAlpha()
 
     @overload
     def copy(self) -> Py5Image:
@@ -512,8 +526,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -555,7 +569,7 @@ class Py5Image(PixelMixin, Py5Base):
         as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -571,8 +585,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -614,7 +628,7 @@ class Py5Image(PixelMixin, Py5Base):
         as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -630,8 +644,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -673,7 +687,7 @@ class Py5Image(PixelMixin, Py5Base):
         as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     def copy(self, *args):
@@ -687,8 +701,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -730,25 +744,12 @@ class Py5Image(PixelMixin, Py5Base):
         as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         return self._instance.copy(*args)
 
     @overload
     def apply_filter(self, kind: int, /) -> None:
-        """Filters the image as defined by one of the following modes:  THRESHOLD Converts
-        the image to black and white pixels depending if they are above or below the
-        threshold defined by the level parameter. The parameter must be between 0.0
-        (black) and 1.0 (white). If no level is specified, 0.5 is used.  GRAY Converts
-        any colors in the image to grayscale equivalents. No parameter is used.  OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.  INVERT Sets
-        each pixel to its inverse value. No parameter is used.  POSTERIZE Limits each
-        channel of the image to the number of colors specified as the parameter. The
-        parameter can be set to values between 2 and 255, but results are most
-        noticeable in the lower ranges.  BLUR Executes a Gaussian blur with the level
-        parameter specifying the extent of the blurring. If no parameter is used, the
-        blur is equivalent to Gaussian blur of radius 1. Larger values increase the
-        blur.  ERODE Reduces the light areas. No parameter is used.  DILATE Increases
-        the light areas. No parameter is used.
+        """Apply an image filter.
 
         Underlying Java method: PImage.filter
 
@@ -757,8 +758,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
 
         Parameters
         ----------
@@ -771,6 +772,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         Notes
         -----
+
+        Apply an image filter.
 
         Filters the image as defined by one of the following modes:
 
@@ -803,25 +806,12 @@ class Py5Image(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         pass
 
     @overload
     def apply_filter(self, kind: int, param: float, /) -> None:
-        """Filters the image as defined by one of the following modes:  THRESHOLD Converts
-        the image to black and white pixels depending if they are above or below the
-        threshold defined by the level parameter. The parameter must be between 0.0
-        (black) and 1.0 (white). If no level is specified, 0.5 is used.  GRAY Converts
-        any colors in the image to grayscale equivalents. No parameter is used.  OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.  INVERT Sets
-        each pixel to its inverse value. No parameter is used.  POSTERIZE Limits each
-        channel of the image to the number of colors specified as the parameter. The
-        parameter can be set to values between 2 and 255, but results are most
-        noticeable in the lower ranges.  BLUR Executes a Gaussian blur with the level
-        parameter specifying the extent of the blurring. If no parameter is used, the
-        blur is equivalent to Gaussian blur of radius 1. Larger values increase the
-        blur.  ERODE Reduces the light areas. No parameter is used.  DILATE Increases
-        the light areas. No parameter is used.
+        """Apply an image filter.
 
         Underlying Java method: PImage.filter
 
@@ -830,8 +820,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
 
         Parameters
         ----------
@@ -844,6 +834,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         Notes
         -----
+
+        Apply an image filter.
 
         Filters the image as defined by one of the following modes:
 
@@ -876,24 +868,11 @@ class Py5Image(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         pass
 
     def apply_filter(self, *args):
-        """Filters the image as defined by one of the following modes:  THRESHOLD Converts
-        the image to black and white pixels depending if they are above or below the
-        threshold defined by the level parameter. The parameter must be between 0.0
-        (black) and 1.0 (white). If no level is specified, 0.5 is used.  GRAY Converts
-        any colors in the image to grayscale equivalents. No parameter is used.  OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.  INVERT Sets
-        each pixel to its inverse value. No parameter is used.  POSTERIZE Limits each
-        channel of the image to the number of colors specified as the parameter. The
-        parameter can be set to values between 2 and 255, but results are most
-        noticeable in the lower ranges.  BLUR Executes a Gaussian blur with the level
-        parameter specifying the extent of the blurring. If no parameter is used, the
-        blur is equivalent to Gaussian blur of radius 1. Larger values increase the
-        blur.  ERODE Reduces the light areas. No parameter is used.  DILATE Increases
-        the light areas. No parameter is used.
+        """Apply an image filter.
 
         Underlying Java method: PImage.filter
 
@@ -902,8 +881,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
 
         Parameters
         ----------
@@ -916,6 +895,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         Notes
         -----
+
+        Apply an image filter.
 
         Filters the image as defined by one of the following modes:
 
@@ -948,7 +929,7 @@ class Py5Image(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         return self._instance.filter(*args)
 
     @overload
@@ -963,8 +944,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -1001,7 +982,7 @@ class Py5Image(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         ``pixels[]`` for more information.
-"""
+        """
         pass
 
     @overload
@@ -1016,8 +997,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -1054,7 +1035,7 @@ class Py5Image(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         ``pixels[]`` for more information.
-"""
+        """
         pass
 
     @overload
@@ -1069,8 +1050,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -1107,7 +1088,7 @@ class Py5Image(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         ``pixels[]`` for more information.
-"""
+        """
         pass
 
     def get(self, *args):
@@ -1121,8 +1102,8 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -1159,7 +1140,7 @@ class Py5Image(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         ``pixels[]`` for more information.
-"""
+        """
         return self._instance.get(*args)
 
     def load_pixels(self) -> None:
@@ -1172,7 +1153,7 @@ class Py5Image(PixelMixin, Py5Base):
 
         Loads the pixel data for the image into its ``pixels[]`` array. This function
         must always be called before reading from or writing to ``pixels[]``.
-"""
+        """
         return self._instance.loadPixels()
 
     @overload
@@ -1187,8 +1168,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * mask(img: Py5Image) -> None
-         * mask(mask_array: JArray(JInt)) -> None
+         * mask(img: Py5Image, /) -> None
+         * mask(mask_array: JArray(JInt), /) -> None
 
         Parameters
         ----------
@@ -1212,7 +1193,7 @@ class Py5Image(PixelMixin, Py5Base):
         generated alpha masks. This array must be of the same length as the target
         image's pixels array and should contain only grayscale data of values between
         0-255.
-"""
+        """
         pass
 
     @overload
@@ -1227,8 +1208,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * mask(img: Py5Image) -> None
-         * mask(mask_array: JArray(JInt)) -> None
+         * mask(img: Py5Image, /) -> None
+         * mask(mask_array: JArray(JInt), /) -> None
 
         Parameters
         ----------
@@ -1252,7 +1233,7 @@ class Py5Image(PixelMixin, Py5Base):
         generated alpha masks. This array must be of the same length as the target
         image's pixels array and should contain only grayscale data of values between
         0-255.
-"""
+        """
         pass
 
     def mask(self, *args):
@@ -1266,8 +1247,8 @@ class Py5Image(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * mask(img: Py5Image) -> None
-         * mask(mask_array: JArray(JInt)) -> None
+         * mask(img: Py5Image, /) -> None
+         * mask(mask_array: JArray(JInt), /) -> None
 
         Parameters
         ----------
@@ -1291,7 +1272,7 @@ class Py5Image(PixelMixin, Py5Base):
         generated alpha masks. This array must be of the same length as the target
         image's pixels array and should contain only grayscale data of values between
         0-255.
-"""
+        """
         return self._instance.mask(*args)
 
     @overload
@@ -1306,7 +1287,7 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * update_pixels() -> None
-         * update_pixels(x: int, y: int, w: int, h: int) -> None
+         * update_pixels(x: int, y: int, w: int, h: int, /) -> None
 
         Parameters
         ----------
@@ -1329,7 +1310,7 @@ class Py5Image(PixelMixin, Py5Base):
         Updates the image with the data in its ``pixels[]`` array. Use in conjunction
         with ``load_pixels()``. If you're only reading pixels from the array, there's no
         need to call ``update_pixels()``.
-"""
+        """
         pass
 
     @overload
@@ -1344,7 +1325,7 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * update_pixels() -> None
-         * update_pixels(x: int, y: int, w: int, h: int) -> None
+         * update_pixels(x: int, y: int, w: int, h: int, /) -> None
 
         Parameters
         ----------
@@ -1367,7 +1348,7 @@ class Py5Image(PixelMixin, Py5Base):
         Updates the image with the data in its ``pixels[]`` array. Use in conjunction
         with ``load_pixels()``. If you're only reading pixels from the array, there's no
         need to call ``update_pixels()``.
-"""
+        """
         pass
 
     def update_pixels(self, *args):
@@ -1381,7 +1362,7 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * update_pixels() -> None
-         * update_pixels(x: int, y: int, w: int, h: int) -> None
+         * update_pixels(x: int, y: int, w: int, h: int, /) -> None
 
         Parameters
         ----------
@@ -1404,5 +1385,5 @@ class Py5Image(PixelMixin, Py5Base):
         Updates the image with the data in its ``pixels[]`` array. Use in conjunction
         with ``load_pixels()``. If you're only reading pixels from the array, there's no
         need to call ``update_pixels()``.
-"""
+        """
         return self._instance.updatePixels(*args)

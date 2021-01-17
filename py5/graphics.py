@@ -64,7 +64,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
     To create a new graphics context, use the ``create_graphics()`` function. Do not
     use the syntax ``new Py5Graphics()``.
-"""
+    """
 
     def __init__(self, pgraphics):
         self._instance = pgraphics
@@ -313,7 +313,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         by the second parameter of the ``size()`` function. For example, the function
         call ``size(320, 240)`` sets the ``height`` variable to the value 240. The value
         of ``height`` defaults to 100 if ``size()`` is not used in a program.
-"""
+        """
         return self._instance.height
     height: int = property(fget=_get_height)
 
@@ -348,7 +348,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         To use variables as the arguments to ``pixel_density()`` function, place the
         ``pixel_density()`` function within the ``settings()`` function. There is more
         information about this on the ``settings()`` reference page.
-"""
+        """
         return self._instance.pixelDensity
     pixel_density: int = property(fget=_get_pixel_density)
 
@@ -371,7 +371,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
         array, for instance, because the number of elements in the array will be
         ``pixel_width*pixel_height``, not ``width*height``.
-"""
+        """
         return self._instance.pixelHeight
     pixel_height: int = property(fget=_get_pixel_height)
 
@@ -394,7 +394,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
         array, for instance, because the number of elements in the array will be
         ``pixel_width*pixel_height``, not ``width*height``.
-"""
+        """
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
 
@@ -421,7 +421,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``load_pixels()`` is called again. After ``pixels`` has been modified, the
         ``update_pixels()`` function must be run to update the content of the display
         window.
-"""
+        """
         return self._instance.pixels
     pixels: JArray(JInt) = property(fget=_get_pixels)
 
@@ -437,7 +437,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         by the first parameter of the ``size()`` function. For example, the function
         call ``size(320, 240)`` sets the ``width`` variable to the value 320. The value
         of ``width`` defaults to 100 if ``size()`` is not used in a program.
-"""
+        """
         return self._instance.width
     width: int = property(fget=_get_width)
 
@@ -456,7 +456,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Extracts the alpha value from a color.
-"""
+        """
         return self._instance.alpha(rgb)
 
     @overload
@@ -470,9 +470,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient(gray: float) -> None
-         * ambient(rgb: int) -> None
-         * ambient(v1: float, v2: float, v3: float) -> None
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -502,7 +502,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         half of the green light to reflect. Used in combination with ``emissive()``,
         ``specular()``, and ``shininess()`` in setting the material properties of
         shapes.
-"""
+        """
         pass
 
     @overload
@@ -516,9 +516,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient(gray: float) -> None
-         * ambient(rgb: int) -> None
-         * ambient(v1: float, v2: float, v3: float) -> None
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -548,7 +548,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         half of the green light to reflect. Used in combination with ``emissive()``,
         ``specular()``, and ``shininess()`` in setting the material properties of
         shapes.
-"""
+        """
         pass
 
     @overload
@@ -562,9 +562,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient(gray: float) -> None
-         * ambient(rgb: int) -> None
-         * ambient(v1: float, v2: float, v3: float) -> None
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -594,7 +594,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         half of the green light to reflect. Used in combination with ``emissive()``,
         ``specular()``, and ``shininess()`` in setting the material properties of
         shapes.
-"""
+        """
         pass
 
     def ambient(self, *args):
@@ -607,9 +607,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient(gray: float) -> None
-         * ambient(rgb: int) -> None
-         * ambient(v1: float, v2: float, v3: float) -> None
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -639,7 +639,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         half of the green light to reflect. Used in combination with ``emissive()``,
         ``specular()``, and ``shininess()`` in setting the material properties of
         shapes.
-"""
+        """
         return self._instance.ambient(*args)
 
     @overload
@@ -653,8 +653,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient_light(v1: float, v2: float, v3: float) -> None
-         * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float) -> None
+         * ambient_light(v1: float, v2: float, v3: float, /) -> None
+         * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -688,7 +688,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         them to only have an effect the first time through the loop. The ``v1``, ``v2``,
         and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
         the current color mode.
-"""
+        """
         pass
 
     @overload
@@ -703,8 +703,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient_light(v1: float, v2: float, v3: float) -> None
-         * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float) -> None
+         * ambient_light(v1: float, v2: float, v3: float, /) -> None
+         * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -738,7 +738,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         them to only have an effect the first time through the loop. The ``v1``, ``v2``,
         and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
         the current color mode.
-"""
+        """
         pass
 
     def ambient_light(self, *args):
@@ -751,8 +751,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * ambient_light(v1: float, v2: float, v3: float) -> None
-         * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float) -> None
+         * ambient_light(v1: float, v2: float, v3: float, /) -> None
+         * ambient_light(v1: float, v2: float, v3: float, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -786,7 +786,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         them to only have an effect the first time through the loop. The ``v1``, ``v2``,
         and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
         the current color mode.
-"""
+        """
         return self._instance.ambientLight(*args)
 
     @overload
@@ -801,10 +801,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -870,7 +870,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         is very slow because it will try to calculate the inverse of the transform, so
         avoid it whenever possible. The equivalent function in OpenGL is
         ``gl_mult_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -902,10 +902,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -971,7 +971,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         is very slow because it will try to calculate the inverse of the transform, so
         avoid it whenever possible. The equivalent function in OpenGL is
         ``gl_mult_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -985,10 +985,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -1054,7 +1054,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         is very slow because it will try to calculate the inverse of the transform, so
         avoid it whenever possible. The equivalent function in OpenGL is
         ``gl_mult_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -1068,10 +1068,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -1137,7 +1137,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         is very slow because it will try to calculate the inverse of the transform, so
         avoid it whenever possible. The equivalent function in OpenGL is
         ``gl_mult_matrix()``.
-"""
+        """
         pass
 
     def apply_matrix(self, *args):
@@ -1150,10 +1150,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -1219,7 +1219,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         is very slow because it will try to calculate the inverse of the transform, so
         avoid it whenever possible. The equivalent function in OpenGL is
         ``gl_mult_matrix()``.
-"""
+        """
         return self._instance.applyMatrix(*args)
 
     @overload
@@ -1234,8 +1234,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * arc(a: float, b: float, c: float, d: float, start: float, stop: float) -> None
-         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int) -> None
+         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None
+         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /) -> None
 
         Parameters
         ----------
@@ -1279,7 +1279,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         For example, the shape may jitter on screen when rotating slowly. If you're
         having an issue with how arcs are rendered, you'll need to draw the arc yourself
         with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
-"""
+        """
         pass
 
     @overload
@@ -1294,8 +1294,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * arc(a: float, b: float, c: float, d: float, start: float, stop: float) -> None
-         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int) -> None
+         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None
+         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /) -> None
 
         Parameters
         ----------
@@ -1339,7 +1339,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         For example, the shape may jitter on screen when rotating slowly. If you're
         having an issue with how arcs are rendered, you'll need to draw the arc yourself
         with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
-"""
+        """
         pass
 
     def arc(self, *args):
@@ -1352,8 +1352,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * arc(a: float, b: float, c: float, d: float, start: float, stop: float) -> None
-         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int) -> None
+         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None
+         * arc(a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /) -> None
 
         Parameters
         ----------
@@ -1397,7 +1397,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         For example, the shape may jitter on screen when rotating slowly. If you're
         having an issue with how arcs are rendered, you'll need to draw the arc yourself
         with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
-"""
+        """
         return self._instance.arc(*args)
 
     @overload
@@ -1412,13 +1412,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1461,7 +1461,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     @overload
@@ -1476,13 +1476,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1525,7 +1525,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     @overload
@@ -1540,13 +1540,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1589,7 +1589,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     @overload
@@ -1605,13 +1605,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1654,7 +1654,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     @overload
@@ -1669,13 +1669,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1718,7 +1718,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     @overload
@@ -1733,13 +1733,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1782,7 +1782,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     @overload
@@ -1797,13 +1797,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1846,7 +1846,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         pass
 
     def background(self, *args):
@@ -1860,13 +1860,13 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * background(gray: float) -> None
-         * background(gray: float, alpha: float) -> None
-         * background(image: Py5Image) -> None
-         * background(rgb: int) -> None
-         * background(rgb: int, alpha: float) -> None
-         * background(v1: float, v2: float, v3: float) -> None
-         * background(v1: float, v2: float, v3: float, alpha: float) -> None
+         * background(gray: float, /) -> None
+         * background(gray: float, alpha: float, /) -> None
+         * background(image: Py5Image, /) -> None
+         * background(rgb: int, /) -> None
+         * background(rgb: int, alpha: float, /) -> None
+         * background(v1: float, v2: float, v3: float, /) -> None
+         * background(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -1909,7 +1909,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
         ``Py5Graphics`` object and ``create_graphics()``.
-"""
+        """
         return self._instance.background(*args)
 
     def begin_camera(self) -> None:
@@ -1935,7 +1935,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         affect the camera. ``begin_camera()`` should always be used with a following
         ``end_camera()`` and pairs of ``begin_camera()`` and ``end_camera()`` cannot be
         nested.
-"""
+        """
         return self._instance.beginCamera()
 
     def begin_contour(self) -> None:
@@ -1958,7 +1958,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
         not work within a ``begin_contour()``/``end_contour()`` pair. It is also not
         possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
-"""
+        """
         return self._instance.beginContour()
 
     def begin_draw(self) -> None:
@@ -1971,7 +1971,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Sets the default properties for a PGraphics object. It should be called before
         anything is drawn into the object.
-"""
+        """
         return self._instance.beginDraw()
 
     def begin_raw(self, raw_graphics: Py5Graphics, /) -> None:
@@ -1985,8 +1985,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * begin_raw(raw_graphics: Py5Graphics) -> None
-         * begin_raw(renderer: str, filename: str) -> Py5Graphics
+         * begin_raw(raw_graphics: Py5Graphics, /) -> None
+         * begin_raw(renderer: str, filename: str, /) -> Py5Graphics
 
         Parameters
         ----------
@@ -2025,7 +2025,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
         information.
-"""
+        """
         return self._instance.beginRaw(raw_graphics)
 
     @overload
@@ -2041,7 +2041,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * begin_shape() -> None
-         * begin_shape(kind: int) -> None
+         * begin_shape(kind: int, /) -> None
 
         Parameters
         ----------
@@ -2073,7 +2073,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         per-vertex basis, but the default renderer does not. Settings such as
         ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
         while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
-"""
+        """
         pass
 
     @overload
@@ -2089,7 +2089,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * begin_shape() -> None
-         * begin_shape(kind: int) -> None
+         * begin_shape(kind: int, /) -> None
 
         Parameters
         ----------
@@ -2121,7 +2121,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         per-vertex basis, but the default renderer does not. Settings such as
         ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
         while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
-"""
+        """
         pass
 
     def begin_shape(self, *args):
@@ -2136,7 +2136,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * begin_shape() -> None
-         * begin_shape(kind: int) -> None
+         * begin_shape(kind: int, /) -> None
 
         Parameters
         ----------
@@ -2168,7 +2168,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         per-vertex basis, but the default renderer does not. Settings such as
         ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
         while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
-"""
+        """
         return self._instance.beginShape(*args)
 
     @overload
@@ -2183,8 +2183,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -2235,7 +2235,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
         version requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         pass
 
     @overload
@@ -2250,8 +2250,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -2302,7 +2302,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
         version requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         pass
 
     def bezier(self, *args):
@@ -2315,8 +2315,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * bezier(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -2367,7 +2367,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
         version requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         return self._instance.bezier(*args)
 
     def bezier_detail(self, detail: int, /) -> None:
@@ -2387,7 +2387,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the resolution at which Beziers display. The default value is 20. This
         function is only useful when using the ``P3D`` renderer; the default ``P2D``
         renderer does not use this information.
-"""
+        """
         return self._instance.bezierDetail(detail)
 
     def bezier_point(self, a: float, b: float, c: float,
@@ -2421,7 +2421,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         between 0 and 1, a and d are points on the curve, and b and c are the control
         points. This can be done once with the x coordinates and a second time with the
         y coordinates to get the location of a bezier curve at t.
-"""
+        """
         return self._instance.bezierPoint(a, b, c, d, t)
 
     def bezier_tangent(self, a: float, b: float, c: float,
@@ -2453,7 +2453,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Calculates the tangent of a point on a Bezier curve. There is a good definition
         of *tangent* on Wikipedia.
-"""
+        """
         return self._instance.bezierTangent(a, b, c, d, t)
 
     @overload
@@ -2468,8 +2468,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -2512,7 +2512,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         used between ``begin_shape()`` and ``end_shape()`` and only when there is no
         MODE parameter specified to ``begin_shape()``. Using the 3D version requires
         rendering with P3D (see the Environment reference for more information).
-"""
+        """
         pass
 
     @overload
@@ -2527,8 +2527,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -2571,7 +2571,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         used between ``begin_shape()`` and ``end_shape()`` and only when there is no
         MODE parameter specified to ``begin_shape()``. Using the 3D version requires
         rendering with P3D (see the Environment reference for more information).
-"""
+        """
         pass
 
     def bezier_vertex(self, *args):
@@ -2584,8 +2584,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -2628,7 +2628,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         used between ``begin_shape()`` and ``end_shape()`` and only when there is no
         MODE parameter specified to ``begin_shape()``. Using the 3D version requires
         rendering with P3D (see the Environment reference for more information).
-"""
+        """
         return self._instance.bezierVertex(*args)
 
     @overload
@@ -2644,8 +2644,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
         Parameters
         ----------
@@ -2725,7 +2725,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``src`` parameter is not used, the display window is used as the source image.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -2741,8 +2741,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
         Parameters
         ----------
@@ -2822,7 +2822,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``src`` parameter is not used, the display window is used as the source image.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     def blend(self, *args):
@@ -2836,8 +2836,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
-         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int) -> None
+         * blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
+         * blend(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None
 
         Parameters
         ----------
@@ -2917,7 +2917,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``src`` parameter is not used, the display window is used as the source image.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         return self._instance.blend(*args)
 
     def blend_mode(self, mode: int, /) -> None:
@@ -2966,7 +2966,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         However, unlike ``blend()``, the ``blend_mode()`` function does not support the
         following: HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN. On older hardware, the
         LIGHTEST, DARKEST, and DIFFERENCE modes might not be available as well.
-"""
+        """
         return self._instance.blendMode(mode)
 
     def blue(self, rgb: int, /) -> float:
@@ -2995,7 +2995,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         ``b1 = blue(c)   # simpler, but slower to calculate
         b2 = c & 0xFF  # very fast to calculate``
-"""
+        """
         return self._instance.blue(rgb)
 
     @overload
@@ -3009,8 +3009,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * box(size: float) -> None
-         * box(w: float, h: float, d: float) -> None
+         * box(size: float, /) -> None
+         * box(w: float, h: float, d: float, /) -> None
 
         Parameters
         ----------
@@ -3032,7 +3032,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         A box is an extruded rectangle. A box with equal dimensions on all sides is a
         cube.
-"""
+        """
         pass
 
     @overload
@@ -3046,8 +3046,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * box(size: float) -> None
-         * box(w: float, h: float, d: float) -> None
+         * box(size: float, /) -> None
+         * box(w: float, h: float, d: float, /) -> None
 
         Parameters
         ----------
@@ -3069,7 +3069,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         A box is an extruded rectangle. A box with equal dimensions on all sides is a
         cube.
-"""
+        """
         pass
 
     def box(self, *args):
@@ -3082,8 +3082,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * box(size: float) -> None
-         * box(w: float, h: float, d: float) -> None
+         * box(size: float, /) -> None
+         * box(w: float, h: float, d: float, /) -> None
 
         Parameters
         ----------
@@ -3105,7 +3105,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         A box is an extruded rectangle. A box with equal dimensions on all sides is a
         cube.
-"""
+        """
         return self._instance.box(*args)
 
     def brightness(self, rgb: int, /) -> float:
@@ -3123,7 +3123,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Extracts the brightness value from a color.
-"""
+        """
         return self._instance.brightness(rgb)
 
     @overload
@@ -3139,7 +3139,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * camera() -> None
-         * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float) -> None
+         * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None
 
         Parameters
         ----------
@@ -3183,7 +3183,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         tan(PI*30.0 / 180.0), width//2.0, height//2.0, 0, 0, 1, 0)``. This function is
         similar to ``glu_look_at()`` in OpenGL, but it first clears the current camera
         settings.
-"""
+        """
         pass
 
     @overload
@@ -3210,7 +3210,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * camera() -> None
-         * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float) -> None
+         * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None
 
         Parameters
         ----------
@@ -3254,7 +3254,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         tan(PI*30.0 / 180.0), width//2.0, height//2.0, 0, 0, 1, 0)``. This function is
         similar to ``glu_look_at()`` in OpenGL, but it first clears the current camera
         settings.
-"""
+        """
         pass
 
     def camera(self, *args):
@@ -3269,7 +3269,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * camera() -> None
-         * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float) -> None
+         * camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None
 
         Parameters
         ----------
@@ -3313,7 +3313,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         tan(PI*30.0 / 180.0), width//2.0, height//2.0, 0, 0, 1, 0)``. This function is
         similar to ``glu_look_at()`` in OpenGL, but it first clears the current camera
         settings.
-"""
+        """
         return self._instance.camera(*args)
 
     def circle(self, x: float, y: float, extent: float, /) -> None:
@@ -3339,7 +3339,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Draws a circle to the screen. By default, the first two parameters set the
         location of the center, and the third sets the shape's width and height. The
         origin may be changed with the ``ellipse_mode()`` function.
-"""
+        """
         return self._instance.circle(x, y, extent)
 
     def clear(self) -> None:
@@ -3356,7 +3356,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         created with ``create_graphics()`` can be entirely or partially transparent.
         This function clears everything in a ``Py5Graphics`` object to make all of the
         pixels 100% transparent.
-"""
+        """
         return self._instance.clear()
 
     def clip(self, a: float, b: float, c: float, d: float, /) -> None:
@@ -3385,7 +3385,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Limits the rendering to the boundaries of a rectangle defined by the parameters.
         The boundaries are drawn based on the state of the ``image_mode()`` fuction,
         either CORNER, CORNERS, or CENTER.
-"""
+        """
         return self._instance.clip(a, b, c, d)
 
     @overload
@@ -3399,14 +3399,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3463,7 +3463,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3477,14 +3477,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3541,7 +3541,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3555,14 +3555,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3619,7 +3619,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3633,14 +3633,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3697,7 +3697,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3711,14 +3711,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3775,7 +3775,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3789,14 +3789,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3853,7 +3853,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3867,14 +3867,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -3931,7 +3931,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -3945,14 +3945,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -4009,7 +4009,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     @overload
@@ -4023,14 +4023,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -4087,7 +4087,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         pass
 
     def color(self, *args):
@@ -4100,14 +4100,14 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color(fgray: float) -> int
-         * color(fgray: float, falpha: float) -> int
-         * color(gray: int) -> int
-         * color(gray: int, alpha: int) -> int
-         * color(v1: float, v2: float, v3: float) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float) -> int
-         * color(v1: int, v2: int, v3: int) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
 
         Parameters
         ----------
@@ -4164,7 +4164,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         More about how colors are stored can be found in the reference for the color
         datatype.
-"""
+        """
         return self._instance.color(*args)
 
     @overload
@@ -4178,10 +4178,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color_mode(mode: int) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-         * color_mode(mode: int, max: float) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
 
         Parameters
         ----------
@@ -4223,7 +4223,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of ``color_mode(RGB)``,
         write ``color_mode(RGB, 255, 255, 255)``.
-"""
+        """
         pass
 
     @overload
@@ -4237,10 +4237,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color_mode(mode: int) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-         * color_mode(mode: int, max: float) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
 
         Parameters
         ----------
@@ -4282,7 +4282,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of ``color_mode(RGB)``,
         write ``color_mode(RGB, 255, 255, 255)``.
-"""
+        """
         pass
 
     @overload
@@ -4297,10 +4297,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color_mode(mode: int) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-         * color_mode(mode: int, max: float) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
 
         Parameters
         ----------
@@ -4342,7 +4342,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of ``color_mode(RGB)``,
         write ``color_mode(RGB, 255, 255, 255)``.
-"""
+        """
         pass
 
     @overload
@@ -4357,10 +4357,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color_mode(mode: int) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-         * color_mode(mode: int, max: float) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
 
         Parameters
         ----------
@@ -4402,7 +4402,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of ``color_mode(RGB)``,
         write ``color_mode(RGB, 255, 255, 255)``.
-"""
+        """
         pass
 
     def color_mode(self, *args):
@@ -4415,10 +4415,10 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * color_mode(mode: int) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float) -> None
-         * color_mode(mode: int, max: float) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
 
         Parameters
         ----------
@@ -4460,7 +4460,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of ``color_mode(RGB)``,
         write ``color_mode(RGB, 255, 255, 255)``.
-"""
+        """
         return self._instance.colorMode(*args)
 
     @overload
@@ -4477,8 +4477,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -4521,7 +4521,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         the source image has an alpha channel set, it will be copied as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -4539,8 +4539,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -4583,7 +4583,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         the source image has an alpha channel set, it will be copied as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -4601,8 +4601,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -4645,7 +4645,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         the source image has an alpha channel set, it will be copied as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         pass
 
     @_return_py5image
@@ -4662,8 +4662,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * copy() -> Py5Image
-         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
-         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int) -> None
+         * copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
+         * copy(sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None
 
         Parameters
         ----------
@@ -4706,7 +4706,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         the source image has an alpha channel set, it will be copied as well.
 
         As of release 0149, this function ignores ``image_mode()``.
-"""
+        """
         return self._instance.copy(*args)
 
     @overload
@@ -4721,8 +4721,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * create_shape() -> Py5Shape
-         * create_shape(kind: int, p: float) -> Py5Shape
-         * create_shape(type: int) -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
 
         Parameters
         ----------
@@ -4763,7 +4763,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
         The complete list of methods and fields for the PShape class are in the
         Processing Javadoc.
-"""
+        """
         pass
 
     @overload
@@ -4778,8 +4778,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * create_shape() -> Py5Shape
-         * create_shape(kind: int, p: float) -> Py5Shape
-         * create_shape(type: int) -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
 
         Parameters
         ----------
@@ -4820,7 +4820,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
         The complete list of methods and fields for the PShape class are in the
         Processing Javadoc.
-"""
+        """
         pass
 
     @overload
@@ -4835,8 +4835,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * create_shape() -> Py5Shape
-         * create_shape(kind: int, p: float) -> Py5Shape
-         * create_shape(type: int) -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
 
         Parameters
         ----------
@@ -4877,7 +4877,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
         The complete list of methods and fields for the PShape class are in the
         Processing Javadoc.
-"""
+        """
         pass
 
     @_return_py5shape
@@ -4892,8 +4892,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * create_shape() -> Py5Shape
-         * create_shape(kind: int, p: float) -> Py5Shape
-         * create_shape(type: int) -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
 
         Parameters
         ----------
@@ -4934,7 +4934,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
         The complete list of methods and fields for the PShape class are in the
         Processing Javadoc.
-"""
+        """
         return self._instance.createShape(*args)
 
     @overload
@@ -4949,8 +4949,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -5002,7 +5002,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         provides control for the visual quality of the curve. The ``curve()`` function
         is an implementation of Catmull-Rom splines. Using the 3D version requires
         rendering with P3D (see the Environment reference for more information).
-"""
+        """
         pass
 
     @overload
@@ -5017,8 +5017,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -5070,7 +5070,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         provides control for the visual quality of the curve. The ``curve()`` function
         is an implementation of Catmull-Rom splines. Using the 3D version requires
         rendering with P3D (see the Environment reference for more information).
-"""
+        """
         pass
 
     def curve(self, *args):
@@ -5083,8 +5083,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float) -> None
-         * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float) -> None
+         * curve(x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
 
         Parameters
         ----------
@@ -5136,7 +5136,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         provides control for the visual quality of the curve. The ``curve()`` function
         is an implementation of Catmull-Rom splines. Using the 3D version requires
         rendering with P3D (see the Environment reference for more information).
-"""
+        """
         return self._instance.curve(*args)
 
     def curve_detail(self, detail: int, /) -> None:
@@ -5156,7 +5156,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the resolution at which curves display. The default value is 20. This
         function is only useful when using the P3D renderer as the default P2D renderer
         does not use this information.
-"""
+        """
         return self._instance.curveDetail(detail)
 
     def curve_point(self, a: float, b: float, c: float,
@@ -5192,7 +5192,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         on the curve. As seen in the example above, this can be used once with the ``x``
         coordinates and a second time with the ``y`` coordinates to get the location of
         a curve at ``t``.
-"""
+        """
         return self._instance.curvePoint(a, b, c, d, t)
 
     def curve_tangent(self, a: float, b: float, c: float,
@@ -5224,7 +5224,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Calculates the tangent of a point on a curve. There's a good definition of
         *tangent* on Wikipedia.
-"""
+        """
         return self._instance.curveTangent(a, b, c, d, t)
 
     def curve_tightness(self, tightness: float, /) -> None:
@@ -5248,7 +5248,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         straight lines. Values within the range -5.0 and 5.0 will deform the curves but
         will leave them recognizable and as values increase in magnitude, they will
         continue to deform.
-"""
+        """
         return self._instance.curveTightness(tightness)
 
     @overload
@@ -5262,8 +5262,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * curve_vertex(x: float, y: float) -> None
-         * curve_vertex(x: float, y: float, z: float) -> None
+         * curve_vertex(x: float, y: float, /) -> None
+         * curve_vertex(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -5290,7 +5290,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function is an implementation of Catmull-Rom splines. Using the 3D version
         requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         pass
 
     @overload
@@ -5304,8 +5304,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * curve_vertex(x: float, y: float) -> None
-         * curve_vertex(x: float, y: float, z: float) -> None
+         * curve_vertex(x: float, y: float, /) -> None
+         * curve_vertex(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -5332,7 +5332,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function is an implementation of Catmull-Rom splines. Using the 3D version
         requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         pass
 
     def curve_vertex(self, *args):
@@ -5345,8 +5345,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * curve_vertex(x: float, y: float) -> None
-         * curve_vertex(x: float, y: float, z: float) -> None
+         * curve_vertex(x: float, y: float, /) -> None
+         * curve_vertex(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -5373,7 +5373,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function is an implementation of Catmull-Rom splines. Using the 3D version
         requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         return self._instance.curveVertex(*args)
 
     def directional_light(self, v1: float, v2: float, v3: float,
@@ -5416,7 +5416,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         current color mode. The ``nx``, ``ny``, and ``nz`` parameters specify the
         direction the light is facing. For example, setting ``ny`` to -1 will cause the
         geometry to be lit from below (since the light would be facing directly upward).
-"""
+        """
         return self._instance.directionalLight(v1, v2, v3, nx, ny, nz)
 
     def ellipse(self, a: float, b: float, c: float, d: float, /) -> None:
@@ -5446,7 +5446,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         a circle. By default, the first two parameters set the location, and the third
         and fourth parameters set the shape's width and height. The origin may be
         changed with the ``ellipse_mode()`` function.
-"""
+        """
         return self._instance.ellipse(a, b, c, d)
 
     def ellipse_mode(self, mode: int, /) -> None:
@@ -5485,7 +5485,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The parameter must be written in ALL CAPS because Processing is a case-sensitive
         language.
-"""
+        """
         return self._instance.ellipseMode(mode)
 
     @overload
@@ -5500,9 +5500,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * emissive(gray: float) -> None
-         * emissive(rgb: int) -> None
-         * emissive(v1: float, v2: float, v3: float) -> None
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -5528,7 +5528,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Used in combination with ``ambient()``, ``specular()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         pass
 
     @overload
@@ -5543,9 +5543,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * emissive(gray: float) -> None
-         * emissive(rgb: int) -> None
-         * emissive(v1: float, v2: float, v3: float) -> None
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -5571,7 +5571,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Used in combination with ``ambient()``, ``specular()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         pass
 
     @overload
@@ -5586,9 +5586,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * emissive(gray: float) -> None
-         * emissive(rgb: int) -> None
-         * emissive(v1: float, v2: float, v3: float) -> None
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -5614,7 +5614,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Used in combination with ``ambient()``, ``specular()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         pass
 
     def emissive(self, *args):
@@ -5628,9 +5628,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * emissive(gray: float) -> None
-         * emissive(rgb: int) -> None
-         * emissive(v1: float, v2: float, v3: float) -> None
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -5656,7 +5656,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Used in combination with ``ambient()``, ``specular()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         return self._instance.emissive(*args)
 
     def end_camera(self) -> None:
@@ -5671,7 +5671,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         The ``begin_camera()`` and ``end_camera()`` functions enable advanced
         customization of the camera space. Please see the reference for
         ``begin_camera()`` for a description of how the functions are used.
-"""
+        """
         return self._instance.endCamera()
 
     def end_contour(self) -> None:
@@ -5694,7 +5694,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
         not work within a ``begin_contour()``/``end_contour()`` pair. It is also not
         possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
-"""
+        """
         return self._instance.endContour()
 
     def end_draw(self) -> None:
@@ -5706,7 +5706,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Finalizes the rendering of a PGraphics object so that it can be shown on screen.
-"""
+        """
         return self._instance.endDraw()
 
     def end_raw(self) -> None:
@@ -5719,7 +5719,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Complement to ``begin_raw()``; they must always be used together. See the
         ``begin_raw()`` reference for details.
-"""
+        """
         return self._instance.endRaw()
 
     @overload
@@ -5735,7 +5735,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * end_shape() -> None
-         * end_shape(mode: int) -> None
+         * end_shape(mode: int, /) -> None
 
         Parameters
         ----------
@@ -5751,7 +5751,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         data defined since the previous call to ``begin_shape()`` is written into the
         image buffer. The constant CLOSE as the value for the MODE parameter to close
         the shape (to connect the beginning and the end).
-"""
+        """
         pass
 
     @overload
@@ -5767,7 +5767,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * end_shape() -> None
-         * end_shape(mode: int) -> None
+         * end_shape(mode: int, /) -> None
 
         Parameters
         ----------
@@ -5783,7 +5783,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         data defined since the previous call to ``begin_shape()`` is written into the
         image buffer. The constant CLOSE as the value for the MODE parameter to close
         the shape (to connect the beginning and the end).
-"""
+        """
         pass
 
     def end_shape(self, *args):
@@ -5798,7 +5798,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * end_shape() -> None
-         * end_shape(mode: int) -> None
+         * end_shape(mode: int, /) -> None
 
         Parameters
         ----------
@@ -5814,7 +5814,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         data defined since the previous call to ``begin_shape()`` is written into the
         image buffer. The constant CLOSE as the value for the MODE parameter to close
         the shape (to connect the beginning and the end).
-"""
+        """
         return self._instance.endShape(*args)
 
     @overload
@@ -5828,12 +5828,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -5878,7 +5878,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         pass
 
     @overload
@@ -5892,12 +5892,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -5942,7 +5942,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         pass
 
     @overload
@@ -5956,12 +5956,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -6006,7 +6006,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         pass
 
     @overload
@@ -6020,12 +6020,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -6070,7 +6070,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         pass
 
     @overload
@@ -6084,12 +6084,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -6134,7 +6134,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         pass
 
     @overload
@@ -6148,12 +6148,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -6198,7 +6198,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         pass
 
     def fill(self, *args):
@@ -6211,12 +6211,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * fill(gray: float) -> None
-         * fill(gray: float, alpha: float) -> None
-         * fill(rgb: int) -> None
-         * fill(rgb: int, alpha: float) -> None
-         * fill(v1: float, v2: float, v3: float) -> None
-         * fill(v1: float, v2: float, v3: float, alpha: float) -> None
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, /) -> None
+         * fill(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -6261,7 +6261,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         To change the color of an image or a texture, use ``tint()``.
-"""
+        """
         return self._instance.fill(*args)
 
     @overload
@@ -6275,9 +6275,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
-         * apply_filter(shader: Py5Shader) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
+         * apply_filter(shader: Py5Shader, /) -> None
 
         Parameters
         ----------
@@ -6329,7 +6329,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         pass
 
     @overload
@@ -6343,9 +6343,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
-         * apply_filter(shader: Py5Shader) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
+         * apply_filter(shader: Py5Shader, /) -> None
 
         Parameters
         ----------
@@ -6397,7 +6397,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         pass
 
     @overload
@@ -6411,9 +6411,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
-         * apply_filter(shader: Py5Shader) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
+         * apply_filter(shader: Py5Shader, /) -> None
 
         Parameters
         ----------
@@ -6465,7 +6465,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         pass
 
     def apply_filter(self, *args):
@@ -6478,9 +6478,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * apply_filter(kind: int) -> None
-         * apply_filter(kind: int, param: float) -> None
-         * apply_filter(shader: Py5Shader) -> None
+         * apply_filter(kind: int, /) -> None
+         * apply_filter(kind: int, param: float, /) -> None
+         * apply_filter(shader: Py5Shader, /) -> None
 
         Parameters
         ----------
@@ -6532,7 +6532,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         DILATE
         Increases the light areas. No parameter is used.
-"""
+        """
         return self._instance.filter(*args)
 
     def frustum(self, left: float, right: float, bottom: float,
@@ -6584,7 +6584,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Works like glFrustum, except it wipes out the current perspective matrix rather
         than multiplying itself with it.
-"""
+        """
         return self._instance.frustum(left, right, bottom, top, near, far)
 
     @overload
@@ -6599,8 +6599,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -6641,7 +6641,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         pixels[] for more information.
-"""
+        """
         pass
 
     @overload
@@ -6656,8 +6656,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -6698,7 +6698,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         pixels[] for more information.
-"""
+        """
         pass
 
     @overload
@@ -6713,8 +6713,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -6755,7 +6755,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         pixels[] for more information.
-"""
+        """
         pass
 
     @_return_py5image
@@ -6770,8 +6770,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get() -> Py5Image
-         * get(x: int, y: int) -> int
-         * get(x: int, y: int, w: int, h: int) -> Py5Image
+         * get(x: int, y: int, /) -> int
+         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -6812,12 +6812,12 @@ class Py5Graphics(PixelMixin, Py5Base):
         as grabbing the data directly from ``pixels[]``. The equivalent statement to
         ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
         pixels[] for more information.
-"""
+        """
         return self._instance.get(*args)
 
     @overload
     def get_matrix(self) -> NDArray[(Any, Any), Float]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.getMatrix
 
@@ -6827,8 +6827,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
         Parameters
         ----------
@@ -6842,14 +6842,16 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def get_matrix(self, target: NDArray[(
             2, 3), Float], /) -> NDArray[(2, 3), Float]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.getMatrix
 
@@ -6859,8 +6861,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
         Parameters
         ----------
@@ -6874,14 +6876,16 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def get_matrix(self, target: NDArray[(
             4, 4), Float], /) -> NDArray[(4, 4), Float]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.getMatrix
 
@@ -6891,8 +6895,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
         Parameters
         ----------
@@ -6906,13 +6910,15 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @ _get_matrix_wrapper
     def get_matrix(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.getMatrix
 
@@ -6922,8 +6928,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float]) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float]) -> NDArray[(4, 4), Float]
+         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
+         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
 
         Parameters
         ----------
@@ -6937,8 +6943,10 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getMatrix(*args)
 
     def green(self, rgb: int, /) -> float:
@@ -6968,7 +6976,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         ``g1 = green(c)  # simpler, but slower to calculate
         g2 = c >> 8 & 0xFF  # very fast to calculate``
-"""
+        """
         return self._instance.green(rgb)
 
     def hint(self, which: int, /) -> None:
@@ -7063,7 +7071,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``ENABLE_STROKE_PERSPECTIVE``
         Enables stroke geometry (lines and points) to be affected by the perspective,
         meaning that they will look smaller as they move away from the camera.
-"""
+        """
         return self._instance.hint(which)
 
     def hue(self, rgb: int, /) -> float:
@@ -7081,7 +7089,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Extracts the hue value from a color.
-"""
+        """
         return self._instance.hue(rgb)
 
     @overload
@@ -7095,9 +7103,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * image(img: Py5Image, a: float, b: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+         * image(img: Py5Image, a: float, b: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
         Parameters
         ----------
@@ -7146,7 +7154,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The color of an image may be modified with the ``tint()`` function. This
         function will maintain transparency for GIF and PNG images.
-"""
+        """
         pass
 
     @overload
@@ -7161,9 +7169,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * image(img: Py5Image, a: float, b: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+         * image(img: Py5Image, a: float, b: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
         Parameters
         ----------
@@ -7212,7 +7220,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The color of an image may be modified with the ``tint()`` function. This
         function will maintain transparency for GIF and PNG images.
-"""
+        """
         pass
 
     @overload
@@ -7227,9 +7235,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * image(img: Py5Image, a: float, b: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+         * image(img: Py5Image, a: float, b: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
         Parameters
         ----------
@@ -7278,7 +7286,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The color of an image may be modified with the ``tint()`` function. This
         function will maintain transparency for GIF and PNG images.
-"""
+        """
         pass
 
     def image(self, *args):
@@ -7291,9 +7299,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * image(img: Py5Image, a: float, b: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float) -> None
-         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int) -> None
+         * image(img: Py5Image, a: float, b: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None
+         * image(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None
 
         Parameters
         ----------
@@ -7342,7 +7350,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The color of an image may be modified with the ``tint()`` function. This
         function will maintain transparency for GIF and PNG images.
-"""
+        """
         return self._instance.image(*args)
 
     def image_mode(self, mode: int, /) -> None:
@@ -7378,7 +7386,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The parameter must be written in ALL CAPS because Processing is a case-sensitive
         language.
-"""
+        """
         return self._instance.imageMode(mode)
 
     @overload
@@ -7392,8 +7400,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * lerp_color(c1: int, c2: int, amt: float) -> int
-         * lerp_color(c1: int, c2: int, amt: float, mode: int) -> int
+         * lerp_color(c1: int, c2: int, amt: float, /) -> int
+         * lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int
 
         Parameters
         ----------
@@ -7421,7 +7429,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of ``lerp()``, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
-"""
+        """
         pass
 
     @overload
@@ -7435,8 +7443,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * lerp_color(c1: int, c2: int, amt: float) -> int
-         * lerp_color(c1: int, c2: int, amt: float, mode: int) -> int
+         * lerp_color(c1: int, c2: int, amt: float, /) -> int
+         * lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int
 
         Parameters
         ----------
@@ -7464,7 +7472,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of ``lerp()``, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
-"""
+        """
         pass
 
     def lerp_color(self, *args):
@@ -7477,8 +7485,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * lerp_color(c1: int, c2: int, amt: float) -> int
-         * lerp_color(c1: int, c2: int, amt: float, mode: int) -> int
+         * lerp_color(c1: int, c2: int, amt: float, /) -> int
+         * lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int
 
         Parameters
         ----------
@@ -7506,7 +7514,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of ``lerp()``, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
-"""
+        """
         return self._instance.lerpColor(*args)
 
     def light_falloff(self, constant: float, linear: float,
@@ -7543,7 +7551,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         lit ambiently with another color, you could use an ambient light with location
         and falloff. You can think of it as a point light that doesn't care which
         direction a surface is facing.
-"""
+        """
         return self._instance.lightFalloff(constant, linear, quadratic)
 
     def light_specular(self, v1: float, v2: float, v3: float, /) -> None:
@@ -7572,7 +7580,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         directions like a diffuse light) and is used for creating highlights. The
         specular quality of a light interacts with the specular material qualities set
         through the ``specular()`` and ``shininess()`` functions.
-"""
+        """
         return self._instance.lightSpecular(v1, v2, v3)
 
     def lights(self) -> None:
@@ -7589,7 +7597,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         included in the ``draw()`` to remain persistent in a looping program. Placing
         them in the ``setup()`` of a looping program will cause them to only have an
         effect the first time through the loop.
-"""
+        """
         return self._instance.lights()
 
     @overload
@@ -7603,8 +7611,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * line(x1: float, y1: float, x2: float, y2: float) -> None
-         * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> None
+         * line(x1: float, y1: float, x2: float, y2: float, /) -> None
+         * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None
 
         Parameters
         ----------
@@ -7638,7 +7646,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function. The version with six parameters allows the line to be placed anywhere
         within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
         P3D parameter in combination with ``size()`` as shown in the above example.
-"""
+        """
         pass
 
     @overload
@@ -7653,8 +7661,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * line(x1: float, y1: float, x2: float, y2: float) -> None
-         * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> None
+         * line(x1: float, y1: float, x2: float, y2: float, /) -> None
+         * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None
 
         Parameters
         ----------
@@ -7688,7 +7696,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function. The version with six parameters allows the line to be placed anywhere
         within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
         P3D parameter in combination with ``size()`` as shown in the above example.
-"""
+        """
         pass
 
     def line(self, *args):
@@ -7701,8 +7709,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * line(x1: float, y1: float, x2: float, y2: float) -> None
-         * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> None
+         * line(x1: float, y1: float, x2: float, y2: float, /) -> None
+         * line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None
 
         Parameters
         ----------
@@ -7736,7 +7744,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function. The version with six parameters allows the line to be placed anywhere
         within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
         P3D parameter in combination with ``size()`` as shown in the above example.
-"""
+        """
         return self._instance.line(*args)
 
     def load_pixels(self) -> None:
@@ -7751,7 +7759,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         This function must always be called before reading from or writing to
         ``pixels[]``. Subsequent changes to the display window will not be reflected in
         ``pixels`` until ``load_pixels()`` is called again.
-"""
+        """
         return self._instance.loadPixels()
 
     @overload
@@ -7765,8 +7773,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * load_shader(frag_filename: str) -> Py5Shader
-         * load_shader(frag_filename: str, vert_filename: str) -> Py5Shader
+         * load_shader(frag_filename: str, /) -> Py5Shader
+         * load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader
 
         Parameters
         ----------
@@ -7793,7 +7801,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         an error message will be printed to the console. The error message does not halt
         the program, however the null value may cause a NullPointerException if your
         code does not check whether the value returned is null.
-"""
+        """
         pass
 
     @overload
@@ -7808,8 +7816,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * load_shader(frag_filename: str) -> Py5Shader
-         * load_shader(frag_filename: str, vert_filename: str) -> Py5Shader
+         * load_shader(frag_filename: str, /) -> Py5Shader
+         * load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader
 
         Parameters
         ----------
@@ -7836,7 +7844,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         an error message will be printed to the console. The error message does not halt
         the program, however the null value may cause a NullPointerException if your
         code does not check whether the value returned is null.
-"""
+        """
         pass
 
     @_load_py5shader
@@ -7850,8 +7858,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * load_shader(frag_filename: str) -> Py5Shader
-         * load_shader(frag_filename: str, vert_filename: str) -> Py5Shader
+         * load_shader(frag_filename: str, /) -> Py5Shader
+         * load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader
 
         Parameters
         ----------
@@ -7878,7 +7886,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         an error message will be printed to the console. The error message does not halt
         the program, however the null value may cause a NullPointerException if your
         code does not check whether the value returned is null.
-"""
+        """
         return self._instance.loadShader(*args)
 
     @overload
@@ -7892,8 +7900,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * load_shape(filename: str) -> Py5Shape
-         * load_shape(filename: str, options: str) -> Py5Shape
+         * load_shape(filename: str, /) -> Py5Shape
+         * load_shape(filename: str, options: str, /) -> Py5Shape
 
         Parameters
         ----------
@@ -7922,7 +7930,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         an error message will be printed to the console. The error message does not halt
         the program, however the null value may cause a NullPointerException if your
         code does not check whether the value returned is null.
-"""
+        """
         pass
 
     @overload
@@ -7936,8 +7944,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * load_shape(filename: str) -> Py5Shape
-         * load_shape(filename: str, options: str) -> Py5Shape
+         * load_shape(filename: str, /) -> Py5Shape
+         * load_shape(filename: str, options: str, /) -> Py5Shape
 
         Parameters
         ----------
@@ -7966,7 +7974,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         an error message will be printed to the console. The error message does not halt
         the program, however the null value may cause a NullPointerException if your
         code does not check whether the value returned is null.
-"""
+        """
         pass
 
     @_load_py5shape
@@ -7980,8 +7988,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * load_shape(filename: str) -> Py5Shape
-         * load_shape(filename: str, options: str) -> Py5Shape
+         * load_shape(filename: str, /) -> Py5Shape
+         * load_shape(filename: str, options: str, /) -> Py5Shape
 
         Parameters
         ----------
@@ -8010,7 +8018,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         an error message will be printed to the console. The error message does not halt
         the program, however the null value may cause a NullPointerException if your
         code does not check whether the value returned is null.
-"""
+        """
         return self._instance.loadShape(*args)
 
     @overload
@@ -8025,8 +8033,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * mask(img: Py5Image) -> None
-         * mask(mask_array: JArray(JInt)) -> None
+         * mask(img: Py5Image, /) -> None
+         * mask(mask_array: JArray(JInt), /) -> None
 
         Parameters
         ----------
@@ -8050,7 +8058,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         generated alpha masks. This array must be of the same length as the target
         image's pixels array and should contain only grayscale data of values between
         0-255.
-"""
+        """
         pass
 
     @overload
@@ -8065,8 +8073,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * mask(img: Py5Image) -> None
-         * mask(mask_array: JArray(JInt)) -> None
+         * mask(img: Py5Image, /) -> None
+         * mask(mask_array: JArray(JInt), /) -> None
 
         Parameters
         ----------
@@ -8090,7 +8098,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         generated alpha masks. This array must be of the same length as the target
         image's pixels array and should contain only grayscale data of values between
         0-255.
-"""
+        """
         pass
 
     def mask(self, *args):
@@ -8104,8 +8112,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * mask(img: Py5Image) -> None
-         * mask(mask_array: JArray(JInt)) -> None
+         * mask(img: Py5Image, /) -> None
+         * mask(mask_array: JArray(JInt), /) -> None
 
         Parameters
         ----------
@@ -8129,7 +8137,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         generated alpha masks. This array must be of the same length as the target
         image's pixels array and should contain only grayscale data of values between
         0-255.
-"""
+        """
         return self._instance.mask(*args)
 
     def model_x(self, x: float, y: float, z: float, /) -> float:
@@ -8163,7 +8171,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         translate and rotate commands. After ``pop_matrix()`` is called, those
         transformations no longer apply, but the (x, y, z) coordinate returned by the
         model functions is used to place another box in the same location.
-"""
+        """
         return self._instance.modelX(x, y, z)
 
     def model_y(self, x: float, y: float, z: float, /) -> float:
@@ -8197,7 +8205,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         translate and rotate commands. After ``pop_matrix()`` is called, those
         transformations no longer apply, but the (x, y, z) coordinate returned by the
         model functions is used to place another box in the same location.
-"""
+        """
         return self._instance.modelY(x, y, z)
 
     def model_z(self, x: float, y: float, z: float, /) -> float:
@@ -8231,7 +8239,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         translate and rotate commands. After ``pop_matrix()`` is called, those
         transformations no longer apply, but the (x, y, z) coordinate returned by the
         model functions is used to place another box in the same location.
-"""
+        """
         return self._instance.modelZ(x, y, z)
 
     def no_clip(self) -> None:
@@ -8243,7 +8251,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Disables the clipping previously started by the ``clip()`` function.
-"""
+        """
         return self._instance.noClip()
 
     def no_fill(self) -> None:
@@ -8256,7 +8264,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Disables filling geometry. If both ``no_stroke()`` and ``no_fill()`` are called,
         nothing will be drawn to the screen.
-"""
+        """
         return self._instance.noFill()
 
     def no_lights(self) -> None:
@@ -8271,7 +8279,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``lights()`` function. This function can be used to disable lighting so that 2D
         geometry (which does not require lighting) can be drawn after a set of lighted
         3D geometry.
-"""
+        """
         return self._instance.noLights()
 
     def no_smooth(self) -> None:
@@ -8291,7 +8299,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         each sketch, either at the top of a sketch without a ``setup()``, or after the
         ``size()`` function when used in a sketch with ``setup()``. See the examples
         above for both scenarios.
-"""
+        """
         return self._instance.noSmooth()
 
     def no_stroke(self) -> None:
@@ -8304,19 +8312,21 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Disables drawing the stroke (outline). If both ``no_stroke()`` and ``no_fill()``
         are called, nothing will be drawn to the screen.
-"""
+        """
         return self._instance.noStroke()
 
     def no_texture(self) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.noTexture
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.noTexture()
 
     def no_tint(self) -> None:
@@ -8330,7 +8340,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Removes the current fill value for displaying images and reverts to displaying
         images with their original hues.
-"""
+        """
         return self._instance.noTint()
 
     def normal(self, nx: float, ny: float, nz: float, /) -> None:
@@ -8359,7 +8369,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         automatically assign normals to shapes, but since that's imperfect, this is a
         better option when you want more control. This function is identical to
         ``gl_normal3f()`` in OpenGL.
-"""
+        """
         return self._instance.normal(nx, ny, nz)
 
     @overload
@@ -8374,8 +8384,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * ortho() -> None
-         * ortho(left: float, right: float, bottom: float, top: float) -> None
-         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
         Parameters
         ----------
@@ -8408,7 +8418,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
         ortho(-width/2, width/2, -height/2, height/2).
-"""
+        """
         pass
 
     @overload
@@ -8424,8 +8434,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * ortho() -> None
-         * ortho(left: float, right: float, bottom: float, top: float) -> None
-         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
         Parameters
         ----------
@@ -8458,7 +8468,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
         ortho(-width/2, width/2, -height/2, height/2).
-"""
+        """
         pass
 
     @overload
@@ -8474,8 +8484,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * ortho() -> None
-         * ortho(left: float, right: float, bottom: float, top: float) -> None
-         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
         Parameters
         ----------
@@ -8508,7 +8518,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
         ortho(-width/2, width/2, -height/2, height/2).
-"""
+        """
         pass
 
     def ortho(self, *args):
@@ -8522,8 +8532,8 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * ortho() -> None
-         * ortho(left: float, right: float, bottom: float, top: float) -> None
-         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, /) -> None
+         * ortho(left: float, right: float, bottom: float, top: float, near: float, far: float, /) -> None
 
         Parameters
         ----------
@@ -8556,7 +8566,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
         ortho(-width/2, width/2, -height/2, height/2).
-"""
+        """
         return self._instance.ortho(*args)
 
     @overload
@@ -8572,7 +8582,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * perspective() -> None
-         * perspective(fovy: float, aspect: float, z_near: float, z_far: float) -> None
+         * perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None
 
         Parameters
         ----------
@@ -8601,7 +8611,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         version with four parameters allows the programmer to set the area precisely.
         The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
         cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-"""
+        """
         pass
 
     @overload
@@ -8618,7 +8628,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * perspective() -> None
-         * perspective(fovy: float, aspect: float, z_near: float, z_far: float) -> None
+         * perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None
 
         Parameters
         ----------
@@ -8647,7 +8657,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         version with four parameters allows the programmer to set the area precisely.
         The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
         cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-"""
+        """
         pass
 
     def perspective(self, *args):
@@ -8662,7 +8672,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * perspective() -> None
-         * perspective(fovy: float, aspect: float, z_near: float, z_far: float) -> None
+         * perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None
 
         Parameters
         ----------
@@ -8691,7 +8701,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         version with four parameters allows the programmer to set the area precisely.
         The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
         cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-"""
+        """
         return self._instance.perspective(*args)
 
     @overload
@@ -8705,8 +8715,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * point(x: float, y: float) -> None
-         * point(x: float, y: float, z: float) -> None
+         * point(x: float, y: float, /) -> None
+         * point(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -8739,7 +8749,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         screen, depending on the graphics settings of the computer. Workarounds include
         setting the pixel using ``set()`` or drawing the point using either ``circle()``
         or ``square()``.
-"""
+        """
         pass
 
     @overload
@@ -8753,8 +8763,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * point(x: float, y: float) -> None
-         * point(x: float, y: float, z: float) -> None
+         * point(x: float, y: float, /) -> None
+         * point(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -8787,7 +8797,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         screen, depending on the graphics settings of the computer. Workarounds include
         setting the pixel using ``set()`` or drawing the point using either ``circle()``
         or ``square()``.
-"""
+        """
         pass
 
     def point(self, *args):
@@ -8800,8 +8810,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * point(x: float, y: float) -> None
-         * point(x: float, y: float, z: float) -> None
+         * point(x: float, y: float, /) -> None
+         * point(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -8834,7 +8844,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         screen, depending on the graphics settings of the computer. Workarounds include
         setting the pixel using ``set()`` or drawing the point using either ``circle()``
         or ``square()``.
-"""
+        """
         return self._instance.point(*args)
 
     def point_light(self, v1: float, v2: float, v3: float,
@@ -8873,7 +8883,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         The ``v1``, ``v2``, and ``v3`` parameters are interpreted as either RGB or HSB
         values, depending on the current color mode. The ``x``, ``y``, and ``z``
         parameters set the position of the light.
-"""
+        """
         return self._instance.pointLight(v1, v2, v3, x, y, z)
 
     def pop(self) -> None:
@@ -8903,7 +8913,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``pop_styles()``. The difference is that ``push()`` and ``pop()`` control both
         the transformations (rotate, scale, translate) and the drawing styles at the
         same time.
-"""
+        """
         return self._instance.pop()
 
     def pop_matrix(self) -> None:
@@ -8920,7 +8930,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``pop_matrix()`` restores the prior coordinate system. ``push_matrix()`` and
         ``pop_matrix()`` are used in conjuction with the other transformation functions
         and may be embedded to control the scope of the transformations.
-"""
+        """
         return self._instance.popMatrix()
 
     def pop_style(self) -> None:
@@ -8940,7 +8950,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         current style information. The ``push_style()`` and ``pop_style()`` functions
         can be embedded to provide more control (see the second example above for a
         demonstration.)
-"""
+        """
         return self._instance.popStyle()
 
     def print_camera(self) -> None:
@@ -8954,7 +8964,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Prints the current camera matrix to the Console (the text window at the bottom
         of Processing).
-"""
+        """
         return self._instance.printCamera()
 
     def print_matrix(self) -> None:
@@ -8968,7 +8978,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Prints the current matrix to the Console (the text window at the bottom of
         Processing).
-"""
+        """
         return self._instance.printMatrix()
 
     def print_projection(self) -> None:
@@ -8982,7 +8992,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Prints the current projection matrix to the Console (the text window at the
         bottom of Processing).
-"""
+        """
         return self._instance.printProjection()
 
     def push(self) -> None:
@@ -9013,7 +9023,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``pop_styles()``. The difference is that ``push()`` and ``pop()`` control both
         the transformations (rotate, scale, translate) and the drawing styles at the
         same time.
-"""
+        """
         return self._instance.push()
 
     def push_matrix(self) -> None:
@@ -9031,7 +9041,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``push_matrix()`` and ``pop_matrix()`` are used in conjuction with the other
         transformation functions and may be embedded to control the scope of the
         transformations.
-"""
+        """
         return self._instance.pushMatrix()
 
     def push_style(self) -> None:
@@ -9058,7 +9068,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``shape_mode()``, ``color_mode()``, ``text_align()``, ``text_font()``,
         ``text_mode()``, ``text_size()``, ``text_leading()``, ``emissive()``,
         ``specular()``, ``shininess()``, ``ambient()``
-"""
+        """
         return self._instance.pushStyle()
 
     def quad(self, x1: float, y1: float, x2: float, y2: float,
@@ -9101,7 +9111,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         but the angles between its edges are not constrained to ninety degrees. The
         first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs
         should proceed clockwise or counter-clockwise around the defined shape.
-"""
+        """
         return self._instance.quad(x1, y1, x2, y2, x3, y3, x4, y4)
 
     @overload
@@ -9116,8 +9126,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float) -> None
-         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float) -> None
+         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
 
         Parameters
         ----------
@@ -9152,7 +9162,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
         version requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         pass
 
     @overload
@@ -9167,8 +9177,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float) -> None
-         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float) -> None
+         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
 
         Parameters
         ----------
@@ -9203,7 +9213,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
         version requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         pass
 
     def quadratic_vertex(self, *args):
@@ -9216,8 +9226,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float) -> None
-         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float) -> None
+         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
 
         Parameters
         ----------
@@ -9252,7 +9262,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
         version requires rendering with P3D (see the Environment reference for more
         information).
-"""
+        """
         return self._instance.quadraticVertex(*args)
 
     @overload
@@ -9266,9 +9276,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rect(a: float, b: float, c: float, d: float) -> None
-         * rect(a: float, b: float, c: float, d: float, r: float) -> None
-         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+         * rect(a: float, b: float, c: float, d: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
         Parameters
         ----------
@@ -9316,7 +9326,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         using eight parameters, the latter four set the radius of the arc at each corner
         separately, starting with the top-left corner and moving clockwise around the
         rectangle.
-"""
+        """
         pass
 
     @overload
@@ -9331,9 +9341,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rect(a: float, b: float, c: float, d: float) -> None
-         * rect(a: float, b: float, c: float, d: float, r: float) -> None
-         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+         * rect(a: float, b: float, c: float, d: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
         Parameters
         ----------
@@ -9381,7 +9391,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         using eight parameters, the latter four set the radius of the arc at each corner
         separately, starting with the top-left corner and moving clockwise around the
         rectangle.
-"""
+        """
         pass
 
     @overload
@@ -9396,9 +9406,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rect(a: float, b: float, c: float, d: float) -> None
-         * rect(a: float, b: float, c: float, d: float, r: float) -> None
-         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+         * rect(a: float, b: float, c: float, d: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
         Parameters
         ----------
@@ -9446,7 +9456,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         using eight parameters, the latter four set the radius of the arc at each corner
         separately, starting with the top-left corner and moving clockwise around the
         rectangle.
-"""
+        """
         pass
 
     def rect(self, *args):
@@ -9459,9 +9469,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rect(a: float, b: float, c: float, d: float) -> None
-         * rect(a: float, b: float, c: float, d: float, r: float) -> None
-         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float) -> None
+         * rect(a: float, b: float, c: float, d: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, r: float, /) -> None
+         * rect(a: float, b: float, c: float, d: float, tl: float, tr: float, br: float, bl: float, /) -> None
 
         Parameters
         ----------
@@ -9509,7 +9519,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         using eight parameters, the latter four set the radius of the arc at each corner
         separately, starting with the top-left corner and moving clockwise around the
         rectangle.
-"""
+        """
         return self._instance.rect(*args)
 
     def rect_mode(self, mode: int, /) -> None:
@@ -9548,7 +9558,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         The parameter must be written in ALL CAPS because Processing is a case-sensitive
         language.
-"""
+        """
         return self._instance.rectMode(mode)
 
     def red(self, rgb: int, /) -> float:
@@ -9577,7 +9587,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         ``r1 = red(c)  # simpler, but slower to calculate
         r2 = c >> 16 & 0xFF  # very fast to calculate``
-"""
+        """
         return self._instance.red(rgb)
 
     def reset_matrix(self) -> None:
@@ -9590,7 +9600,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Replaces the current matrix with the identity matrix. The equivalent function in
         OpenGL is ``gl_load_identity()``.
-"""
+        """
         return self._instance.resetMatrix()
 
     @overload
@@ -9605,7 +9615,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * reset_shader() -> None
-         * reset_shader(kind: int) -> None
+         * reset_shader(kind: int, /) -> None
 
         Parameters
         ----------
@@ -9618,7 +9628,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Restores the default shaders. Code that runs after ``reset_shader()`` will not
         be affected by previously defined shaders.
-"""
+        """
         pass
 
     @overload
@@ -9633,7 +9643,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * reset_shader() -> None
-         * reset_shader(kind: int) -> None
+         * reset_shader(kind: int, /) -> None
 
         Parameters
         ----------
@@ -9646,7 +9656,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Restores the default shaders. Code that runs after ``reset_shader()`` will not
         be affected by previously defined shaders.
-"""
+        """
         pass
 
     def reset_shader(self, *args):
@@ -9660,7 +9670,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * reset_shader() -> None
-         * reset_shader(kind: int) -> None
+         * reset_shader(kind: int, /) -> None
 
         Parameters
         ----------
@@ -9673,7 +9683,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Restores the default shaders. Code that runs after ``reset_shader()`` will not
         be affected by previously defined shaders.
-"""
+        """
         return self._instance.resetShader(*args)
 
     @overload
@@ -9687,8 +9697,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rotate(angle: float) -> None
-         * rotate(angle: float, x: float, y: float, z: float) -> None
+         * rotate(angle: float, /) -> None
+         * rotate(angle: float, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -9723,7 +9733,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Technically, ``rotate()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by ``push_matrix()``
         and ``pop_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -9737,8 +9747,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rotate(angle: float) -> None
-         * rotate(angle: float, x: float, y: float, z: float) -> None
+         * rotate(angle: float, /) -> None
+         * rotate(angle: float, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -9773,7 +9783,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Technically, ``rotate()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by ``push_matrix()``
         and ``pop_matrix()``.
-"""
+        """
         pass
 
     def rotate(self, *args):
@@ -9786,8 +9796,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * rotate(angle: float) -> None
-         * rotate(angle: float, x: float, y: float, z: float) -> None
+         * rotate(angle: float, /) -> None
+         * rotate(angle: float, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -9822,7 +9832,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Technically, ``rotate()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by ``push_matrix()``
         and ``pop_matrix()``.
-"""
+        """
         return self._instance.rotate(*args)
 
     def rotate_x(self, angle: float, /) -> None:
@@ -9850,7 +9860,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         If ``rotate_x()`` is run within the ``draw()``, the transformation is reset when
         the loop begins again. This function requires using P3D as a third parameter to
         ``size()`` as shown in the example above.
-"""
+        """
         return self._instance.rotateX(angle)
 
     def rotate_y(self, angle: float, /) -> None:
@@ -9878,7 +9888,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         If ``rotate_y()`` is run within the ``draw()``, the transformation is reset when
         the loop begins again. This function requires using P3D as a third parameter to
         ``size()`` as shown in the example above.
-"""
+        """
         return self._instance.rotateY(angle)
 
     def rotate_z(self, angle: float, /) -> None:
@@ -9906,7 +9916,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         If ``rotate_z()`` is run within the ``draw()``, the transformation is reset when
         the loop begins again. This function requires using P3D as a third parameter to
         ``size()`` as shown in the example above.
-"""
+        """
         return self._instance.rotateZ(angle)
 
     def saturation(self, rgb: int, /) -> float:
@@ -9924,7 +9934,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Extracts the saturation value from a color.
-"""
+        """
         return self._instance.saturation(rgb)
 
     @overload
@@ -9939,9 +9949,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -9973,7 +9983,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function with the ``z`` parameter requires using P3D as a parameter for
         ``size()``, as shown in the third example above. This function can be further
         controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -9988,9 +9998,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -10022,7 +10032,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function with the ``z`` parameter requires using P3D as a parameter for
         ``size()``, as shown in the third example above. This function can be further
         controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -10037,9 +10047,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -10071,7 +10081,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function with the ``z`` parameter requires using P3D as a parameter for
         ``size()``, as shown in the third example above. This function can be further
         controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         pass
 
     def scale(self, *args):
@@ -10085,9 +10095,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -10119,7 +10129,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         function with the ``z`` parameter requires using P3D as a parameter for
         ``size()``, as shown in the third example above. This function can be further
         controlled with ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         return self._instance.scale(*args)
 
     @overload
@@ -10134,8 +10144,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * screen_x(x: float, y: float) -> float
-         * screen_x(x: float, y: float, z: float) -> float
+         * screen_x(x: float, y: float, /) -> float
+         * screen_x(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
@@ -10154,7 +10164,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         pass
 
     @overload
@@ -10169,8 +10179,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * screen_x(x: float, y: float) -> float
-         * screen_x(x: float, y: float, z: float) -> float
+         * screen_x(x: float, y: float, /) -> float
+         * screen_x(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
@@ -10189,7 +10199,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         pass
 
     def screen_x(self, *args):
@@ -10203,8 +10213,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * screen_x(x: float, y: float) -> float
-         * screen_x(x: float, y: float, z: float) -> float
+         * screen_x(x: float, y: float, /) -> float
+         * screen_x(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
@@ -10223,7 +10233,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         return self._instance.screenX(*args)
 
     @overload
@@ -10238,8 +10248,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * screen_y(x: float, y: float) -> float
-         * screen_y(x: float, y: float, z: float) -> float
+         * screen_y(x: float, y: float, /) -> float
+         * screen_y(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
@@ -10258,7 +10268,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         pass
 
     @overload
@@ -10273,8 +10283,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * screen_y(x: float, y: float) -> float
-         * screen_y(x: float, y: float, z: float) -> float
+         * screen_y(x: float, y: float, /) -> float
+         * screen_y(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
@@ -10293,7 +10303,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         pass
 
     def screen_y(self, *args):
@@ -10307,8 +10317,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * screen_y(x: float, y: float) -> float
-         * screen_y(x: float, y: float, z: float) -> float
+         * screen_y(x: float, y: float, /) -> float
+         * screen_y(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
@@ -10327,7 +10337,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         return self._instance.screenY(*args)
 
     def screen_z(self, x: float, y: float, z: float, /) -> float:
@@ -10353,12 +10363,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Takes a three-dimensional X, Y, Z position and returns the Z value for where it
         will appear on a (two-dimensional) screen.
-"""
+        """
         return self._instance.screenZ(x, y, z)
 
     @overload
     def set_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.setMatrix
 
@@ -10367,8 +10377,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * set_matrix(source: NDArray[(2, 3), Float]) -> None
-         * set_matrix(source: NDArray[(4, 4), Float]) -> None
+         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -10382,13 +10392,15 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.setMatrix
 
@@ -10397,8 +10409,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * set_matrix(source: NDArray[(2, 3), Float]) -> None
-         * set_matrix(source: NDArray[(4, 4), Float]) -> None
+         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -10412,12 +10424,14 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def set_matrix(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PApplet.setMatrix
 
@@ -10426,8 +10440,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * set_matrix(source: NDArray[(2, 3), Float]) -> None
-         * set_matrix(source: NDArray[(4, 4), Float]) -> None
+         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -10441,8 +10455,10 @@ class Py5Graphics(PixelMixin, Py5Base):
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setMatrix(*args)
 
     @overload
@@ -10456,8 +10472,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shader(shader: Py5Shader) -> None
-         * shader(shader: Py5Shader, kind: int) -> None
+         * shader(shader: Py5Shader, /) -> None
+         * shader(shader: Py5Shader, kind: int, /) -> None
 
         Parameters
         ----------
@@ -10473,7 +10489,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Applies the shader specified by the parameters. It's compatible with the P2D and
         P3D renderers, but not with the default renderer.
-"""
+        """
         pass
 
     @overload
@@ -10487,8 +10503,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shader(shader: Py5Shader) -> None
-         * shader(shader: Py5Shader, kind: int) -> None
+         * shader(shader: Py5Shader, /) -> None
+         * shader(shader: Py5Shader, kind: int, /) -> None
 
         Parameters
         ----------
@@ -10504,7 +10520,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Applies the shader specified by the parameters. It's compatible with the P2D and
         P3D renderers, but not with the default renderer.
-"""
+        """
         pass
 
     def shader(self, *args):
@@ -10517,8 +10533,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shader(shader: Py5Shader) -> None
-         * shader(shader: Py5Shader, kind: int) -> None
+         * shader(shader: Py5Shader, /) -> None
+         * shader(shader: Py5Shader, kind: int, /) -> None
 
         Parameters
         ----------
@@ -10534,7 +10550,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Applies the shader specified by the parameters. It's compatible with the P2D and
         P3D renderers, but not with the default renderer.
-"""
+        """
         return self._instance.shader(*args)
 
     @overload
@@ -10548,9 +10564,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shape(shape: Py5Shape) -> None
-         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-         * shape(shape: Py5Shape, x: float, y: float) -> None
+         * shape(shape: Py5Shape, /) -> None
+         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+         * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
         Parameters
         ----------
@@ -10587,7 +10603,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         shape is displayed at its original size unless the ``c`` and ``d`` parameters
         specify a different size. The ``shape_mode()`` function can be used to change
         the way these parameters are interpreted.
-"""
+        """
         pass
 
     @overload
@@ -10601,9 +10617,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shape(shape: Py5Shape) -> None
-         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-         * shape(shape: Py5Shape, x: float, y: float) -> None
+         * shape(shape: Py5Shape, /) -> None
+         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+         * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
         Parameters
         ----------
@@ -10640,7 +10656,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         shape is displayed at its original size unless the ``c`` and ``d`` parameters
         specify a different size. The ``shape_mode()`` function can be used to change
         the way these parameters are interpreted.
-"""
+        """
         pass
 
     @overload
@@ -10655,9 +10671,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shape(shape: Py5Shape) -> None
-         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-         * shape(shape: Py5Shape, x: float, y: float) -> None
+         * shape(shape: Py5Shape, /) -> None
+         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+         * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
         Parameters
         ----------
@@ -10694,7 +10710,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         shape is displayed at its original size unless the ``c`` and ``d`` parameters
         specify a different size. The ``shape_mode()`` function can be used to change
         the way these parameters are interpreted.
-"""
+        """
         pass
 
     def shape(self, *args):
@@ -10707,9 +10723,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * shape(shape: Py5Shape) -> None
-         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float) -> None
-         * shape(shape: Py5Shape, x: float, y: float) -> None
+         * shape(shape: Py5Shape, /) -> None
+         * shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None
+         * shape(shape: Py5Shape, x: float, y: float, /) -> None
 
         Parameters
         ----------
@@ -10746,7 +10762,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         shape is displayed at its original size unless the ``c`` and ``d`` parameters
         specify a different size. The ``shape_mode()`` function can be used to change
         the way these parameters are interpreted.
-"""
+        """
         return self._instance.shape(*args)
 
     def shape_mode(self, mode: int, /) -> None:
@@ -10773,7 +10789,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         and forth parameters of ``shape()`` to specify the width and height. The
         parameter must be written in "ALL CAPS" because Processing is a case sensitive
         language.
-"""
+        """
         return self._instance.shapeMode(mode)
 
     def shear_x(self, angle: float, /) -> None:
@@ -10804,7 +10820,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Technically, ``shear_x()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by the
         ``push_matrix()`` and ``pop_matrix()`` functions.
-"""
+        """
         return self._instance.shearX(angle)
 
     def shear_y(self, angle: float, /) -> None:
@@ -10835,7 +10851,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Technically, ``shear_y()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by the
         ``push_matrix()`` and ``pop_matrix()`` functions.
-"""
+        """
         return self._instance.shearY(angle)
 
     def shininess(self, shine: float, /) -> None:
@@ -10855,7 +10871,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the amount of gloss in the surface of shapes. Used in combination with
         ``ambient()``, ``specular()``, and ``emissive()`` in setting the material
         properties of shapes.
-"""
+        """
         return self._instance.shininess(shine)
 
     @overload
@@ -10870,7 +10886,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * smooth() -> None
-         * smooth(level: int) -> None
+         * smooth(level: int, /) -> None
 
         Parameters
         ----------
@@ -10906,7 +10922,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
         after the object is created with ``create_graphics()``, as shown in the
         Reference in the third example.
-"""
+        """
         pass
 
     @overload
@@ -10921,7 +10937,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * smooth() -> None
-         * smooth(level: int) -> None
+         * smooth(level: int, /) -> None
 
         Parameters
         ----------
@@ -10957,7 +10973,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
         after the object is created with ``create_graphics()``, as shown in the
         Reference in the third example.
-"""
+        """
         pass
 
     def smooth(self, *args):
@@ -10971,7 +10987,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * smooth() -> None
-         * smooth(level: int) -> None
+         * smooth(level: int, /) -> None
 
         Parameters
         ----------
@@ -11007,7 +11023,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
         after the object is created with ``create_graphics()``, as shown in the
         Reference in the third example.
-"""
+        """
         return self._instance.smooth(*args)
 
     @overload
@@ -11022,9 +11038,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * specular(gray: float) -> None
-         * specular(rgb: int) -> None
-         * specular(v1: float, v2: float, v3: float) -> None
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -11052,7 +11068,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         pass
 
     @overload
@@ -11067,9 +11083,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * specular(gray: float) -> None
-         * specular(rgb: int) -> None
-         * specular(v1: float, v2: float, v3: float) -> None
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -11097,7 +11113,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         pass
 
     @overload
@@ -11112,9 +11128,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * specular(gray: float) -> None
-         * specular(rgb: int) -> None
-         * specular(v1: float, v2: float, v3: float) -> None
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -11142,7 +11158,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         pass
 
     def specular(self, *args):
@@ -11156,9 +11172,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * specular(gray: float) -> None
-         * specular(rgb: int) -> None
-         * specular(v1: float, v2: float, v3: float) -> None
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(v1: float, v2: float, v3: float, /) -> None
 
         Parameters
         ----------
@@ -11186,7 +11202,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
         ``shininess()`` in setting the material properties of shapes.
-"""
+        """
         return self._instance.specular(*args)
 
     def sphere(self, r: float, /) -> None:
@@ -11204,7 +11220,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         A sphere is a hollow ball made from tessellated triangles.
-"""
+        """
         return self._instance.sphere(r)
 
     @overload
@@ -11219,8 +11235,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * sphere_detail(res: int) -> None
-         * sphere_detail(ures: int, vres: int) -> None
+         * sphere_detail(res: int, /) -> None
+         * sphere_detail(ures: int, vres: int, /) -> None
 
         Parameters
         ----------
@@ -11248,7 +11264,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         further away from the camera. To control the detail of the horizontal and
         vertical resolution independently, use the version of the functions with two
         parameters.
-"""
+        """
         pass
 
     @overload
@@ -11263,8 +11279,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * sphere_detail(res: int) -> None
-         * sphere_detail(ures: int, vres: int) -> None
+         * sphere_detail(res: int, /) -> None
+         * sphere_detail(ures: int, vres: int, /) -> None
 
         Parameters
         ----------
@@ -11292,7 +11308,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         further away from the camera. To control the detail of the horizontal and
         vertical resolution independently, use the version of the functions with two
         parameters.
-"""
+        """
         pass
 
     def sphere_detail(self, *args):
@@ -11306,8 +11322,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * sphere_detail(res: int) -> None
-         * sphere_detail(ures: int, vres: int) -> None
+         * sphere_detail(res: int, /) -> None
+         * sphere_detail(ures: int, vres: int, /) -> None
 
         Parameters
         ----------
@@ -11335,7 +11351,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         further away from the camera. To control the detail of the horizontal and
         vertical resolution independently, use the version of the functions with two
         parameters.
-"""
+        """
         return self._instance.sphereDetail(*args)
 
     def spot_light(
@@ -11404,7 +11420,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         the direction of light. The ``angle`` parameter affects angle of the spotlight
         cone, while ``concentration`` sets the bias of light focusing toward the center
         of that cone.
-"""
+        """
         return self._instance.spotLight(
             v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
 
@@ -11433,7 +11449,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         parameters set the location of the upper-left corner, the third sets the width
         and height. The way these parameters are interpreted, however, may be changed
         with the ``rect_mode()`` function.
-"""
+        """
         return self._instance.square(x, y, extent)
 
     @overload
@@ -11447,12 +11463,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11498,7 +11514,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         pass
 
     @overload
@@ -11512,12 +11528,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11563,7 +11579,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         pass
 
     @overload
@@ -11577,12 +11593,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11628,7 +11644,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         pass
 
     @overload
@@ -11642,12 +11658,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11693,7 +11709,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         pass
 
     @overload
@@ -11707,12 +11723,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11758,7 +11774,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         pass
 
     @overload
@@ -11772,12 +11788,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11823,7 +11839,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         pass
 
     def stroke(self, *args):
@@ -11836,12 +11852,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * stroke(gray: float) -> None
-         * stroke(gray: float, alpha: float) -> None
-         * stroke(rgb: int) -> None
-         * stroke(rgb: int, alpha: float) -> None
-         * stroke(v1: float, v2: float, v3: float) -> None
-         * stroke(v1: float, v2: float, v3: float, alpha: float) -> None
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, /) -> None
+         * stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -11887,7 +11903,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
         performance). See the ``hint()`` documentation for more details.
-"""
+        """
         return self._instance.stroke(*args)
 
     def stroke_cap(self, cap: int, /) -> None:
@@ -11910,7 +11926,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         To make ``point()`` appear square, use ``stroke_cap(PROJECT)``. Using
         ``stroke_cap(SQUARE)`` (no cap) causes points to become invisible.
-"""
+        """
         return self._instance.strokeCap(cap)
 
     def stroke_join(self, join: int, /) -> None:
@@ -11930,7 +11946,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Sets the style of the joints which connect line segments. These joints are
         either mitered, beveled, or rounded and specified with the corresponding
         parameters MITER, BEVEL, and ROUND. The default joint is MITER.
-"""
+        """
         return self._instance.strokeJoin(join)
 
     def stroke_weight(self, weight: float, /) -> None:
@@ -11955,7 +11971,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         screen, depending on the graphics settings of the computer. Workarounds include
         setting the pixel using ``set()`` or drawing the point using either ``circle()``
         or ``square()``.
-"""
+        """
         return self._instance.strokeWeight(weight)
 
     @overload
@@ -11969,17 +11985,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12045,7 +12061,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12059,17 +12075,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12135,7 +12151,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12150,17 +12166,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12226,7 +12242,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12241,17 +12257,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12317,7 +12333,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12331,17 +12347,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12407,7 +12423,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12421,17 +12437,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12497,7 +12513,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12511,17 +12527,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12587,7 +12603,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12601,17 +12617,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12677,7 +12693,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12691,17 +12707,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12767,7 +12783,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12781,17 +12797,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12857,7 +12873,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @overload
@@ -12872,17 +12888,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -12948,7 +12964,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         pass
 
     @_text_fix_str
@@ -12962,17 +12978,17 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text(c: chr, x: float, y: float) -> None
-         * text(c: chr, x: float, y: float, z: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float) -> None
-         * text(num: float, x: float, y: float) -> None
-         * text(num: float, x: float, y: float, z: float) -> None
-         * text(num: int, x: float, y: float) -> None
-         * text(num: int, x: float, y: float, z: float) -> None
-         * text(str: str, x1: float, y1: float, x2: float, y2: float) -> None
-         * text(str: str, x: float, y: float) -> None
-         * text(str: str, x: float, y: float, z: float) -> None
+         * text(c: chr, x: float, y: float, /) -> None
+         * text(c: chr, x: float, y: float, z: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(num: float, x: float, y: float, /) -> None
+         * text(num: float, x: float, y: float, z: float, /) -> None
+         * text(num: int, x: float, y: float, /) -> None
+         * text(num: int, x: float, y: float, z: float, /) -> None
+         * text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None
+         * text(str: str, x: float, y: float, /) -> None
+         * text(str: str, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -13038,7 +13054,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Note that Processing now lets you call ``text()`` without first specifying a
         PFont with ``text_font()``. In that case, a generic sans-serif font will be used
         instead. (See the third example above.)
-"""
+        """
         return self._instance.text(*args)
 
     @overload
@@ -13052,8 +13068,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_align(align_x: int) -> None
-         * text_align(align_x: int, align_y: int) -> None
+         * text_align(align_x: int, /) -> None
+         * text_align(align_x: int, align_y: int, /) -> None
 
         Parameters
         ----------
@@ -13088,7 +13104,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         a few pixels by hand so that the offset looks correct. To do this as less of a
         hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
         hack works even if you change the size of the font.
-"""
+        """
         pass
 
     @overload
@@ -13102,8 +13118,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_align(align_x: int) -> None
-         * text_align(align_x: int, align_y: int) -> None
+         * text_align(align_x: int, /) -> None
+         * text_align(align_x: int, align_y: int, /) -> None
 
         Parameters
         ----------
@@ -13138,7 +13154,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         a few pixels by hand so that the offset looks correct. To do this as less of a
         hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
         hack works even if you change the size of the font.
-"""
+        """
         pass
 
     def text_align(self, *args):
@@ -13151,8 +13167,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_align(align_x: int) -> None
-         * text_align(align_x: int, align_y: int) -> None
+         * text_align(align_x: int, /) -> None
+         * text_align(align_x: int, align_y: int, /) -> None
 
         Parameters
         ----------
@@ -13187,7 +13203,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         a few pixels by hand so that the offset looks correct. To do this as less of a
         hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
         hack works even if you change the size of the font.
-"""
+        """
         return self._instance.textAlign(*args)
 
     def text_ascent(self) -> float:
@@ -13200,7 +13216,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Returns ascent of the current font at its current size. This information is
         useful for determining the height of the font above the baseline.
-"""
+        """
         return self._instance.textAscent()
 
     def text_descent(self) -> float:
@@ -13213,7 +13229,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Returns descent of the current font at its current size. This information is
         useful for determining the height of the font below the baseline.
-"""
+        """
         return self._instance.textDescent()
 
     @overload
@@ -13227,8 +13243,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_font(which: Py5Font) -> None
-         * text_font(which: Py5Font, size: float) -> None
+         * text_font(which: Py5Font, /) -> None
+         * text_font(which: Py5Font, size: float, /) -> None
 
         Parameters
         ----------
@@ -13253,7 +13269,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         P3D renderers as well as with ``load_font()`` and vlw files), you should create
         fonts at the sizes that will be used most commonly. Using ``text_font()``
         without the size parameter will result in the cleanest type.
-"""
+        """
         pass
 
     @overload
@@ -13267,8 +13283,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_font(which: Py5Font) -> None
-         * text_font(which: Py5Font, size: float) -> None
+         * text_font(which: Py5Font, /) -> None
+         * text_font(which: Py5Font, size: float, /) -> None
 
         Parameters
         ----------
@@ -13293,7 +13309,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         P3D renderers as well as with ``load_font()`` and vlw files), you should create
         fonts at the sizes that will be used most commonly. Using ``text_font()``
         without the size parameter will result in the cleanest type.
-"""
+        """
         pass
 
     def text_font(self, *args):
@@ -13306,8 +13322,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_font(which: Py5Font) -> None
-         * text_font(which: Py5Font, size: float) -> None
+         * text_font(which: Py5Font, /) -> None
+         * text_font(which: Py5Font, size: float, /) -> None
 
         Parameters
         ----------
@@ -13332,7 +13348,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         P3D renderers as well as with ``load_font()`` and vlw files), you should create
         fonts at the sizes that will be used most commonly. Using ``text_font()``
         without the size parameter will result in the cleanest type.
-"""
+        """
         return self._instance.textFont(*args)
 
     def text_leading(self, leading: float, /) -> None:
@@ -13354,7 +13370,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         the leading is reset by ``text_size()``. For example, if the leading is set to
         20 with ``text_leading(20)``, then if ``text_size(48)`` is run at a later point,
         the leading will be reset to the default for the text size of 48.
-"""
+        """
         return self._instance.textLeading(leading)
 
     def text_mode(self, mode: int, /) -> None:
@@ -13386,7 +13402,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``PDF``. The ``SHAPE`` mode is not currently optimized for ``P3D``, so if
         recording shape data, use ``text_mode(MODEL)`` until you're ready to capture the
         geometry with ``begin_raw()``.
-"""
+        """
         return self._instance.textMode(mode)
 
     def text_size(self, size: float, /) -> None:
@@ -13405,7 +13421,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         Sets the current font size. This size will be used in all subsequent calls to
         the ``text()`` function. Font size is measured in units of pixels.
-"""
+        """
         return self._instance.textSize(size)
 
     @overload
@@ -13419,9 +13435,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_width(c: chr) -> float
-         * text_width(chars: List[chr], start: int, length: int) -> float
-         * text_width(str: str) -> float
+         * text_width(c: chr, /) -> float
+         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(str: str, /) -> float
 
         Parameters
         ----------
@@ -13445,7 +13461,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Calculates and returns the width of any character or text string.
-"""
+        """
         pass
 
     @overload
@@ -13460,9 +13476,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_width(c: chr) -> float
-         * text_width(chars: List[chr], start: int, length: int) -> float
-         * text_width(str: str) -> float
+         * text_width(c: chr, /) -> float
+         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(str: str, /) -> float
 
         Parameters
         ----------
@@ -13486,7 +13502,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Calculates and returns the width of any character or text string.
-"""
+        """
         pass
 
     @overload
@@ -13500,9 +13516,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_width(c: chr) -> float
-         * text_width(chars: List[chr], start: int, length: int) -> float
-         * text_width(str: str) -> float
+         * text_width(c: chr, /) -> float
+         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(str: str, /) -> float
 
         Parameters
         ----------
@@ -13526,7 +13542,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Calculates and returns the width of any character or text string.
-"""
+        """
         pass
 
     @_text_fix_str
@@ -13540,9 +13556,9 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * text_width(c: chr) -> float
-         * text_width(chars: List[chr], start: int, length: int) -> float
-         * text_width(str: str) -> float
+         * text_width(c: chr, /) -> float
+         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(str: str, /) -> float
 
         Parameters
         ----------
@@ -13566,7 +13582,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         -----
 
         Calculates and returns the width of any character or text string.
-"""
+        """
         return self._instance.textWidth(*args)
 
     def texture(self, image: Py5Image, /) -> None:
@@ -13589,7 +13605,7 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         When textures are in use, the fill color is ignored. Instead, use ``tint()`` to
         specify the color of the texture as it is applied to the shape.
-"""
+        """
         return self._instance.texture(image)
 
     def texture_mode(self, mode: int, /) -> None:
@@ -13614,7 +13630,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         With ``IMAGE``, if an image is 100 x 200 pixels, mapping the image onto the
         entire size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
         The same mapping in ``NORMAL`` is (0,0) (1,0) (1,1) (0,1).
-"""
+        """
         return self._instance.textureMode(mode)
 
     def texture_wrap(self, wrap: int, /) -> None:
@@ -13634,7 +13650,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         Defines if textures repeat or draw once within a texture map. The two parameters
         are CLAMP (the default behavior) and REPEAT. This function only works with the
         P2D and P3D renderers.
-"""
+        """
         return self._instance.textureWrap(wrap)
 
     @overload
@@ -13648,12 +13664,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -13700,7 +13716,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         pass
 
     @overload
@@ -13714,12 +13730,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -13766,7 +13782,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         pass
 
     @overload
@@ -13780,12 +13796,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -13832,7 +13848,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         pass
 
     @overload
@@ -13846,12 +13862,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -13898,7 +13914,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         pass
 
     @overload
@@ -13912,12 +13928,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -13964,7 +13980,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         pass
 
     @overload
@@ -13978,12 +13994,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -14030,7 +14046,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         pass
 
     def tint(self, *args):
@@ -14043,12 +14059,12 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * tint(gray: float) -> None
-         * tint(gray: float, alpha: float) -> None
-         * tint(rgb: int) -> None
-         * tint(rgb: int, alpha: float) -> None
-         * tint(v1: float, v2: float, v3: float) -> None
-         * tint(v1: float, v2: float, v3: float, alpha: float) -> None
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, /) -> None
+         * tint(v1: float, v2: float, v3: float, alpha: float, /) -> None
 
         Parameters
         ----------
@@ -14095,7 +14111,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
-"""
+        """
         return self._instance.tint(*args)
 
     @overload
@@ -14109,8 +14125,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * translate(x: float, y: float) -> None
-         * translate(x: float, y: float, z: float) -> None
+         * translate(x: float, y: float, /) -> None
+         * translate(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -14139,7 +14155,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
         transformation is reset when the loop begins again. This function can be further
         controlled by using ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         pass
 
     @overload
@@ -14153,8 +14169,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * translate(x: float, y: float) -> None
-         * translate(x: float, y: float, z: float) -> None
+         * translate(x: float, y: float, /) -> None
+         * translate(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -14183,7 +14199,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
         transformation is reset when the loop begins again. This function can be further
         controlled by using ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         pass
 
     def translate(self, *args):
@@ -14196,8 +14212,8 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * translate(x: float, y: float) -> None
-         * translate(x: float, y: float, z: float) -> None
+         * translate(x: float, y: float, /) -> None
+         * translate(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -14226,7 +14242,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
         transformation is reset when the loop begins again. This function can be further
         controlled by using ``push_matrix()`` and ``pop_matrix()``.
-"""
+        """
         return self._instance.translate(*args)
 
     def triangle(self, x1: float, y1: float, x2: float,
@@ -14262,7 +14278,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         A triangle is a plane created by connecting three points. The first two
         arguments specify the first point, the middle two arguments specify the second
         point, and the last two arguments specify the third point.
-"""
+        """
         return self._instance.triangle(x1, y1, x2, y2, x3, y3)
 
     @overload
@@ -14277,7 +14293,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * update_pixels() -> None
-         * update_pixels(x1: int, y1: int, x2: int, y2: int) -> None
+         * update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None
 
         Parameters
         ----------
@@ -14301,7 +14317,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         conjunction with ``load_pixels()``. If you're only reading pixels from the
         array, there's no need to call ``update_pixels()`` — updating is only necessary
         to apply changes.
-"""
+        """
         pass
 
     @overload
@@ -14316,7 +14332,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * update_pixels() -> None
-         * update_pixels(x1: int, y1: int, x2: int, y2: int) -> None
+         * update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None
 
         Parameters
         ----------
@@ -14340,7 +14356,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         conjunction with ``load_pixels()``. If you're only reading pixels from the
         array, there's no need to call ``update_pixels()`` — updating is only necessary
         to apply changes.
-"""
+        """
         pass
 
     def update_pixels(self, *args):
@@ -14354,7 +14370,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * update_pixels() -> None
-         * update_pixels(x1: int, y1: int, x2: int, y2: int) -> None
+         * update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None
 
         Parameters
         ----------
@@ -14378,7 +14394,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         conjunction with ``load_pixels()``. If you're only reading pixels from the
         array, there's no need to call ``update_pixels()`` — updating is only necessary
         to apply changes.
-"""
+        """
         return self._instance.updatePixels(*args)
 
     @overload
@@ -14392,11 +14408,11 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float]) -> None
-         * vertex(x: float, y: float) -> None
-         * vertex(x: float, y: float, u: float, v: float) -> None
-         * vertex(x: float, y: float, z: float) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
         Parameters
         ----------
@@ -14435,7 +14451,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
         size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -14449,11 +14465,11 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float]) -> None
-         * vertex(x: float, y: float) -> None
-         * vertex(x: float, y: float, u: float, v: float) -> None
-         * vertex(x: float, y: float, z: float) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
         Parameters
         ----------
@@ -14492,7 +14508,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
         size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -14506,11 +14522,11 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float]) -> None
-         * vertex(x: float, y: float) -> None
-         * vertex(x: float, y: float, u: float, v: float) -> None
-         * vertex(x: float, y: float, z: float) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
         Parameters
         ----------
@@ -14549,7 +14565,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
         size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -14564,11 +14580,11 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float]) -> None
-         * vertex(x: float, y: float) -> None
-         * vertex(x: float, y: float, u: float, v: float) -> None
-         * vertex(x: float, y: float, z: float) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
         Parameters
         ----------
@@ -14607,7 +14623,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
         size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+        """
         pass
 
     @overload
@@ -14621,11 +14637,11 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float]) -> None
-         * vertex(x: float, y: float) -> None
-         * vertex(x: float, y: float, u: float, v: float) -> None
-         * vertex(x: float, y: float, z: float) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
         Parameters
         ----------
@@ -14664,7 +14680,7 @@ class Py5Graphics(PixelMixin, Py5Base):
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
         size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+        """
         pass
 
     def vertex(self, *args):
@@ -14677,11 +14693,11 @@ class Py5Graphics(PixelMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float]) -> None
-         * vertex(x: float, y: float) -> None
-         * vertex(x: float, y: float, u: float, v: float) -> None
-         * vertex(x: float, y: float, z: float) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float) -> None
+         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
 
         Parameters
         ----------
@@ -14720,5 +14736,5 @@ class Py5Graphics(PixelMixin, Py5Base):
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
         size in pixels, but this relation can be changed with ``texture_mode()``.
-"""
+        """
         return self._instance.vertex(*args)

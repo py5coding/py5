@@ -48,7 +48,7 @@ def settings():
 def setup():
 {4}
 
-    py5.save_frame("{3}")
+    py5.save_frame("{3}", use_thread=False)
     py5.exit_sketch()
 """
 
@@ -228,31 +228,29 @@ def run_single_frame_sketch(renderer, code, width, height, user_ns, safe_exec):
         code = code.replace('"""', r'\"\"\"')
         prepared_code = f'    exec("""{code}""", _py5_user_ns)'
 
-    temp_py = tempfile.NamedTemporaryFile(suffix='.py')
-    temp_out = tempfile.NamedTemporaryFile(suffix=suffix)
+    with tempfile.TemporaryDirectory() as tempdir:
+        temp_py = Path(tempdir) / 'py5_code.py'
+        temp_out = Path(tempdir) / ('output' + suffix)
 
-    with open(temp_py.name, 'w') as f:
-        code = template.format(
-            width,
-            height,
-            renderer,
-            temp_out.name,
-            prepared_code)
-        f.write(code)
+        with open(temp_py, 'w') as f:
+            code = template.format(
+                width,
+                height,
+                renderer,
+                temp_out.as_posix(),
+                prepared_code)
+            f.write(code)
 
-    exec(_CODE_FRAMEWORK.format(temp_py.name, True, ''), user_ns)
+        exec(_CODE_FRAMEWORK.format(temp_py.as_posix(), True, ''), user_ns)
+
+        with open(temp_out, read_mode) as f:
+            result = f.read()
+
+    py5.reset_py5()
 
     if not safe_exec:
         del user_ns['_py5_user_ns']
 
-    py5.reset_py5()
-
-    temp_py.close()
-
-    with open(temp_out.name, read_mode) as f:
-        result = f.read()
-
-    temp_out.close()
     return result
 
 

@@ -15,46 +15,52 @@ def _return_py5surface(f):
 
 
 class Py5Surface:
-    """new template no description.
+    """The documentation for this field or method has not yet been written.
 
     Underlying Java class: PSurface.PSurface
 
     Notes
     -----
 
-    new template no description.
-"""
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
 
     def __init__(self, psurface, pimage_cache):
         self._instance = psurface
         self._pimage_cache = pimage_cache
 
     def get_native(self) -> Any:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.getNative
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getNative()
 
     def is_stopped(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.isStopped
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.isStopped()
 
     def open_link(self, url: str, /) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.openLink
 
@@ -67,36 +73,42 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.openLink(url)
 
     def pause_thread(self) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.pauseThread
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.pauseThread()
 
     def resume_thread(self) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.resumeThread
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.resumeThread()
 
     def set_always_on_top(self, always: bool, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setAlwaysOnTop
 
@@ -109,12 +121,14 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setAlwaysOnTop(always)
 
     def set_icon(self, icon: Py5Image, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setIcon
 
@@ -127,12 +141,14 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setIcon(icon)
 
     def set_location(self, x: int, y: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setLocation
 
@@ -148,12 +164,14 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setLocation(x, y)
 
     def set_resizable(self, resizable: bool, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setResizable
 
@@ -166,12 +184,14 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setResizable(resizable)
 
     def set_size(self, width: int, height: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setSize
 
@@ -187,12 +207,14 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setSize(width, height)
 
     def set_title(self, title: str, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setTitle
 
@@ -205,12 +227,14 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setTitle(title)
 
     def set_visible(self, visible: bool, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.setVisible
 
@@ -223,18 +247,22 @@ class Py5Surface:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setVisible(visible)
 
     def stop_thread(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PSurface.stopThread
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.stopThread()

@@ -19,6 +19,7 @@ INSTALL_REQUIRES = [
     'nptyping>=1.3',
     'numpy>=1.18',
     'pandas>=1.0',
+    'pillow>=8.0.1',
     'requests>=2.24',
     'stackprinter>=0.2.4',
 ]

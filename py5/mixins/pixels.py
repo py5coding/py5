@@ -1,3 +1,4 @@
+import threading
 from pathlib import Path
 from typing import overload, List, Union  # noqa
 
@@ -29,26 +30,28 @@ class PixelMixin:
     # *** BEGIN METHODS ***
 
     def load_np_pixels(self) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         if self._np_pixels is None:
             self._init_np_pixels()
         self._instance.loadPixels()
         self._java_bb.asIntBuffer().put(self._instance.pixels)
 
     def update_np_pixels(self) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         if self._np_pixels is None:
             self._init_np_pixels()
         self._java_bb.asIntBuffer().get(self._instance.pixels)
@@ -56,17 +59,18 @@ class PixelMixin:
 
     @property
     def np_pixels(self) -> np.ndarray:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return self._np_pixels
 
     def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -80,8 +84,9 @@ class PixelMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         self.load_np_pixels()
         if bands == 'L':
             self._np_pixels[:, :, 0] = 255
@@ -102,8 +107,9 @@ class PixelMixin:
                              Path],
              format: str = None,
              drop_alpha: bool = True,
+             use_thread: bool = True,
              **params) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -120,13 +126,32 @@ class PixelMixin:
         params
             missing variable description
 
+        use_thread: bool
+            missing variable description
+
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         filename = Path(str(self._instance.savePath(str(filename))))
         self.load_np_pixels()
         arr = self.np_pixels[:, :, 1:] if drop_alpha else np.roll(
             self.np_pixels, -1, axis=2)
-        Image.fromarray(arr).save(filename, format=format, **params)
+
+        if use_thread:
+            def _save(arr, filename, format, params):
+                Image.fromarray(arr).save(filename, format=format, **params)
+
+            t = threading.Thread(
+                target=_save,
+                args=(
+                    arr,
+                    filename,
+                    format,
+                    params),
+                daemon=True)
+            t.start()
+        else:
+            Image.fromarray(arr).save(filename, format=format, **params)

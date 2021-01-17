@@ -83,21 +83,23 @@ class Py5Shape:
 
     To create a new shape, use the ``create_shape()`` function. Do not use the
     syntax ``new Py5Shape()``.
-"""
+    """
 
     def __init__(self, pshape):
         self._instance = pshape
 
     def _get_depth(self) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java field: PShape.depth
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.depth
     depth: float = property(fget=_get_depth)
 
@@ -110,7 +112,7 @@ class Py5Shape:
         -----
 
         The height of the PShape document.
-"""
+        """
         return self._instance.height
     height: float = property(fget=_get_height)
 
@@ -123,7 +125,7 @@ class Py5Shape:
         -----
 
         The width of the PShape document.
-"""
+        """
         return self._instance.width
     width: float = property(fget=_get_width)
 
@@ -138,8 +140,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * add_child(who: Py5Shape) -> None
-         * add_child(who: Py5Shape, idx: int) -> None
+         * add_child(who: Py5Shape, /) -> None
+         * add_child(who: Py5Shape, idx: int, /) -> None
 
         Parameters
         ----------
@@ -156,7 +158,7 @@ class Py5Shape:
         Adds a child PShape to a parent PShape that is defined as a GROUP. In the
         example, the three shapes ``path``, ``rectangle``, and ``circle`` are added to a
         parent PShape variable named ``house`` that is a GROUP.
-"""
+        """
         pass
 
     @overload
@@ -170,8 +172,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * add_child(who: Py5Shape) -> None
-         * add_child(who: Py5Shape, idx: int) -> None
+         * add_child(who: Py5Shape, /) -> None
+         * add_child(who: Py5Shape, idx: int, /) -> None
 
         Parameters
         ----------
@@ -188,7 +190,7 @@ class Py5Shape:
         Adds a child PShape to a parent PShape that is defined as a GROUP. In the
         example, the three shapes ``path``, ``rectangle``, and ``circle`` are added to a
         parent PShape variable named ``house`` that is a GROUP.
-"""
+        """
         pass
 
     def add_child(self, *args):
@@ -201,8 +203,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * add_child(who: Py5Shape) -> None
-         * add_child(who: Py5Shape, idx: int) -> None
+         * add_child(who: Py5Shape, /) -> None
+         * add_child(who: Py5Shape, idx: int, /) -> None
 
         Parameters
         ----------
@@ -219,11 +221,11 @@ class Py5Shape:
         Adds a child PShape to a parent PShape that is defined as a GROUP. In the
         example, the three shapes ``path``, ``rectangle``, and ``circle`` are added to a
         parent PShape variable named ``house`` that is a GROUP.
-"""
+        """
         return self._instance.addChild(*args)
 
     def add_name(self, nom: str, shape: Py5Shape, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.addName
 
@@ -239,14 +241,183 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.addName(nom, shape)
+
+    @overload
+    def ambient(self, gray: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.ambient
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def ambient(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.ambient
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def ambient(self, rgb: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.ambient
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def ambient(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.ambient
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * ambient(gray: float, /) -> None
+         * ambient(rgb: int, /) -> None
+         * ambient(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.ambient(*args)
 
     @overload
     def apply_matrix(self, n00: float, n01: float, n02: float,
                      n10: float, n11: float, n12: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.applyMatrix
 
@@ -255,10 +426,10 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -320,8 +491,10 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
@@ -344,7 +517,7 @@ class Py5Shape:
             n32: float,
             n33: float,
             /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.applyMatrix
 
@@ -353,10 +526,10 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -418,13 +591,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.applyMatrix
 
@@ -433,10 +608,10 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -498,13 +673,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.applyMatrix
 
@@ -513,10 +690,10 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -578,12 +755,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def apply_matrix(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.applyMatrix
 
@@ -592,10 +771,10 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float]) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float]) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
+         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
+         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
+         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
 
         Parameters
         ----------
@@ -657,13 +836,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.applyMatrix(*args)
 
     @overload
     def attrib(self, name: str, /, *values: bool) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attrib
 
@@ -672,9 +853,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * attrib(name: str, values: bool) -> None
-         * attrib(name: str, values: float) -> None
-         * attrib(name: str, values: int) -> None
+         * attrib(name: str, /, *values: bool) -> None
+         * attrib(name: str, /, *values: float) -> None
+         * attrib(name: str, /, *values: int) -> None
 
         Parameters
         ----------
@@ -694,13 +875,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def attrib(self, name: str, /, *values: float) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attrib
 
@@ -709,9 +892,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * attrib(name: str, values: bool) -> None
-         * attrib(name: str, values: float) -> None
-         * attrib(name: str, values: int) -> None
+         * attrib(name: str, /, *values: bool) -> None
+         * attrib(name: str, /, *values: float) -> None
+         * attrib(name: str, /, *values: int) -> None
 
         Parameters
         ----------
@@ -731,13 +914,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def attrib(self, name: str, /, *values: int) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attrib
 
@@ -746,9 +931,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * attrib(name: str, values: bool) -> None
-         * attrib(name: str, values: float) -> None
-         * attrib(name: str, values: int) -> None
+         * attrib(name: str, /, *values: bool) -> None
+         * attrib(name: str, /, *values: float) -> None
+         * attrib(name: str, /, *values: int) -> None
 
         Parameters
         ----------
@@ -768,13 +953,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @_py5shape_type_fixer
     def attrib(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attrib
 
@@ -783,9 +970,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * attrib(name: str, values: bool) -> None
-         * attrib(name: str, values: float) -> None
-         * attrib(name: str, values: int) -> None
+         * attrib(name: str, /, *values: bool) -> None
+         * attrib(name: str, /, *values: float) -> None
+         * attrib(name: str, /, *values: int) -> None
 
         Parameters
         ----------
@@ -805,12 +992,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.attrib(*args)
 
     def attrib_color(self, name: str, color: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attribColor
 
@@ -826,13 +1015,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.attribColor(name, color)
 
     def attrib_normal(self, name: str, nx: float,
                       ny: float, nz: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attribNormal
 
@@ -854,13 +1045,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.attribNormal(name, nx, ny, nz)
 
     def attrib_position(self, name: str, x: float,
                         y: float, z: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.attribPosition
 
@@ -882,9 +1075,25 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.attribPosition(name, x, y, z)
+
+    def begin_contour(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.beginContour
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.beginContour()
 
     @overload
     def begin_shape(self) -> None:
@@ -899,7 +1108,7 @@ class Py5Shape:
         You can use any of the following signatures:
 
          * begin_shape() -> None
-         * begin_shape(kind: int) -> None
+         * begin_shape(kind: int, /) -> None
 
         Parameters
         ----------
@@ -912,7 +1121,7 @@ class Py5Shape:
 
         This method is used to start a custom shape created with the ``create_shape()``
         function. It's always and only used with ``create_shape()``.
-"""
+        """
         pass
 
     @overload
@@ -928,7 +1137,7 @@ class Py5Shape:
         You can use any of the following signatures:
 
          * begin_shape() -> None
-         * begin_shape(kind: int) -> None
+         * begin_shape(kind: int, /) -> None
 
         Parameters
         ----------
@@ -941,7 +1150,7 @@ class Py5Shape:
 
         This method is used to start a custom shape created with the ``create_shape()``
         function. It's always and only used with ``create_shape()``.
-"""
+        """
         pass
 
     def begin_shape(self, *args):
@@ -956,7 +1165,7 @@ class Py5Shape:
         You can use any of the following signatures:
 
          * begin_shape() -> None
-         * begin_shape(kind: int) -> None
+         * begin_shape(kind: int, /) -> None
 
         Parameters
         ----------
@@ -969,11 +1178,11 @@ class Py5Shape:
 
         This method is used to start a custom shape created with the ``create_shape()``
         function. It's always and only used with ``create_shape()``.
-"""
+        """
         return self._instance.beginShape(*args)
 
     def bezier_detail(self, detail: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.bezierDetail
 
@@ -986,12 +1195,405 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.bezierDetail(detail)
 
+    @overload
+    def bezier_vertex(self, x2: float, y2: float, x3: float,
+                      y3: float, x4: float, y4: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.bezierVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
+
+        Parameters
+        ----------
+
+        x2: float
+            missing variable description
+
+        x3: float
+            missing variable description
+
+        x4: float
+            missing variable description
+
+        y2: float
+            missing variable description
+
+        y3: float
+            missing variable description
+
+        y4: float
+            missing variable description
+
+        z2: float
+            missing variable description
+
+        z3: float
+            missing variable description
+
+        z4: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def bezier_vertex(self, x2: float, y2: float, z2: float, x3: float,
+                      y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.bezierVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
+
+        Parameters
+        ----------
+
+        x2: float
+            missing variable description
+
+        x3: float
+            missing variable description
+
+        x4: float
+            missing variable description
+
+        y2: float
+            missing variable description
+
+        y3: float
+            missing variable description
+
+        y4: float
+            missing variable description
+
+        z2: float
+            missing variable description
+
+        z3: float
+            missing variable description
+
+        z4: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def bezier_vertex(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.bezierVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * bezier_vertex(x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /) -> None
+         * bezier_vertex(x2: float, y2: float, z2: float, x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None
+
+        Parameters
+        ----------
+
+        x2: float
+            missing variable description
+
+        x3: float
+            missing variable description
+
+        x4: float
+            missing variable description
+
+        y2: float
+            missing variable description
+
+        y3: float
+            missing variable description
+
+        y4: float
+            missing variable description
+
+        z2: float
+            missing variable description
+
+        z3: float
+            missing variable description
+
+        z4: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.bezierVertex(*args)
+
+    @overload
+    def color_mode(self, mode: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            missing variable description
+
+        max_a: float
+            missing variable description
+
+        max_x: float
+            missing variable description
+
+        max_y: float
+            missing variable description
+
+        max_z: float
+            missing variable description
+
+        mode: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            missing variable description
+
+        max_a: float
+            missing variable description
+
+        max_x: float
+            missing variable description
+
+        max_y: float
+            missing variable description
+
+        max_z: float
+            missing variable description
+
+        mode: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max_x: float,
+                   max_y: float, max_z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            missing variable description
+
+        max_a: float
+            missing variable description
+
+        max_x: float
+            missing variable description
+
+        max_y: float
+            missing variable description
+
+        max_z: float
+            missing variable description
+
+        mode: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max_x: float, max_y: float,
+                   max_z: float, max_a: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            missing variable description
+
+        max_a: float
+            missing variable description
+
+        max_x: float
+            missing variable description
+
+        max_y: float
+            missing variable description
+
+        max_z: float
+            missing variable description
+
+        mode: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def color_mode(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            missing variable description
+
+        max_a: float
+            missing variable description
+
+        max_x: float
+            missing variable description
+
+        max_y: float
+            missing variable description
+
+        max_z: float
+            missing variable description
+
+        mode: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.colorMode(*args)
+
     def contains(self, x: float, y: float, /) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.contains
 
@@ -1007,9 +1609,155 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.contains(x, y)
+
+    def curve_detail(self, detail: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.curveDetail
+
+        Parameters
+        ----------
+
+        detail: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.curveDetail(detail)
+
+    def curve_tightness(self, tightness: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.curveTightness
+
+        Parameters
+        ----------
+
+        tightness: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.curveTightness(tightness)
+
+    @overload
+    def curve_vertex(self, x: float, y: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.curveVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * curve_vertex(x: float, y: float, /) -> None
+         * curve_vertex(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def curve_vertex(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.curveVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * curve_vertex(x: float, y: float, /) -> None
+         * curve_vertex(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def curve_vertex(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.curveVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * curve_vertex(x: float, y: float, /) -> None
+         * curve_vertex(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.curveVertex(*args)
 
     def disable_style(self) -> None:
         """Disables the shape's style data and uses Processing's current styles.
@@ -1021,8 +1769,175 @@ class Py5Shape:
 
         Disables the shape's style data and uses Processing's current styles. Styles
         include attributes such as colors, stroke weight, and stroke joints.
-"""
+        """
         return self._instance.disableStyle()
+
+    @overload
+    def emissive(self, gray: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.emissive
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def emissive(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.emissive
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def emissive(self, rgb: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.emissive
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def emissive(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.emissive
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * emissive(gray: float, /) -> None
+         * emissive(rgb: int, /) -> None
+         * emissive(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.emissive(*args)
 
     def enable_style(self) -> None:
         """Enables the shape's style data and ignores Processing's current styles.
@@ -1034,8 +1949,22 @@ class Py5Shape:
 
         Enables the shape's style data and ignores Processing's current styles. Styles
         include attributes such as colors, stroke weight, and stroke joints.
-"""
+        """
         return self._instance.enableStyle()
+
+    def end_contour(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.endContour
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.endContour()
 
     @overload
     def end_shape(self) -> None:
@@ -1050,7 +1979,7 @@ class Py5Shape:
         You can use any of the following signatures:
 
          * end_shape() -> None
-         * end_shape(mode: int) -> None
+         * end_shape(mode: int, /) -> None
 
         Parameters
         ----------
@@ -1063,7 +1992,7 @@ class Py5Shape:
 
         This method is used to complete a custom shape created with the
         ``create_shape()`` function. It's always and only used with ``create_shape()``.
-"""
+        """
         pass
 
     @overload
@@ -1079,7 +2008,7 @@ class Py5Shape:
         You can use any of the following signatures:
 
          * end_shape() -> None
-         * end_shape(mode: int) -> None
+         * end_shape(mode: int, /) -> None
 
         Parameters
         ----------
@@ -1092,7 +2021,7 @@ class Py5Shape:
 
         This method is used to complete a custom shape created with the
         ``create_shape()`` function. It's always and only used with ``create_shape()``.
-"""
+        """
         pass
 
     def end_shape(self, *args):
@@ -1107,7 +2036,7 @@ class Py5Shape:
         You can use any of the following signatures:
 
          * end_shape() -> None
-         * end_shape(mode: int) -> None
+         * end_shape(mode: int, /) -> None
 
         Parameters
         ----------
@@ -1120,12 +2049,368 @@ class Py5Shape:
 
         This method is used to complete a custom shape created with the
         ``create_shape()`` function. It's always and only used with ``create_shape()``.
-"""
+        """
         return self._instance.endShape(*args)
+
+    @overload
+    def fill(self, gray: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def fill(self, gray: float, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def fill(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def fill(self, x: float, y: float, z: float, a: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def fill(self, rgb: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def fill(self, rgb: int, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def fill(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.fill
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * fill(gray: float, /) -> None
+         * fill(gray: float, alpha: float, /) -> None
+         * fill(rgb: int, /) -> None
+         * fill(rgb: int, alpha: float, /) -> None
+         * fill(x: float, y: float, z: float, /) -> None
+         * fill(x: float, y: float, z: float, a: float, /) -> None
+
+        Parameters
+        ----------
+
+        a: float
+            missing variable description
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.fill(*args)
 
     @_return_py5shape
     def find_child(self, target: str, /) -> Py5Shape:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.findChild
 
@@ -1138,12 +2423,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.findChild(target)
 
     def get_ambient(self, index: int, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getAmbient
 
@@ -1156,8 +2443,10 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getAmbient(index)
 
     @overload
@@ -1171,8 +2460,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_child(index: int) -> Py5Shape
-         * get_child(target: str) -> Py5Shape
+         * get_child(index: int, /) -> Py5Shape
+         * get_child(target: str, /) -> Py5Shape
 
         Parameters
         ----------
@@ -1189,7 +2478,7 @@ class Py5Shape:
         Extracts a child shape from a parent shape. Specify the name of the shape with
         the ``target`` parameter. The shape is returned as a ``Py5Shape`` object, or
         ``None`` is returned if there is an error.
-"""
+        """
         pass
 
     @overload
@@ -1203,8 +2492,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_child(index: int) -> Py5Shape
-         * get_child(target: str) -> Py5Shape
+         * get_child(index: int, /) -> Py5Shape
+         * get_child(target: str, /) -> Py5Shape
 
         Parameters
         ----------
@@ -1221,7 +2510,7 @@ class Py5Shape:
         Extracts a child shape from a parent shape. Specify the name of the shape with
         the ``target`` parameter. The shape is returned as a ``Py5Shape`` object, or
         ``None`` is returned if there is an error.
-"""
+        """
         pass
 
     @_return_py5shape
@@ -1235,8 +2524,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_child(index: int) -> Py5Shape
-         * get_child(target: str) -> Py5Shape
+         * get_child(index: int, /) -> Py5Shape
+         * get_child(target: str, /) -> Py5Shape
 
         Parameters
         ----------
@@ -1253,7 +2542,7 @@ class Py5Shape:
         Extracts a child shape from a parent shape. Specify the name of the shape with
         the ``target`` parameter. The shape is returned as a ``Py5Shape`` object, or
         ``None`` is returned if there is an error.
-"""
+        """
         return self._instance.getChild(*args)
 
     def get_child_count(self) -> int:
@@ -1265,11 +2554,11 @@ class Py5Shape:
         -----
 
         Returns the number of children within the PShape.
-"""
+        """
         return self._instance.getChildCount()
 
     def get_child_index(self, who: Py5Shape, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getChildIndex
 
@@ -1282,37 +2571,43 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getChildIndex(who)
 
     @_return_list_py5shapes
     def get_children(self) -> List[Py5Shape]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getChildren
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getChildren()
 
     def get_depth(self) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getDepth
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getDepth()
 
     def get_emissive(self, index: int, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getEmissive
 
@@ -1325,24 +2620,28 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getEmissive(index)
 
     def get_family(self) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getFamily
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getFamily()
 
     def get_fill(self, index: int, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getFill
 
@@ -1355,49 +2654,57 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getFill(index)
 
     def get_height(self) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getHeight
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getHeight()
 
     def get_kind(self) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getKind
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getKind()
 
     def get_name(self) -> str:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getName
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getName()
 
     @overload
     def get_normal(self, index: int, /) -> NDArray[(Any,), Float]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getNormal
 
@@ -1406,8 +2713,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_normal(index: int) -> NDArray[(Any,), Float]
-         * get_normal(index: int, vec: NDArray[(Any,), Float]) -> NDArray[(Any,), Float]
+         * get_normal(index: int, /) -> NDArray[(Any,), Float]
+         * get_normal(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
 
         Parameters
         ----------
@@ -1421,14 +2728,16 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def get_normal(self, index: int, vec: NDArray[(
             Any,), Float], /) -> NDArray[(Any,), Float]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getNormal
 
@@ -1437,8 +2746,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_normal(index: int) -> NDArray[(Any,), Float]
-         * get_normal(index: int, vec: NDArray[(Any,), Float]) -> NDArray[(Any,), Float]
+         * get_normal(index: int, /) -> NDArray[(Any,), Float]
+         * get_normal(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
 
         Parameters
         ----------
@@ -1452,13 +2761,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @_get_pvector_wrapper
     def get_normal(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getNormal
 
@@ -1467,8 +2778,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_normal(index: int) -> NDArray[(Any,), Float]
-         * get_normal(index: int, vec: NDArray[(Any,), Float]) -> NDArray[(Any,), Float]
+         * get_normal(index: int, /) -> NDArray[(Any,), Float]
+         * get_normal(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
 
         Parameters
         ----------
@@ -1482,12 +2793,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getNormal(*args)
 
     def get_normal_x(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getNormalX
 
@@ -1500,12 +2813,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getNormalX(index)
 
     def get_normal_y(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getNormalY
 
@@ -1518,12 +2833,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getNormalY(index)
 
     def get_normal_z(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getNormalZ
 
@@ -1536,25 +2853,136 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getNormalZ(index)
+
+    def get_param(self, index: int, /) -> float:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getParam
+
+        Parameters
+        ----------
+
+        index: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.getParam(index)
+
+    @overload
+    def get_params(self) -> NDArray[(Any,), Float]:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getParams
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_params() -> NDArray[(Any,), Float]
+         * get_params(target: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+
+        Parameters
+        ----------
+
+        target: NDArray[(Any,), Float]
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def get_params(self, target: NDArray[(
+            Any,), Float], /) -> NDArray[(Any,), Float]:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getParams
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_params() -> NDArray[(Any,), Float]
+         * get_params(target: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+
+        Parameters
+        ----------
+
+        target: NDArray[(Any,), Float]
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def get_params(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getParams
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_params() -> NDArray[(Any,), Float]
+         * get_params(target: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+
+        Parameters
+        ----------
+
+        target: NDArray[(Any,), Float]
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.getParams(*args)
 
     @_return_py5shape
     def get_parent(self) -> Py5Shape:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getParent
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getParent()
 
     def get_shininess(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getShininess
 
@@ -1567,12 +2995,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getShininess(index)
 
     def get_specular(self, index: int, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getSpecular
 
@@ -1585,12 +3015,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getSpecular(index)
 
     def get_stroke(self, index: int, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getStroke
 
@@ -1603,12 +3035,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getStroke(index)
 
     def get_stroke_weight(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getStrokeWeight
 
@@ -1621,25 +3055,29 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getStrokeWeight(index)
 
     @_return_py5shape
     def get_tessellation(self) -> Py5Shape:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getTessellation
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getTessellation()
 
     def get_texture_u(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getTextureU
 
@@ -1652,12 +3090,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getTextureU(index)
 
     def get_texture_v(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getTextureV
 
@@ -1670,12 +3110,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getTextureV(index)
 
     def get_tint(self, index: int, /) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getTint
 
@@ -1688,8 +3130,10 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getTint(index)
 
     @overload
@@ -1704,8 +3148,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_vertex(index: int) -> NDArray[(Any,), Float]
-         * get_vertex(index: int, vec: NDArray[(Any,), Float]) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, /) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
 
         Parameters
         ----------
@@ -1724,7 +3168,7 @@ class Py5Shape:
         works when shapes are created as shown in the example above, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
         80, 80)``.
-"""
+        """
         pass
 
     @overload
@@ -1740,8 +3184,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_vertex(index: int) -> NDArray[(Any,), Float]
-         * get_vertex(index: int, vec: NDArray[(Any,), Float]) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, /) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
 
         Parameters
         ----------
@@ -1760,7 +3204,7 @@ class Py5Shape:
         works when shapes are created as shown in the example above, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
         80, 80)``.
-"""
+        """
         pass
 
     @_get_pvector_wrapper
@@ -1775,8 +3219,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * get_vertex(index: int) -> NDArray[(Any,), Float]
-         * get_vertex(index: int, vec: NDArray[(Any,), Float]) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, /) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
 
         Parameters
         ----------
@@ -1795,8 +3239,56 @@ class Py5Shape:
         works when shapes are created as shown in the example above, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
         80, 80)``.
-"""
+        """
         return self._instance.getVertex(*args)
+
+    def get_vertex_code(self, index: int, /) -> int:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getVertexCode
+
+        Parameters
+        ----------
+
+        index: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.getVertexCode(index)
+
+    def get_vertex_code_count(self) -> int:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getVertexCodeCount
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.getVertexCodeCount()
+
+    def get_vertex_codes(self) -> JArray(JInt):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.getVertexCodes
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.getVertexCodes()
 
     def get_vertex_count(self) -> int:
         """The ``get_vertex_count()`` method returns the number of vertices that make up a
@@ -1810,11 +3302,11 @@ class Py5Shape:
         The ``get_vertex_count()`` method returns the number of vertices that make up a
         PShape. In the above example, the value 4 is returned by the
         ``get_vertex_count()`` method because 4 vertices are defined in ``setup()``.
-"""
+        """
         return self._instance.getVertexCount()
 
     def get_vertex_x(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getVertexX
 
@@ -1827,12 +3319,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getVertexX(index)
 
     def get_vertex_y(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getVertexY
 
@@ -1845,12 +3339,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getVertexY(index)
 
     def get_vertex_z(self, index: int, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getVertexZ
 
@@ -1863,56 +3359,66 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getVertexZ(index)
 
     def get_width(self) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.getWidth
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getWidth()
 
     def is2d(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.is2D
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.is2D()
 
     def is3d(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.is3D
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.is3D()
 
     def is_closed(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.isClosed
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.isClosed()
 
     def is_visible(self) -> bool:
@@ -1930,11 +3436,226 @@ class Py5Shape:
         The default visibility of a shape is usually controlled by whatever program
         created the SVG file. For instance, this parameter is controlled by showing or
         hiding the shape in the layers palette in Adobe Illustrator.
-"""
+        """
         return self._instance.isVisible()
 
+    def no_fill(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.noFill
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.noFill()
+
+    def no_stroke(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.noStroke
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.noStroke()
+
+    def no_texture(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.noTexture
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.noTexture()
+
+    def no_tint(self) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.noTint
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.noTint()
+
+    def normal(self, nx: float, ny: float, nz: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.normal
+
+        Parameters
+        ----------
+
+        nx: float
+            missing variable description
+
+        ny: float
+            missing variable description
+
+        nz: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.normal(nx, ny, nz)
+
+    @overload
+    def quadratic_vertex(self, cx: float, cy: float,
+                         x3: float, y3: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.quadraticVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
+
+        Parameters
+        ----------
+
+        cx: float
+            missing variable description
+
+        cy: float
+            missing variable description
+
+        cz: float
+            missing variable description
+
+        x3: float
+            missing variable description
+
+        y3: float
+            missing variable description
+
+        z3: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def quadratic_vertex(self, cx: float, cy: float, cz: float,
+                         x3: float, y3: float, z3: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.quadraticVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
+
+        Parameters
+        ----------
+
+        cx: float
+            missing variable description
+
+        cy: float
+            missing variable description
+
+        cz: float
+            missing variable description
+
+        x3: float
+            missing variable description
+
+        y3: float
+            missing variable description
+
+        z3: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def quadratic_vertex(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.quadraticVertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * quadratic_vertex(cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /) -> None
+         * quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None
+
+        Parameters
+        ----------
+
+        cx: float
+            missing variable description
+
+        cy: float
+            missing variable description
+
+        cz: float
+            missing variable description
+
+        x3: float
+            missing variable description
+
+        y3: float
+            missing variable description
+
+        z3: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.quadraticVertex(*args)
+
     def remove_child(self, idx: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.removeChild
 
@@ -1947,8 +3668,10 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.removeChild(idx)
 
     def reset_matrix(self) -> None:
@@ -1961,7 +3684,7 @@ class Py5Shape:
 
         Replaces the current matrix of a shape with the identity matrix. The equivalent
         function in OpenGL is ``gl_load_identity()``.
-"""
+        """
         return self._instance.resetMatrix()
 
     @overload
@@ -1975,8 +3698,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * rotate(angle: float) -> None
-         * rotate(angle: float, v0: float, v1: float, v2: float) -> None
+         * rotate(angle: float, /) -> None
+         * rotate(angle: float, v0: float, v1: float, v2: float, /) -> None
 
         Parameters
         ----------
@@ -2006,7 +3729,7 @@ class Py5Shape:
         the effect. For example, calling ``rotate(HALF_PI)`` and then
         ``rotate(HALF_PI)`` is the same as ``rotate(PI)``. This transformation is
         applied directly to the shape, it's not refreshed each time ``draw()`` is run.
-"""
+        """
         pass
 
     @overload
@@ -2020,8 +3743,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * rotate(angle: float) -> None
-         * rotate(angle: float, v0: float, v1: float, v2: float) -> None
+         * rotate(angle: float, /) -> None
+         * rotate(angle: float, v0: float, v1: float, v2: float, /) -> None
 
         Parameters
         ----------
@@ -2051,7 +3774,7 @@ class Py5Shape:
         the effect. For example, calling ``rotate(HALF_PI)`` and then
         ``rotate(HALF_PI)`` is the same as ``rotate(PI)``. This transformation is
         applied directly to the shape, it's not refreshed each time ``draw()`` is run.
-"""
+        """
         pass
 
     def rotate(self, *args):
@@ -2064,8 +3787,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * rotate(angle: float) -> None
-         * rotate(angle: float, v0: float, v1: float, v2: float) -> None
+         * rotate(angle: float, /) -> None
+         * rotate(angle: float, v0: float, v1: float, v2: float, /) -> None
 
         Parameters
         ----------
@@ -2095,7 +3818,7 @@ class Py5Shape:
         the effect. For example, calling ``rotate(HALF_PI)`` and then
         ``rotate(HALF_PI)`` is the same as ``rotate(PI)``. This transformation is
         applied directly to the shape, it's not refreshed each time ``draw()`` is run.
-"""
+        """
         return self._instance.rotate(*args)
 
     def rotate_x(self, angle: float, /) -> None:
@@ -2126,7 +3849,7 @@ class Py5Shape:
 
         This method requires a 3D renderer. You need to use P3D as a third parameter for
         the ``size()`` function as shown in the example above.
-"""
+        """
         return self._instance.rotateX(angle)
 
     def rotate_y(self, angle: float, /) -> None:
@@ -2157,7 +3880,7 @@ class Py5Shape:
 
         This method requires a 3D renderer. You need to use P3D as a third parameter for
         the ``size()`` function as shown in the example above.
-"""
+        """
         return self._instance.rotateY(angle)
 
     def rotate_z(self, angle: float, /) -> None:
@@ -2188,7 +3911,7 @@ class Py5Shape:
 
         This method requires a 3D renderer. You need to use P3D as a third parameter for
         the ``size()`` function as shown in the example above.
-"""
+        """
         return self._instance.rotateZ(angle)
 
     @overload
@@ -2203,9 +3926,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -2235,7 +3958,7 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         pass
 
     @overload
@@ -2250,9 +3973,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -2282,7 +4005,7 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         pass
 
     @overload
@@ -2297,9 +4020,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -2329,7 +4052,7 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         pass
 
     def scale(self, *args):
@@ -2343,9 +4066,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * scale(s: float) -> None
-         * scale(x: float, y: float) -> None
-         * scale(x: float, y: float, z: float) -> None
+         * scale(s: float, /) -> None
+         * scale(x: float, y: float, /) -> None
+         * scale(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -2375,12 +4098,32 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         return self._instance.scale(*args)
+
+    def set3d(self, val: bool, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.set3D
+
+        Parameters
+        ----------
+
+        val: bool
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.set3D(val)
 
     @overload
     def set_ambient(self, ambient: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAmbient
 
@@ -2389,8 +4132,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_ambient(ambient: int) -> None
-         * set_ambient(index: int, ambient: int) -> None
+         * set_ambient(ambient: int, /) -> None
+         * set_ambient(index: int, ambient: int, /) -> None
 
         Parameters
         ----------
@@ -2404,13 +4147,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_ambient(self, index: int, ambient: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAmbient
 
@@ -2419,8 +4164,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_ambient(ambient: int) -> None
-         * set_ambient(index: int, ambient: int) -> None
+         * set_ambient(ambient: int, /) -> None
+         * set_ambient(index: int, ambient: int, /) -> None
 
         Parameters
         ----------
@@ -2434,12 +4179,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def set_ambient(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAmbient
 
@@ -2448,8 +4195,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_ambient(ambient: int) -> None
-         * set_ambient(index: int, ambient: int) -> None
+         * set_ambient(ambient: int, /) -> None
+         * set_ambient(index: int, ambient: int, /) -> None
 
         Parameters
         ----------
@@ -2463,13 +4210,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setAmbient(*args)
 
     @overload
     def set_attrib(self, name: str, index: int, /, *values: bool) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAttrib
 
@@ -2478,9 +4227,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_attrib(name: str, index: int, values: bool) -> None
-         * set_attrib(name: str, index: int, values: float) -> None
-         * set_attrib(name: str, index: int, values: int) -> None
+         * set_attrib(name: str, index: int, /, *values: bool) -> None
+         * set_attrib(name: str, index: int, /, *values: float) -> None
+         * set_attrib(name: str, index: int, /, *values: int) -> None
 
         Parameters
         ----------
@@ -2503,13 +4252,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_attrib(self, name: str, index: int, /, *values: float) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAttrib
 
@@ -2518,9 +4269,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_attrib(name: str, index: int, values: bool) -> None
-         * set_attrib(name: str, index: int, values: float) -> None
-         * set_attrib(name: str, index: int, values: int) -> None
+         * set_attrib(name: str, index: int, /, *values: bool) -> None
+         * set_attrib(name: str, index: int, /, *values: float) -> None
+         * set_attrib(name: str, index: int, /, *values: int) -> None
 
         Parameters
         ----------
@@ -2543,13 +4294,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_attrib(self, name: str, index: int, /, *values: int) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAttrib
 
@@ -2558,9 +4311,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_attrib(name: str, index: int, values: bool) -> None
-         * set_attrib(name: str, index: int, values: float) -> None
-         * set_attrib(name: str, index: int, values: int) -> None
+         * set_attrib(name: str, index: int, /, *values: bool) -> None
+         * set_attrib(name: str, index: int, /, *values: float) -> None
+         * set_attrib(name: str, index: int, /, *values: int) -> None
 
         Parameters
         ----------
@@ -2583,13 +4336,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @_py5shape_type_fixer
     def set_attrib(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setAttrib
 
@@ -2598,9 +4353,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_attrib(name: str, index: int, values: bool) -> None
-         * set_attrib(name: str, index: int, values: float) -> None
-         * set_attrib(name: str, index: int, values: int) -> None
+         * set_attrib(name: str, index: int, /, *values: bool) -> None
+         * set_attrib(name: str, index: int, /, *values: float) -> None
+         * set_attrib(name: str, index: int, /, *values: int) -> None
 
         Parameters
         ----------
@@ -2623,13 +4378,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setAttrib(*args)
 
     @overload
     def set_emissive(self, emissive: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setEmissive
 
@@ -2638,8 +4395,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_emissive(emissive: int) -> None
-         * set_emissive(index: int, emissive: int) -> None
+         * set_emissive(emissive: int, /) -> None
+         * set_emissive(index: int, emissive: int, /) -> None
 
         Parameters
         ----------
@@ -2653,13 +4410,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_emissive(self, index: int, emissive: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setEmissive
 
@@ -2668,8 +4427,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_emissive(emissive: int) -> None
-         * set_emissive(index: int, emissive: int) -> None
+         * set_emissive(emissive: int, /) -> None
+         * set_emissive(index: int, emissive: int, /) -> None
 
         Parameters
         ----------
@@ -2683,12 +4442,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def set_emissive(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setEmissive
 
@@ -2697,8 +4458,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_emissive(emissive: int) -> None
-         * set_emissive(index: int, emissive: int) -> None
+         * set_emissive(emissive: int, /) -> None
+         * set_emissive(index: int, emissive: int, /) -> None
 
         Parameters
         ----------
@@ -2712,9 +4473,31 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setEmissive(*args)
+
+    def set_family(self, family: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.setFamily
+
+        Parameters
+        ----------
+
+        family: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.setFamily(family)
 
     @overload
     def set_fill(self, fill: bool, /) -> None:
@@ -2727,9 +4510,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_fill(fill: bool) -> None
-         * set_fill(fill: int) -> None
-         * set_fill(index: int, fill: int) -> None
+         * set_fill(fill: bool, /) -> None
+         * set_fill(fill: int, /) -> None
+         * set_fill(index: int, fill: int, /) -> None
 
         Parameters
         ----------
@@ -2753,7 +4536,7 @@ class Py5Shape:
         be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
         ``end_shape()``. However, after the shape is created, only the ``set_fill()``
         method can define a new fill value for the ``Py5Shape``.
-"""
+        """
         pass
 
     @overload
@@ -2767,9 +4550,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_fill(fill: bool) -> None
-         * set_fill(fill: int) -> None
-         * set_fill(index: int, fill: int) -> None
+         * set_fill(fill: bool, /) -> None
+         * set_fill(fill: int, /) -> None
+         * set_fill(index: int, fill: int, /) -> None
 
         Parameters
         ----------
@@ -2793,7 +4576,7 @@ class Py5Shape:
         be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
         ``end_shape()``. However, after the shape is created, only the ``set_fill()``
         method can define a new fill value for the ``Py5Shape``.
-"""
+        """
         pass
 
     @overload
@@ -2807,9 +4590,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_fill(fill: bool) -> None
-         * set_fill(fill: int) -> None
-         * set_fill(index: int, fill: int) -> None
+         * set_fill(fill: bool, /) -> None
+         * set_fill(fill: int, /) -> None
+         * set_fill(index: int, fill: int, /) -> None
 
         Parameters
         ----------
@@ -2833,7 +4616,7 @@ class Py5Shape:
         be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
         ``end_shape()``. However, after the shape is created, only the ``set_fill()``
         method can define a new fill value for the ``Py5Shape``.
-"""
+        """
         pass
 
     @_py5shape_type_fixer
@@ -2847,9 +4630,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_fill(fill: bool) -> None
-         * set_fill(fill: int) -> None
-         * set_fill(index: int, fill: int) -> None
+         * set_fill(fill: bool, /) -> None
+         * set_fill(fill: int, /) -> None
+         * set_fill(index: int, fill: int, /) -> None
 
         Parameters
         ----------
@@ -2873,11 +4656,31 @@ class Py5Shape:
         be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
         ``end_shape()``. However, after the shape is created, only the ``set_fill()``
         method can define a new fill value for the ``Py5Shape``.
-"""
+        """
         return self._instance.setFill(*args)
 
+    def set_kind(self, kind: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.setKind
+
+        Parameters
+        ----------
+
+        kind: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.setKind(kind)
+
     def set_name(self, name: str, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setName
 
@@ -2890,13 +4693,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setName(name)
 
     def set_normal(self, index: int, nx: float,
                    ny: float, nz: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setNormal
 
@@ -2918,13 +4723,39 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setNormal(index, nx, ny, nz)
+
+    def set_path(self, vcount: int,
+                 verts: NDArray[(Any, Any), Float], /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.setPath
+
+        Parameters
+        ----------
+
+        vcount: int
+            missing variable description
+
+        verts: NDArray[(Any, Any), Float]
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.setPath(vcount, verts)
 
     @overload
     def set_shininess(self, shine: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setShininess
 
@@ -2933,8 +4764,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_shininess(index: int, shine: float) -> None
-         * set_shininess(shine: float) -> None
+         * set_shininess(index: int, shine: float, /) -> None
+         * set_shininess(shine: float, /) -> None
 
         Parameters
         ----------
@@ -2948,13 +4779,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_shininess(self, index: int, shine: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setShininess
 
@@ -2963,8 +4796,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_shininess(index: int, shine: float) -> None
-         * set_shininess(shine: float) -> None
+         * set_shininess(index: int, shine: float, /) -> None
+         * set_shininess(shine: float, /) -> None
 
         Parameters
         ----------
@@ -2978,12 +4811,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def set_shininess(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setShininess
 
@@ -2992,8 +4827,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_shininess(index: int, shine: float) -> None
-         * set_shininess(shine: float) -> None
+         * set_shininess(index: int, shine: float, /) -> None
+         * set_shininess(shine: float, /) -> None
 
         Parameters
         ----------
@@ -3007,13 +4842,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setShininess(*args)
 
     @overload
     def set_specular(self, specular: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setSpecular
 
@@ -3022,8 +4859,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_specular(index: int, specular: int) -> None
-         * set_specular(specular: int) -> None
+         * set_specular(index: int, specular: int, /) -> None
+         * set_specular(specular: int, /) -> None
 
         Parameters
         ----------
@@ -3037,13 +4874,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_specular(self, index: int, specular: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setSpecular
 
@@ -3052,8 +4891,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_specular(index: int, specular: int) -> None
-         * set_specular(specular: int) -> None
+         * set_specular(index: int, specular: int, /) -> None
+         * set_specular(specular: int, /) -> None
 
         Parameters
         ----------
@@ -3067,12 +4906,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def set_specular(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setSpecular
 
@@ -3081,8 +4922,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_specular(index: int, specular: int) -> None
-         * set_specular(specular: int) -> None
+         * set_specular(index: int, specular: int, /) -> None
+         * set_specular(specular: int, /) -> None
 
         Parameters
         ----------
@@ -3096,8 +4937,10 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setSpecular(*args)
 
     @overload
@@ -3111,9 +4954,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke(index: int, stroke: int) -> None
-         * set_stroke(stroke: bool) -> None
-         * set_stroke(stroke: int) -> None
+         * set_stroke(index: int, stroke: int, /) -> None
+         * set_stroke(stroke: bool, /) -> None
+         * set_stroke(stroke: int, /) -> None
 
         Parameters
         ----------
@@ -3137,7 +4980,7 @@ class Py5Shape:
         attributes may be changed with ``fill()`` and ``stroke()`` within
         ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
         the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
-"""
+        """
         pass
 
     @overload
@@ -3151,9 +4994,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke(index: int, stroke: int) -> None
-         * set_stroke(stroke: bool) -> None
-         * set_stroke(stroke: int) -> None
+         * set_stroke(index: int, stroke: int, /) -> None
+         * set_stroke(stroke: bool, /) -> None
+         * set_stroke(stroke: int, /) -> None
 
         Parameters
         ----------
@@ -3177,7 +5020,7 @@ class Py5Shape:
         attributes may be changed with ``fill()`` and ``stroke()`` within
         ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
         the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
-"""
+        """
         pass
 
     @overload
@@ -3191,9 +5034,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke(index: int, stroke: int) -> None
-         * set_stroke(stroke: bool) -> None
-         * set_stroke(stroke: int) -> None
+         * set_stroke(index: int, stroke: int, /) -> None
+         * set_stroke(stroke: bool, /) -> None
+         * set_stroke(stroke: int, /) -> None
 
         Parameters
         ----------
@@ -3217,7 +5060,7 @@ class Py5Shape:
         attributes may be changed with ``fill()`` and ``stroke()`` within
         ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
         the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
-"""
+        """
         pass
 
     @_py5shape_type_fixer
@@ -3231,9 +5074,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke(index: int, stroke: int) -> None
-         * set_stroke(stroke: bool) -> None
-         * set_stroke(stroke: int) -> None
+         * set_stroke(index: int, stroke: int, /) -> None
+         * set_stroke(stroke: bool, /) -> None
+         * set_stroke(stroke: int, /) -> None
 
         Parameters
         ----------
@@ -3257,11 +5100,11 @@ class Py5Shape:
         attributes may be changed with ``fill()`` and ``stroke()`` within
         ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
         the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
-"""
+        """
         return self._instance.setStroke(*args)
 
     def set_stroke_cap(self, cap: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setStrokeCap
 
@@ -3274,12 +5117,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setStrokeCap(cap)
 
     def set_stroke_join(self, join: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setStrokeJoin
 
@@ -3292,13 +5137,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setStrokeJoin(join)
 
     @overload
     def set_stroke_weight(self, weight: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setStrokeWeight
 
@@ -3307,8 +5154,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke_weight(index: int, weight: float) -> None
-         * set_stroke_weight(weight: float) -> None
+         * set_stroke_weight(index: int, weight: float, /) -> None
+         * set_stroke_weight(weight: float, /) -> None
 
         Parameters
         ----------
@@ -3322,13 +5169,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_stroke_weight(self, index: int, weight: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setStrokeWeight
 
@@ -3337,8 +5186,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke_weight(index: int, weight: float) -> None
-         * set_stroke_weight(weight: float) -> None
+         * set_stroke_weight(index: int, weight: float, /) -> None
+         * set_stroke_weight(weight: float, /) -> None
 
         Parameters
         ----------
@@ -3352,12 +5201,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     def set_stroke_weight(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setStrokeWeight
 
@@ -3366,8 +5217,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_stroke_weight(index: int, weight: float) -> None
-         * set_stroke_weight(weight: float) -> None
+         * set_stroke_weight(index: int, weight: float, /) -> None
+         * set_stroke_weight(weight: float, /) -> None
 
         Parameters
         ----------
@@ -3381,12 +5232,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setStrokeWeight(*args)
 
     def set_texture(self, tex: Py5Image, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTexture
 
@@ -3399,12 +5252,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setTexture(tex)
 
     def set_texture_mode(self, mode: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTextureMode
 
@@ -3417,12 +5272,14 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setTextureMode(mode)
 
     def set_texture_uv(self, index: int, u: float, v: float, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTextureUV
 
@@ -3441,13 +5298,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setTextureUV(index, u, v)
 
     @overload
     def set_tint(self, tint: bool, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTint
 
@@ -3456,9 +5315,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_tint(fill: int) -> None
-         * set_tint(index: int, tint: int) -> None
-         * set_tint(tint: bool) -> None
+         * set_tint(fill: int, /) -> None
+         * set_tint(index: int, tint: int, /) -> None
+         * set_tint(tint: bool, /) -> None
 
         Parameters
         ----------
@@ -3478,13 +5337,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_tint(self, fill: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTint
 
@@ -3493,9 +5354,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_tint(fill: int) -> None
-         * set_tint(index: int, tint: int) -> None
-         * set_tint(tint: bool) -> None
+         * set_tint(fill: int, /) -> None
+         * set_tint(index: int, tint: int, /) -> None
+         * set_tint(tint: bool, /) -> None
 
         Parameters
         ----------
@@ -3515,13 +5376,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def set_tint(self, index: int, tint: int, /) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTint
 
@@ -3530,9 +5393,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_tint(fill: int) -> None
-         * set_tint(index: int, tint: int) -> None
-         * set_tint(tint: bool) -> None
+         * set_tint(fill: int, /) -> None
+         * set_tint(index: int, tint: int, /) -> None
+         * set_tint(tint: bool, /) -> None
 
         Parameters
         ----------
@@ -3552,13 +5415,15 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @_py5shape_type_fixer
     def set_tint(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PShape.setTint
 
@@ -3567,9 +5432,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_tint(fill: int) -> None
-         * set_tint(index: int, tint: int) -> None
-         * set_tint(tint: bool) -> None
+         * set_tint(fill: int, /) -> None
+         * set_tint(index: int, tint: int, /) -> None
+         * set_tint(tint: bool, /) -> None
 
         Parameters
         ----------
@@ -3589,8 +5454,10 @@ class Py5Shape:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setTint(*args)
 
     @overload
@@ -3605,9 +5472,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float]) -> None
-         * set_vertex(index: int, x: float, y: float) -> None
-         * set_vertex(index: int, x: float, y: float, z: float) -> None
+         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, x: float, y: float, /) -> None
+         * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3634,7 +5501,7 @@ class Py5Shape:
         at the position defined by the ``index`` parameter. This method works when
         shapes are created as shown in the example above, but won't work properly when a
         shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
-"""
+        """
         pass
 
     @overload
@@ -3649,9 +5516,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float]) -> None
-         * set_vertex(index: int, x: float, y: float) -> None
-         * set_vertex(index: int, x: float, y: float, z: float) -> None
+         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, x: float, y: float, /) -> None
+         * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3678,7 +5545,7 @@ class Py5Shape:
         at the position defined by the ``index`` parameter. This method works when
         shapes are created as shown in the example above, but won't work properly when a
         shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
-"""
+        """
         pass
 
     @overload
@@ -3693,9 +5560,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float]) -> None
-         * set_vertex(index: int, x: float, y: float) -> None
-         * set_vertex(index: int, x: float, y: float, z: float) -> None
+         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, x: float, y: float, /) -> None
+         * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3722,7 +5589,7 @@ class Py5Shape:
         at the position defined by the ``index`` parameter. This method works when
         shapes are created as shown in the example above, but won't work properly when a
         shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
-"""
+        """
         pass
 
     def set_vertex(self, *args):
@@ -3736,9 +5603,9 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float]) -> None
-         * set_vertex(index: int, x: float, y: float) -> None
-         * set_vertex(index: int, x: float, y: float, z: float) -> None
+         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, x: float, y: float, /) -> None
+         * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3765,7 +5632,7 @@ class Py5Shape:
         at the position defined by the ``index`` parameter. This method works when
         shapes are created as shown in the example above, but won't work properly when a
         shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
-"""
+        """
         return self._instance.setVertex(*args)
 
     def set_visible(self, visible: bool, /) -> None:
@@ -3788,8 +5655,965 @@ class Py5Shape:
         The default visibility of a shape is usually controlled by whatever program
         created the SVG file. For instance, this parameter is controlled by showing or
         hiding the shape in the layers palette in Adobe Illustrator.
-"""
+        """
         return self._instance.setVisible(visible)
+
+    def shininess(self, shine: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.shininess
+
+        Parameters
+        ----------
+
+        shine: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.shininess(shine)
+
+    @overload
+    def specular(self, gray: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.specular
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def specular(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.specular
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def specular(self, rgb: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.specular
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def specular(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.specular
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * specular(gray: float, /) -> None
+         * specular(rgb: int, /) -> None
+         * specular(x: float, y: float, z: float, /) -> None
+
+        Parameters
+        ----------
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.specular(*args)
+
+    @overload
+    def stroke(self, gray: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def stroke(self, gray: float, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def stroke(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def stroke(self, x: float, y: float, z: float, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def stroke(self, rgb: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def stroke(self, rgb: int, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def stroke(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.stroke
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * stroke(gray: float, /) -> None
+         * stroke(gray: float, alpha: float, /) -> None
+         * stroke(rgb: int, /) -> None
+         * stroke(rgb: int, alpha: float, /) -> None
+         * stroke(x: float, y: float, z: float, /) -> None
+         * stroke(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.stroke(*args)
+
+    def stroke_cap(self, cap: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.strokeCap
+
+        Parameters
+        ----------
+
+        cap: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.strokeCap(cap)
+
+    def stroke_join(self, join: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.strokeJoin
+
+        Parameters
+        ----------
+
+        join: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.strokeJoin(join)
+
+    def stroke_weight(self, weight: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.strokeWeight
+
+        Parameters
+        ----------
+
+        weight: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.strokeWeight(weight)
+
+    def texture(self, tex: Py5Image, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.texture
+
+        Parameters
+        ----------
+
+        tex: Py5Image
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.texture(tex)
+
+    def texture_mode(self, mode: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.textureMode
+
+        Parameters
+        ----------
+
+        mode: int
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.textureMode(mode)
+
+    @overload
+    def tint(self, gray: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def tint(self, gray: float, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def tint(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def tint(self, x: float, y: float, z: float, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def tint(self, rgb: int, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def tint(self, rgb: int, alpha: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def tint(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.tint
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * tint(gray: float, /) -> None
+         * tint(gray: float, alpha: float, /) -> None
+         * tint(rgb: int, /) -> None
+         * tint(rgb: int, alpha: float, /) -> None
+         * tint(x: float, y: float, z: float, /) -> None
+         * tint(x: float, y: float, z: float, alpha: float, /) -> None
+
+        Parameters
+        ----------
+
+        alpha: float
+            missing variable description
+
+        gray: float
+            missing variable description
+
+        rgb: int
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.tint(*args)
 
     @overload
     def translate(self, x: float, y: float, /) -> None:
@@ -3802,8 +6626,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * translate(x: float, y: float) -> None
-         * translate(x: float, y: float, z: float) -> None
+         * translate(x: float, y: float, /) -> None
+         * translate(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3830,7 +6654,7 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         pass
 
     @overload
@@ -3844,8 +6668,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * translate(x: float, y: float) -> None
-         * translate(x: float, y: float, z: float) -> None
+         * translate(x: float, y: float, /) -> None
+         * translate(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3872,7 +6696,7 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         pass
 
     def translate(self, *args):
@@ -3885,8 +6709,8 @@ class Py5Shape:
 
         You can use any of the following signatures:
 
-         * translate(x: float, y: float) -> None
-         * translate(x: float, y: float, z: float) -> None
+         * translate(x: float, y: float, /) -> None
+         * translate(x: float, y: float, z: float, /) -> None
 
         Parameters
         ----------
@@ -3913,5 +6737,220 @@ class Py5Shape:
 
         Using this method with the ``z`` parameter requires using the P3D parameter in
         combination with size.
-"""
+        """
         return self._instance.translate(*args)
+
+    @overload
+    def vertex(self, x: float, y: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.vertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
+
+        Parameters
+        ----------
+
+        u: float
+            missing variable description
+
+        v: float
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def vertex(self, x: float, y: float, z: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.vertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
+
+        Parameters
+        ----------
+
+        u: float
+            missing variable description
+
+        v: float
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def vertex(self, x: float, y: float, u: float, v: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.vertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
+
+        Parameters
+        ----------
+
+        u: float
+            missing variable description
+
+        v: float
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    @overload
+    def vertex(self, x: float, y: float, z: float,
+               u: float, v: float, /) -> None:
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.vertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
+
+        Parameters
+        ----------
+
+        u: float
+            missing variable description
+
+        v: float
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        pass
+
+    def vertex(self, *args):
+        """The documentation for this field or method has not yet been written.
+
+        Underlying Java method: PShape.vertex
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * vertex(x: float, y: float, /) -> None
+         * vertex(x: float, y: float, u: float, v: float, /) -> None
+         * vertex(x: float, y: float, z: float, /) -> None
+         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
+
+        Parameters
+        ----------
+
+        u: float
+            missing variable description
+
+        v: float
+            missing variable description
+
+        x: float
+            missing variable description
+
+        y: float
+            missing variable description
+
+        z: float
+            missing variable description
+
+        Notes
+        -----
+
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
+        return self._instance.vertex(*args)

@@ -26,7 +26,7 @@ class MathMixin:
 
     @classmethod
     def sin(cls, angle: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -37,13 +37,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.sin(angle)
 
     @classmethod
     def cos(cls, angle: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -54,13 +55,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.cos(angle)
 
     @classmethod
     def tan(cls, angle: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -71,13 +73,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.tan(angle)
 
     @classmethod
     def asin(cls, value: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -88,13 +91,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.arcsin(value)
 
     @classmethod
     def acos(cls, value: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -105,13 +109,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.arccos(value)
 
     @classmethod
     def atan(cls, value: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -122,13 +127,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.arctan(value)
 
     @classmethod
     def atan2(cls, y: float, x: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -142,13 +148,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.arctan2(y, x)
 
     @classmethod
     def degrees(cls, radians: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -159,13 +166,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.degrees(radians)
 
     @classmethod
     def radians(cls, degrees: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -176,13 +184,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.radians(degrees)
 
     @classmethod
     def constrain(cls, amt: float, low: float, high: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -199,8 +208,9 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.where(amt < low, low, np.where(amt > high, high, amt))
 
     @classmethod
@@ -211,7 +221,7 @@ class MathMixin:
             stop1: float,
             start2: float,
             stop2: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -234,14 +244,15 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return start2 + (stop2 - start2) * \
             ((value - start1) / (stop1 - start1))
 
     @classmethod
     def dist(cls, *args: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -252,8 +263,9 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         p1 = args[:(len(args) // 2)]
         p2 = args[(len(args) // 2):]
         assert len(p1) == len(p2)
@@ -261,7 +273,7 @@ class MathMixin:
 
     @classmethod
     def lerp(cls, start: float, stop: float, amt: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -278,13 +290,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return amt * (stop - start) + start
 
     @classmethod
     def mag(cls, *args: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -295,13 +308,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return sum([x * x for x in args])**0.5
 
     @classmethod
     def norm(cls, value: float, start: float, stop: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -318,13 +332,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return (value - start) / (stop - start)
 
     @classmethod
     def sq(cls, value: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -335,13 +350,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return value * value
 
     @classmethod
     def sqrt(cls, value: float) -> Union[float, complex]:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -352,13 +368,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return value**0.5
 
     @classmethod
     def floor(cls, value: float) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -369,13 +386,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return int(np.floor(value))
 
     @classmethod
     def ceil(cls, value: float) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -386,13 +404,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return int(np.ceil(value))
 
     @classmethod
     def exp(cls, value: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -403,13 +422,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.exp(value)
 
     @classmethod
     def log(cls, value: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -420,13 +440,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return np.log(value)
 
     @overload
     def random(cls, high: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
@@ -448,13 +469,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         pass
 
     @overload
     def random(cls, low: float, high: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
@@ -476,13 +498,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         pass
 
     @classmethod
     def random_seed(cls, seed: int) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -493,13 +516,14 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         cls._rs = RandomState(MT19937(SeedSequence(seed)))
 
     @classmethod
     def random(cls, *args: float) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
@@ -521,8 +545,9 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         if len(args) == 1:
             high = args[0]
             if isinstance(high, (int, float)):
@@ -540,28 +565,29 @@ class MathMixin:
 
     @classmethod
     def random_gaussian(cls) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return cls._rs.randn()
 
     @overload
     def noise(cls, x, **kwargs) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x, kwargs) -> float
-         * noise(x, y, kwargs) -> float
-         * noise(x, y, z, kwargs) -> float
-         * noise(x, y, z, w, kwargs) -> float
+         * noise(x, **kwargs) -> float
+         * noise(x, y, **kwargs) -> float
+         * noise(x, y, z, **kwargs) -> float
+         * noise(x, y, z, w, **kwargs) -> float
 
         Parameters
         ----------
@@ -584,23 +610,24 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         pass
 
     @overload
     def noise(cls, x, y, **kwargs) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x, kwargs) -> float
-         * noise(x, y, kwargs) -> float
-         * noise(x, y, z, kwargs) -> float
-         * noise(x, y, z, w, kwargs) -> float
+         * noise(x, **kwargs) -> float
+         * noise(x, y, **kwargs) -> float
+         * noise(x, y, z, **kwargs) -> float
+         * noise(x, y, z, w, **kwargs) -> float
 
         Parameters
         ----------
@@ -623,23 +650,24 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         pass
 
     @overload
     def noise(cls, x, y, z, **kwargs) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x, kwargs) -> float
-         * noise(x, y, kwargs) -> float
-         * noise(x, y, z, kwargs) -> float
-         * noise(x, y, z, w, kwargs) -> float
+         * noise(x, **kwargs) -> float
+         * noise(x, y, **kwargs) -> float
+         * noise(x, y, z, **kwargs) -> float
+         * noise(x, y, z, w, **kwargs) -> float
 
         Parameters
         ----------
@@ -662,23 +690,24 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         pass
 
     @overload
     def noise(cls, x, y, z, w, **kwargs) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x, kwargs) -> float
-         * noise(x, y, kwargs) -> float
-         * noise(x, y, z, kwargs) -> float
-         * noise(x, y, z, w, kwargs) -> float
+         * noise(x, **kwargs) -> float
+         * noise(x, y, **kwargs) -> float
+         * noise(x, y, z, **kwargs) -> float
+         * noise(x, y, z, w, **kwargs) -> float
 
         Parameters
         ----------
@@ -701,23 +730,24 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         pass
 
     @classmethod
     def noise(cls, *args, **kwargs) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x, kwargs) -> float
-         * noise(x, y, kwargs) -> float
-         * noise(x, y, z, kwargs) -> float
-         * noise(x, y, z, w, kwargs) -> float
+         * noise(x, **kwargs) -> float
+         * noise(x, y, **kwargs) -> float
+         * noise(x, y, z, **kwargs) -> float
+         * noise(x, y, z, w, **kwargs) -> float
 
         Parameters
         ----------
@@ -740,8 +770,9 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         len_args = len(args)
         noise_args = {
             'octaves': cls._NOISE_OCTAVES,
@@ -779,7 +810,7 @@ class MathMixin:
 
     @classmethod
     def noise_mode(cls, mode: int) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -790,15 +821,16 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         if mode in [cls.PERLIN_NOISE, cls.SIMPLEX_NOISE]:
             cls._NOISE_MODE = mode
 
     @classmethod
     def noise_detail(cls, octaves: float = None, persistence: float = None,
                      lacunarity: float = None) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -815,8 +847,9 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         if octaves:
             cls._NOISE_OCTAVES = octaves
         if persistence:
@@ -826,7 +859,7 @@ class MathMixin:
 
     @classmethod
     def noise_seed(cls, seed: float) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Parameters
         ----------
@@ -837,6 +870,7 @@ class MathMixin:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         cls._NOISE_SEED = seed

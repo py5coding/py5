@@ -47,7 +47,7 @@ class ScreenshotHook(BaseHook):
 
     def __call__(self, sketch):
         try:
-            sketch.save_frame(self.filename)
+            sketch.save_frame(self.filename, use_thread=False)
             self.hook_finished(sketch)
         except Exception as e:
             self.hook_error(sketch, e)
@@ -357,15 +357,16 @@ class Py5Magics(Magics):
 
         wait(args.wait, sketch)
 
-        with tempfile.NamedTemporaryFile(suffix='.png') as png_file:
-            hook = ScreenshotHook(png_file.name)
+        with tempfile.TemporaryDirectory() as tempdir:
+            temp_png = Path(tempdir) / 'output.png'
+            hook = ScreenshotHook(temp_png)
             sketch._add_post_hook('draw', hook.hook_name, hook)
 
             while not hook.is_ready and not hook.is_terminated:
                 time.sleep(0.005)
 
             if hook.is_ready:
-                return PIL.Image.open(png_file.name)
+                return PIL.Image.open(temp_png)
             elif hook.is_terminated and hook.exception:
                 print('error running magic:', hook.exception)
 
@@ -441,7 +442,7 @@ class Py5Magics(Magics):
     @argument('-w', type=int, dest='wait', default=0,
               help='wait time in seconds before starting sketch frame capture')
     @argument('-l', dest='loop', type=int, default=0,
-              help='number of times for the GIF to loop (default of 0 loops indefinitely')
+              help='number of times for the GIF to loop (default of 0 loops indefinitely)')
     @argument('--optimize', action='store_true', help='optimize GIF palette')
     def py5animatedgif(self, line):
         """Save the current running sketch's frames to a directory.

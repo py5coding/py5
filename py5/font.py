@@ -62,7 +62,7 @@ class Py5Font:
 
     To create a new font dynamically, use the ``create_font()`` function. Do not use
     the syntax ``new Py5Font()``.
-"""
+    """
 
     _cls = jpype.JClass('processing.core.PFont')
     CHARSET = _cls.CHARSET
@@ -71,80 +71,92 @@ class Py5Font:
         self._instance = pfont
 
     def ascent(self) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.ascent
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.ascent()
 
     def descent(self) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.descent
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.descent()
 
     def get_default_size(self) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getDefaultSize
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getDefaultSize()
 
     def get_glyph_count(self) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getGlyphCount
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getGlyphCount()
 
     def get_name(self) -> str:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getName
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getName()
 
     def get_post_script_name(self) -> str:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getPostScriptName
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getPostScriptName()
 
     @overload
     def get_shape(self, ch: chr, /) -> Py5Shape:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getShape
 
@@ -153,8 +165,8 @@ class Py5Font:
 
         You can use any of the following signatures:
 
-         * get_shape(ch: chr) -> Py5Shape
-         * get_shape(ch: chr, detail: float) -> Py5Shape
+         * get_shape(ch: chr, /) -> Py5Shape
+         * get_shape(ch: chr, detail: float, /) -> Py5Shape
 
         Parameters
         ----------
@@ -168,13 +180,15 @@ class Py5Font:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @overload
     def get_shape(self, ch: chr, detail: float, /) -> Py5Shape:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getShape
 
@@ -183,8 +197,8 @@ class Py5Font:
 
         You can use any of the following signatures:
 
-         * get_shape(ch: chr) -> Py5Shape
-         * get_shape(ch: chr, detail: float) -> Py5Shape
+         * get_shape(ch: chr, /) -> Py5Shape
+         * get_shape(ch: chr, detail: float, /) -> Py5Shape
 
         Parameters
         ----------
@@ -198,13 +212,15 @@ class Py5Font:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         pass
 
     @_return_py5shape
     def get_shape(self, *args):
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getShape
 
@@ -213,8 +229,8 @@ class Py5Font:
 
         You can use any of the following signatures:
 
-         * get_shape(ch: chr) -> Py5Shape
-         * get_shape(ch: chr, detail: float) -> Py5Shape
+         * get_shape(ch: chr, /) -> Py5Shape
+         * get_shape(ch: chr, detail: float, /) -> Py5Shape
 
         Parameters
         ----------
@@ -228,44 +244,52 @@ class Py5Font:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getShape(*args)
 
     def get_size(self) -> int:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.getSize
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.getSize()
 
     def is_smooth(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.isSmooth
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.isSmooth()
 
     def is_stream(self) -> bool:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.isStream
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.isStream()
 
     @classmethod
@@ -281,23 +305,25 @@ class Py5Font:
         Gets a list of the fonts installed on the system. The data is returned as a
         String array. This list provides the names of each font for input into
         ``create_font()``, which allows Processing to dynamically format fonts.
-"""
+        """
         return cls._cls.list()
 
     def set_subsetting(self) -> None:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.setSubsetting
 
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.setSubsetting()
 
     def width(self, c: chr, /) -> float:
-        """new template no description.
+        """The documentation for this field or method has not yet been written.
 
         Underlying Java method: PFont.width
 
@@ -310,6 +336,8 @@ class Py5Font:
         Notes
         -----
 
-        new template no description.
-"""
+        The documentation for this field or method has not yet been written. If you know
+        what it does, please help out with a pull request to the relevant file in
+        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        """
         return self._instance.width(c)

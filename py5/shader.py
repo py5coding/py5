@@ -74,7 +74,7 @@ class Py5Shader(Py5Base):
     renderer. Use the ``load_shader()`` function to load your shader code. [Note:
     It's strongly encouraged to use ``load_shader()`` to create a PShader object,
     rather than calling the PShader constructor manually.]
-"""
+    """
 
     def __init__(self, pshader):
         self._instance = pshader
@@ -92,28 +92,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -189,7 +189,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -204,28 +204,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -301,7 +301,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -316,28 +316,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -413,7 +413,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -428,28 +428,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -525,7 +525,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -540,28 +540,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -637,7 +637,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -653,28 +653,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -750,7 +750,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -765,28 +765,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -862,7 +862,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -877,28 +877,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -974,7 +974,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -989,28 +989,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1086,7 +1086,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1102,28 +1102,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1199,7 +1199,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1214,28 +1214,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1311,7 +1311,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1327,28 +1327,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1424,7 +1424,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1439,28 +1439,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1536,7 +1536,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1551,28 +1551,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1648,7 +1648,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1663,28 +1663,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1760,7 +1760,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1775,28 +1775,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1872,7 +1872,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1887,28 +1887,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -1984,7 +1984,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -1999,28 +1999,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -2096,7 +2096,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -2111,28 +2111,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -2208,7 +2208,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -2223,28 +2223,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -2320,7 +2320,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -2335,28 +2335,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -2432,7 +2432,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @overload
@@ -2448,28 +2448,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -2545,7 +2545,7 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         pass
 
     @_py5shader_set_wrapper
@@ -2560,28 +2560,28 @@ class Py5Shader(Py5Base):
 
         You can use any of the following signatures:
 
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float]) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool) -> None
-         * set(name: str, tex: Py5Image) -> None
-         * set(name: str, vec: JArray(JBoolean)) -> None
-         * set(name: str, vec: JArray(JInt)) -> None
-         * set(name: str, vec: JArray(JInt), ncoords: int) -> None
-         * set(name: str, vec: NDArray[(Any,), Float]) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int) -> None
-         * set(name: str, x: bool) -> None
-         * set(name: str, x: bool, y: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool) -> None
-         * set(name: str, x: float) -> None
-         * set(name: str, x: float, y: float) -> None
-         * set(name: str, x: float, y: float, z: float) -> None
-         * set(name: str, x: float, y: float, z: float, w: float) -> None
-         * set(name: str, x: int) -> None
-         * set(name: str, x: int, y: int) -> None
-         * set(name: str, x: int, y: int, z: int) -> None
-         * set(name: str, x: int, y: int, z: int, w: int) -> None
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: JArray(JInt), /) -> None
+         * set(name: str, vec: JArray(JInt), ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
 
         Parameters
         ----------
@@ -2657,5 +2657,5 @@ class Py5Shader(Py5Base):
 
         Sets the uniform variables inside the shader to modify the effect while the
         program is running.
-"""
+        """
         return self._instance.set(*args)

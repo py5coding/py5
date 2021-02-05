@@ -1,5 +1,22 @@
-# -*- coding: utf-8 -*-
-# *** FORMAT PARAMS ***
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 import functools
 from typing import overload, List  # noqa
 
@@ -302,9 +319,9 @@ class Py5Font:
         Notes
         -----
 
-        Gets a list of the fonts installed on the system. The data is returned as a
-        String array. This list provides the names of each font for input into
-        ``create_font()``, which allows Processing to dynamically format fonts.
+        Gets a list of the fonts installed on the system. The data is returned as a list
+        of strings. This list provides the names of each font for input into
+        ``create_font()``, which allows py5 to dynamically format fonts.
         """
         return cls._cls.list()
 

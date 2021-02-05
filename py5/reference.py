@@ -1,6 +1,22 @@
-# -*- coding: utf-8 -*-
-# *** FORMAT PARAMS ***
-# *** SKIP AUTOPEP8 ***
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 
 
 
@@ -233,27 +249,27 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Sketch', 'random_gaussian'), ['() -> float']),
     (('Sketch', 'noise'), ['(x, **kwargs) -> float', '(x, y, **kwargs) -> float', '(x, y, z, **kwargs) -> float', '(x, y, z, w, **kwargs) -> float']),
     (('Sketch', 'noise_mode'), ['(mode: int) -> None']),
-    (('Sketch', 'noise_detail'), ['(octaves: float, persistence: float, lacunarity: float) -> None']),
+    (('Sketch', 'noise_detail'), ['(octaves: float = None, persistence: float = None, lacunarity: float = None) -> None']),
     (('Sketch', 'noise_seed'), ['(seed: float) -> None']),
-    (('Sketch', 'launch_thread'), ['(f: Callable, name: str, daemon: bool, args: Tuple, kwargs: Dict) -> str']),
-    (('Sketch', 'launch_promise_thread'), ['(f: Callable, name: str, daemon: bool, args: Tuple, kwargs: Dict) -> Py5Promise']),
-    (('Sketch', 'launch_repeating_thread'), ['(f: Callable, name: str, time_delay: float, daemon: bool, args: Tuple, kwargs: Dict) -> str']),
-    (('Sketch', 'has_thread'), ['(name: str) -> None']),
-    (('Sketch', 'stop_thread'), ['(name: str, wait: bool) -> None']),
-    (('Sketch', 'stop_all_threads'), ['(wait: bool) -> None']),
-    (('Sketch', 'list_threads'), ['() -> None']),
     (('Sketch', 'load_np_pixels'), ['() -> None']),
     (('Sketch', 'update_np_pixels'), ['() -> None']),
-    (('Sketch', 'set_np_pixels'), ['(array: np.ndarray, bands: str) -> None']),
-    (('Sketch', 'save'), ['(filename: Union[str, Path], format: str, drop_alpha: bool, use_thread: bool, params) -> None']),
+    (('Sketch', 'set_np_pixels'), ["(array: np.ndarray, bands: str = 'ARGB') -> None"]),
+    (('Sketch', 'save'), ['(filename: Union[str, Path], format: str = None, drop_alpha: bool = True, use_thread: bool = True, params) -> None']),
+    (('Sketch', 'launch_thread'), ['(f: Callable, name: str = None, daemon: bool = True, args: Tuple = None, kwargs: Dict = None) -> str']),
+    (('Sketch', 'launch_promise_thread'), ['(f: Callable, name: str = None, daemon: bool = True, args: Tuple = None, kwargs: Dict = None) -> Py5Promise']),
+    (('Sketch', 'launch_repeating_thread'), ['(f: Callable, name: str = None, time_delay: float = 0, daemon: bool = True, args: Tuple = None, kwargs: Dict = None) -> str']),
+    (('Sketch', 'has_thread'), ['(name: str) -> None']),
+    (('Sketch', 'stop_thread'), ['(name: str, wait: bool = False) -> None']),
+    (('Sketch', 'stop_all_threads'), ['(wait: bool = False) -> None']),
+    (('Sketch', 'list_threads'), ['() -> None']),
     (('Sketch', 'hot_reload_draw'), ['(draw: Callable) -> None']),
     (('Sketch', 'profile_functions'), ['(function_names: List[str]) -> None']),
     (('Sketch', 'profile_draw'), ['() -> None']),
     (('Sketch', 'print_line_profiler_stats'), ['() -> None']),
-    (('Sketch', 'save_frame'), ['(filename: Union[str, Path], format: str, drop_alpha: bool, use_thread: bool, params) -> None']),
-    (('Sketch', 'create_image_from_numpy'), ['(numpy_image: NumpyImageArray, dst: Py5Image) -> Py5Image']),
-    (('Sketch', 'convert_image'), ['(obj: Any, dst: Py5Image) -> Py5Image']),
-    (('Sketch', 'load_image'), ['(filename: Union[str, Path], dst: Py5Image) -> Py5Image']),
+    (('Sketch', 'save_frame'), ['(filename: Union[str, Path], format: str = None, drop_alpha: bool = True, use_thread: bool = True, params) -> None']),
+    (('Sketch', 'create_image_from_numpy'), ['(numpy_image: NumpyImageArray, dst: Py5Image = None) -> Py5Image']),
+    (('Sketch', 'convert_image'), ['(obj: Any, dst: Py5Image = None) -> Py5Image']),
+    (('Sketch', 'load_image'), ['(filename: Union[str, Path], dst: Py5Image = None) -> Py5Image']),
     (('Sketch', 'request_image'), ['(filename: Union[str, Path]) -> Py5Promise']),
     (('Py5Shader', 'set'), ['(name: str, x: bool, /) -> None', '(name: str, x: bool, y: bool, /) -> None', '(name: str, x: bool, y: bool, z: bool, /) -> None', '(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None', '(name: str, vec: JArray(JBoolean), /) -> None', '(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None', '(name: str, x: float, /) -> None', '(name: str, x: float, y: float, /) -> None', '(name: str, x: float, y: float, z: float, /) -> None', '(name: str, x: float, y: float, z: float, w: float, /) -> None', '(name: str, vec: NDArray[(Any,), Float], /) -> None', '(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None', '(name: str, x: int, /) -> None', '(name: str, x: int, y: int, /) -> None', '(name: str, x: int, y: int, z: int, /) -> None', '(name: str, x: int, y: int, z: int, w: int, /) -> None', '(name: str, vec: JArray(JInt), /) -> None', '(name: str, vec: JArray(JInt), ncoords: int, /) -> None', '(name: str, tex: Py5Image, /) -> None', '(name: str, mat: NDArray[(2, 3), Float], /) -> None', '(name: str, mat: NDArray[(4, 4), Float], /) -> None', '(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None']),
     (('Py5Shape', 'add_child'), ['(who: Py5Shape, /) -> None', '(who: Py5Shape, idx: int, /) -> None']),
@@ -538,9 +554,20 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Py5Image', 'mask'), ['(mask_array: JArray(JInt), /) -> None', '(img: Py5Image, /) -> None']),
     (('Py5Image', 'update_pixels'), ['() -> None', '(x: int, y: int, w: int, h: int, /) -> None']),
     (('Sketch', 'run_sketch'), ['(block: bool = None, py5_options: List = None, sketch_args: List = None) -> None']),
+    (('Py5Functions', 'create_font_file'), ['(font_name: str, font_size: int, filename: str = None, characters: str = None, pause: bool = True) -> None']),
+    (('Py5Functions', 'get_current_sketch'), ['() -> Sketch']),
+    (('Py5Functions', 'reset_py5'), ['() -> None']),
+    (('Py5Functions', 'prune_tracebacks'), ['(prune: bool) -> None']),
+    (('Py5Functions', 'set_stackprinter_style'), ['(style: str) -> None']),
+    (('Py5Functions', 'render_frame'), ['(draw: Callable, width: int, height: int, renderer: str = Sketch.HIDDEN, *, draw_args: Tuple = None, draw_kwargs: Dict = None) -> Image']),
+    (('Py5Functions', 'render'), ['(width: int, height: int, renderer: str = Sketch.HIDDEN) -> Image']),
+    (('Py5Functions', 'render_frame_sequence'), ['(draw: Callable, width: int, height: int, renderer: str = Sketch.HIDDEN, *, limit: int = 1, setup: Callable = None, setup_args: Tuple = None, setup_kwargs: Dict = None, draw_args: Tuple = None, draw_kwargs: Dict = None) -> List[PIL_Image]']),
+    (('Py5Functions', 'render_sequence'), ['(width: int, height: int, renderer: str = Sketch.HIDDEN, *, limit: int = 1, setup: Callable = None, setup_args: Tuple = None, setup_kwargs: Dict = None) -> List[PIL_Image]']),
+    (('Py5Functions', 'register_image_conversion'), ['(precondition: Callable, convert_function: Callable) -> None']),
 ])
 
 PY5_DIR_STR = [
+    '__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -812,6 +839,7 @@ PY5_DIR_STR = [
     'NORMAL',
     'normal',
     'np_pixels',
+    'NumpyImageArray',
     'OPAQUE',
     'OPEN',
     'OPENGL',
@@ -889,6 +917,10 @@ PY5_DIR_STR = [
     'register_exception_msg',
     'register_image_conversion',
     'remap',
+    'render',
+    'render_frame',
+    'render_frame_sequence',
+    'render_sequence',
     'REPEAT',
     'REPLACE',
     'request_image',
@@ -986,6 +1018,7 @@ PY5_DIR_STR = [
     'UP',
     'update_np_pixels',
     'update_pixels',
+    'utils',
     'VERTEX',
     'vertex',
     'vertices',
@@ -1000,6 +1033,7 @@ PY5_DIR_STR = [
 ]
 
 PY5_ALL_STR = [
+    '__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -1251,6 +1285,7 @@ PY5_ALL_STR = [
     'norm',
     'NORMAL',
     'normal',
+    'NumpyImageArray',
     'OPAQUE',
     'OPEN',
     'OPENGL',
@@ -1323,6 +1358,10 @@ PY5_ALL_STR = [
     'register_exception_msg',
     'register_image_conversion',
     'remap',
+    'render',
+    'render_frame',
+    'render_frame_sequence',
+    'render_sequence',
     'REPEAT',
     'REPLACE',
     'request_image',
@@ -1420,6 +1459,7 @@ PY5_ALL_STR = [
     'UP',
     'update_np_pixels',
     'update_pixels',
+    'utils',
     'VERTEX',
     'vertex',
     'vertices',

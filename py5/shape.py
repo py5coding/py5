@@ -1,5 +1,22 @@
-# -*- coding: utf-8 -*-
-# *** FORMAT PARAMS ***
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 from __future__ import annotations
 
 import functools
@@ -30,8 +47,6 @@ def _return_py5shape(f):
 def _py5shape_type_fixer(f):
     @functools.wraps(f)
     def decorated(self_, *args):
-        args = list(args)
-
         def fix_type(arg):
             if isinstance(arg, bool):
                 return JBoolean(arg)
@@ -42,7 +57,7 @@ def _py5shape_type_fixer(f):
             else:
                 return arg
         args = [fix_type(a) for a in args]
-        return f(self_, *tuple(args))
+        return f(self_, *args)
     return decorated
 
 

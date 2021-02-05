@@ -1,3 +1,22 @@
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 import sys
 import os
 from multiprocessing import Process
@@ -243,8 +262,11 @@ def run_single_frame_sketch(renderer, code, width, height, user_ns, safe_exec):
 
         exec(_CODE_FRAMEWORK.format(temp_py.as_posix(), True, ''), user_ns)
 
-        with open(temp_out, read_mode) as f:
-            result = f.read()
+        if temp_out.exists():
+            with open(temp_out, read_mode) as f:
+                result = f.read()
+        else:
+            result = None
 
     py5.reset_py5()
 

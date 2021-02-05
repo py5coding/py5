@@ -19,22 +19,20 @@
 # *****************************************************************************
 import argparse
 
-from py5_tools import run
+import py5_tools
 
 
-parser = argparse.ArgumentParser(description="Execute py5 sketch",
-                                 epilog="this is the epilog")
-parser.add_argument(
-    action='store',
-    dest='sketch_path',
-    help='path to py5 sketch')
-parser.add_argument('-c', '--classpath', action='store', dest='classpath',
-                    help='extra directories to add to classpath')
+parser = argparse.ArgumentParser(description="Generate Py5Utilities framework")
+parser.add_argument('-o', '--output', action='store', dest='output_dir',
+                    help='output destination (defaults to current directory)')
+parser.add_argument('-j', '--jars', action='store', dest='jars_dir',
+                    help='jar directory (defaults to jars subdirectory)')
 
 
 def main():
     args = parser.parse_args()
-    run.run_sketch(args.sketch_path, classpath=args.classpath)
+    py5_tools.utilities.generate_utilities_framework(
+        args.output_dir, args.jars_dir)
 
 
 if __name__ == '__main__':

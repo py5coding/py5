@@ -1,8 +1,28 @@
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 import io
 from pathlib import Path
 import uuid
 import tempfile
 from dataclasses import dataclass
+from typing import Callable
 
 import numpy as np
 from PIL import Image
@@ -10,7 +30,12 @@ from PIL import Image
 
 pimage_functions = []
 
-_TEMP_DIR = tempfile.TemporaryDirectory()
+_TEMP_DIR = Path(tempfile.TemporaryDirectory().name)
+_TEMP_DIR.mkdir(exist_ok=True, parents=True)
+
+
+def _convertable(obj):
+    return any(pre(obj) for pre, _ in pimage_functions)
 
 
 def _convert(obj):
@@ -24,7 +49,26 @@ def _convert(obj):
     return obj
 
 
-def register_image_conversion(precondition, convert_function):
+def register_image_conversion(
+        precondition: Callable,
+        convert_function: Callable) -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Parameters
+    ----------
+
+    convert_function: Callable
+        missing variable description
+
+    precondition: Callable
+        missing variable description
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
     pimage_functions.append((precondition, convert_function))
 
 
@@ -115,7 +159,7 @@ try:
         return isinstance(obj, cairocffi.Surface)
 
     def cairocffi_surface_to_tempfile_converter(surface):
-        temp_png = Path(_TEMP_DIR.name) / f'{uuid.uuid4()}.png'
+        temp_png = _TEMP_DIR / f'{uuid.uuid4()}.png'
         surface.write_to_png(temp_png.as_posix())
         return temp_png
 
@@ -133,7 +177,7 @@ try:
         return isinstance(obj, cairo.Surface)
 
     def cairo_surface_to_tempfile_converter(surface):
-        temp_png = Path(_TEMP_DIR.name) / f'{uuid.uuid4()}.png'
+        temp_png = _TEMP_DIR / f'{uuid.uuid4()}.png'
         surface.write_to_png(temp_png.as_posix())
         return temp_png
 

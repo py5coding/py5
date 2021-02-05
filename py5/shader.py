@@ -1,5 +1,22 @@
-# -*- coding: utf-8 -*-
-# *** FORMAT PARAMS ***
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 import functools
 from typing import overload, List, Any  # noqa
 from nptyping import NDArray, Float  # noqa
@@ -36,15 +53,14 @@ def _load_py5shader(f):
 def _py5shader_set_wrapper(f):
     @functools.wraps(f)
     def decorated(self_, name, *args):
-        args = list(args)
         if isinstance(args[0], np.ndarray):
             array = args[0]
             if array.shape in [(2,), (3,)]:
-                args[0] = _numpy_to_pvector(array)
+                args = _numpy_to_pvector(array), *args[1:]
             elif array.shape == (2, 3):
-                args[0] = _numpy_to_pmatrix2d(array)
+                args = _numpy_to_pmatrix2d(array), *args[1:]
             elif array.shape == (4, 4):
-                args[0] = _numpy_to_pmatrix3d(array)
+                args = _numpy_to_pmatrix3d(array), *args[1:]
         else:
             def fix_type(arg):
                 if isinstance(arg, bool):
@@ -56,7 +72,7 @@ def _py5shader_set_wrapper(f):
                 else:
                     return arg
             args = [fix_type(a) for a in args]
-        return f(self_, name, *tuple(args))
+        return f(self_, name, *args)
     return decorated
 
 

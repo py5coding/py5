@@ -1,5 +1,23 @@
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 # -*- coding: utf-8 -*-
-# *** FORMAT PARAMS ***
 """
 py5 makes Processing available to the CPython interpreter using JPype.
 """
@@ -32,6 +50,7 @@ if not py5_tools.is_jvm_running():
 
 from .methods import register_exception_msg  # noqa
 from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5Promise, _in_ipython_session  # noqa
+from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
 from .create_font_tool import create_font_file  # noqa
 from .image_conversion import register_image_conversion, NumpyImageArray  # noqa
 from . import reference
@@ -43,7 +62,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.3a4'
+__version__ = '0.3a5'
 
 logger = logging.getLogger(__name__)
 
@@ -12599,10 +12618,10 @@ def size(width: int, height: int, /) -> None:
         height of the display window in units of pixels
 
     path: str
-        missing variable description
+        filename to save rendering engine output to
 
     renderer: str
-        missing variable description
+        rendering engine to use
 
     width: int
         width of the display window in units of pixels
@@ -12691,10 +12710,10 @@ def size(width: int, height: int, renderer: str, /) -> None:
         height of the display window in units of pixels
 
     path: str
-        missing variable description
+        filename to save rendering engine output to
 
     renderer: str
-        missing variable description
+        rendering engine to use
 
     width: int
         width of the display window in units of pixels
@@ -12783,10 +12802,10 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
         height of the display window in units of pixels
 
     path: str
-        missing variable description
+        filename to save rendering engine output to
 
     renderer: str
-        missing variable description
+        rendering engine to use
 
     width: int
         width of the display window in units of pixels
@@ -12874,10 +12893,10 @@ def size(*args):
         height of the display window in units of pixels
 
     path: str
-        missing variable description
+        filename to save rendering engine output to
 
     renderer: str
-        missing variable description
+        rendering engine to use
 
     width: int
         width of the display window in units of pixels
@@ -17899,13 +17918,13 @@ def noise_detail(octaves: float = None, persistence: float = None,
     Parameters
     ----------
 
-    lacunarity: float
+    lacunarity: float = None
         missing variable description
 
-    octaves: float
+    octaves: float = None
         missing variable description
 
-    persistence: float
+    persistence: float = None
         missing variable description
 
     Notes
@@ -17940,6 +17959,102 @@ def noise_seed(seed: float) -> None:
     return Sketch.noise_seed(seed)
 
 ##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: np.ndarray = None
+
+
+def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Parameters
+    ----------
+
+    array: np.ndarray
+        missing variable description
+
+    bands: str = 'ARGB'
+        missing variable description
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path],
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = True,
+         **params) -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        missing variable description
+
+    filename: Union[str, Path]
+        missing variable description
+
+    format: str = None
+        missing variable description
+
+    params
+        missing variable description
+
+    use_thread: bool = True
+        missing variable description
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
 # module functions from threads.py
 ##############################################################################
 
@@ -17951,19 +18066,19 @@ def launch_thread(f: Callable, name: str = None, daemon: bool = True,
     Parameters
     ----------
 
-    args: Tuple
+    args: Tuple = None
         missing variable description
 
-    daemon: bool
+    daemon: bool = True
         missing variable description
 
     f: Callable
         missing variable description
 
-    kwargs: Dict
+    kwargs: Dict = None
         missing variable description
 
-    name: str
+    name: str = None
         missing variable description
 
     Notes
@@ -17988,19 +18103,19 @@ def launch_promise_thread(
     Parameters
     ----------
 
-    args: Tuple
+    args: Tuple = None
         missing variable description
 
-    daemon: bool
+    daemon: bool = True
         missing variable description
 
     f: Callable
         missing variable description
 
-    kwargs: Dict
+    kwargs: Dict = None
         missing variable description
 
-    name: str
+    name: str = None
         missing variable description
 
     Notes
@@ -18022,22 +18137,22 @@ def launch_repeating_thread(f: Callable, name: str = None,
     Parameters
     ----------
 
-    args: Tuple
+    args: Tuple = None
         missing variable description
 
-    daemon: bool
+    daemon: bool = True
         missing variable description
 
     f: Callable
         missing variable description
 
-    kwargs: Dict
+    kwargs: Dict = None
         missing variable description
 
-    name: str
+    name: str = None
         missing variable description
 
-    time_delay: float
+    time_delay: float = 0
         missing variable description
 
     Notes
@@ -18084,7 +18199,7 @@ def stop_thread(name: str, wait: bool = False) -> None:
     name: str
         missing variable description
 
-    wait: bool
+    wait: bool = False
         missing variable description
 
     Notes
@@ -18103,7 +18218,7 @@ def stop_all_threads(wait: bool = False) -> None:
     Parameters
     ----------
 
-    wait: bool
+    wait: bool = False
         missing variable description
 
     Notes
@@ -18127,102 +18242,6 @@ def list_threads() -> None:
     https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
     """
     return _py5sketch.list_threads()
-
-##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: np.ndarray = None
-
-
-def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    array: np.ndarray
-        missing variable description
-
-    bands: str
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path],
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = True,
-         **params) -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool
-        missing variable description
-
-    filename: Union[str, Path]
-        missing variable description
-
-    format: str
-        missing variable description
-
-    params
-        missing variable description
-
-    use_thread: bool
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
 
 ##############################################################################
 # module functions from sketch.py
@@ -18310,19 +18329,19 @@ def save_frame(filename: Union[str,
     Parameters
     ----------
 
-    drop_alpha: bool
+    drop_alpha: bool = True
         missing variable description
 
     filename: Union[str, Path]
         missing variable description
 
-    format: str
+    format: str = None
         missing variable description
 
     params
         missing variable description
 
-    use_thread: bool
+    use_thread: bool = True
         missing variable description
 
     Notes
@@ -18348,7 +18367,7 @@ def create_image_from_numpy(
     Parameters
     ----------
 
-    dst: Py5Image
+    dst: Py5Image = None
         missing variable description
 
     numpy_image: NumpyImageArray
@@ -18365,23 +18384,34 @@ def create_image_from_numpy(
 
 
 def convert_image(obj: Any, dst: Py5Image = None) -> Py5Image:
-    """The documentation for this field or method has not yet been written.
+    """Convert non-py5 image objects into Py5Image objects.
 
     Parameters
     ----------
 
-    dst: Py5Image
-        missing variable description
+    dst: Py5Image = None
+        existing Py5Image object to put the converted image into
 
     obj: Any
-        missing variable description
+        object to convert into a Py5Image object
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Convert non-py5 image objects into Py5Image objects. This facilitates py5
+    compatability with other commonly used Python libraries.
+
+    This method is comparable to :doc:`load_image`, except instead of reading image
+    files from disk, it reads image data from other Python objects.
+
+    Passed image object types must be known to py5's builtin image conversion tools.
+    New object types and functions to effect conversions can be registered with
+    :doc:`register_image_conversion`.
+
+    The caller can optionally pass an existing Py5Image object to put the converted
+    image into. This can have performance benefits in code that would otherwise
+    continuously create new Py5Image objects. The converted image width and height
+    must match that of the recycled Py5Image object.
     """
     return _py5sketch.convert_image(obj, dst=dst)
 
@@ -18392,7 +18422,7 @@ def load_image(filename: Union[str, Path], dst: Py5Image = None) -> Py5Image:
     Parameters
     ----------
 
-    dst: Py5Image
+    dst: Py5Image = None
         missing variable description
 
     filename: Union[str, Path]
@@ -18551,22 +18581,64 @@ def run_sketch(block: bool = None,
 
 
 def get_current_sketch() -> Sketch:
+    """The documentation for this field or method has not yet been written.
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
     return _py5sketch
 
 
 def reset_py5() -> None:
-    """reset the py5 library so a new sketch can be executed.
-    """
+    """The documentation for this field or method has not yet been written.
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
     global _py5sketch
     _py5sketch = Sketch()
 
 
-def prune_tracebacks(prune: bool):
+def prune_tracebacks(prune: bool) -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Parameters
+    ----------
+
+    prune: bool
+        missing variable description
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
     from . import methods
     methods._prune_tracebacks = prune
 
 
-def set_stackprinter_style(style: str):
+def set_stackprinter_style(style: str) -> None:
+    """The documentation for this field or method has not yet been written.
+
+    Parameters
+    ----------
+
+    style: str
+        missing variable description
+
+    Notes
+    -----
+
+    The documentation for this field or method has not yet been written. If you know
+    what it does, please help out with a pull request to the relevant file in
+    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
     from . import methods
     methods._stackprinter_style = style
 

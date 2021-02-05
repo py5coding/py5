@@ -1,10 +1,27 @@
-# -*- coding: utf-8 -*-
-# *** FORMAT PARAMS ***
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 import time
 import os
 import logging
 from pathlib import Path
-import tempfile
+import functools
 from typing import overload, Any, Callable, Union, Dict, List  # noqa
 from nptyping import NDArray, Float  # noqa
 
@@ -26,7 +43,7 @@ from .graphics import Py5Graphics, _return_py5graphics  # noqa
 from .type_decorators import _text_fix_str  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
 from . import image_conversion
-from .image_conversion import NumpyImageArray
+from .image_conversion import NumpyImageArray, _convertable
 from . import reference
 
 
@@ -39,6 +56,18 @@ except NameError:
     _in_ipython_session = False
 
 logger = logging.getLogger(__name__)
+
+
+def _auto_convert_to_py5image(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        args_index = args[0]
+        if isinstance(args_index, NumpyImageArray):
+            args = self_.create_image_from_numpy(args_index), *args[1:]
+        elif not isinstance(args_index, (Py5Image, Py5Graphics)) and _convertable(args_index):
+            args = self_.convert_image(args_index), *args[1:]
+        return f(self_, *args)
+    return decorated
 
 
 class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
@@ -66,6 +95,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         # otherwise, it will be garbage collected and lead to segmentation
         # faults!
         self._py5_methods = None
+
+        # attempt to instantiate Py5Utilities
+        self.utils = None
+        try:
+            self.utils = jpype.JClass(
+                'py5.utils.Py5Utilities')(self._py5applet)
+        except Exception:
+            pass
 
     def run_sketch(self, block: bool = None,
                    py5_options: List = None, sketch_args: List = None) -> None:
@@ -338,19 +375,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Parameters
         ----------
 
-        drop_alpha: bool
+        drop_alpha: bool = True
             missing variable description
 
         filename: Union[str, Path]
             missing variable description
 
-        format: str
+        format: str = None
             missing variable description
 
         params
             missing variable description
 
-        use_thread: bool
+        use_thread: bool = True
             missing variable description
 
         Notes
@@ -378,7 +415,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Parameters
         ----------
 
-        dst: Py5Image
+        dst: Py5Image = None
             missing variable description
 
         numpy_image: NumpyImageArray
@@ -405,33 +442,42 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         return py5_img
 
     def convert_image(self, obj: Any, dst: Py5Image = None) -> Py5Image:
-        """The documentation for this field or method has not yet been written.
+        """Convert non-py5 image objects into Py5Image objects.
 
         Parameters
         ----------
 
-        dst: Py5Image
-            missing variable description
+        dst: Py5Image = None
+            existing Py5Image object to put the converted image into
 
         obj: Any
-            missing variable description
+            object to convert into a Py5Image object
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
+        Convert non-py5 image objects into Py5Image objects. This facilitates py5
+        compatability with other commonly used Python libraries.
+
+        This method is comparable to :doc:`load_image`, except instead of reading image
+        files from disk, it reads image data from other Python objects.
+
+        Passed image object types must be known to py5's builtin image conversion tools.
+        New object types and functions to effect conversions can be registered with
+        :doc:`register_image_conversion`.
+
+        The caller can optionally pass an existing Py5Image object to put the converted
+        image into. This can have performance benefits in code that would otherwise
+        continuously create new Py5Image objects. The converted image width and height
+        must match that of the recycled Py5Image object."""
         result = image_conversion._convert(obj)
         if isinstance(result, (Path, str)):
             return self.load_image(result, dst=dst)
-        elif isinstance(result, Path):
-            ret = self.load_image(result, dst=dst)
-            # result.close()
-            os.remove(result)
-            return ret
         elif isinstance(result, NumpyImageArray):
             return self.create_image_from_numpy(result, dst=dst)
+        else:
+            # could be Py5Image or something comparable
+            return result
 
     def load_image(self, filename: Union[str, Path],
                    dst: Py5Image = None) -> Py5Image:
@@ -440,7 +486,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Parameters
         ----------
 
-        dst: Py5Image
+        dst: Py5Image = None
             missing variable description
 
         filename: Union[str, Path]
@@ -2506,6 +2552,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """
         pass
 
+    @_auto_convert_to_py5image
     def background(self, *args):
         """The ``background()`` function sets the color used for the background of the
         Processing window.
@@ -3736,6 +3783,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """
         pass
 
+    @_auto_convert_to_py5image
     def blend(self, *args):
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
@@ -5481,6 +5529,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """
         pass
 
+    @_auto_convert_to_py5image
     @_return_py5image
     def copy(self, *args):
         """Copies a region of pixels from the display window to another area of the display
@@ -6526,6 +6575,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """
         pass
 
+    @_auto_convert_to_py5image
     def cursor(self, *args):
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
@@ -9387,6 +9437,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """
         pass
 
+    @_auto_convert_to_py5image
     def image(self, *args):
         """The ``image()`` function draws an image to the display window.
 
@@ -13206,10 +13257,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the display window in units of pixels
 
         path: str
-            missing variable description
+            filename to save rendering engine output to
 
         renderer: str
-            missing variable description
+            rendering engine to use
 
         width: int
             width of the display window in units of pixels
@@ -13297,10 +13348,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the display window in units of pixels
 
         path: str
-            missing variable description
+            filename to save rendering engine output to
 
         renderer: str
-            missing variable description
+            rendering engine to use
 
         width: int
             width of the display window in units of pixels
@@ -13389,10 +13440,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the display window in units of pixels
 
         path: str
-            missing variable description
+            filename to save rendering engine output to
 
         renderer: str
-            missing variable description
+            rendering engine to use
 
         width: int
             width of the display window in units of pixels
@@ -13479,10 +13530,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the display window in units of pixels
 
         path: str
-            missing variable description
+            filename to save rendering engine output to
 
         renderer: str
-            missing variable description
+            rendering engine to use
 
         width: int
             width of the display window in units of pixels
@@ -16373,6 +16424,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         """
         return self._instance.textWidth(*args)
 
+    @_auto_convert_to_py5image
     def texture(self, image: Py5Image, /) -> None:
         """Sets a texture to be applied to vertex points.
 

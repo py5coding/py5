@@ -1,3 +1,22 @@
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2021 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
 import sys
 import time
 import threading
@@ -128,19 +147,19 @@ class ThreadsMixin:
         Parameters
         ----------
 
-        args: Tuple
+        args: Tuple = None
             missing variable description
 
-        daemon: bool
+        daemon: bool = True
             missing variable description
 
         f: Callable
             missing variable description
 
-        kwargs: Dict
+        kwargs: Dict = None
             missing variable description
 
-        name: str
+        name: str = None
             missing variable description
 
         Notes
@@ -166,19 +185,19 @@ class ThreadsMixin:
         Parameters
         ----------
 
-        args: Tuple
+        args: Tuple = None
             missing variable description
 
-        daemon: bool
+        daemon: bool = True
             missing variable description
 
         f: Callable
             missing variable description
 
-        kwargs: Dict
+        kwargs: Dict = None
             missing variable description
 
-        name: str
+        name: str = None
             missing variable description
 
         Notes
@@ -207,22 +226,22 @@ class ThreadsMixin:
         Parameters
         ----------
 
-        args: Tuple
+        args: Tuple = None
             missing variable description
 
-        daemon: bool
+        daemon: bool = True
             missing variable description
 
         f: Callable
             missing variable description
 
-        kwargs: Dict
+        kwargs: Dict = None
             missing variable description
 
-        name: str
+        name: str = None
             missing variable description
 
-        time_delay: float
+        time_delay: float = 0
             missing variable description
 
         Notes
@@ -269,7 +288,7 @@ class ThreadsMixin:
         name: str
             missing variable description
 
-        wait: bool
+        wait: bool = False
             missing variable description
 
         Notes
@@ -291,7 +310,7 @@ class ThreadsMixin:
         Parameters
         ----------
 
-        wait: bool
+        wait: bool = False
             missing variable description
 
         Notes

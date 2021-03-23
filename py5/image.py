@@ -45,19 +45,23 @@ class Py5Image(PixelMixin, Py5Base):
     Notes
     -----
 
-    Datatype for storing images. Processing can display ``.gif``, ``.jpg``,
-    ``.tga``, and ``.png`` images. Images may be displayed in 2D and 3D space.
-    Before an image is used, it must be loaded with the ``load_image()`` function.
-    The ``Py5Image`` class contains fields for the ``width`` and ``height`` of the
-    image, as well as an array called ``pixels[]`` that contains the values for
-    every pixel in the image. The methods described below allow easy access to the
-    image's pixels and alpha channel and simplify the process of compositing.
+    Datatype for storing images. Py5 can load ``.gif``, ``.jpg``, ``.tga``, and
+    ``.png`` images using the :doc:`load_image` function. Py5 can also convert
+    common Python image objects using the :doc:`convert_image` function. Images may
+    be displayed in 2D and 3D space. The ``Py5Image`` class contains fields for the
+    :doc:`py5image_width` and :doc:`py5image_height` of the image, as well as arrays
+    called :doc:`py5image_pixels` and :doc:`py5image_np_pixels` that contain the
+    values for every pixel in the image. The methods described below allow easy
+    access to the image's pixels and alpha channel and simplify the process of
+    compositing.
 
-    Before using the ``pixels[]`` array, be sure to use the ``load_pixels()`` method
-    on the image to make sure that the pixel data is properly loaded.
+    Before using the :doc:`py5image_pixels` array, be sure to use the
+    :doc:`py5image_load_pixels` method on the image to make sure that the pixel data
+    is properly loaded. Similarly, be sure to use the :doc:`py5image_load_np_pixels`
+    method on the image before using the :doc:`py5image_np_pixels` array.
 
-    To create a new image, use the ``create_image()`` function. Do not use the
-    syntax ``new Py5Image()``.
+    To create a new image, use the :doc:`create_image` function. Do not use the
+    syntax ``Py5Image()``.
     """
 
     def __init__(self, pimage):
@@ -114,7 +118,9 @@ class Py5Image(PixelMixin, Py5Base):
     height: int = property(fget=_get_height)
 
     def _get_pixel_density(self) -> int:
-        """This function is new with Processing 3.0.
+        """This function makes it possible for py5 to render using all of the pixels on
+        high resolutions screens like Apple Retina displays and Windows High-DPI
+        displays.
 
         Underlying Java method: PApplet.pixelDensity
 
@@ -127,31 +133,28 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new with Processing 3.0. It makes it possible for Processing to
-        render using all of the pixels on high resolutions screens like Apple Retina
-        displays and Windows High-DPI displays. This function can only be run once
-        within a program and it must be used right after ``size()`` in a program without
-        a ``setup()`` and used within ``setup()`` when a program has one.  The
-        ``pixel_density()`` should only be used with hardcoded numbers (in almost all
-        cases this number will be 2) or in combination with ``display_density()`` as in
-        the third example above.
+        This function makes it possible for py5 to render using all of the pixels on
+        high resolutions screens like Apple Retina displays and Windows High-DPI
+        displays. This function can only be run once within a program and it must be
+        called in ``settings()``.  The ``pixel_density()`` should only be used with
+        hardcoded numbers (in almost all cases this number will be 2) or in combination
+        with :doc:`display_density` as in the second example.
 
         When the pixel density is set to more than 1, it changes all of the pixel
-        operations including the way ``get()``, ``set()``, ``blend()``, ``copy()``, and
-        ``update_pixels()`` all work. See the reference for ``pixel_width`` and
-        ``pixel_height`` for more information.
+        operations including the way :doc:`get`, :doc:`blend`, :doc:`copy`,
+        :doc:`update_pixels`, and :doc:`update_np_pixels` all work. See the reference
+        for :doc:`pixel_width` and :doc:`pixel_height` for more information.
 
         To use variables as the arguments to ``pixel_density()`` function, place the
-        ``pixel_density()`` function within the ``settings()`` function. There is more
-        information about this on the ``settings()`` reference page.
+        ``pixel_density()`` function within the ``settings()`` function.
         """
         return self._instance.pixelDensity
     pixel_density: int = property(fget=_get_pixel_density)
 
     def _get_pixel_height(self) -> int:
         """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled.
 
         Underlying Java field: PApplet.pixelHeight
 
@@ -159,22 +162,22 @@ class Py5Image(PixelMixin, Py5Base):
         -----
 
         When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled. As
-        a result, all operations that use pixels (like ``load_pixels()``, ``get()``,
-        ``set()``, etc.) happen in this doubled space. As a convenience, the variables
-        ``pixel_width`` and ``pixel_height`` hold the actual width and height of the
-        sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
-        array, for instance, because the number of elements in the array will be
-        ``pixel_width*pixel_height``, not ``width*height``.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled. As a
+        result, all operations that use pixels (like :doc:`load_pixels`, :doc:`get`,
+        etc.) happen in this doubled space. As a convenience, the variables
+        :doc:`pixel_width` and ``pixel_height`` hold the actual width and height of the
+        Sketch in pixels. This is useful for any Sketch that use the :doc:`pixels` or
+        :doc:`np_pixels` arrays, for instance, because the number of elements in each
+        array will be ``pixel_width*pixel_height``, not ``width*height``.
         """
         return self._instance.pixelHeight
     pixel_height: int = property(fget=_get_pixel_height)
 
     def _get_pixel_width(self) -> int:
         """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled.
 
         Underlying Java field: PApplet.pixelWidth
 
@@ -182,14 +185,14 @@ class Py5Image(PixelMixin, Py5Base):
         -----
 
         When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled. As
-        a result, all operations that use pixels (like ``load_pixels()``, ``get()``,
-        ``set()``, etc.) happen in this doubled space. As a convenience, the variables
-        ``pixel_width`` and ``pixel_height`` hold the actual width and height of the
-        sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
-        array, for instance, because the number of elements in the array will be
-        ``pixel_width*pixel_height``, not ``width*height``.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled. As a
+        result, all operations that use pixels (like :doc:`load_pixels`, :doc:`get`,
+        etc.) happen in this doubled space. As a convenience, the variables
+        ``pixel_width`` and :doc:`pixel_height` hold the actual width and height of the
+        Sketch in pixels. This is useful for any Sketch that use the :doc:`pixels` or
+        :doc:`np_pixels` arrays, for instance, because the number of elements in each
+        array will be ``pixel_width*pixel_height``, not ``width*height``.
         """
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
@@ -207,10 +210,11 @@ class Py5Image(PixelMixin, Py5Base):
         if the image is 100 x 100 pixels, there will be 10,000 values and if the window
         is 200 x 300 pixels, there will be 60,000 values.
 
-        Before accessing this array, the data must loaded with the ``load_pixels()``
-        method. Failure to do so may result in a NullPointerException. After the array
-        data has been modified, the ``update_pixels()`` method must be run to update the
-        content of the display window.
+        Before accessing this array, the data must loaded with the
+        :doc:`py5image_load_pixels` method. Failure to do so may result in a Java
+        ``NullPointerException``. After the array data has been modified, the
+        :doc:`py5image_update_pixels` method must be run to update the content of the
+        display window.
         """
         return self._instance.pixels
     pixels: JArray(JInt) = property(fget=_get_pixels)
@@ -284,44 +288,31 @@ class Py5Image(PixelMixin, Py5Base):
         modes to blend the colors of source pixels (A) with the ones of pixels in the
         destination image (B):
 
-        BLEND - linear interpolation of colours: C = A*factor + B
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - Multiply the colors, result will always be darker.
-
-        SCREEN - Opposite multiply, uses inverse values of the colors.
-
-        OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-        and screens light values.
-
-        HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-
-        SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-        Works like OVERLAY, but not as harsh.
-
-        DODGE - Lightens light tones and increases contrast, ignores darks.
-        Called "Color Dodge" in Illustrator and Photoshop.
-
-        BURN - Darker areas are applied, increasing contrast, ignores lights.
-        Called "Color Burn" in Illustrator and Photoshop.
+        * BLEND: linear interpolation of colours: ``C = A*factor + B``
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest colour succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest colour succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: Multiply the colors, result will always be darker.
+        * SCREEN: Opposite multiply, uses inverse values of the colors.
+        * OVERLAY: A mix of ``MULTIPLY`` and ``SCREEN``. Multiplies dark values, and
+        screens light values.
+        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
+        * SOFT_LIGHT: Mix of ``DARKEST`` and ``LIGHTEST``.  Works like ``OVERLAY``, but
+        not as harsh.
+        * DODGE: Lightens light tones and increases contrast, ignores darks. Called
+        "Color Dodge" in Illustrator and Photoshop.
+        * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
+        "Color Burn" in Illustrator and Photoshop.
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -381,44 +372,31 @@ class Py5Image(PixelMixin, Py5Base):
         modes to blend the colors of source pixels (A) with the ones of pixels in the
         destination image (B):
 
-        BLEND - linear interpolation of colours: C = A*factor + B
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - Multiply the colors, result will always be darker.
-
-        SCREEN - Opposite multiply, uses inverse values of the colors.
-
-        OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-        and screens light values.
-
-        HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-
-        SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-        Works like OVERLAY, but not as harsh.
-
-        DODGE - Lightens light tones and increases contrast, ignores darks.
-        Called "Color Dodge" in Illustrator and Photoshop.
-
-        BURN - Darker areas are applied, increasing contrast, ignores lights.
-        Called "Color Burn" in Illustrator and Photoshop.
+        * BLEND: linear interpolation of colours: ``C = A*factor + B``
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest colour succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest colour succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: Multiply the colors, result will always be darker.
+        * SCREEN: Opposite multiply, uses inverse values of the colors.
+        * OVERLAY: A mix of ``MULTIPLY`` and ``SCREEN``. Multiplies dark values, and
+        screens light values.
+        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
+        * SOFT_LIGHT: Mix of ``DARKEST`` and ``LIGHTEST``.  Works like ``OVERLAY``, but
+        not as harsh.
+        * DODGE: Lightens light tones and increases contrast, ignores darks. Called
+        "Color Dodge" in Illustrator and Photoshop.
+        * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
+        "Color Burn" in Illustrator and Photoshop.
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -476,44 +454,31 @@ class Py5Image(PixelMixin, Py5Base):
         modes to blend the colors of source pixels (A) with the ones of pixels in the
         destination image (B):
 
-        BLEND - linear interpolation of colours: C = A*factor + B
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - Multiply the colors, result will always be darker.
-
-        SCREEN - Opposite multiply, uses inverse values of the colors.
-
-        OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-        and screens light values.
-
-        HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-
-        SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-        Works like OVERLAY, but not as harsh.
-
-        DODGE - Lightens light tones and increases contrast, ignores darks.
-        Called "Color Dodge" in Illustrator and Photoshop.
-
-        BURN - Darker areas are applied, increasing contrast, ignores lights.
-        Called "Color Burn" in Illustrator and Photoshop.
+        * BLEND: linear interpolation of colours: ``C = A*factor + B``
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest colour succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest colour succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: Multiply the colors, result will always be darker.
+        * SCREEN: Opposite multiply, uses inverse values of the colors.
+        * OVERLAY: A mix of ``MULTIPLY`` and ``SCREEN``. Multiplies dark values, and
+        screens light values.
+        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
+        * SOFT_LIGHT: Mix of ``DARKEST`` and ``LIGHTEST``.  Works like ``OVERLAY``, but
+        not as harsh.
+        * DODGE: Lightens light tones and increases contrast, ignores darks. Called
+        "Color Dodge" in Illustrator and Photoshop.
+        * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
+        "Color Burn" in Illustrator and Photoshop.
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         return self._instance.blend(*args)
 
@@ -585,7 +550,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -644,7 +609,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -703,7 +668,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -760,7 +725,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         return self._instance.copy(*args)
 
@@ -785,7 +750,7 @@ class Py5Image(PixelMixin, Py5Base):
             Either THRESHOLD, GRAY, OPAQUE, INVERT, POSTERIZE, BLUR, ERODE, or DILATE
 
         param: float
-            unique for each, see above
+            unique for each filter, see description
 
         Notes
         -----
@@ -794,35 +759,21 @@ class Py5Image(PixelMixin, Py5Base):
 
         Filters the image as defined by one of the following modes:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Gaussian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Gaussian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Gaussian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Gaussian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         pass
 
@@ -847,7 +798,7 @@ class Py5Image(PixelMixin, Py5Base):
             Either THRESHOLD, GRAY, OPAQUE, INVERT, POSTERIZE, BLUR, ERODE, or DILATE
 
         param: float
-            unique for each, see above
+            unique for each filter, see description
 
         Notes
         -----
@@ -856,35 +807,21 @@ class Py5Image(PixelMixin, Py5Base):
 
         Filters the image as defined by one of the following modes:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Gaussian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Gaussian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Gaussian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Gaussian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         pass
 
@@ -908,7 +845,7 @@ class Py5Image(PixelMixin, Py5Base):
             Either THRESHOLD, GRAY, OPAQUE, INVERT, POSTERIZE, BLUR, ERODE, or DILATE
 
         param: float
-            unique for each, see above
+            unique for each filter, see description
 
         Notes
         -----
@@ -917,35 +854,21 @@ class Py5Image(PixelMixin, Py5Base):
 
         Filters the image as defined by one of the following modes:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Gaussian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Gaussian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Gaussian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Gaussian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         return self._instance.filter(*args)
 
@@ -985,20 +908,21 @@ class Py5Image(PixelMixin, Py5Base):
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
         to get the value of one pixel. Get a section of the display window by specifying
-        an additional ``width`` and ``height`` parameter. When getting an image, the
-        ``x`` and ``y`` parameters define the coordinates for the upper-left corner of
-        the image, regardless of the current ``image_mode()``.
+        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
+        ``y`` parameters define the coordinates for the upper-left corner of the image,
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        ``pixels[]`` for more information.
+        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
+        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
+        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
+        information.
         """
         pass
 
@@ -1038,20 +962,21 @@ class Py5Image(PixelMixin, Py5Base):
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
         to get the value of one pixel. Get a section of the display window by specifying
-        an additional ``width`` and ``height`` parameter. When getting an image, the
-        ``x`` and ``y`` parameters define the coordinates for the upper-left corner of
-        the image, regardless of the current ``image_mode()``.
+        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
+        ``y`` parameters define the coordinates for the upper-left corner of the image,
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        ``pixels[]`` for more information.
+        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
+        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
+        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
+        information.
         """
         pass
 
@@ -1091,20 +1016,21 @@ class Py5Image(PixelMixin, Py5Base):
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
         to get the value of one pixel. Get a section of the display window by specifying
-        an additional ``width`` and ``height`` parameter. When getting an image, the
-        ``x`` and ``y`` parameters define the coordinates for the upper-left corner of
-        the image, regardless of the current ``image_mode()``.
+        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
+        ``y`` parameters define the coordinates for the upper-left corner of the image,
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        ``pixels[]`` for more information.
+        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
+        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
+        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
+        information.
         """
         pass
 
@@ -1143,33 +1069,35 @@ class Py5Image(PixelMixin, Py5Base):
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
         to get the value of one pixel. Get a section of the display window by specifying
-        an additional ``width`` and ``height`` parameter. When getting an image, the
-        ``x`` and ``y`` parameters define the coordinates for the upper-left corner of
-        the image, regardless of the current ``image_mode()``.
+        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
+        ``y`` parameters define the coordinates for the upper-left corner of the image,
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        ``pixels[]`` for more information.
+        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
+        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
+        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
+        information.
         """
         return self._instance.get(*args)
 
     def load_pixels(self) -> None:
-        """Loads the pixel data for the image into its ``pixels[]`` array.
+        """Loads the pixel data for the image into its :doc:`py5image_pixels` array.
 
         Underlying Java method: PImage.loadPixels
 
         Notes
         -----
 
-        Loads the pixel data for the image into its ``pixels[]`` array. This function
-        must always be called before reading from or writing to ``pixels[]``.
+        Loads the pixel data for the image into its :doc:`py5image_pixels` array. This
+        function must always be called before reading from or writing to
+        :doc:`py5image_pixels`.
         """
         return self._instance.loadPixels()
 
@@ -1294,7 +1222,7 @@ class Py5Image(PixelMixin, Py5Base):
 
     @overload
     def update_pixels(self) -> None:
-        """Updates the image with the data in its ``pixels[]`` array.
+        """Updates the image with the data in its :doc:`py5image_pixels` array.
 
         Underlying Java method: PImage.updatePixels
 
@@ -1324,15 +1252,15 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its ``pixels[]`` array. Use in conjunction
-        with ``load_pixels()``. If you're only reading pixels from the array, there's no
-        need to call ``update_pixels()``.
+        Updates the image with the data in its :doc:`py5image_pixels` array. Use in
+        conjunction with :doc:`py5image_load_pixels`. If you're only reading pixels from
+        the array, there's no need to call ``update_pixels()``.
         """
         pass
 
     @overload
     def update_pixels(self, x: int, y: int, w: int, h: int, /) -> None:
-        """Updates the image with the data in its ``pixels[]`` array.
+        """Updates the image with the data in its :doc:`py5image_pixels` array.
 
         Underlying Java method: PImage.updatePixels
 
@@ -1362,14 +1290,14 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its ``pixels[]`` array. Use in conjunction
-        with ``load_pixels()``. If you're only reading pixels from the array, there's no
-        need to call ``update_pixels()``.
+        Updates the image with the data in its :doc:`py5image_pixels` array. Use in
+        conjunction with :doc:`py5image_load_pixels`. If you're only reading pixels from
+        the array, there's no need to call ``update_pixels()``.
         """
         pass
 
     def update_pixels(self, *args):
-        """Updates the image with the data in its ``pixels[]`` array.
+        """Updates the image with the data in its :doc:`py5image_pixels` array.
 
         Underlying Java method: PImage.updatePixels
 
@@ -1399,8 +1327,8 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its ``pixels[]`` array. Use in conjunction
-        with ``load_pixels()``. If you're only reading pixels from the array, there's no
-        need to call ``update_pixels()``.
+        Updates the image with the data in its :doc:`py5image_pixels` array. Use in
+        conjunction with :doc:`py5image_load_pixels`. If you're only reading pixels from
+        the array, there's no need to call ``update_pixels()``.
         """
         return self._instance.updatePixels(*args)

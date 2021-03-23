@@ -86,10 +86,9 @@ class Py5Shader(Py5Base):
     -----
 
     This class encapsulates a GLSL shader program, including a vertex and a fragment
-    shader. It's compatible with the P2D and P3D renderers, but not with the default
-    renderer. Use the ``load_shader()`` function to load your shader code. [Note:
-    It's strongly encouraged to use ``load_shader()`` to create a PShader object,
-    rather than calling the PShader constructor manually.]
+    shader. It's compatible with the ``P2D`` and ``P3D`` renderers, but not with the
+    default renderer. Use the :doc:`load_shader` function to load your shader code
+    and create ``Py5Shader`` objects.
     """
 
     def __init__(self, pshader):
@@ -138,10 +137,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -153,16 +152,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -250,10 +249,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -265,16 +264,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -362,10 +361,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -377,16 +376,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -474,10 +473,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -489,16 +488,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -586,10 +585,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -601,16 +600,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -699,10 +698,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -714,16 +713,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -811,10 +810,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -826,16 +825,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -923,10 +922,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -938,16 +937,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1035,10 +1034,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1050,16 +1049,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1148,10 +1147,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1163,16 +1162,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1260,10 +1259,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1275,16 +1274,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1373,10 +1372,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1388,16 +1387,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1485,10 +1484,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1500,16 +1499,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1597,10 +1596,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1612,16 +1611,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1709,10 +1708,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1724,16 +1723,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1821,10 +1820,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1836,16 +1835,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1933,10 +1932,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -1948,16 +1947,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2045,10 +2044,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -2060,16 +2059,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2157,10 +2156,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -2172,16 +2171,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2269,10 +2268,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -2284,16 +2283,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2381,10 +2380,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -2396,16 +2395,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2494,10 +2493,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -2509,16 +2508,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2606,10 +2605,10 @@ class Py5Shader(Py5Base):
             missing variable description
 
         mat: NDArray[(2, 3), Float]
-            matrix of values
+            numpy array of values
 
         mat: NDArray[(4, 4), Float]
-            matrix of values
+            numpy array of values
 
         name: str
             the name of the uniform variable to modify
@@ -2621,16 +2620,16 @@ class Py5Shader(Py5Base):
             sets the sampler uniform variable to read from this image texture
 
         use3x3: bool
-            enforces the matrix is 3 x 3
+            enforces the numpy array is 3 x 3
 
         vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: JArray(JInt)
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            modifies all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Float]
-            modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+            numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)

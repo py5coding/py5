@@ -17,17 +17,35 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-"""
-Utilities and accessory tools for py5.
-"""
-from . import imported  # noqa
-from .imported import set_imported_mode  # noqa
-from .jvm import *  # noqa
-from .libraries import *  # noqa
-from . import magics  # noqa
-from . import parsing  # noqa
-from . import utilities  # noqa
-from . import testing  # noqa
+import time
+import re
+
+from IPython.core.magic_arguments import MagicHelpFormatter
 
 
-__version__ = '0.4a0'
+class CellMagicHelpFormatter(MagicHelpFormatter):
+
+    def add_usage(self, usage, actions, groups, prefix="::\n\n  %%"):
+        super(
+            MagicHelpFormatter,
+            self).add_usage(
+            usage,
+            actions,
+            groups,
+            prefix)
+
+
+def fix_triple_quote_str(code):
+    for m in re.finditer(r'\"\"\"[^\"]*\"\"\"', code):
+        code = code.replace(
+            m.group(), m.group().replace('\n    ', '\n'))
+    return code
+
+
+def wait(wait_time, sketch):
+    end_time = time.time() + wait_time
+    while time.time() < end_time and sketch.is_running:
+        time.sleep(0.1)
+
+
+__all__ = ['CellMagicHelpFormatter', 'fix_triple_quote_str', 'wait']

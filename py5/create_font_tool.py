@@ -98,8 +98,8 @@ def create_font_file(
     users would create these files through the PDE using the Create Font tool. This
     utility function accomplishes the same task.
 
-    This function creates a small helper sketch to create a font file. Do not use
-    this function inside of another sketch.
+    This function creates a small helper Sketch to create a font file. Do not use
+    this function inside of another Sketch.
 
     By default it will create data files for every character available in the
     specified font. To reduce execution time and output file size, limit the

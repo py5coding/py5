@@ -175,7 +175,7 @@ def render_frame_sequence(
 
     Optionally, the caller can pass a ``setup`` function, along with corresponding
     ``setup_args`` and ``setup_kwargs`` arguments. This will be called once, just
-    like it would for any other py5 sketch. As with the passed ``draw`` function,
+    like it would for any other py5 Sketch. As with the passed ``draw`` function,
     the first parameter must be a ``py5.Sketch`` object.
 
     Currently, only the default and OpenGL renderers are supported.
@@ -289,7 +289,7 @@ def render_sequence(
 
     Optionally, the caller can pass the decorator a ``setup`` function, along with
     corresponding ``setup_args`` and ``setup_kwargs`` arguments. This will be called
-    once, just like it would for any other py5 sketch. As with the passed ``draw``
+    once, just like it would for any other py5 Sketch. As with the passed ``draw``
     function, the first parameter must be a ``py5.Sketch`` object.
 
     Currently, only the default and OpenGL renderers are supported.

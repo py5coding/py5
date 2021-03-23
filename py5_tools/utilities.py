@@ -22,14 +22,14 @@ from pathlib import Path
 
 PY5_UTILITIES_CLASS = """package py5.utils;
 
-import processing.core.PApplet;
+import py5.core.Sketch;
 
 class Py5Utilities {
 
-  public PApplet papplet;
+  public Sketch sketch;
 
-  public Py5Utilities(PApplet papplet) {
-    this.papplet = papplet;
+  public Py5Utilities(Sketch sketch) {
+    this.sketch = sketch;
   }
 
 }
@@ -71,6 +71,7 @@ DOT_CLASSPATH_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="{path}/core.jar"/>
 	<classpathentry kind="lib" path="{path}/jogl-all.jar"/>
+	<classpathentry kind="lib" path="{path}/py5.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
 """
@@ -140,3 +141,6 @@ def generate_utilities_framework(output_dir=None, jars_dir=None):
     src_dir.mkdir(parents=True, exist_ok=True)
     with open(src_dir / 'Py5Utilities.java', 'w') as f:
         f.write(PY5_UTILITIES_CLASS)
+
+
+__all__ = ['generate_utilities_framework']

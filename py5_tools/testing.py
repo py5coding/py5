@@ -17,17 +17,49 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-"""
-Utilities and accessory tools for py5.
-"""
-from . import imported  # noqa
-from .imported import set_imported_mode  # noqa
-from .jvm import *  # noqa
-from .libraries import *  # noqa
-from . import magics  # noqa
-from . import parsing  # noqa
-from . import utilities  # noqa
-from . import testing  # noqa
+from pathlib import Path
 
 
-__version__ = '0.4a0'
+_DRAW_WRAPPER_CODE_TEMPLATE = """
+if _PY5_HAS_DRAW_:
+    draw_ = draw
+
+def draw():
+    if _PY5_HAS_DRAW_:
+        draw_()
+
+    if _PY5_SAVE_FRAME_:
+        py5.save_frame("{0}", use_thread=False)
+    py5.exit_sketch()
+"""
+
+
+_RUN_SKETCH_CODE = """
+py5.run_sketch(block=True)
+if py5.is_dead_from_error:
+    py5.exit_sketch()
+"""
+
+_EXIT_SKETCH = """
+import time
+time.sleep(1)
+py5.exit_sketch()
+time.sleep(1)
+"""
+
+
+def run_code(code: str, image: Path) -> bool:
+    import py5
+    ns = dict(py5=py5)
+
+    exec(code, ns)
+    ns['_PY5_HAS_DRAW_'] = 'draw' in ns
+    ns['_PY5_SAVE_FRAME_'] = image is not None
+
+    if code.find("py5.run_sketch") >= 0:
+        exec(_EXIT_SKETCH, ns)
+    else:
+        exec(_DRAW_WRAPPER_CODE_TEMPLATE.format(image), ns)
+        exec(_RUN_SKETCH_CODE, ns)
+
+    return not py5.is_dead_from_error

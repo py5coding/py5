@@ -60,25 +60,24 @@ def _return_list_str(f):
 
 
 class Py5Font:
-    """PFont is the font class for Processing.
+    """Py5Font is the font class for py5.
 
     Underlying Java class: PFont.PFont
 
     Notes
     -----
 
-    PFont is the font class for Processing. To create a font to use with Processing,
-    select "Create Font..." from the Tools menu. This will create a font in the
-    format Processing requires and also adds it to the current sketch's data
-    directory. Processing displays fonts using the .vlw font format, which uses
-    images for each letter, rather than defining them through vector data. The
-    ``load_font()`` function constructs a new font and ``text_font()`` makes a font
-    active. The ``list()`` method creates a list of the fonts installed on the
-    computer, which is useful information to use with the ``create_font()`` function
-    for dynamically converting fonts into a format to use with Processing.
+    Py5Font is the font class for py5. To create a font to use with py5, use
+    :doc:`create_font_file`. This will create a font in the format py5 requires. Py5
+    displays fonts using the .vlw font format, which uses images for each letter,
+    rather than defining them through vector data. The :doc:`load_font` function
+    constructs a new font and :doc:`text_font` makes a font active. The
+    :doc:`py5font_list` method creates a list of the fonts installed on the
+    computer, which is useful information to use with the :doc:`create_font`
+    function for dynamically converting fonts into a format to use with py5.
 
-    To create a new font dynamically, use the ``create_font()`` function. Do not use
-    the syntax ``new Py5Font()``.
+    To create a new font dynamically, use the :doc:`create_font` function. Do not
+    use the syntax ``Py5Font()``.
     """
 
     _cls = jpype.JClass('processing.core.PFont')
@@ -321,7 +320,9 @@ class Py5Font:
 
         Gets a list of the fonts installed on the system. The data is returned as a list
         of strings. This list provides the names of each font for input into
-        ``create_font()``, which allows py5 to dynamically format fonts.
+        :doc:`create_font`, which allows py5 to dynamically format fonts.
+
+        This works outside of a running Sketch.
         """
         return cls._cls.list()
 

@@ -32,16 +32,16 @@ def _return_py5surface(f):
 
 
 class Py5Surface:
-    """The documentation for this field or method has not yet been written.
+    """The Py5Surface object is the actual window py5 draws animations to.
 
     Underlying Java class: PSurface.PSurface
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    The Py5Surface object is the actual window py5 draws animations to. You can use
+    this to interact with the window and change some of its characteristics, such as
+    the window title or location.
     """
 
     def __init__(self, psurface, pimage_cache):
@@ -49,83 +49,79 @@ class Py5Surface:
         self._pimage_cache = pimage_cache
 
     def get_native(self) -> Any:
-        """The documentation for this field or method has not yet been written.
+        """Get the Sketch's Java native window object.
 
         Underlying Java method: PSurface.getNative
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Get the Sketch's Java native window object. Here there be dragons! The returned
+        object will be a Java object you can interact with through py5's Python-Java
+        bridge, jpype. The type of the native window will depend on your operating
+        system and the Sketch's renderer, and is subject to change in future releases of
+        Processing.
+
+        This method may be useful to you if you research the Java libraries Processing
+        uses to display animations. Any errors will result in Java Exceptions.
         """
         return self._instance.getNative()
 
     def is_stopped(self) -> bool:
-        """The documentation for this field or method has not yet been written.
+        """Determine if the surface is currently running an animation.
 
         Underlying Java method: PSurface.isStopped
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Determine if the surface is currently running an animation. A Sketch that has
+        called :doc:`no_loop` or has no ``draw()`` function is not animating, and will
+        result in this method returning ``True``. If there is a ``draw()`` function and
+        :doc:`no_loop` has not been called, this will return ``False``. Calling
+        Py5Surface's :doc:`py5surface_stop_thread` will make all future calls to
+        ``is_stopped()`` return ``True``.
+
+        The output of this method is independent of :doc:`py5surface_pause_thread` and
+        :doc:`py5surface_resume_thread`.
         """
         return self._instance.isStopped()
 
-    def open_link(self, url: str, /) -> bool:
-        """The documentation for this field or method has not yet been written.
-
-        Underlying Java method: PSurface.openLink
-
-        Parameters
-        ----------
-
-        url: str
-            the link to open
-
-        Notes
-        -----
-
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-        """
-        return self._instance.openLink(url)
-
     def pause_thread(self) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Pause a running Sketch.
 
         Underlying Java method: PSurface.pauseThread
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Pause a running Sketch. The Sketch window will be static and unresponsive. You
+        can resume the Sketch with :doc:`py5surface_resume_thread`.
+
+        The :doc:`frame_count` will not increment while the Sketch is paused.
+
+        Pausing a Sketch is not the same as stopping a Sketch, so this method will not
+        change the results of :doc:`py5surface_is_stopped`.
         """
         return self._instance.pauseThread()
 
     def resume_thread(self) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Resume a paused Sketch.
 
         Underlying Java method: PSurface.resumeThread
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Resume a paused Sketch. The Sketch window will resume operating as it did before
+        :doc:`py5surface_pause_thread` was called.
+
+        The :doc:`frame_count` will continue incrementing after the Sketch is resumed.
         """
         return self._instance.resumeThread()
 
     def set_always_on_top(self, always: bool, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set the Sketch window to always be on top of other windows.
 
         Underlying Java method: PSurface.setAlwaysOnTop
 
@@ -133,19 +129,19 @@ class Py5Surface:
         ----------
 
         always: bool
-            missing variable description
+            should the Sketch window always be on top of other windows
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set the Sketch window to always be on top of other windows. By default, the
+        Sketch window can be covered by other windows. Setting this to ``True`` will
+        keep that from happening.
         """
         return self._instance.setAlwaysOnTop(always)
 
     def set_icon(self, icon: Py5Image, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set the Sketch window icon.
 
         Underlying Java method: PSurface.setIcon
 
@@ -153,19 +149,22 @@ class Py5Surface:
         ----------
 
         icon: Py5Image
-            missing variable description
+            image to use as the window icon
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set the Sketch window icon. This will typically appear in the window's title
+        bar. The default window icon is the same as Processing's.
+
+        This method will not work for the ``P2D`` or ``P3D`` renderers. Setting the icon
+        for those renderers is a bit tricky; see the second example to learn how to do
+        that.
         """
         return self._instance.setIcon(icon)
 
     def set_location(self, x: int, y: int, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set the Sketch's window location.
 
         Underlying Java method: PSurface.setLocation
 
@@ -173,22 +172,22 @@ class Py5Surface:
         ----------
 
         x: int
-            missing variable description
+            x-coordinate for window location
 
         y: int
-            missing variable description
+            y-coordinate for window location
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set the Sketch's window location. Calling this repeatedly from the ``draw()``
+        function may result in a sluggish Sketch. Negative or invalid coordinates are
+        ignored. To hide a Sketch window, use :doc:`py5surface_set_visible`.
         """
         return self._instance.setLocation(x, y)
 
     def set_resizable(self, resizable: bool, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set the Sketch window as resizable by the user.
 
         Underlying Java method: PSurface.setResizable
 
@@ -196,19 +195,22 @@ class Py5Surface:
         ----------
 
         resizable: bool
-            missing variable description
+            should the Sketch window be resizable
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set the Sketch window as resizable by the user. The user will be able to resize
+        the window in the same way as they do for many other windows on their computer.
+        By default, the Sketch window is not resizable.
+
+        Changing the window size will clear the drawing canvas. If your Sketch uses
+        this, the :doc:`width` and :doc:`height` variables will change.
         """
         return self._instance.setResizable(resizable)
 
     def set_size(self, width: int, height: int, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set a new width and height for the Sketch window.
 
         Underlying Java method: PSurface.setSize
 
@@ -216,22 +218,24 @@ class Py5Surface:
         ----------
 
         height: int
-            missing variable description
+            new window height
 
         width: int
-            missing variable description
+            new window width
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set a new width and height for the Sketch window. You do not need to call
+        :doc:`py5surface_set_resizable` before calling this.
+
+        Changing the window size will clear the drawing canvas. If your Sketch uses
+        this, the :doc:`width` and :doc:`height` variables will change.
         """
         return self._instance.setSize(width, height)
 
     def set_title(self, title: str, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set the Sketch window's title.
 
         Underlying Java method: PSurface.setTitle
 
@@ -239,19 +243,18 @@ class Py5Surface:
         ----------
 
         title: str
-            missing variable description
+            new window title
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set the Sketch window's title. This will typically appear at the window's title
+        bar. The default window title is "Sketch".
         """
         return self._instance.setTitle(title)
 
     def set_visible(self, visible: bool, /) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Set the Sketch window's visiblity.
 
         Underlying Java method: PSurface.setVisible
 
@@ -259,27 +262,31 @@ class Py5Surface:
         ----------
 
         visible: bool
-            missing variable description
+            desired surface visiblity
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Set the Sketch window's visiblity. The animation will continue to run but the
+        window will not be visible.
         """
         return self._instance.setVisible(visible)
 
     def stop_thread(self) -> bool:
-        """The documentation for this field or method has not yet been written.
+        """Stop the animation thread.
 
         Underlying Java method: PSurface.stopThread
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Stop the animation thread. The Sketch window will remain open but will be static
+        and unresponsive. Use :doc:`py5surface_is_stopped` to determine if a Sketch has
+        been stopped or not.
+
+        This method is different from :doc:`py5surface_pause_thread` in that it will
+        irreversably stop the animation. Use :doc:`py5surface_pause_thread` and
+        :doc:`py5surface_resume_thread` if you want to pause and resume a running
+        Sketch.
         """
         return self._instance.stopThread()

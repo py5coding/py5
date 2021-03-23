@@ -47,7 +47,7 @@ from .image_conversion import NumpyImageArray, _convertable
 from . import reference
 
 
-_Py5Applet = jpype.JClass('py5.core.Py5Applet')
+_Sketch = jpype.JClass('py5.core.Sketch')
 
 try:
     __IPYTHON__  # type: ignore
@@ -83,11 +83,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
     """
 
-    _cls = _Py5Applet
+    _cls = _Sketch
 
     def __init__(self, *args, **kwargs):
-        self._py5applet = _Py5Applet()
-        super().__init__(instance=self._py5applet)
+        super().__init__(instance=_Sketch())
         self._methods_to_profile = []
         self._pre_hooks_to_add = []
         self._post_hooks_to_add = []
@@ -99,20 +98,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         # attempt to instantiate Py5Utilities
         self.utils = None
         try:
-            self.utils = jpype.JClass(
-                'py5.utils.Py5Utilities')(self._py5applet)
+            self.utils = jpype.JClass('py5.utils.Py5Utilities')(self._instance)
         except Exception:
             pass
 
     def run_sketch(self, block: bool = None,
                    py5_options: List = None, sketch_args: List = None) -> None:
-        """Run the sketch.
+        """Run the Sketch.
 
         Parameters
         ----------
 
         block: bool = None
-            method returns immediately (False) or blocks until sketch exits (True)
+            method returns immediately (False) or blocks until Sketch exits (True)
 
         py5_options: List = None
             command line arguments to pass to Processing as arguments
@@ -123,23 +121,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Run the sketch. Code in the ``settings``, ``setup``, and ``draw`` functions will
-        be used to actualize your sketch.
+        Run the Sketch. Code in the ``settings``, ``setup``, and ``draw`` functions will
+        be used to actualize your Sketch.
 
         Use the ``block`` parameter to specify if the call to ``run_sketch`` should
-        return immediately or block until the sketch exits. If the ``block`` parameter
-        is not specified, py5 will first attempt to determine if the sketch is running
+        return immediately or block until the Sketch exits. If the ``block`` parameter
+        is not specified, py5 will first attempt to determine if the Sketch is running
         in a Jupyter Notebook or an IPython shell. If it is, ``block`` will default to
         ``False``, and ``True`` otherwise.
 
         A list of strings passed to ``py5_options`` will be passed to the Processing
         PApplet class as arguments to specify characteristics such as the window's
         location on the screen. A list of strings passed to ``sketch_args`` will be
-        available to a running sketch using :doc:`args`. For example, if you launch a
-        sketch with ``py5.run_sketch(py5_options=['--location=400,300', '--display=1'],
-        sketch_args=['py5 is awesome'])``, the sketch window will appear at location
-        (400, 300) on your second monitor and ``py5.args`` will equal ``['py5 is
-        awesome']``."""
+        available to a running Sketch using :doc:`args`. See the third example for an
+        example of how this can be used."""
         if block is None:
             block = not _in_ipython_session
 
@@ -162,7 +157,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         self._py5_methods.profile_functions(self._methods_to_profile)
         self._py5_methods.add_pre_hooks(self._pre_hooks_to_add)
         self._py5_methods.add_post_hooks(self._post_hooks_to_add)
-        self._py5applet.usePy5Methods(self._py5_methods)
+        self._instance.usePy5Methods(self._py5_methods)
 
         if not py5_options:
             py5_options = []
@@ -173,9 +168,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         args = py5_options + [''] + sketch_args
 
         try:
-            _Py5Applet.runSketch(args, self._py5applet)
+            _Sketch.runSketch(args, self._instance)
         except Exception:
-            logger.exception('exception thrown by Py5Applet.runSketch')
+            logger.exception('Java exception thrown by Sketch.runSketch')
 
         if block:
             # wait for the sketch to finish
@@ -228,8 +223,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     # *** BEGIN METHODS ***
 
-    @property
-    def is_ready(self) -> bool:
+    def _get_is_ready(self) -> bool:
         """The documentation for this field or method has not yet been written.
 
         Notes
@@ -241,9 +235,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         surface = self.get_surface()
         # if there is no surface yet, the sketch can be run.
         return surface._instance is None
+    is_ready: bool = property(fget=_get_is_ready)
 
-    @property
-    def is_running(self) -> bool:
+    def _get_is_running(self) -> bool:
         """The documentation for this field or method has not yet been written.
 
         Notes
@@ -258,25 +252,30 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             return False
         else:
             return not surface.is_stopped()
+    is_running: bool = property(fget=_get_is_running)
 
-    @property
-    def is_dead(self) -> bool:
-        """The documentation for this field or method has not yet been written.
+    def _get_is_dead(self) -> bool:
+        """Boolean value stating if the Sketch has been run and has now stopped.
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
+        Boolean value stating if the Sketch has been run and has now stopped. This will
+        be ``True`` after calling :doc:`exit_sketch` or if the Sketch throws an error
+        and stops. This will also be ``True`` after calling :doc:`py5surface`'s
+        :doc:`py5surface_stop_thread` method. Once a Sketch reaches the "dead" state, it
+        cannot be rerun.
+
+        After an error or a call to :doc:`py5surface_stop_thread`, the Sketch window
+        will still be open. Call :doc:`exit_sketch` to close the window."""
         surface = self.get_surface()
         if surface._instance is None:
             # Sketch has not been run yet
             return False
         return surface.is_stopped()
+    is_dead: bool = property(fget=_get_is_dead)
 
-    @property
-    def is_dead_from_error(self) -> bool:
+    def _get_is_dead_from_error(self) -> bool:
         """The documentation for this field or method has not yet been written.
 
         Notes
@@ -286,6 +285,37 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         what it does, please help out with a pull request to the relevant file in
         https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return self.is_dead and not self._instance.getSuccess()
+    is_dead_from_error: bool = property(fget=_get_is_dead_from_error)
+
+    def _get_is_mouse_pressed(self) -> bool:
+        """The ``is_mouse_pressed`` variable stores whether or not a mouse button is
+        currently being pressed.
+
+        Notes
+        -----
+
+        The ``is_mouse_pressed`` variable stores whether or not a mouse button is
+        currently being pressed. The value is ``True`` when `any` mouse button is
+        pressed, and ``False`` if no button is pressed. The :doc:`mouse_button` variable
+        (see the related reference entry) can be used to determine which button has been
+        pressed."""
+        return self._instance.isMousePressed()
+    is_mouse_pressed: bool = property(fget=_get_is_mouse_pressed)
+
+    def _get_is_key_pressed(self) -> bool:
+        """The ``is_key_pressed`` variable stores whether or not a keyboard button is
+        currently being pressed.
+
+        Notes
+        -----
+
+        The ``is_key_pressed`` variable stores whether or not a keyboard button is
+        currently being pressed. The value is true when `any` keyboard button is
+        pressed, and false if no button is pressed. The :doc:`key` variable and
+        :doc:`key_code` variables (see the related reference entries) can be used to
+        determine which button has been pressed."""
+        return self._instance.isKeyPressed()
+    is_key_pressed: bool = property(fget=_get_is_key_pressed)
 
     def hot_reload_draw(self, draw: Callable) -> None:
         """The documentation for this field or method has not yet been written.
@@ -788,17 +818,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     finished: bool = property(fget=_get_finished)
 
     def _get_focused(self) -> bool:
-        """Confirms if a Processing program is "focused," meaning that it is active and
-        will accept mouse or keyboard input.
+        """Confirms if a py5 program is "focused," meaning that it is active and will
+        accept mouse or keyboard input.
 
         Underlying Java field: PApplet.focused
 
         Notes
         -----
 
-        Confirms if a Processing program is "focused," meaning that it is active and
-        will accept mouse or keyboard input. This variable is "true" if it is focused
-        and "false" if not.
+        Confirms if a py5 program is "focused," meaning that it is active and will
+        accept mouse or keyboard input. This variable is ``True`` if it is focused and
+        ``False`` if not.
         """
         return self._instance.focused
     focused: bool = property(fget=_get_focused)
@@ -828,9 +858,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         System variable that stores the height of the display window. This value is set
-        by the second parameter of the ``size()`` function. For example, the function
+        by the second parameter of the :doc:`size` function. For example, the function
         call ``size(320, 240)`` sets the ``height`` variable to the value 240. The value
-        of ``height`` defaults to 100 if ``size()`` is not used in a program.
+        of ``height`` defaults to 100 if :doc:`size` is not used in a program.
         """
         return self._instance.height
     height: int = property(fget=_get_height)
@@ -892,15 +922,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The system variable ``key`` always contains the value of the most recent key on
         the keyboard that was used (either pressed or released).
 
-        For non-ASCII keys, use the ``key_code`` variable. The keys included in the
-        ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not
-        require checking to see if the key is coded, and you should simply use the
-        ``key`` variable instead of ``key_code`` If you're making cross-platform
-        projects, note that the ENTER key is commonly used on PCs and Unix and the
-        RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make
-        sure your program will work for all platforms.
+        For non-ASCII keys, use the :doc:`key_code` variable. The keys included in the
+        ASCII specification (``BACKSPACE``, ``TAB``, ``ENTER``, ``RETURN``, ``ESC``, and
+        ``DELETE``) do not require checking to see if the key is coded, and you should
+        simply use the ``key`` variable instead of :doc:`key_code`. If you're making
+        cross-platform projects, note that the ``ENTER`` key is commonly used on PCs and
+        Unix and the ``RETURN`` key is used instead on Macintosh. Check for both
+        ``ENTER`` and ``RETURN`` to make sure your program will work for all platforms.
 
-        There are issues with how ``key_code`` behaves across different renderers and
+        There are issues with how :doc:`key_code` behaves across different renderers and
         operating systems. Watch out for unexpected behavior as you switch renderers and
         operating systems.
         """
@@ -909,7 +939,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def _get_key_code(self) -> int:
         """The variable ``key_code`` is used to detect special keys such as the arrow keys
-        (UP, DOWN, LEFT, and RIGHT) as well as ALT, CONTROL, and SHIFT.
+        (``UP``, ``DOWN``, ``LEFT``, and ``RIGHT``) as well as ``ALT``, ``CONTROL``, and
+        ``SHIFT``.
 
         Underlying Java field: PApplet.keyCode
 
@@ -917,22 +948,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The variable ``key_code`` is used to detect special keys such as the arrow keys
-        (UP, DOWN, LEFT, and RIGHT) as well as ALT, CONTROL, and SHIFT.
+        (``UP``, ``DOWN``, ``LEFT``, and ``RIGHT``) as well as ``ALT``, ``CONTROL``, and
+        ``SHIFT``.
 
         When checking for these keys, it can be useful to first check if the key is
         coded. This is done with the conditional ``if (key == CODED)``, as shown in the
-        example above.
+        example.
 
-        The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN,
-        ESC, and DELETE) do not require checking to see if the key is coded; for those
-        keys, you should simply use the ``key`` variable directly (and not
-        ``key_code``).  If you're making cross-platform projects, note that the ENTER
-        key is commonly used on PCs and Unix, while the RETURN key is used on Macs. Make
-        sure your program will work on all platforms by checking for both ENTER and
-        RETURN.
+        The keys included in the ASCII specification (``BACKSPACE``, ``TAB``, ``ENTER``,
+        ``RETURN``, ``ESC``, and ``DELETE``) do not require checking to see if the key
+        is coded; for those keys, you should simply use the :doc:`key` variable directly
+        (and not ``key_code``).  If you're making cross-platform projects, note that the
+        ``ENTER`` key is commonly used on PCs and Unix, while the ``RETURN`` key is used
+        on Macs. Make sure your program will work on all platforms by checking for both
+        ``ENTER`` and ``RETURN``.
 
-        For those familiar with Java, the values for UP and DOWN are simply shorter
-        versions of Java's ``key_event.VK_UP`` and ``key_event.VK_DOWN``. Other
+        For those familiar with Java, the values for ``UP`` and ``DOWN`` are simply
+        shorter versions of Java's ``key_event.VK_UP`` and ``key_event.VK_DOWN``. Other
         ``key_code`` values can be found in the Java KeyEvent reference.
 
         There are issues with how ``key_code`` behaves across different renderers and
@@ -940,7 +972,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         operating systems and you are using keys are aren't mentioned in this reference
         entry.
 
-        If you are using P2D or P3D as your renderer, use the NEWT KeyEvent constants.
+        If you are using ``P2D`` or ``P3D`` as your renderer, use the ``NEWT`` KeyEvent
+        constants.
         """
         return self._instance.keyCode
     key_code: int = property(fget=_get_key_code)
@@ -960,7 +993,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         on which button is pressed. (If no button is pressed, ``mouse_button`` may be
         reset to ``0``. For that reason, it's best to use ``mouse_pressed`` first to
         test if any button is being pressed, and only then test the value of
-        ``mouse_button``, as shown in the examples above.)
+        ``mouse_button``, as shown in the examples.)
         """
         return self._instance.mouseButton
     mouse_button: int = property(fget=_get_mouse_button)
@@ -977,10 +1010,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The system variable ``mouse_x`` always contains the current horizontal
         coordinate of the mouse.
 
-        Note that Processing can only track the mouse position when the pointer is over
-        the current window. The default value of ``mouse_x`` is ``0``, so ``0`` will be
-        returned until the mouse moves in front of the sketch window. (This typically
-        happens when a sketch is first run.)  Once the mouse moves away from the window,
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``mouse_x`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
         ``mouse_x`` will continue to report its most recent position.
         """
         return self._instance.mouseX
@@ -998,10 +1031,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The system variable ``mouse_y`` always contains the current vertical coordinate
         of the mouse.
 
-        Note that Processing can only track the mouse position when the pointer is over
-        the current window. The default value of ``mouse_y`` is ``0``, so ``0`` will be
-        returned until the mouse moves in front of the sketch window. (This typically
-        happens when a sketch is first run.)  Once the mouse moves away from the window,
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``mouse_y`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
         ``mouse_y`` will continue to report its most recent position.
         """
         return self._instance.mouseY
@@ -1009,8 +1042,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def _get_pixel_height(self) -> int:
         """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled.
 
         Underlying Java field: PApplet.pixelHeight
 
@@ -1018,22 +1051,22 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled. As
-        a result, all operations that use pixels (like ``load_pixels()``, ``get()``,
-        ``set()``, etc.) happen in this doubled space. As a convenience, the variables
-        ``pixel_width`` and ``pixel_height`` hold the actual width and height of the
-        sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
-        array, for instance, because the number of elements in the array will be
-        ``pixel_width*pixel_height``, not ``width*height``.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled. As a
+        result, all operations that use pixels (like :doc:`load_pixels`, :doc:`get`,
+        etc.) happen in this doubled space. As a convenience, the variables
+        :doc:`pixel_width` and ``pixel_height`` hold the actual width and height of the
+        Sketch in pixels. This is useful for any Sketch that use the :doc:`pixels` or
+        :doc:`np_pixels` arrays, for instance, because the number of elements in each
+        array will be ``pixel_width*pixel_height``, not ``width*height``.
         """
         return self._instance.pixelHeight
     pixel_height: int = property(fget=_get_pixel_height)
 
     def _get_pixel_width(self) -> int:
         """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled.
 
         Underlying Java field: PApplet.pixelWidth
 
@@ -1041,14 +1074,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OS X or high-dpi on Windows and Linux), the width
-        and height of the sketch do not change, but the number of pixels is doubled. As
-        a result, all operations that use pixels (like ``load_pixels()``, ``get()``,
-        ``set()``, etc.) happen in this doubled space. As a convenience, the variables
-        ``pixel_width`` and ``pixel_height`` hold the actual width and height of the
-        sketch in pixels. This is useful for any sketch that uses the ``pixels[]``
-        array, for instance, because the number of elements in the array will be
-        ``pixel_width*pixel_height``, not ``width*height``.
+        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
+        height of the Sketch do not change, but the number of pixels is doubled. As a
+        result, all operations that use pixels (like :doc:`load_pixels`, :doc:`get`,
+        etc.) happen in this doubled space. As a convenience, the variables
+        ``pixel_width`` and :doc:`pixel_height` hold the actual width and height of the
+        Sketch in pixels. This is useful for any Sketch that use the :doc:`pixels` or
+        :doc:`np_pixels` arrays, for instance, because the number of elements in each
+        array will be ``pixel_width*pixel_height``, not ``width*height``.
         """
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
@@ -1067,15 +1100,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         size of the display window. For example, if the window is 100 x 100 pixels,
         there will be 10,000 values and if the window is 200 x 300 pixels, there will be
         60,000 values. When the pixel density is set to higher than 1 with the
-        ``pixel_density()`` function, these values will change. See the reference for
-        ``pixel_width`` or ``pixel_height`` for more information.
+        :doc:`pixel_density` function, these values will change. See the reference for
+        :doc:`pixel_width` or :doc:`pixel_height` for more information.
 
-        Before accessing this array, the data must loaded with the ``load_pixels()``
-        function. Failure to do so may result in a NullPointerException. Subsequent
-        changes to the display window will not be reflected in ``pixels`` until
-        ``load_pixels()`` is called again. After ``pixels`` has been modified, the
-        ``update_pixels()`` function must be run to update the content of the display
-        window.
+        Before accessing this array, the data must loaded with the :doc:`load_pixels`
+        function. Failure to do so may result in a Java ``NullPointerException``.
+        Subsequent changes to the display window will not be reflected in ``pixels``
+        until :doc:`load_pixels` is called again. After ``pixels`` has been modified,
+        the :doc:`update_pixels` function must be run to update the content of the
+        display window.
         """
         return self._instance.pixels
     pixels: JArray(JInt) = property(fget=_get_pixels)
@@ -1092,20 +1125,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The system variable ``pmouse_x`` always contains the horizontal position of the
         mouse in the frame previous to the current frame.
 
-        You may find that ``pmouse_x`` and ``pmouse_y`` have different values when
+        You may find that ``pmouse_x`` and :doc:`pmouse_y` have different values when
         referenced inside of ``draw()`` and inside of mouse events like
         ``mouse_pressed()`` and ``mouse_moved()``. Inside ``draw()``, ``pmouse_x`` and
-        ``pmouse_y`` update only once per frame (once per trip through the ``draw()``
+        :doc:`pmouse_y` update only once per frame (once per trip through the ``draw()``
         loop). But inside mouse events, they update each time the event is called. If
         these values weren't updated immediately during mouse events, then the mouse
         position would be read only once per frame, resulting in slight delays and
         choppy interaction. If the mouse variables were always updated multiple times
         per frame, then something like ``line(pmouse_x, pmouse_y, mouse_x, mouse_y)``
         inside ``draw()`` would have lots of gaps, because ``pmouse_x`` may have changed
-        several times in between the calls to ``line()``.
+        several times in between the calls to :doc:`line`.
+
         If you want values relative to the previous frame, use ``pmouse_x`` and
-        ``pmouse_y`` inside ``draw()``. If you want continuous response, use
-        ``pmouse_x`` and ``pmouse_y`` inside the mouse event functions.
+        :doc:`pmouse_y` inside ``draw()``. If you want continuous response, use
+        ``pmouse_x`` and :doc:`pmouse_y` inside the mouse event functions.
         """
         return self._instance.pmouseX
     pmouse_x: int = property(fget=_get_pmouse_x)
@@ -1123,7 +1157,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         mouse in the frame previous to the current frame.
 
         For more detail on how ``pmouse_y`` is updated inside of mouse events and
-        ``draw()``, see the reference for ``pmouse_x``.
+        ``draw()``, see the reference for :doc:`pmouse_x`.
         """
         return self._instance.pmouseY
     pmouse_y: int = property(fget=_get_pmouse_y)
@@ -1137,15 +1171,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         System variable that stores the width of the display window. This value is set
-        by the first parameter of the ``size()`` function. For example, the function
+        by the first parameter of the :doc:`size` function. For example, the function
         call ``size(320, 240)`` sets the ``width`` variable to the value 320. The value
-        of ``width`` defaults to 100 if ``size()`` is not used in a program.
+        of ``width`` defaults to 100 if :doc:`size` is not used in a program.
         """
         return self._instance.width
     width: int = property(fget=_get_width)
 
     def alpha(self, rgb: int, /) -> float:
-        """Extracts the alpha value from a color.
+        """Extracts the alpha value from a color, scaled to match current
+        :doc:`color_mode`.
 
         Underlying Java method: PApplet.alpha
 
@@ -1158,7 +1193,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Extracts the alpha value from a color.
+        Extracts the alpha value from a color, scaled to match current
+        :doc:`color_mode`. The value is always returned as a float, so be careful not to
+        assign it to an int value.
+
+        The ``alpha()`` function is easy to use and understand, but it is slower than a
+        technique called bit shifting. When working in ``color_mode(RGB, 255)``, you can
+        achieve the same results as ``alpha()`` but with greater speed by using the
+        right shift operator (``>>``) with a bit mask. For example, ``alpha(c)`` and ``c
+        >> 24 & 0xFF`` both extract the alpha value from a color variable ``c`` but the
+        later is faster.
         """
         return self._instance.alpha(rgb)
 
@@ -1201,10 +1245,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the ambient reflectance for shapes drawn to the screen. This is combined
         with the ambient light component of environment. The color components set
         through the parameters define the reflectance. For example in the default color
-        mode, setting v1=255, v2=127, v3=0, would cause all the red light to reflect and
-        half of the green light to reflect. Used in combination with ``emissive()``,
-        ``specular()``, and ``shininess()`` in setting the material properties of
-        shapes.
+        mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
+        and half of the green light to reflect. Used in combination with
+        :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
+        properties of shapes.
         """
         pass
 
@@ -1247,10 +1291,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the ambient reflectance for shapes drawn to the screen. This is combined
         with the ambient light component of environment. The color components set
         through the parameters define the reflectance. For example in the default color
-        mode, setting v1=255, v2=127, v3=0, would cause all the red light to reflect and
-        half of the green light to reflect. Used in combination with ``emissive()``,
-        ``specular()``, and ``shininess()`` in setting the material properties of
-        shapes.
+        mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
+        and half of the green light to reflect. Used in combination with
+        :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
+        properties of shapes.
         """
         pass
 
@@ -1293,10 +1337,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the ambient reflectance for shapes drawn to the screen. This is combined
         with the ambient light component of environment. The color components set
         through the parameters define the reflectance. For example in the default color
-        mode, setting v1=255, v2=127, v3=0, would cause all the red light to reflect and
-        half of the green light to reflect. Used in combination with ``emissive()``,
-        ``specular()``, and ``shininess()`` in setting the material properties of
-        shapes.
+        mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
+        and half of the green light to reflect. Used in combination with
+        :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
+        properties of shapes.
         """
         pass
 
@@ -1338,10 +1382,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the ambient reflectance for shapes drawn to the screen. This is combined
         with the ambient light component of environment. The color components set
         through the parameters define the reflectance. For example in the default color
-        mode, setting v1=255, v2=127, v3=0, would cause all the red light to reflect and
-        half of the green light to reflect. Used in combination with ``emissive()``,
-        ``specular()``, and ``shininess()`` in setting the material properties of
-        shapes.
+        mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
+        and half of the green light to reflect. Used in combination with
+        :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
+        properties of shapes.
         """
         return self._instance.ambient(*args)
 
@@ -1389,8 +1433,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         lights. Lights need to be included in the ``draw()`` to remain persistent in a
         looping program. Placing them in the ``setup()`` of a looping program will cause
         them to only have an effect the first time through the loop. The ``v1``, ``v2``,
-        and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
-        the current color mode.
+        and ``v3`` parameters are interpreted as either ``RGB`` or ``HSB`` values,
+        depending on the current color mode.
         """
         pass
 
@@ -1439,8 +1483,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         lights. Lights need to be included in the ``draw()`` to remain persistent in a
         looping program. Placing them in the ``setup()`` of a looping program will cause
         them to only have an effect the first time through the loop. The ``v1``, ``v2``,
-        and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
-        the current color mode.
+        and ``v3`` parameters are interpreted as either ``RGB`` or ``HSB`` values,
+        depending on the current color mode.
         """
         pass
 
@@ -1487,8 +1531,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         lights. Lights need to be included in the ``draw()`` to remain persistent in a
         looping program. Placing them in the ``setup()`` of a looping program will cause
         them to only have an effect the first time through the loop. The ``v1``, ``v2``,
-        and ``v3`` parameters are interpreted as either RGB or HSB values, depending on
-        the current color mode.
+        and ``v3`` parameters are interpreted as either ``RGB`` or ``HSB`` values,
+        depending on the current color mode.
         """
         return self._instance.ambientLight(*args)
 
@@ -1956,7 +2000,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the arc's ellipse by default
 
         mode: int
-            missing variable description
+            arc drawing mode
 
         start: float
             angle to start the arc, specified in radians
@@ -1969,19 +2013,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws an arc to the screen. Arcs are drawn along the outer edge of an ellipse
         defined by the ``a``, ``b``, ``c``, and ``d`` parameters. The origin of the
-        arc's ellipse may be changed with the ``ellipse_mode()`` function. Use the
+        arc's ellipse may be changed with the :doc:`ellipse_mode` function. Use the
         ``start`` and ``stop`` parameters to specify the angles (in radians) at which to
         draw the arc. The start/stop values must be in clockwise order.
 
         There are three ways to draw an arc; the rendering technique used is defined by
-        the optional seventh parameter. The three options, depicted in the above
-        examples, are PIE, OPEN, and CHORD. The default mode is the OPEN stroke with a
-        PIE fill.
+        the optional seventh parameter. The three options, depicted in the examples, are
+        ``PIE``, ``OPEN``, and ``CHORD``. The default mode is the ``OPEN`` stroke with a
+        ``PIE`` fill.
 
         In some cases, the ``arc()`` function isn't accurate enough for smooth drawing.
         For example, the shape may jitter on screen when rotating slowly. If you're
         having an issue with how arcs are rendered, you'll need to draw the arc yourself
-        with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
+        with :doc:`begin_shape` & :doc:`end_shape` or a ``Py5Shape``.
         """
         pass
 
@@ -2016,7 +2060,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the arc's ellipse by default
 
         mode: int
-            missing variable description
+            arc drawing mode
 
         start: float
             angle to start the arc, specified in radians
@@ -2029,19 +2073,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws an arc to the screen. Arcs are drawn along the outer edge of an ellipse
         defined by the ``a``, ``b``, ``c``, and ``d`` parameters. The origin of the
-        arc's ellipse may be changed with the ``ellipse_mode()`` function. Use the
+        arc's ellipse may be changed with the :doc:`ellipse_mode` function. Use the
         ``start`` and ``stop`` parameters to specify the angles (in radians) at which to
         draw the arc. The start/stop values must be in clockwise order.
 
         There are three ways to draw an arc; the rendering technique used is defined by
-        the optional seventh parameter. The three options, depicted in the above
-        examples, are PIE, OPEN, and CHORD. The default mode is the OPEN stroke with a
-        PIE fill.
+        the optional seventh parameter. The three options, depicted in the examples, are
+        ``PIE``, ``OPEN``, and ``CHORD``. The default mode is the ``OPEN`` stroke with a
+        ``PIE`` fill.
 
         In some cases, the ``arc()`` function isn't accurate enough for smooth drawing.
         For example, the shape may jitter on screen when rotating slowly. If you're
         having an issue with how arcs are rendered, you'll need to draw the arc yourself
-        with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
+        with :doc:`begin_shape` & :doc:`end_shape` or a ``Py5Shape``.
         """
         pass
 
@@ -2074,7 +2118,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             height of the arc's ellipse by default
 
         mode: int
-            missing variable description
+            arc drawing mode
 
         start: float
             angle to start the arc, specified in radians
@@ -2087,26 +2131,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws an arc to the screen. Arcs are drawn along the outer edge of an ellipse
         defined by the ``a``, ``b``, ``c``, and ``d`` parameters. The origin of the
-        arc's ellipse may be changed with the ``ellipse_mode()`` function. Use the
+        arc's ellipse may be changed with the :doc:`ellipse_mode` function. Use the
         ``start`` and ``stop`` parameters to specify the angles (in radians) at which to
         draw the arc. The start/stop values must be in clockwise order.
 
         There are three ways to draw an arc; the rendering technique used is defined by
-        the optional seventh parameter. The three options, depicted in the above
-        examples, are PIE, OPEN, and CHORD. The default mode is the OPEN stroke with a
-        PIE fill.
+        the optional seventh parameter. The three options, depicted in the examples, are
+        ``PIE``, ``OPEN``, and ``CHORD``. The default mode is the ``OPEN`` stroke with a
+        ``PIE`` fill.
 
         In some cases, the ``arc()`` function isn't accurate enough for smooth drawing.
         For example, the shape may jitter on screen when rotating slowly. If you're
         having an issue with how arcs are rendered, you'll need to draw the arc yourself
-        with ``begin_shape()``/``end_shape()`` or a ``Py5Shape``.
+        with :doc:`begin_shape` & :doc:`end_shape` or a ``Py5Shape``.
         """
         return self._instance.arc(*args)
 
     @overload
     def background(self, gray: float, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2133,7 +2177,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2150,27 +2194,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @overload
     def background(self, gray: float, alpha: float, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2197,7 +2241,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2214,27 +2258,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @overload
     def background(self, v1: float, v2: float, v3: float, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2261,7 +2305,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2278,28 +2322,28 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @overload
     def background(self, v1: float, v2: float,
                    v3: float, alpha: float, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2326,7 +2370,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2343,27 +2387,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @overload
     def background(self, rgb: int, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2390,7 +2434,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2407,27 +2451,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @overload
     def background(self, rgb: int, alpha: float, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2454,7 +2498,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2471,27 +2515,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @overload
     def background(self, image: Py5Image, /) -> None:
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2518,7 +2562,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2535,27 +2579,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         pass
 
     @_auto_convert_to_py5image
     def background(self, *args):
-        """The ``background()`` function sets the color used for the background of the
-        Processing window.
+        """The ``background()`` function sets the color used for the background of the py5
+        window.
 
         Underlying Java method: PApplet.background
 
@@ -2582,7 +2626,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             specifies a value between white and black
 
         image: Py5Image
-            PImage to set as background (must be same size as the sketch window)
+            Py5Image to set as background (must be same size as the Sketch window)
 
         rgb: int
             any value of the color datatype
@@ -2599,25 +2643,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``background()`` function sets the color used for the background of the
-        Processing window. The default background is light gray. This function is
-        typically used within ``draw()`` to clear the display window at the beginning of
-        each frame, but it can be used inside ``setup()`` to set the background on the
-        first frame of animation or if the backgound need only be set once.
+        The ``background()`` function sets the color used for the background of the py5
+        window. The default background is light gray. This function is typically used
+        within ``draw()`` to clear the display window at the beginning of each frame,
+        but it can be used inside ``setup()`` to set the background on the first frame
+        of animation or if the backgound need only be set once.
 
-        An image can also be used as the background for a sketch, although the image's
-        width and height must match that of the sketch window. Images used with
-        ``background()`` will ignore the current ``tint()`` setting. To resize an image
-        to the size of the sketch window, use image.resize(width, height).
+        An image can also be used as the background for a Sketch, although the image's
+        width and height must match that of the Sketch window. Images used with
+        ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+        to the size of the Sketch window, use ``image.resize(width, height)``.
 
         It is not possible to use the transparency ``alpha`` parameter with background
         colors on the main drawing surface. It can only be used along with a
-        ``Py5Graphics`` object and ``create_graphics()``.
+        ``Py5Graphics`` object and :doc:`create_graphics`.
         """
         return self._instance.background(*args)
 
     def begin_camera(self) -> None:
-        """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
+        """The ``begin_camera()`` and :doc:`end_camera` functions enable advanced
         customization of the camera space.
 
         Underlying Java method: PApplet.beginCamera
@@ -2625,25 +2669,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``begin_camera()`` and ``end_camera()`` functions enable advanced
+        The ``begin_camera()`` and :doc:`end_camera` functions enable advanced
         customization of the camera space. The functions are useful if you want to more
-        control over camera movement, however for most users, the ``camera()`` function
-        will be sufficient.The camera functions will replace any transformations (such
-        as ``rotate()`` or ``translate()``) that occur before them in ``draw()``, but
+        control over camera movement, however for most users, the :doc:`camera` function
+        will be sufficient. The camera functions will replace any transformations (such
+        as :doc:`rotate` or :doc:`translate`) that occur before them in ``draw()``, but
         they will not automatically replace the camera transform itself. For this
         reason, camera functions should be placed at the beginning of ``draw()`` (so
-        that transformations happen afterwards), and the ``camera()`` function can be
+        that transformations happen afterwards), and the :doc:`camera` function can be
         used after ``begin_camera()`` if you want to reset the camera before applying
-        transformations.This function sets the matrix mode to the camera matrix so calls
-        such as ``translate()``, ``rotate()``, ``apply_matrix()`` and ``reset_matrix()``
+        transformations.
+
+        This function sets the matrix mode to the camera matrix so calls such as
+        :doc:`translate`, :doc:`rotate`, :doc:`apply_matrix` and :doc:`reset_matrix`
         affect the camera. ``begin_camera()`` should always be used with a following
-        ``end_camera()`` and pairs of ``begin_camera()`` and ``end_camera()`` cannot be
-        nested.
+        :doc:`end_camera` and pairs of ``begin_camera()`` and :doc:`end_camera` cannot
+        be nested.
         """
         return self._instance.beginCamera()
 
     def begin_contour(self) -> None:
-        """Use the ``begin_contour()`` and ``end_contour()`` function to create negative
+        """Use the ``begin_contour()`` and :doc:`end_contour` function to create negative
         shapes within shapes such as the center of the letter 'O'.
 
         Underlying Java method: PApplet.beginContour
@@ -2651,23 +2697,24 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Use the ``begin_contour()`` and ``end_contour()`` function to create negative
+        Use the ``begin_contour()`` and :doc:`end_contour` function to create negative
         shapes within shapes such as the center of the letter 'O'. ``begin_contour()``
-        begins recording vertices for the shape and ``end_contour()`` stops recording.
+        begins recording vertices for the shape and :doc:`end_contour` stops recording.
         The vertices that define a negative shape must "wind" in the opposite direction
         from the exterior shape. First draw vertices for the exterior shape in clockwise
         order, then for internal shapes, draw vertices counterclockwise.
 
-        These functions can only be used within a ``begin_shape()``/``end_shape()`` pair
-        and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
-        not work within a ``begin_contour()``/``end_contour()`` pair. It is also not
-        possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
+        These functions can only be used within a :doc:`begin_shape` & :doc:`end_shape`
+        pair and transformations such as :doc:`translate`, :doc:`rotate`, and
+        :doc:`scale` do not work within a ``begin_contour()`` & :doc:`end_contour` pair.
+        It is also not possible to use other shapes, such as :doc:`ellipse` or
+        :doc:`rect` within.
         """
         return self._instance.beginContour()
 
     @overload
     def begin_raw(self, renderer: str, filename: str, /) -> Py5Graphics:
-        """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
+        """To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
         commands.
 
         Underlying Java method: PApplet.beginRaw
@@ -2687,7 +2734,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             filename for output
 
         raw_graphics: Py5Graphics
-            ???
+            Py5Graphics object to apply draw commands to
 
         renderer: str
             for example, PDF or DXF
@@ -2695,34 +2742,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
+        To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
         commands. These commands will grab the shape data just before it is rendered to
         the screen. At this stage, your entire scene is nothing but a long list of
         individual lines and triangles. This means that a shape created with
-        ``sphere()`` function will be made up of hundreds of triangles, rather than a
+        :doc:`sphere` function will be made up of hundreds of triangles, rather than a
         single object. Or that a multi-segment line shape (such as a curve) will be
         rendered as individual segments.
 
-        When using ``begin_raw()`` and ``end_raw()``, it's possible to write to either a
-        2D or 3D renderer. For instance, ``begin_raw()`` with the PDF library will write
-        the geometry as flattened triangles and lines, even if recording from the
+        When using ``begin_raw()`` and :doc:`end_raw`, it's possible to write to either
+        a 2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
+        write the geometry as flattened triangles and lines, even if recording from the
         ``P3D`` renderer.
 
         If you want a background to show up in your files, use ``rect(0, 0, width,
-        height)`` after setting the ``fill()`` to the background color. Otherwise the
+        height)`` after setting the :doc:`fill` to the background color. Otherwise the
         background will not be rendered to the file because the background is not shape.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
-
-        See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
-        information.
         """
         pass
 
     @overload
     def begin_raw(self, raw_graphics: Py5Graphics, /) -> None:
-        """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
+        """To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
         commands.
 
         Underlying Java method: PApplet.beginRaw
@@ -2742,7 +2786,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             filename for output
 
         raw_graphics: Py5Graphics
-            ???
+            Py5Graphics object to apply draw commands to
 
         renderer: str
             for example, PDF or DXF
@@ -2750,34 +2794,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
+        To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
         commands. These commands will grab the shape data just before it is rendered to
         the screen. At this stage, your entire scene is nothing but a long list of
         individual lines and triangles. This means that a shape created with
-        ``sphere()`` function will be made up of hundreds of triangles, rather than a
+        :doc:`sphere` function will be made up of hundreds of triangles, rather than a
         single object. Or that a multi-segment line shape (such as a curve) will be
         rendered as individual segments.
 
-        When using ``begin_raw()`` and ``end_raw()``, it's possible to write to either a
-        2D or 3D renderer. For instance, ``begin_raw()`` with the PDF library will write
-        the geometry as flattened triangles and lines, even if recording from the
+        When using ``begin_raw()`` and :doc:`end_raw`, it's possible to write to either
+        a 2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
+        write the geometry as flattened triangles and lines, even if recording from the
         ``P3D`` renderer.
 
         If you want a background to show up in your files, use ``rect(0, 0, width,
-        height)`` after setting the ``fill()`` to the background color. Otherwise the
+        height)`` after setting the :doc:`fill` to the background color. Otherwise the
         background will not be rendered to the file because the background is not shape.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
-
-        See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
-        information.
         """
         pass
 
     @_return_py5graphics
     def begin_raw(self, *args):
-        """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
+        """To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
         commands.
 
         Underlying Java method: PApplet.beginRaw
@@ -2797,7 +2838,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             filename for output
 
         raw_graphics: Py5Graphics
-            ???
+            Py5Graphics object to apply draw commands to
 
         renderer: str
             for example, PDF or DXF
@@ -2805,28 +2846,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
+        To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
         commands. These commands will grab the shape data just before it is rendered to
         the screen. At this stage, your entire scene is nothing but a long list of
         individual lines and triangles. This means that a shape created with
-        ``sphere()`` function will be made up of hundreds of triangles, rather than a
+        :doc:`sphere` function will be made up of hundreds of triangles, rather than a
         single object. Or that a multi-segment line shape (such as a curve) will be
         rendered as individual segments.
 
-        When using ``begin_raw()`` and ``end_raw()``, it's possible to write to either a
-        2D or 3D renderer. For instance, ``begin_raw()`` with the PDF library will write
-        the geometry as flattened triangles and lines, even if recording from the
+        When using ``begin_raw()`` and :doc:`end_raw`, it's possible to write to either
+        a 2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
+        write the geometry as flattened triangles and lines, even if recording from the
         ``P3D`` renderer.
 
         If you want a background to show up in your files, use ``rect(0, 0, width,
-        height)`` after setting the ``fill()`` to the background color. Otherwise the
+        height)`` after setting the :doc:`fill` to the background color. Otherwise the
         background will not be rendered to the file because the background is not shape.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
-
-        See examples in the reference for the ``PDF`` and ``DXF`` libraries for more
-        information.
         """
         return self._instance.beginRaw(*args)
 
@@ -2852,7 +2890,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             filename for output
 
         recorder: Py5Graphics
-            missing variable description
+            Py5Graphics object to record drawing commands to
 
         renderer: str
             PDF or SVG
@@ -2863,15 +2901,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window. The ``begin_record()`` function requires two
         parameters, the first is the renderer and the second is the file name. This
-        function is always used with ``end_record()`` to stop the recording process and
+        function is always used with :doc:`end_record` to stop the recording process and
         close the file.
 
         Note that ``begin_record()`` will only pick up any settings that happen after it
-        has been called. For instance, if you call ``text_font()`` before
+        has been called. For instance, if you call :doc:`text_font` before
         ``begin_record()``, then that font will not be set for the file that you're
         recording to.
 
-        ``begin_record()`` works only with the PDF and SVG renderers.
+        ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
         """
         pass
 
@@ -2897,7 +2935,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             filename for output
 
         recorder: Py5Graphics
-            missing variable description
+            Py5Graphics object to record drawing commands to
 
         renderer: str
             PDF or SVG
@@ -2908,15 +2946,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window. The ``begin_record()`` function requires two
         parameters, the first is the renderer and the second is the file name. This
-        function is always used with ``end_record()`` to stop the recording process and
+        function is always used with :doc:`end_record` to stop the recording process and
         close the file.
 
         Note that ``begin_record()`` will only pick up any settings that happen after it
-        has been called. For instance, if you call ``text_font()`` before
+        has been called. For instance, if you call :doc:`text_font` before
         ``begin_record()``, then that font will not be set for the file that you're
         recording to.
 
-        ``begin_record()`` works only with the PDF and SVG renderers.
+        ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
         """
         pass
 
@@ -2942,7 +2980,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             filename for output
 
         recorder: Py5Graphics
-            missing variable description
+            Py5Graphics object to record drawing commands to
 
         renderer: str
             PDF or SVG
@@ -2953,21 +2991,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window. The ``begin_record()`` function requires two
         parameters, the first is the renderer and the second is the file name. This
-        function is always used with ``end_record()`` to stop the recording process and
+        function is always used with :doc:`end_record` to stop the recording process and
         close the file.
 
         Note that ``begin_record()`` will only pick up any settings that happen after it
-        has been called. For instance, if you call ``text_font()`` before
+        has been called. For instance, if you call :doc:`text_font` before
         ``begin_record()``, then that font will not be set for the file that you're
         recording to.
 
-        ``begin_record()`` works only with the PDF and SVG renderers.
+        ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
         """
         return self._instance.beginRecord(*args)
 
     @overload
     def begin_shape(self) -> None:
-        """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
+        """Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
         complex forms.
 
         Underlying Java method: PApplet.beginShape
@@ -2989,33 +3027,34 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
+        Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
         complex forms. ``begin_shape()`` begins recording vertices for a shape and
-        ``end_shape()`` stops recording. The value of the ``kind`` parameter tells it
+        :doc:`end_shape` stops recording. The value of the ``kind`` parameter tells it
         which types of shapes to create from the provided vertices. With no mode
         specified, the shape can be any irregular polygon. The parameters available for
-        ``begin_shape()`` are POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP,
-        QUADS, and QUAD_STRIP. After calling the ``begin_shape()`` function, a series of
-        ``vertex()`` commands must follow. To stop drawing the shape, call
-        ``end_shape()``. The ``vertex()`` function with two parameters specifies a
-        position in 2D and the ``vertex()`` function with three parameters specifies a
-        position in 3D. Each shape will be outlined with the current stroke color and
-        filled with the fill color.
+        ``begin_shape()`` are ``POINTS``, ``LINES``, ``TRIANGLES``, ``TRIANGLE_FAN``,
+        ``TRIANGLE_STRIP``, ``QUADS``, and ``QUAD_STRIP``. After calling the
+        ``begin_shape()`` function, a series of :doc:`vertex` commands must follow. To
+        stop drawing the shape, call :doc:`end_shape`. The :doc:`vertex` function with
+        two parameters specifies a position in 2D and the :doc:`vertex` function with
+        three parameters specifies a position in 3D. Each shape will be outlined with
+        the current stroke color and filled with the fill color.
 
-        Transformations such as ``translate()``, ``rotate()``, and ``scale()`` do not
+        Transformations such as :doc:`translate`, :doc:`rotate`, and :doc:`scale` do not
         work within ``begin_shape()``. It is also not possible to use other shapes, such
-        as ``ellipse()`` or ``rect()`` within ``begin_shape()``.
+        as :doc:`ellipse` or :doc:`rect` within ``begin_shape()``.
 
-        The P2D and P3D renderers allow ``stroke()`` and ``fill()`` to be altered on a
-        per-vertex basis, but the default renderer does not. Settings such as
-        ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
-        while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
+        The ``P2D`` and ``P3D`` renderers allow :doc:`stroke` and :doc:`fill` to be
+        altered on a per-vertex basis, but the default renderer does not. Settings such
+        as :doc:`stroke_weight`, :doc:`stroke_cap`, and :doc:`stroke_join` cannot be
+        changed while inside a ``begin_shape()`` & :doc:`end_shape` block with any
+        renderer.
         """
         pass
 
     @overload
     def begin_shape(self, kind: int, /) -> None:
-        """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
+        """Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
         complex forms.
 
         Underlying Java method: PApplet.beginShape
@@ -3037,32 +3076,33 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
+        Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
         complex forms. ``begin_shape()`` begins recording vertices for a shape and
-        ``end_shape()`` stops recording. The value of the ``kind`` parameter tells it
+        :doc:`end_shape` stops recording. The value of the ``kind`` parameter tells it
         which types of shapes to create from the provided vertices. With no mode
         specified, the shape can be any irregular polygon. The parameters available for
-        ``begin_shape()`` are POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP,
-        QUADS, and QUAD_STRIP. After calling the ``begin_shape()`` function, a series of
-        ``vertex()`` commands must follow. To stop drawing the shape, call
-        ``end_shape()``. The ``vertex()`` function with two parameters specifies a
-        position in 2D and the ``vertex()`` function with three parameters specifies a
-        position in 3D. Each shape will be outlined with the current stroke color and
-        filled with the fill color.
+        ``begin_shape()`` are ``POINTS``, ``LINES``, ``TRIANGLES``, ``TRIANGLE_FAN``,
+        ``TRIANGLE_STRIP``, ``QUADS``, and ``QUAD_STRIP``. After calling the
+        ``begin_shape()`` function, a series of :doc:`vertex` commands must follow. To
+        stop drawing the shape, call :doc:`end_shape`. The :doc:`vertex` function with
+        two parameters specifies a position in 2D and the :doc:`vertex` function with
+        three parameters specifies a position in 3D. Each shape will be outlined with
+        the current stroke color and filled with the fill color.
 
-        Transformations such as ``translate()``, ``rotate()``, and ``scale()`` do not
+        Transformations such as :doc:`translate`, :doc:`rotate`, and :doc:`scale` do not
         work within ``begin_shape()``. It is also not possible to use other shapes, such
-        as ``ellipse()`` or ``rect()`` within ``begin_shape()``.
+        as :doc:`ellipse` or :doc:`rect` within ``begin_shape()``.
 
-        The P2D and P3D renderers allow ``stroke()`` and ``fill()`` to be altered on a
-        per-vertex basis, but the default renderer does not. Settings such as
-        ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
-        while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
+        The ``P2D`` and ``P3D`` renderers allow :doc:`stroke` and :doc:`fill` to be
+        altered on a per-vertex basis, but the default renderer does not. Settings such
+        as :doc:`stroke_weight`, :doc:`stroke_cap`, and :doc:`stroke_join` cannot be
+        changed while inside a ``begin_shape()`` & :doc:`end_shape` block with any
+        renderer.
         """
         pass
 
     def begin_shape(self, *args):
-        """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
+        """Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
         complex forms.
 
         Underlying Java method: PApplet.beginShape
@@ -3084,27 +3124,28 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
+        Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
         complex forms. ``begin_shape()`` begins recording vertices for a shape and
-        ``end_shape()`` stops recording. The value of the ``kind`` parameter tells it
+        :doc:`end_shape` stops recording. The value of the ``kind`` parameter tells it
         which types of shapes to create from the provided vertices. With no mode
         specified, the shape can be any irregular polygon. The parameters available for
-        ``begin_shape()`` are POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP,
-        QUADS, and QUAD_STRIP. After calling the ``begin_shape()`` function, a series of
-        ``vertex()`` commands must follow. To stop drawing the shape, call
-        ``end_shape()``. The ``vertex()`` function with two parameters specifies a
-        position in 2D and the ``vertex()`` function with three parameters specifies a
-        position in 3D. Each shape will be outlined with the current stroke color and
-        filled with the fill color.
+        ``begin_shape()`` are ``POINTS``, ``LINES``, ``TRIANGLES``, ``TRIANGLE_FAN``,
+        ``TRIANGLE_STRIP``, ``QUADS``, and ``QUAD_STRIP``. After calling the
+        ``begin_shape()`` function, a series of :doc:`vertex` commands must follow. To
+        stop drawing the shape, call :doc:`end_shape`. The :doc:`vertex` function with
+        two parameters specifies a position in 2D and the :doc:`vertex` function with
+        three parameters specifies a position in 3D. Each shape will be outlined with
+        the current stroke color and filled with the fill color.
 
-        Transformations such as ``translate()``, ``rotate()``, and ``scale()`` do not
+        Transformations such as :doc:`translate`, :doc:`rotate`, and :doc:`scale` do not
         work within ``begin_shape()``. It is also not possible to use other shapes, such
-        as ``ellipse()`` or ``rect()`` within ``begin_shape()``.
+        as :doc:`ellipse` or :doc:`rect` within ``begin_shape()``.
 
-        The P2D and P3D renderers allow ``stroke()`` and ``fill()`` to be altered on a
-        per-vertex basis, but the default renderer does not. Settings such as
-        ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be changed
-        while inside a ``begin_shape()``/``end_shape()`` block with any renderer.
+        The ``P2D`` and ``P3D`` renderers allow :doc:`stroke` and :doc:`fill` to be
+        altered on a per-vertex basis, but the default renderer does not. Settings such
+        as :doc:`stroke_weight`, :doc:`stroke_cap`, and :doc:`stroke_join` cannot be
+        changed while inside a ``begin_shape()`` & :doc:`end_shape` block with any
+        renderer.
         """
         return self._instance.beginShape(*args)
 
@@ -3170,7 +3211,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         point and the last two parameters specify the other anchor point. The middle
         parameters specify the control points which define the shape of the curve.
         Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
-        version requires rendering with P3D (see the Environment reference for more
+        version requires rendering with ``P3D`` (see the Environment reference for more
         information).
         """
         pass
@@ -3237,7 +3278,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         point and the last two parameters specify the other anchor point. The middle
         parameters specify the control points which define the shape of the curve.
         Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
-        version requires rendering with P3D (see the Environment reference for more
+        version requires rendering with ``P3D`` (see the Environment reference for more
         information).
         """
         pass
@@ -3302,7 +3343,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         point and the last two parameters specify the other anchor point. The middle
         parameters specify the control points which define the shape of the curve.
         Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
-        version requires rendering with P3D (see the Environment reference for more
+        version requires rendering with ``P3D`` (see the Environment reference for more
         information).
         """
         return self._instance.bezier(*args)
@@ -3444,11 +3485,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies vertex coordinates for Bezier curves. Each call to ``bezier_vertex()``
         defines the position of two control points and one anchor point of a Bezier
         curve, adding a new segment to a line or shape. The first time
-        ``bezier_vertex()`` is used within a ``begin_shape()`` call, it must be prefaced
-        with a call to ``vertex()`` to set the first anchor point. This function must be
-        used between ``begin_shape()`` and ``end_shape()`` and only when there is no
-        MODE parameter specified to ``begin_shape()``. Using the 3D version requires
-        rendering with P3D (see the Environment reference for more information).
+        ``bezier_vertex()`` is used within a :doc:`begin_shape` call, it must be
+        prefaced with a call to :doc:`vertex` to set the first anchor point. This
+        function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
+        when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
+        3D version requires rendering with ``P3D`` (see the Environment reference for
+        more information).
         """
         pass
 
@@ -3503,11 +3545,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies vertex coordinates for Bezier curves. Each call to ``bezier_vertex()``
         defines the position of two control points and one anchor point of a Bezier
         curve, adding a new segment to a line or shape. The first time
-        ``bezier_vertex()`` is used within a ``begin_shape()`` call, it must be prefaced
-        with a call to ``vertex()`` to set the first anchor point. This function must be
-        used between ``begin_shape()`` and ``end_shape()`` and only when there is no
-        MODE parameter specified to ``begin_shape()``. Using the 3D version requires
-        rendering with P3D (see the Environment reference for more information).
+        ``bezier_vertex()`` is used within a :doc:`begin_shape` call, it must be
+        prefaced with a call to :doc:`vertex` to set the first anchor point. This
+        function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
+        when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
+        3D version requires rendering with ``P3D`` (see the Environment reference for
+        more information).
         """
         pass
 
@@ -3560,11 +3603,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies vertex coordinates for Bezier curves. Each call to ``bezier_vertex()``
         defines the position of two control points and one anchor point of a Bezier
         curve, adding a new segment to a line or shape. The first time
-        ``bezier_vertex()`` is used within a ``begin_shape()`` call, it must be prefaced
-        with a call to ``vertex()`` to set the first anchor point. This function must be
-        used between ``begin_shape()`` and ``end_shape()`` and only when there is no
-        MODE parameter specified to ``begin_shape()``. Using the 3D version requires
-        rendering with P3D (see the Environment reference for more information).
+        ``bezier_vertex()`` is used within a :doc:`begin_shape` call, it must be
+        prefaced with a call to :doc:`vertex` to set the first anchor point. This
+        function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
+        when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
+        3D version requires rendering with ``P3D`` (see the Environment reference for
+        more information).
         """
         return self._instance.bezierVertex(*args)
 
@@ -3645,44 +3689,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         full alpha channel support. There is a choice of the following modes to blend
         the source pixels (A) with the ones of pixels in the destination image (B):
 
-        BLEND - linear interpolation of colors: C = A*factor + B
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest color succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest color succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - Multiply the colors, result will always be darker.
-
-        SCREEN - Opposite multiply, uses inverse values of the colors.
-
-        OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-        and screens light values.
-
-        HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-
-        SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-        Works like OVERLAY, but not as harsh.
-
-        DODGE - Lightens light tones and increases contrast, ignores darks.
-        Called "Color Dodge" in Illustrator and Photoshop.
-
-        BURN - Darker areas are applied, increasing contrast, ignores lights.
-        Called "Color Burn" in Illustrator and Photoshop.
+        * BLEND: linear interpolation of colors: ``C = A*factor + B``
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: Multiply the colors, result will always be darker.
+        * SCREEN: Opposite multiply, uses inverse values of the colors.
+        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        light values.
+        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
+        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
+        as harsh.
+        * DODGE: Lightens light tones and increases contrast, ignores darks. Called
+        "Color Dodge" in Illustrator and Photoshop.
+        * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
+        "Color Burn" in Illustrator and Photoshop.
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -3742,44 +3773,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         full alpha channel support. There is a choice of the following modes to blend
         the source pixels (A) with the ones of pixels in the destination image (B):
 
-        BLEND - linear interpolation of colors: C = A*factor + B
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest color succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest color succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - Multiply the colors, result will always be darker.
-
-        SCREEN - Opposite multiply, uses inverse values of the colors.
-
-        OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-        and screens light values.
-
-        HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-
-        SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-        Works like OVERLAY, but not as harsh.
-
-        DODGE - Lightens light tones and increases contrast, ignores darks.
-        Called "Color Dodge" in Illustrator and Photoshop.
-
-        BURN - Darker areas are applied, increasing contrast, ignores lights.
-        Called "Color Burn" in Illustrator and Photoshop.
+        * BLEND: linear interpolation of colors: ``C = A*factor + B``
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: Multiply the colors, result will always be darker.
+        * SCREEN: Opposite multiply, uses inverse values of the colors.
+        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        light values.
+        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
+        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
+        as harsh.
+        * DODGE: Lightens light tones and increases contrast, ignores darks. Called
+        "Color Dodge" in Illustrator and Photoshop.
+        * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
+        "Color Burn" in Illustrator and Photoshop.
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -3838,44 +3856,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         full alpha channel support. There is a choice of the following modes to blend
         the source pixels (A) with the ones of pixels in the destination image (B):
 
-        BLEND - linear interpolation of colors: C = A*factor + B
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest color succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest color succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - Multiply the colors, result will always be darker.
-
-        SCREEN - Opposite multiply, uses inverse values of the colors.
-
-        OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-        and screens light values.
-
-        HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-
-        SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-        Works like OVERLAY, but not as harsh.
-
-        DODGE - Lightens light tones and increases contrast, ignores darks.
-        Called "Color Dodge" in Illustrator and Photoshop.
-
-        BURN - Darker areas are applied, increasing contrast, ignores lights.
-        Called "Color Burn" in Illustrator and Photoshop.
+        * BLEND: linear interpolation of colors: ``C = A*factor + B``
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: Multiply the colors, result will always be darker.
+        * SCREEN: Opposite multiply, uses inverse values of the colors.
+        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        light values.
+        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
+        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
+        as harsh.
+        * DODGE: Lightens light tones and increases contrast, ignores darks. Called
+        "Color Dodge" in Illustrator and Photoshop.
+        * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
+        "Color Burn" in Illustrator and Photoshop.
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         return self._instance.blend(*args)
 
@@ -3900,36 +3905,29 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         independently. The red channel is compared with red, green with green, and blue
         with blue.
 
-        BLEND - linear interpolation of colors: C = A*factor + B. This is the default.
-
-        ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-        SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-        DARKEST - only the darkest color succeeds: C = min(A*factor, B)
-
-        LIGHTEST - only the lightest color succeeds: C = max(A*factor, B)
-
-        DIFFERENCE - subtract colors from underlying image.
-
-        EXCLUSION - similar to DIFFERENCE, but less extreme.
-
-        MULTIPLY - multiply the colors, result will always be darker.
-
-        SCREEN - opposite multiply, uses inverse values of the colors.
-
-        REPLACE - the pixels entirely replace the others and don't utilize alpha
+        * BLEND: linear interpolation of colors: ``C = A*factor + B``. This is the
+        default.
+        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
+        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
+        * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
+        * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
+        * DIFFERENCE: subtract colors from underlying image.
+        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * MULTIPLY: multiply the colors, result will always be darker.
+        * SCREEN: opposite multiply, uses inverse values of the colors.
+        * REPLACE: the pixels entirely replace the others and don't utilize alpha
         (transparency) values
 
-        We recommend using ``blend_mode()`` and not the previous ``blend()`` function.
-        However, unlike ``blend()``, the ``blend_mode()`` function does not support the
-        following: HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN. On older hardware, the
-        LIGHTEST, DARKEST, and DIFFERENCE modes might not be available as well.
+        We recommend using ``blend_mode()`` and not the previous :doc:`blend` function.
+        However, unlike :doc:`blend`, the ``blend_mode()`` function does not support the
+        following: ``HARD_LIGHT``, ``SOFT_LIGHT``, ``OVERLAY``, ``DODGE``, ``BURN``. On
+        older hardware, the ``LIGHTEST``, ``DARKEST``, and ``DIFFERENCE`` modes might
+        not be available as well.
         """
         return self._instance.blendMode(mode)
 
     def blue(self, rgb: int, /) -> float:
-        """Extracts the blue value from a color, scaled to match current ``color_mode()``.
+        """Extracts the blue value from a color, scaled to match current :doc:`color_mode`.
 
         Underlying Java method: PApplet.blue
 
@@ -3942,18 +3940,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Extracts the blue value from a color, scaled to match current ``color_mode()``.
+        Extracts the blue value from a color, scaled to match current :doc:`color_mode`.
         The value is always returned as a float, so be careful not to assign it to an
         int value.
 
         The ``blue()`` function is easy to use and understand, but it is slower than a
         technique called bit masking. When working in ``color_mode(RGB, 255)``, you can
-        acheive the same results as ``blue()`` but with greater speed by using a bit
-        mask to remove the other color components. For example, the following two lines
-        of code are equivalent means of getting the blue value of the color value ``c``:
-
-        ``b1 = blue(c)   # simpler, but slower to calculate
-        b2 = c & 0xFF  # very fast to calculate``
+        achieve the same results as ``blue()`` but with greater speed by using a bit
+        mask to remove the other color components. For example, ``blue(c)`` and ``c &
+        0xFF`` both extract the blue value from a color variable ``c`` but the later is
+        faster.
         """
         return self._instance.blue(rgb)
 
@@ -4297,7 +4293,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws a circle to the screen. By default, the first two parameters set the
         location of the center, and the third sets the shape's width and height. The
-        origin may be changed with the ``ellipse_mode()`` function.
+        origin may be changed with the :doc:`ellipse_mode` function.
         """
         return self._instance.circle(x, y, extent)
 
@@ -4310,9 +4306,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Clears the pixels within a buffer. This function only works on ``Py5Graphics``
-        objects created with the ``create_graphics()`` function. Unlike the main
+        objects created with the :doc:`create_graphics` function. Unlike the main
         graphics context (the display window), pixels in additional graphics areas
-        created with ``create_graphics()`` can be entirely or partially transparent.
+        created with :doc:`create_graphics` can be entirely or partially transparent.
         This function clears everything in a ``Py5Graphics`` object to make all of the
         pixels 100% transparent.
         """
@@ -4342,14 +4338,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Limits the rendering to the boundaries of a rectangle defined by the parameters.
-        The boundaries are drawn based on the state of the ``image_mode()`` fuction,
-        either CORNER, CORNERS, or CENTER.
+        The boundaries are drawn based on the state of the :doc:`image_mode` fuction,
+        either ``CORNER``, ``CORNERS``, or ``CENTER``.
         """
         return self._instance.clip(a, b, c, d)
 
     @overload
     def color(self, fgray: float, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4406,28 +4403,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, fgray: float, falpha: float, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4484,28 +4479,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, v1: float, v2: float, v3: float, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4562,28 +4555,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, v1: float, v2: float, v3: float, alpha: float, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4640,28 +4631,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, gray: int, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4718,28 +4707,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, gray: int, alpha: int, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4796,28 +4783,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, v1: int, v2: int, v3: int, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4874,28 +4859,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     @overload
     def color(self, v1: int, v2: int, v3: int, alpha: int, /) -> int:
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -4952,27 +4935,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         pass
 
     def color(self, *args):
-        """Creates colors for storing in variables of the ``color`` datatype.
+        """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer).
 
         Underlying Java method: PApplet.color
 
@@ -5029,28 +5010,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates colors for storing in variables of the ``color`` datatype. The
-        parameters are interpreted as RGB or HSB values depending on the current
-        ``color_mode()``. The default mode is RGB values from 0 to 255 and, therefore,
-        ``color(255, 204, 0)`` will return a bright yellow color (see the first example
-        above).
+        Creates colors for storing in variables of the ``color`` datatype (a 32 bit
+        integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
+        on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+        255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
+        (see the first example).
 
         Note that if only one value is provided to ``color()``, it will be interpreted
         as a grayscale value. Add a second value, and it will be used for alpha
         transparency. When three values are specified, they are interpreted as either
-        RGB or HSB values. Adding a fourth value applies alpha transparency.
+        ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that when using hexadecimal notation, it is not necessary to use
         ``color()``, as in: ``c = 0x006699``
-
-        More about how colors are stored can be found in the reference for the color
-        datatype.
         """
         return self._instance.color(*args)
 
     @overload
     def color_mode(self, mode: int, /) -> None:
-        """Changes the way Processing interprets color data.
+        """Changes the way py5 interprets color data.
 
         Underlying Java method: PApplet.colorMode
 
@@ -5088,9 +5066,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Changes the way Processing interprets color data. By default, the parameters for
-        ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
-        values between 0 and 255 using the RGB color model. The ``color_mode()``
+        Changes the way py5 interprets color data. By default, the parameters for
+        :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+        values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
         function is used to change the numerical range used for specifying colors and to
         switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
         that values are specified between 0 and 1. The limits for defining colors are
@@ -5109,7 +5087,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @overload
     def color_mode(self, mode: int, max: float, /) -> None:
-        """Changes the way Processing interprets color data.
+        """Changes the way py5 interprets color data.
 
         Underlying Java method: PApplet.colorMode
 
@@ -5147,9 +5125,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Changes the way Processing interprets color data. By default, the parameters for
-        ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
-        values between 0 and 255 using the RGB color model. The ``color_mode()``
+        Changes the way py5 interprets color data. By default, the parameters for
+        :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+        values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
         function is used to change the numerical range used for specifying colors and to
         switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
         that values are specified between 0 and 1. The limits for defining colors are
@@ -5169,7 +5147,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color_mode(self, mode: int, max1: float,
                    max2: float, max3: float, /) -> None:
-        """Changes the way Processing interprets color data.
+        """Changes the way py5 interprets color data.
 
         Underlying Java method: PApplet.colorMode
 
@@ -5207,9 +5185,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Changes the way Processing interprets color data. By default, the parameters for
-        ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
-        values between 0 and 255 using the RGB color model. The ``color_mode()``
+        Changes the way py5 interprets color data. By default, the parameters for
+        :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+        values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
         function is used to change the numerical range used for specifying colors and to
         switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
         that values are specified between 0 and 1. The limits for defining colors are
@@ -5229,7 +5207,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def color_mode(self, mode: int, max1: float, max2: float,
                    max3: float, max_a: float, /) -> None:
-        """Changes the way Processing interprets color data.
+        """Changes the way py5 interprets color data.
 
         Underlying Java method: PApplet.colorMode
 
@@ -5267,9 +5245,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Changes the way Processing interprets color data. By default, the parameters for
-        ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
-        values between 0 and 255 using the RGB color model. The ``color_mode()``
+        Changes the way py5 interprets color data. By default, the parameters for
+        :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+        values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
         function is used to change the numerical range used for specifying colors and to
         switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
         that values are specified between 0 and 1. The limits for defining colors are
@@ -5287,7 +5265,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         pass
 
     def color_mode(self, *args):
-        """Changes the way Processing interprets color data.
+        """Changes the way py5 interprets color data.
 
         Underlying Java method: PApplet.colorMode
 
@@ -5325,9 +5303,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Changes the way Processing interprets color data. By default, the parameters for
-        ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
-        values between 0 and 255 using the RGB color model. The ``color_mode()``
+        Changes the way py5 interprets color data. By default, the parameters for
+        :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+        values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
         function is used to change the numerical range used for specifying colors and to
         switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
         that values are specified between 0 and 1. The limits for defining colors are
@@ -5380,7 +5358,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image.
+            an image variable referring to the source image
 
         sw: int
             source image width
@@ -5401,7 +5379,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         specified target region. No alpha information is used in the process, however if
         the source image has an alpha channel set, it will be copied as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -5442,7 +5420,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image.
+            an image variable referring to the source image
 
         sw: int
             source image width
@@ -5463,7 +5441,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         specified target region. No alpha information is used in the process, however if
         the source image has an alpha channel set, it will be copied as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -5504,7 +5482,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image.
+            an image variable referring to the source image
 
         sw: int
             source image width
@@ -5525,7 +5503,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         specified target region. No alpha information is used in the process, however if
         the source image has an alpha channel set, it will be copied as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         pass
 
@@ -5566,7 +5544,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image.
+            an image variable referring to the source image
 
         sw: int
             source image width
@@ -5587,15 +5565,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         specified target region. No alpha information is used in the process, however if
         the source image has an alpha channel set, it will be copied as well.
 
-        As of release 0149, this function ignores ``image_mode()``.
+        This function ignores :doc:`image_mode`.
         """
         return self._instance.copy(*args)
 
     @overload
     def create_font(self, name: str, size: float, /) -> Py5Font:
-        """Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer.
+        """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer.
 
         Underlying Java method: PApplet.createFont
 
@@ -5626,39 +5604,38 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer. If you want to use a font installed on your computer, use the
+        Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer. If you want to use a font installed on your computer, use the
         ``Py5Font.list()`` method to first determine the names for the fonts recognized
         by the computer and are compatible with this function. Not all fonts can be used
         and some might work with one operating system and not others. When sharing a
-        sketch with other people or posting it on the web, you may need to include a
-        .ttf or .otf version of your font in the data directory of the sketch because
+        Sketch with other people or posting it on the web, you may need to include a
+        .ttf or .otf version of your font in the data directory of the Sketch because
         other people might not have the font installed on their computer. Only fonts
-        that can legally be distributed should be included with a sketch.
+        that can legally be distributed should be included with a Sketch.
 
         The ``size`` parameter states the font size you want to generate. The ``smooth``
         parameter specifies if the font should be antialiased or not. The ``charset``
         parameter is an array of chars that specifies the characters to generate.
 
-        This function allows Processing to work with the font natively in the default
-        renderer, so the letters are defined by vector geometry and are rendered
-        quickly. In the ``P2D`` and ``P3D`` renderers, the function sets the project to
-        render the font as a series of small textures. For instance, when using the
-        default renderer, the actual native version of the font will be employed by the
-        sketch, improving drawing quality and performance. With the ``P2D`` and ``P3D``
-        renderers, the bitmapped version will be used to improve speed and appearance,
-        but the results are poor when exporting if the sketch does not include the .otf
-        or .ttf file, and the requested font is not available on the machine running the
-        sketch.
+        This function allows py5 to work with the font natively in the default renderer,
+        so the letters are defined by vector geometry and are rendered quickly. In the
+        ``P2D`` and ``P3D`` renderers, the function sets the project to render the font
+        as a series of small textures. For instance, when using the default renderer,
+        the actual native version of the font will be employed by the Sketch, improving
+        drawing quality and performance. With the ``P2D`` and ``P3D`` renderers, the
+        bitmapped version will be used to improve speed and appearance, but the results
+        are poor when exporting if the Sketch does not include the .otf or .ttf file,
+        and the requested font is not available on the machine running the Sketch.
         """
         pass
 
     @overload
     def create_font(self, name: str, size: float, smooth: bool, /) -> Py5Font:
-        """Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer.
+        """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer.
 
         Underlying Java method: PApplet.createFont
 
@@ -5689,40 +5666,39 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer. If you want to use a font installed on your computer, use the
+        Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer. If you want to use a font installed on your computer, use the
         ``Py5Font.list()`` method to first determine the names for the fonts recognized
         by the computer and are compatible with this function. Not all fonts can be used
         and some might work with one operating system and not others. When sharing a
-        sketch with other people or posting it on the web, you may need to include a
-        .ttf or .otf version of your font in the data directory of the sketch because
+        Sketch with other people or posting it on the web, you may need to include a
+        .ttf or .otf version of your font in the data directory of the Sketch because
         other people might not have the font installed on their computer. Only fonts
-        that can legally be distributed should be included with a sketch.
+        that can legally be distributed should be included with a Sketch.
 
         The ``size`` parameter states the font size you want to generate. The ``smooth``
         parameter specifies if the font should be antialiased or not. The ``charset``
         parameter is an array of chars that specifies the characters to generate.
 
-        This function allows Processing to work with the font natively in the default
-        renderer, so the letters are defined by vector geometry and are rendered
-        quickly. In the ``P2D`` and ``P3D`` renderers, the function sets the project to
-        render the font as a series of small textures. For instance, when using the
-        default renderer, the actual native version of the font will be employed by the
-        sketch, improving drawing quality and performance. With the ``P2D`` and ``P3D``
-        renderers, the bitmapped version will be used to improve speed and appearance,
-        but the results are poor when exporting if the sketch does not include the .otf
-        or .ttf file, and the requested font is not available on the machine running the
-        sketch.
+        This function allows py5 to work with the font natively in the default renderer,
+        so the letters are defined by vector geometry and are rendered quickly. In the
+        ``P2D`` and ``P3D`` renderers, the function sets the project to render the font
+        as a series of small textures. For instance, when using the default renderer,
+        the actual native version of the font will be employed by the Sketch, improving
+        drawing quality and performance. With the ``P2D`` and ``P3D`` renderers, the
+        bitmapped version will be used to improve speed and appearance, but the results
+        are poor when exporting if the Sketch does not include the .otf or .ttf file,
+        and the requested font is not available on the machine running the Sketch.
         """
         pass
 
     @overload
     def create_font(self, name: str, size: float, smooth: bool,
                     charset: List[chr], /) -> Py5Font:
-        """Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer.
+        """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer.
 
         Underlying Java method: PApplet.createFont
 
@@ -5753,39 +5729,38 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer. If you want to use a font installed on your computer, use the
+        Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer. If you want to use a font installed on your computer, use the
         ``Py5Font.list()`` method to first determine the names for the fonts recognized
         by the computer and are compatible with this function. Not all fonts can be used
         and some might work with one operating system and not others. When sharing a
-        sketch with other people or posting it on the web, you may need to include a
-        .ttf or .otf version of your font in the data directory of the sketch because
+        Sketch with other people or posting it on the web, you may need to include a
+        .ttf or .otf version of your font in the data directory of the Sketch because
         other people might not have the font installed on their computer. Only fonts
-        that can legally be distributed should be included with a sketch.
+        that can legally be distributed should be included with a Sketch.
 
         The ``size`` parameter states the font size you want to generate. The ``smooth``
         parameter specifies if the font should be antialiased or not. The ``charset``
         parameter is an array of chars that specifies the characters to generate.
 
-        This function allows Processing to work with the font natively in the default
-        renderer, so the letters are defined by vector geometry and are rendered
-        quickly. In the ``P2D`` and ``P3D`` renderers, the function sets the project to
-        render the font as a series of small textures. For instance, when using the
-        default renderer, the actual native version of the font will be employed by the
-        sketch, improving drawing quality and performance. With the ``P2D`` and ``P3D``
-        renderers, the bitmapped version will be used to improve speed and appearance,
-        but the results are poor when exporting if the sketch does not include the .otf
-        or .ttf file, and the requested font is not available on the machine running the
-        sketch.
+        This function allows py5 to work with the font natively in the default renderer,
+        so the letters are defined by vector geometry and are rendered quickly. In the
+        ``P2D`` and ``P3D`` renderers, the function sets the project to render the font
+        as a series of small textures. For instance, when using the default renderer,
+        the actual native version of the font will be employed by the Sketch, improving
+        drawing quality and performance. With the ``P2D`` and ``P3D`` renderers, the
+        bitmapped version will be used to improve speed and appearance, but the results
+        are poor when exporting if the Sketch does not include the .otf or .ttf file,
+        and the requested font is not available on the machine running the Sketch.
         """
         pass
 
     @_load_py5font
     def create_font(self, *args):
-        """Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer.
+        """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer.
 
         Underlying Java method: PApplet.createFont
 
@@ -5816,31 +5791,30 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Dynamically converts a font to the format used by Processing from a .ttf or .otf
-        file inside the sketch's "data" folder or a font that's installed elsewhere on
-        the computer. If you want to use a font installed on your computer, use the
+        Dynamically converts a font to the format used by py5 from a .ttf or .otf file
+        inside the Sketch's "data" folder or a font that's installed elsewhere on the
+        computer. If you want to use a font installed on your computer, use the
         ``Py5Font.list()`` method to first determine the names for the fonts recognized
         by the computer and are compatible with this function. Not all fonts can be used
         and some might work with one operating system and not others. When sharing a
-        sketch with other people or posting it on the web, you may need to include a
-        .ttf or .otf version of your font in the data directory of the sketch because
+        Sketch with other people or posting it on the web, you may need to include a
+        .ttf or .otf version of your font in the data directory of the Sketch because
         other people might not have the font installed on their computer. Only fonts
-        that can legally be distributed should be included with a sketch.
+        that can legally be distributed should be included with a Sketch.
 
         The ``size`` parameter states the font size you want to generate. The ``smooth``
         parameter specifies if the font should be antialiased or not. The ``charset``
         parameter is an array of chars that specifies the characters to generate.
 
-        This function allows Processing to work with the font natively in the default
-        renderer, so the letters are defined by vector geometry and are rendered
-        quickly. In the ``P2D`` and ``P3D`` renderers, the function sets the project to
-        render the font as a series of small textures. For instance, when using the
-        default renderer, the actual native version of the font will be employed by the
-        sketch, improving drawing quality and performance. With the ``P2D`` and ``P3D``
-        renderers, the bitmapped version will be used to improve speed and appearance,
-        but the results are poor when exporting if the sketch does not include the .otf
-        or .ttf file, and the requested font is not available on the machine running the
-        sketch.
+        This function allows py5 to work with the font natively in the default renderer,
+        so the letters are defined by vector geometry and are rendered quickly. In the
+        ``P2D`` and ``P3D`` renderers, the function sets the project to render the font
+        as a series of small textures. For instance, when using the default renderer,
+        the actual native version of the font will be employed by the Sketch, improving
+        drawing quality and performance. With the ``P2D`` and ``P3D`` renderers, the
+        bitmapped version will be used to improve speed and appearance, but the results
+        are poor when exporting if the Sketch does not include the .otf or .ttf file,
+        and the requested font is not available on the machine running the Sketch.
         """
         return self._instance.createFont(*args)
 
@@ -5880,35 +5854,37 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as P2D, P3D, PDF, or SVG. If the third parameter
-        isn't used, the default renderer is set. The PDF and SVG renderers require the
-        filename parameter.
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
+        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
-        relation to the main renderer specified in ``size()``. For example, it's only
-        possible to use P2D or P3D with ``create_graphics()`` when one of them is
-        defined in ``size()``. Unlike Processing 1.0, P2D and P3D use OpenGL for
-        drawing, and when using an OpenGL renderer it's necessary for the main drawing
-        surface to be OpenGL-based. If P2D or P3D are used as the renderer in
-        ``size()``, then any of the options can be used with ``create_graphics()``. If
-        the default renderer is used in ``size()``, then only the default, PDF, or SVG
-        can be used with ``create_graphics()``.
+        relation to the main renderer specified in :doc:`size`. For example, it's only
+        possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
+        is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+        using an OpenGL renderer it's necessary for the main drawing surface to be
+        OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
+        then any of the options can be used with ``create_graphics()``. If the default
+        renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+        be used with ``create_graphics()``.
 
-        It's important to run all drawing functions between the ``begin_draw()`` and
-        ``end_draw()``. As the exception to this rule, ``smooth()`` should be run on the
-        PGraphics object before ``begin_draw()``. See the reference for ``smooth()`` for
-        more detail.
+        It's important to run all drawing functions between the
+        :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
+        to this rule, :doc:`smooth` should be run on the Py5Graphics object before
+        :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+        detail.
 
         The ``create_graphics()`` function should almost never be used inside ``draw()``
         because of the memory and time needed to set up the graphics. One-time or
         occasional use during ``draw()`` might be acceptable, but code that calls
         ``create_graphics()`` at 60 frames per second might run out of memory or freeze
-        your sketch.
+        your Sketch.
 
         Unlike the main drawing surface which is completely opaque, surfaces created
         with ``create_graphics()`` can have transparency. This makes it possible to draw
-        into a graphics and maintain the alpha channel. By using ``save()`` to write a
-        PNG or TGA file, the transparency of the graphics object will be honored.
+        into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+        ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
+        honored.
         """
         pass
 
@@ -5948,35 +5924,37 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as P2D, P3D, PDF, or SVG. If the third parameter
-        isn't used, the default renderer is set. The PDF and SVG renderers require the
-        filename parameter.
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
+        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
-        relation to the main renderer specified in ``size()``. For example, it's only
-        possible to use P2D or P3D with ``create_graphics()`` when one of them is
-        defined in ``size()``. Unlike Processing 1.0, P2D and P3D use OpenGL for
-        drawing, and when using an OpenGL renderer it's necessary for the main drawing
-        surface to be OpenGL-based. If P2D or P3D are used as the renderer in
-        ``size()``, then any of the options can be used with ``create_graphics()``. If
-        the default renderer is used in ``size()``, then only the default, PDF, or SVG
-        can be used with ``create_graphics()``.
+        relation to the main renderer specified in :doc:`size`. For example, it's only
+        possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
+        is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+        using an OpenGL renderer it's necessary for the main drawing surface to be
+        OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
+        then any of the options can be used with ``create_graphics()``. If the default
+        renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+        be used with ``create_graphics()``.
 
-        It's important to run all drawing functions between the ``begin_draw()`` and
-        ``end_draw()``. As the exception to this rule, ``smooth()`` should be run on the
-        PGraphics object before ``begin_draw()``. See the reference for ``smooth()`` for
-        more detail.
+        It's important to run all drawing functions between the
+        :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
+        to this rule, :doc:`smooth` should be run on the Py5Graphics object before
+        :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+        detail.
 
         The ``create_graphics()`` function should almost never be used inside ``draw()``
         because of the memory and time needed to set up the graphics. One-time or
         occasional use during ``draw()`` might be acceptable, but code that calls
         ``create_graphics()`` at 60 frames per second might run out of memory or freeze
-        your sketch.
+        your Sketch.
 
         Unlike the main drawing surface which is completely opaque, surfaces created
         with ``create_graphics()`` can have transparency. This makes it possible to draw
-        into a graphics and maintain the alpha channel. By using ``save()`` to write a
-        PNG or TGA file, the transparency of the graphics object will be honored.
+        into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+        ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
+        honored.
         """
         pass
 
@@ -6017,35 +5995,37 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as P2D, P3D, PDF, or SVG. If the third parameter
-        isn't used, the default renderer is set. The PDF and SVG renderers require the
-        filename parameter.
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
+        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
-        relation to the main renderer specified in ``size()``. For example, it's only
-        possible to use P2D or P3D with ``create_graphics()`` when one of them is
-        defined in ``size()``. Unlike Processing 1.0, P2D and P3D use OpenGL for
-        drawing, and when using an OpenGL renderer it's necessary for the main drawing
-        surface to be OpenGL-based. If P2D or P3D are used as the renderer in
-        ``size()``, then any of the options can be used with ``create_graphics()``. If
-        the default renderer is used in ``size()``, then only the default, PDF, or SVG
-        can be used with ``create_graphics()``.
+        relation to the main renderer specified in :doc:`size`. For example, it's only
+        possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
+        is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+        using an OpenGL renderer it's necessary for the main drawing surface to be
+        OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
+        then any of the options can be used with ``create_graphics()``. If the default
+        renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+        be used with ``create_graphics()``.
 
-        It's important to run all drawing functions between the ``begin_draw()`` and
-        ``end_draw()``. As the exception to this rule, ``smooth()`` should be run on the
-        PGraphics object before ``begin_draw()``. See the reference for ``smooth()`` for
-        more detail.
+        It's important to run all drawing functions between the
+        :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
+        to this rule, :doc:`smooth` should be run on the Py5Graphics object before
+        :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+        detail.
 
         The ``create_graphics()`` function should almost never be used inside ``draw()``
         because of the memory and time needed to set up the graphics. One-time or
         occasional use during ``draw()`` might be acceptable, but code that calls
         ``create_graphics()`` at 60 frames per second might run out of memory or freeze
-        your sketch.
+        your Sketch.
 
         Unlike the main drawing surface which is completely opaque, surfaces created
         with ``create_graphics()`` can have transparency. This makes it possible to draw
-        into a graphics and maintain the alpha channel. By using ``save()`` to write a
-        PNG or TGA file, the transparency of the graphics object will be honored.
+        into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+        ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
+        honored.
         """
         pass
 
@@ -6085,41 +6065,43 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as P2D, P3D, PDF, or SVG. If the third parameter
-        isn't used, the default renderer is set. The PDF and SVG renderers require the
-        filename parameter.
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
+        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
-        relation to the main renderer specified in ``size()``. For example, it's only
-        possible to use P2D or P3D with ``create_graphics()`` when one of them is
-        defined in ``size()``. Unlike Processing 1.0, P2D and P3D use OpenGL for
-        drawing, and when using an OpenGL renderer it's necessary for the main drawing
-        surface to be OpenGL-based. If P2D or P3D are used as the renderer in
-        ``size()``, then any of the options can be used with ``create_graphics()``. If
-        the default renderer is used in ``size()``, then only the default, PDF, or SVG
-        can be used with ``create_graphics()``.
+        relation to the main renderer specified in :doc:`size`. For example, it's only
+        possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
+        is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+        using an OpenGL renderer it's necessary for the main drawing surface to be
+        OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
+        then any of the options can be used with ``create_graphics()``. If the default
+        renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+        be used with ``create_graphics()``.
 
-        It's important to run all drawing functions between the ``begin_draw()`` and
-        ``end_draw()``. As the exception to this rule, ``smooth()`` should be run on the
-        PGraphics object before ``begin_draw()``. See the reference for ``smooth()`` for
-        more detail.
+        It's important to run all drawing functions between the
+        :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
+        to this rule, :doc:`smooth` should be run on the Py5Graphics object before
+        :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+        detail.
 
         The ``create_graphics()`` function should almost never be used inside ``draw()``
         because of the memory and time needed to set up the graphics. One-time or
         occasional use during ``draw()`` might be acceptable, but code that calls
         ``create_graphics()`` at 60 frames per second might run out of memory or freeze
-        your sketch.
+        your Sketch.
 
         Unlike the main drawing surface which is completely opaque, surfaces created
         with ``create_graphics()`` can have transparency. This makes it possible to draw
-        into a graphics and maintain the alpha channel. By using ``save()`` to write a
-        PNG or TGA file, the transparency of the graphics object will be honored.
+        into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+        ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
+        honored.
         """
         return self._instance.createGraphics(*args)
 
     @_return_py5image
     def create_image(self, w: int, h: int, format: int, /) -> Py5Image:
-        """Creates a new PImage (the datatype for storing images).
+        """Creates a new Py5Image (the datatype for storing images).
 
         Underlying Java method: PApplet.createImage
 
@@ -6138,16 +6120,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Creates a new PImage (the datatype for storing images). This provides a fresh
-        buffer of pixels to play with. Set the size of the buffer with the ``width`` and
-        ``height`` parameters. The ``format`` parameter defines how the pixels are
-        stored. See the PImage reference for more information.
+        Creates a new Py5Image (the datatype for storing images). This provides a fresh
+        buffer of pixels to play with. Set the size of the buffer with the ``w`` and
+        ``h`` parameters. The ``format`` parameter defines how the pixels are stored.
+        See the :doc:`Py5Image` reference for more information.
 
         Be sure to include all three parameters, specifying only the width and height
         (but no format) will produce a strange error.
 
         Advanced users please note that ``create_image()`` should be used instead of the
-        syntax ``new Py5Image()``.
+        syntax ``Py5Image()``.
         """
         return self._instance.createImage(w, h, format)
 
@@ -6182,29 +6164,29 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``create_shape()`` function is used to define a new shape. Once created,
-        this shape can be drawn with the ``shape()`` function. The basic way to use the
+        this shape can be drawn with the :doc:`shape` function. The basic way to use the
         function defines new primitive shapes. One of the following parameters are used
         as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
         ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-        different shapes are the same as their corresponding functions: ``ellipse()``,
-        ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
-        ``line()``. The first example above clarifies how this works.
+        different shapes are the same as their corresponding functions: :doc:`ellipse`,
+        :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
+        :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
 
         Custom, unique shapes can be made by using ``create_shape()`` without a
         parameter. After the shape is started, the drawing attributes and geometry can
-        be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
-        methods. See the second example above for specifics, and the reference for
-        ``begin_shape()`` for all of its options.
+        be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+        methods. See the second example for specifics, and the reference for
+        :doc:`begin_shape` for all of its options.
 
         The  ``create_shape()`` function can also be used to make a complex shape made
         of other shapes. This is called a "group" and it's created by using the
-        parameter ``GROUP`` as the first parameter. See the fourth example above to see
-        how it works.
+        parameter ``GROUP`` as the first parameter. See the fourth example to see how it
+        works.
 
         After using ``create_shape()``, stroke and fill color can be set by calling
-        methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
-        The complete list of methods and fields for the PShape class are in the
-        Processing Javadoc.
+        methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
+        the examples. The complete list of methods and fields for the :doc:`py5shape`
+        class are in the py5 documentation.
         """
         pass
 
@@ -6239,29 +6221,29 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``create_shape()`` function is used to define a new shape. Once created,
-        this shape can be drawn with the ``shape()`` function. The basic way to use the
+        this shape can be drawn with the :doc:`shape` function. The basic way to use the
         function defines new primitive shapes. One of the following parameters are used
         as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
         ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-        different shapes are the same as their corresponding functions: ``ellipse()``,
-        ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
-        ``line()``. The first example above clarifies how this works.
+        different shapes are the same as their corresponding functions: :doc:`ellipse`,
+        :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
+        :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
 
         Custom, unique shapes can be made by using ``create_shape()`` without a
         parameter. After the shape is started, the drawing attributes and geometry can
-        be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
-        methods. See the second example above for specifics, and the reference for
-        ``begin_shape()`` for all of its options.
+        be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+        methods. See the second example for specifics, and the reference for
+        :doc:`begin_shape` for all of its options.
 
         The  ``create_shape()`` function can also be used to make a complex shape made
         of other shapes. This is called a "group" and it's created by using the
-        parameter ``GROUP`` as the first parameter. See the fourth example above to see
-        how it works.
+        parameter ``GROUP`` as the first parameter. See the fourth example to see how it
+        works.
 
         After using ``create_shape()``, stroke and fill color can be set by calling
-        methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
-        The complete list of methods and fields for the PShape class are in the
-        Processing Javadoc.
+        methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
+        the examples. The complete list of methods and fields for the :doc:`py5shape`
+        class are in the py5 documentation.
         """
         pass
 
@@ -6296,29 +6278,29 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``create_shape()`` function is used to define a new shape. Once created,
-        this shape can be drawn with the ``shape()`` function. The basic way to use the
+        this shape can be drawn with the :doc:`shape` function. The basic way to use the
         function defines new primitive shapes. One of the following parameters are used
         as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
         ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-        different shapes are the same as their corresponding functions: ``ellipse()``,
-        ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
-        ``line()``. The first example above clarifies how this works.
+        different shapes are the same as their corresponding functions: :doc:`ellipse`,
+        :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
+        :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
 
         Custom, unique shapes can be made by using ``create_shape()`` without a
         parameter. After the shape is started, the drawing attributes and geometry can
-        be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
-        methods. See the second example above for specifics, and the reference for
-        ``begin_shape()`` for all of its options.
+        be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+        methods. See the second example for specifics, and the reference for
+        :doc:`begin_shape` for all of its options.
 
         The  ``create_shape()`` function can also be used to make a complex shape made
         of other shapes. This is called a "group" and it's created by using the
-        parameter ``GROUP`` as the first parameter. See the fourth example above to see
-        how it works.
+        parameter ``GROUP`` as the first parameter. See the fourth example to see how it
+        works.
 
         After using ``create_shape()``, stroke and fill color can be set by calling
-        methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
-        The complete list of methods and fields for the PShape class are in the
-        Processing Javadoc.
+        methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
+        the examples. The complete list of methods and fields for the :doc:`py5shape`
+        class are in the py5 documentation.
         """
         pass
 
@@ -6353,29 +6335,29 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``create_shape()`` function is used to define a new shape. Once created,
-        this shape can be drawn with the ``shape()`` function. The basic way to use the
+        this shape can be drawn with the :doc:`shape` function. The basic way to use the
         function defines new primitive shapes. One of the following parameters are used
         as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
         ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-        different shapes are the same as their corresponding functions: ``ellipse()``,
-        ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
-        ``line()``. The first example above clarifies how this works.
+        different shapes are the same as their corresponding functions: :doc:`ellipse`,
+        :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
+        :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
 
         Custom, unique shapes can be made by using ``create_shape()`` without a
         parameter. After the shape is started, the drawing attributes and geometry can
-        be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
-        methods. See the second example above for specifics, and the reference for
-        ``begin_shape()`` for all of its options.
+        be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+        methods. See the second example for specifics, and the reference for
+        :doc:`begin_shape` for all of its options.
 
         The  ``create_shape()`` function can also be used to make a complex shape made
         of other shapes. This is called a "group" and it's created by using the
-        parameter ``GROUP`` as the first parameter. See the fourth example above to see
-        how it works.
+        parameter ``GROUP`` as the first parameter. See the fourth example to see how it
+        works.
 
         After using ``create_shape()``, stroke and fill color can be set by calling
-        methods like ``set_fill()`` and ``set_stroke()``, as seen in the examples above.
-        The complete list of methods and fields for the PShape class are in the
-        Processing Javadoc.
+        methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
+        the examples. The complete list of methods and fields for the :doc:`py5shape`
+        class are in the py5 documentation.
         """
         return self._instance.createShape(*args)
 
@@ -6400,7 +6382,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         img: Py5Image
-            any variable of type PImage
+            any variable of type Py5Image
 
         kind: int
             either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
@@ -6422,9 +6404,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Setting or hiding the cursor does not generally work with "Present" mode (when
         running full-screen).
 
-        With the P2D and P3D renderers, a generic set of cursors are used because the
-        OpenGL renderer doesn't have access to the default cursor images for each
-        platform (Issue 3791).
+        With the ``P2D`` and ``P3D`` renderers, a generic set of cursors are used
+        because the OpenGL renderer doesn't have access to the default cursor images for
+        each platform (Processing Issue 3791).
         """
         pass
 
@@ -6449,7 +6431,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         img: Py5Image
-            any variable of type PImage
+            any variable of type Py5Image
 
         kind: int
             either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
@@ -6471,9 +6453,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Setting or hiding the cursor does not generally work with "Present" mode (when
         running full-screen).
 
-        With the P2D and P3D renderers, a generic set of cursors are used because the
-        OpenGL renderer doesn't have access to the default cursor images for each
-        platform (Issue 3791).
+        With the ``P2D`` and ``P3D`` renderers, a generic set of cursors are used
+        because the OpenGL renderer doesn't have access to the default cursor images for
+        each platform (Processing Issue 3791).
         """
         pass
 
@@ -6498,7 +6480,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         img: Py5Image
-            any variable of type PImage
+            any variable of type Py5Image
 
         kind: int
             either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
@@ -6520,9 +6502,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Setting or hiding the cursor does not generally work with "Present" mode (when
         running full-screen).
 
-        With the P2D and P3D renderers, a generic set of cursors are used because the
-        OpenGL renderer doesn't have access to the default cursor images for each
-        platform (Issue 3791).
+        With the ``P2D`` and ``P3D`` renderers, a generic set of cursors are used
+        because the OpenGL renderer doesn't have access to the default cursor images for
+        each platform (Processing Issue 3791).
         """
         pass
 
@@ -6547,7 +6529,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         img: Py5Image
-            any variable of type PImage
+            any variable of type Py5Image
 
         kind: int
             either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
@@ -6569,9 +6551,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Setting or hiding the cursor does not generally work with "Present" mode (when
         running full-screen).
 
-        With the P2D and P3D renderers, a generic set of cursors are used because the
-        OpenGL renderer doesn't have access to the default cursor images for each
-        platform (Issue 3791).
+        With the ``P2D`` and ``P3D`` renderers, a generic set of cursors are used
+        because the OpenGL renderer doesn't have access to the default cursor images for
+        each platform (Processing Issue 3791).
         """
         pass
 
@@ -6596,7 +6578,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         img: Py5Image
-            any variable of type PImage
+            any variable of type Py5Image
 
         kind: int
             either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
@@ -6618,9 +6600,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Setting or hiding the cursor does not generally work with "Present" mode (when
         running full-screen).
 
-        With the P2D and P3D renderers, a generic set of cursors are used because the
-        OpenGL renderer doesn't have access to the default cursor images for each
-        platform (Issue 3791).
+        With the ``P2D`` and ``P3D`` renderers, a generic set of cursors are used
+        because the OpenGL renderer doesn't have access to the default cursor images for
+        each platform (Processing Issue 3791).
         """
         return self._instance.cursor(*args)
 
@@ -6685,10 +6667,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         beginning control point and the last two parameters specify the ending control
         point. The middle parameters specify the start and stop of the curve. Longer
         curves can be created by putting a series of ``curve()`` functions together or
-        using ``curve_vertex()``. An additional function called ``curve_tightness()``
+        using :doc:`curve_vertex`. An additional function called :doc:`curve_tightness`
         provides control for the visual quality of the curve. The ``curve()`` function
         is an implementation of Catmull-Rom splines. Using the 3D version requires
-        rendering with P3D (see the Environment reference for more information).
+        rendering with ``P3D`` (see the Environment reference for more information).
         """
         pass
 
@@ -6753,10 +6735,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         beginning control point and the last two parameters specify the ending control
         point. The middle parameters specify the start and stop of the curve. Longer
         curves can be created by putting a series of ``curve()`` functions together or
-        using ``curve_vertex()``. An additional function called ``curve_tightness()``
+        using :doc:`curve_vertex`. An additional function called :doc:`curve_tightness`
         provides control for the visual quality of the curve. The ``curve()`` function
         is an implementation of Catmull-Rom splines. Using the 3D version requires
-        rendering with P3D (see the Environment reference for more information).
+        rendering with ``P3D`` (see the Environment reference for more information).
         """
         pass
 
@@ -6819,10 +6801,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         beginning control point and the last two parameters specify the ending control
         point. The middle parameters specify the start and stop of the curve. Longer
         curves can be created by putting a series of ``curve()`` functions together or
-        using ``curve_vertex()``. An additional function called ``curve_tightness()``
+        using :doc:`curve_vertex`. An additional function called :doc:`curve_tightness`
         provides control for the visual quality of the curve. The ``curve()`` function
         is an implementation of Catmull-Rom splines. Using the 3D version requires
-        rendering with P3D (see the Environment reference for more information).
+        rendering with ``P3D`` (see the Environment reference for more information).
         """
         return self._instance.curve(*args)
 
@@ -6841,8 +6823,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the resolution at which curves display. The default value is 20. This
-        function is only useful when using the P3D renderer as the default P2D renderer
-        does not use this information.
+        function is only useful when using the ``P3D`` renderer as the default ``P2D``
+        renderer does not use this information.
         """
         return self._instance.curveDetail(detail)
 
@@ -6876,7 +6858,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Evaluates the curve at point ``t`` for points ``a``, ``b``, ``c``, ``d``. The
         parameter ``t`` may range from 0 (the start of the curve) and 1 (the end of the
         curve). ``a`` and ``d`` are the control points, and ``b`` and ``c`` are points
-        on the curve. As seen in the example above, this can be used once with the ``x``
+        on the curve. As seen in the example, this can be used once with the ``x``
         coordinates and a second time with the ``y`` coordinates to get the location of
         a curve at ``t``.
         """
@@ -6915,7 +6897,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         return self._instance.curveTangent(a, b, c, d, t)
 
     def curve_tightness(self, tightness: float, /) -> None:
-        """Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
+        """Modifies the quality of forms created with :doc:`curve` and :doc:`curve_vertex`.
 
         Underlying Java method: PApplet.curveTightness
 
@@ -6928,7 +6910,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
+        Modifies the quality of forms created with :doc:`curve` and :doc:`curve_vertex`.
         The parameter ``tightness`` determines how the curve fits to the vertex points.
         The value 0.0 is the default value for ``tightness`` (this value defines the
         curves to be Catmull-Rom splines) and the value 1.0 connects all the points with
@@ -6968,14 +6950,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Specifies vertex coordinates for curves. This function may only be used between
-        ``begin_shape()`` and ``end_shape()`` and only when there is no MODE parameter
-        specified to ``begin_shape()``. The first and last points in a series of
-        ``curve_vertex()`` lines will be used to guide the beginning and end of a the
+        :doc:`begin_shape` and :doc:`end_shape` and only when there is no ``MODE``
+        parameter specified to :doc:`begin_shape`. The first and last points in a series
+        of ``curve_vertex()`` lines will be used to guide the beginning and end of a the
         curve. A minimum of four points is required to draw a tiny curve between the
         second and third points. Adding a fifth point with ``curve_vertex()`` will draw
         the curve between the second, third, and fourth points. The ``curve_vertex()``
         function is an implementation of Catmull-Rom splines. Using the 3D version
-        requires rendering with P3D (see the Environment reference for more
+        requires rendering with ``P3D`` (see the Environment reference for more
         information).
         """
         pass
@@ -7010,14 +6992,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Specifies vertex coordinates for curves. This function may only be used between
-        ``begin_shape()`` and ``end_shape()`` and only when there is no MODE parameter
-        specified to ``begin_shape()``. The first and last points in a series of
-        ``curve_vertex()`` lines will be used to guide the beginning and end of a the
+        :doc:`begin_shape` and :doc:`end_shape` and only when there is no ``MODE``
+        parameter specified to :doc:`begin_shape`. The first and last points in a series
+        of ``curve_vertex()`` lines will be used to guide the beginning and end of a the
         curve. A minimum of four points is required to draw a tiny curve between the
         second and third points. Adding a fifth point with ``curve_vertex()`` will draw
         the curve between the second, third, and fourth points. The ``curve_vertex()``
         function is an implementation of Catmull-Rom splines. Using the 3D version
-        requires rendering with P3D (see the Environment reference for more
+        requires rendering with ``P3D`` (see the Environment reference for more
         information).
         """
         pass
@@ -7051,14 +7033,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Specifies vertex coordinates for curves. This function may only be used between
-        ``begin_shape()`` and ``end_shape()`` and only when there is no MODE parameter
-        specified to ``begin_shape()``. The first and last points in a series of
-        ``curve_vertex()`` lines will be used to guide the beginning and end of a the
+        :doc:`begin_shape` and :doc:`end_shape` and only when there is no ``MODE``
+        parameter specified to :doc:`begin_shape`. The first and last points in a series
+        of ``curve_vertex()`` lines will be used to guide the beginning and end of a the
         curve. A minimum of four points is required to draw a tiny curve between the
         second and third points. Adding a fifth point with ``curve_vertex()`` will draw
         the curve between the second, third, and fourth points. The ``curve_vertex()``
         function is an implementation of Catmull-Rom splines. Using the 3D version
-        requires rendering with P3D (see the Environment reference for more
+        requires rendering with ``P3D`` (see the Environment reference for more
         information).
         """
         return self._instance.curveVertex(*args)
@@ -7086,15 +7068,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @classmethod
     def day(cls) -> int:
-        """Processing communicates with the clock on your computer.
+        """Py5 communicates with the clock on your computer.
 
         Underlying Java method: PApplet.day
 
         Notes
         -----
 
-        Processing communicates with the clock on your computer. The ``day()`` function
-        returns the current day as a value from 1 - 31.
+        Py5 communicates with the clock on your computer. The ``day()`` function returns
+        the current day as a value from 1 - 31.
         """
         return cls._cls.day()
 
@@ -7134,8 +7116,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Lights need to be included in the ``draw()`` to remain persistent in a looping
         program. Placing them in the ``setup()`` of a looping program will cause them to
         only have an effect the first time through the loop. The ``v1``, ``v2``, and
-        ``v3`` parameters are interpreted as either RGB or HSB values, depending on the
-        current color mode. The ``nx``, ``ny``, and ``nz`` parameters specify the
+        ``v3`` parameters are interpreted as either ``RGB`` or ``HSB`` values, depending
+        on the current color mode. The ``nx``, ``ny``, and ``nz`` parameters specify the
         direction the light is facing. For example, setting ``ny`` to -1 will cause the
         geometry to be lit from below (since the light would be facing directly upward).
         """
@@ -7144,7 +7126,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def display_density(self) -> int:
         """This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not.
 
         Underlying Java method: PApplet.displayDensity
@@ -7167,7 +7149,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not. This information is useful for a program to adapt to run at double the
         pixel density on a screen that supports it.
         """
@@ -7176,7 +7158,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
     @overload
     def display_density(self, display: int, /) -> int:
         """This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not.
 
         Underlying Java method: PApplet.displayDensity
@@ -7199,7 +7181,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not. This information is useful for a program to adapt to run at double the
         pixel density on a screen that supports it.
         """
@@ -7207,7 +7189,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def display_density(self, *args):
         """This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not.
 
         Underlying Java method: PApplet.displayDensity
@@ -7230,7 +7212,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OS X or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not. This information is useful for a program to adapt to run at double the
         pixel density on a screen that supports it.
         """
@@ -7262,13 +7244,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Draws an ellipse (oval) to the screen. An ellipse with equal width and height is
         a circle. By default, the first two parameters set the location, and the third
         and fourth parameters set the shape's width and height. The origin may be
-        changed with the ``ellipse_mode()`` function.
+        changed with the :doc:`ellipse_mode` function.
         """
         return self._instance.ellipse(a, b, c, d)
 
     def ellipse_mode(self, mode: int, /) -> None:
         """Modifies the location from which ellipses are drawn by changing the way in which
-        parameters given to ``ellipse()`` are intepreted.
+        parameters given to :doc:`ellipse` are intepreted.
 
         Underlying Java method: PApplet.ellipseMode
 
@@ -7282,25 +7264,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Modifies the location from which ellipses are drawn by changing the way in which
-        parameters given to ``ellipse()`` are intepreted.
+        parameters given to :doc:`ellipse` are intepreted.
 
         The default mode is ``ellipse_mode(CENTER)``, which interprets the first two
-        parameters of ``ellipse()`` as the shape's center point, while the third and
+        parameters of :doc:`ellipse` as the shape's center point, while the third and
         fourth parameters are its width and height.
 
-        ``ellipse_mode(RADIUS)`` also uses the first two parameters of ``ellipse()`` as
+        ``ellipse_mode(RADIUS)`` also uses the first two parameters of :doc:`ellipse` as
         the shape's center point, but uses the third and fourth parameters to specify
         half of the shapes's width and height.
 
-        ``ellipse_mode(CORNER)`` interprets the first two parameters of ``ellipse()`` as
-        the upper-left corner of the shape, while the third and fourth parameters are
+        ``ellipse_mode(CORNER)`` interprets the first two parameters of :doc:`ellipse`
+        as the upper-left corner of the shape, while the third and fourth parameters are
         its width and height.
 
-        ``ellipse_mode(CORNERS)`` interprets the first two parameters of ``ellipse()``
+        ``ellipse_mode(CORNERS)`` interprets the first two parameters of :doc:`ellipse`
         as the location of one corner of the ellipse's bounding box, and the third and
         fourth parameters as the location of the opposite corner.
 
-        The parameter must be written in ALL CAPS because Processing is a case-sensitive
+        The parameter must be written in ALL CAPS because Python is a case-sensitive
         language.
         """
         return self._instance.ellipseMode(mode)
@@ -7343,8 +7325,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the emissive color of the material used for drawing shapes drawn to the
-        screen. Used in combination with ``ambient()``, ``specular()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         pass
 
@@ -7386,8 +7368,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the emissive color of the material used for drawing shapes drawn to the
-        screen. Used in combination with ``ambient()``, ``specular()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         pass
 
@@ -7429,8 +7411,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the emissive color of the material used for drawing shapes drawn to the
-        screen. Used in combination with ``ambient()``, ``specular()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         pass
 
@@ -7471,13 +7453,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the emissive color of the material used for drawing shapes drawn to the
-        screen. Used in combination with ``ambient()``, ``specular()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         return self._instance.emissive(*args)
 
     def end_camera(self) -> None:
-        """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
+        """The :doc:`begin_camera` and ``end_camera()`` functions enable advanced
         customization of the camera space.
 
         Underlying Java method: PApplet.endCamera
@@ -7485,14 +7467,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``begin_camera()`` and ``end_camera()`` functions enable advanced
+        The :doc:`begin_camera` and ``end_camera()`` functions enable advanced
         customization of the camera space. Please see the reference for
-        ``begin_camera()`` for a description of how the functions are used.
+        :doc:`begin_camera` for a description of how the functions are used.
         """
         return self._instance.endCamera()
 
     def end_contour(self) -> None:
-        """Use the ``begin_contour()`` and ``end_contour()`` function to create negative
+        """Use the :doc:`begin_contour` and ``end_contour()`` function to create negative
         shapes within shapes such as the center of the letter 'O'.
 
         Underlying Java method: PApplet.endContour
@@ -7500,49 +7482,50 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Use the ``begin_contour()`` and ``end_contour()`` function to create negative
-        shapes within shapes such as the center of the letter 'O'. ``begin_contour()``
+        Use the :doc:`begin_contour` and ``end_contour()`` function to create negative
+        shapes within shapes such as the center of the letter 'O'. :doc:`begin_contour`
         begins recording vertices for the shape and ``end_contour()`` stops recording.
         The vertices that define a negative shape must "wind" in the opposite direction
         from the exterior shape. First draw vertices for the exterior shape in clockwise
         order, then for internal shapes, draw vertices counterclockwise.
 
-        These functions can only be used within a ``begin_shape()``/``end_shape()`` pair
-        and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
-        not work within a ``begin_contour()``/``end_contour()`` pair. It is also not
-        possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
+        These functions can only be used within a :doc:`begin_shape` & :doc:`end_shape`
+        pair and transformations such as :doc:`translate`, :doc:`rotate`, and
+        :doc:`scale` do not work within a :doc:`begin_contour` & ``end_contour()`` pair.
+        It is also not possible to use other shapes, such as :doc:`ellipse` or
+        :doc:`rect` within.
         """
         return self._instance.endContour()
 
     def end_raw(self) -> None:
-        """Complement to ``begin_raw()``; they must always be used together.
+        """Complement to :doc:`begin_raw`; they must always be used together.
 
         Underlying Java method: PApplet.endRaw
 
         Notes
         -----
 
-        Complement to ``begin_raw()``; they must always be used together. See the
-        ``begin_raw()`` reference for details.
+        Complement to :doc:`begin_raw`; they must always be used together. See the
+        :doc:`begin_raw` reference for details.
         """
         return self._instance.endRaw()
 
     def end_record(self) -> None:
-        """Stops the recording process started by ``begin_record()`` and closes the file.
+        """Stops the recording process started by :doc:`begin_record` and closes the file.
 
         Underlying Java method: PApplet.endRecord
 
         Notes
         -----
 
-        Stops the recording process started by ``begin_record()`` and closes the file.
+        Stops the recording process started by :doc:`begin_record` and closes the file.
         """
         return self._instance.endRecord()
 
     @overload
     def end_shape(self) -> None:
-        """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
-        be called after ``begin_shape()``.
+        """The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
+        be called after :doc:`begin_shape`.
 
         Underlying Java method: PApplet.endShape
 
@@ -7563,18 +7546,18 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
-        be called after ``begin_shape()``. When ``end_shape()`` is called, all of image
-        data defined since the previous call to ``begin_shape()`` is written into the
-        image buffer. The constant CLOSE as the value for the MODE parameter to close
-        the shape (to connect the beginning and the end).
+        The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
+        be called after :doc:`begin_shape`. When ``end_shape()`` is called, all of image
+        data defined since the previous call to :doc:`begin_shape` is written into the
+        image buffer. The constant ``CLOSE`` as the value for the ``MODE`` parameter to
+        close the shape (to connect the beginning and the end).
         """
         pass
 
     @overload
     def end_shape(self, mode: int, /) -> None:
-        """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
-        be called after ``begin_shape()``.
+        """The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
+        be called after :doc:`begin_shape`.
 
         Underlying Java method: PApplet.endShape
 
@@ -7595,17 +7578,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
-        be called after ``begin_shape()``. When ``end_shape()`` is called, all of image
-        data defined since the previous call to ``begin_shape()`` is written into the
-        image buffer. The constant CLOSE as the value for the MODE parameter to close
-        the shape (to connect the beginning and the end).
+        The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
+        be called after :doc:`begin_shape`. When ``end_shape()`` is called, all of image
+        data defined since the previous call to :doc:`begin_shape` is written into the
+        image buffer. The constant ``CLOSE`` as the value for the ``MODE`` parameter to
+        close the shape (to connect the beginning and the end).
         """
         pass
 
     def end_shape(self, *args):
-        """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
-        be called after ``begin_shape()``.
+        """The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
+        be called after :doc:`begin_shape`.
 
         Underlying Java method: PApplet.endShape
 
@@ -7626,11 +7609,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
-        be called after ``begin_shape()``. When ``end_shape()`` is called, all of image
-        data defined since the previous call to ``begin_shape()`` is written into the
-        image buffer. The constant CLOSE as the value for the MODE parameter to close
-        the shape (to connect the beginning and the end).
+        The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
+        be called after :doc:`begin_shape`. When ``end_shape()`` is called, all of image
+        data defined since the previous call to :doc:`begin_shape` is written into the
+        image buffer. The constant ``CLOSE`` as the value for the ``MODE`` parameter to
+        close the shape (to connect the beginning and the end).
         """
         return self._instance.endShape(*args)
 
@@ -7644,15 +7627,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Quits/stops/exits the program. Programs without a ``draw()`` function stop
         automatically after the last line has run, but programs with ``draw()`` run
-        continuously until the program is manually stopped or ``exit()`` is run.
+        continuously until the program is manually stopped or ``exit_sketch()`` is run.
 
-        Rather than terminating immediately, ``exit()`` will cause the sketch to exit
-        after ``draw()`` has completed (or after ``setup()`` completes if called during
-        the ``setup()`` function).
+        Rather than terminating immediately, ``exit_sketch()`` will cause the Sketch to
+        exit after ``draw()`` has completed (or after ``setup()`` completes if called
+        during the ``setup()`` function).
 
-        For Java programmers, this is *not* the same as System.``exit()``. Further,
-        System.``exit()`` should not be used because closing out an application while
-        ``draw()`` is running may cause a crash (particularly with P3D).
+        For Python programmers, this is *not* the same as ``sys.exit()``. Further,
+        ``sys.exit()`` should not be used because closing out an application while
+        ``draw()`` is running may cause a crash (particularly with ``P3D``).
         """
         return self._instance.exit()
 
@@ -7700,23 +7683,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         pass
 
@@ -7764,23 +7744,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         pass
 
@@ -7828,23 +7805,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         pass
 
@@ -7892,23 +7866,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         pass
 
@@ -7956,23 +7927,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         pass
 
@@ -8020,23 +7988,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         pass
 
@@ -8083,23 +8048,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
         0)``, all subsequent shapes will be filled with orange. This color is either
-        specified in terms of the RGB or HSB color depending on the current
-        ``color_mode()``. The default color space is RGB, with each value in the range
-        from 0 to 255.
+        specified in terms of the ``RGB`` or ``HSB`` color depending on the current
+        :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+        range from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the "gray" parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
-        To change the color of an image or a texture, use ``tint()``.
+        To change the color of an image or a texture, use :doc:`tint`.
         """
         return self._instance.fill(*args)
 
@@ -8135,39 +8097,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Filters the display window using a preset filter or with a custom shader. Using
         a shader with ``apply_filter()`` is much faster than without. Shaders require
-        the P2D or P3D renderer in ``size()``.
+        the ``P2D`` or ``P3D`` renderer in :doc:`size`.
 
         The presets options are:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Guassian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Guassian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Guassian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Guassian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         pass
 
@@ -8203,39 +8151,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Filters the display window using a preset filter or with a custom shader. Using
         a shader with ``apply_filter()`` is much faster than without. Shaders require
-        the P2D or P3D renderer in ``size()``.
+        the ``P2D`` or ``P3D`` renderer in :doc:`size`.
 
         The presets options are:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Guassian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Guassian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Guassian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Guassian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         pass
 
@@ -8271,39 +8205,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Filters the display window using a preset filter or with a custom shader. Using
         a shader with ``apply_filter()`` is much faster than without. Shaders require
-        the P2D or P3D renderer in ``size()``.
+        the ``P2D`` or ``P3D`` renderer in :doc:`size`.
 
         The presets options are:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Guassian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Guassian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Guassian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Guassian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         pass
 
@@ -8338,39 +8258,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Filters the display window using a preset filter or with a custom shader. Using
         a shader with ``apply_filter()`` is much faster than without. Shaders require
-        the P2D or P3D renderer in ``size()``.
+        the ``P2D`` or ``P3D`` renderer in :doc:`size`.
 
         The presets options are:
 
-        THRESHOLD
-        Converts the image to black and white pixels depending if they are above or
-        below the threshold defined by the level parameter. The parameter must be
-        between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
-
-        GRAY
-        Converts any colors in the image to grayscale equivalents. No parameter is used.
-
-        OPAQUE
-        Sets the alpha channel to entirely opaque. No parameter is used.
-
-        INVERT
-        Sets each pixel to its inverse value. No parameter is used.
-
-        POSTERIZE
-        Limits each channel of the image to the number of colors specified as the
-        parameter. The parameter can be set to values between 2 and 255, but results are
-        most noticeable in the lower ranges.
-
-        BLUR
-        Executes a Guassian blur with the level parameter specifying the extent of the
-        blurring. If no parameter is used, the blur is equivalent to Guassian blur of
-        radius 1. Larger values increase the blur.
-
-        ERODE
-        Reduces the light areas. No parameter is used.
-
-        DILATE
-        Increases the light areas. No parameter is used.
+        * THRESHOLD: Converts the image to black and white pixels depending if they are
+        above or below the threshold defined by the level parameter. The parameter must
+        be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+        * GRAY: Converts any colors in the image to grayscale equivalents. No parameter
+        is used.
+        * OPAQUE: Sets the alpha channel to entirely opaque. No parameter is used.
+        * INVERT: Sets each pixel to its inverse value. No parameter is used.
+        * POSTERIZE: Limits each channel of the image to the number of colors specified
+        as the parameter. The parameter can be set to values between 2 and 255, but
+        results are most noticeable in the lower ranges.
+        * BLUR: Executes a Guassian blur with the level parameter specifying the extent
+        of the blurring. If no parameter is used, the blur is equivalent to Guassian
+        blur of radius 1. Larger values increase the blur.
+        * ERODE: Reduces the light areas. No parameter is used.
+        * DILATE: Increases the light areas. No parameter is used.
         """
         return self._instance.filter(*args)
 
@@ -8436,7 +8342,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Setting the frustum has the effect of changing the *perspective* with which the
         scene is rendered.  This can be achieved more simply in many cases by using
-        ``perspective()``.
+        :doc:`perspective`.
 
         Note that the near value must be greater than zero (as the point of the frustum
         "pyramid" cannot converge "behind" the viewer).  Similarly, the far value must
@@ -8450,7 +8356,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @overload
     def full_screen(self) -> None:
-        """This function is new for Processing 3.0.
+        """Open a Sketch using the full size of the computer's display.
 
         Underlying Java method: PApplet.fullScreen
 
@@ -8468,7 +8374,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         display: int
-            the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
+            the screen to run the Sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
 
         renderer: str
             the renderer to use, e.g. P2D, P3D, JAVA2D (default)
@@ -8476,27 +8382,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new for Processing 3.0. It opens a sketch using the full size
-        of the computer's display. This function must be the first line in ``setup()``.
-        The ``size()`` and ``full_screen()`` functions cannot both be used in the same
-        program, just choose one.
+        Open a Sketch using the full size of the computer's display. This function must
+        be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+        cannot both be used in the same program.
 
-        When ``full_screen()`` is used without a parameter, it draws the sketch to the
-        screen currently selected inside the Preferences window. When it is used with a
-        single parameter, this number defines the screen to display to program on (e.g.
-        1, 2, 3...). When used with two parameters, the first defines the renderer to
-        use (e.g. P2D) and the second defines the screen. The ``SPAN`` parameter can be
-        used in place of a screen number to draw the sketch as a full-screen window
-        across all of the attached displays if there are more than one.
-
-        Prior to Processing 3.0, a full-screen program was defined with
-        ``size(display_width, display_height)``.
+        When ``full_screen()`` is used without a parameter on a computer with multiple
+        monitors, it will (probably) draw the Sketch to the primary display. When it is
+        used with a single parameter, this number defines the screen to display to
+        program on (e.g. 1, 2, 3...). When used with two parameters, the first defines
+        the renderer to use (e.g. P2D) and the second defines the screen. The ``SPAN``
+        parameter can be used in place of a screen number to draw the Sketch as a full-
+        screen window across all of the attached displays if there are more than one.
         """
         pass
 
     @overload
     def full_screen(self, display: int, /) -> None:
-        """This function is new for Processing 3.0.
+        """Open a Sketch using the full size of the computer's display.
 
         Underlying Java method: PApplet.fullScreen
 
@@ -8514,7 +8416,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         display: int
-            the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
+            the screen to run the Sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
 
         renderer: str
             the renderer to use, e.g. P2D, P3D, JAVA2D (default)
@@ -8522,27 +8424,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new for Processing 3.0. It opens a sketch using the full size
-        of the computer's display. This function must be the first line in ``setup()``.
-        The ``size()`` and ``full_screen()`` functions cannot both be used in the same
-        program, just choose one.
+        Open a Sketch using the full size of the computer's display. This function must
+        be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+        cannot both be used in the same program.
 
-        When ``full_screen()`` is used without a parameter, it draws the sketch to the
-        screen currently selected inside the Preferences window. When it is used with a
-        single parameter, this number defines the screen to display to program on (e.g.
-        1, 2, 3...). When used with two parameters, the first defines the renderer to
-        use (e.g. P2D) and the second defines the screen. The ``SPAN`` parameter can be
-        used in place of a screen number to draw the sketch as a full-screen window
-        across all of the attached displays if there are more than one.
-
-        Prior to Processing 3.0, a full-screen program was defined with
-        ``size(display_width, display_height)``.
+        When ``full_screen()`` is used without a parameter on a computer with multiple
+        monitors, it will (probably) draw the Sketch to the primary display. When it is
+        used with a single parameter, this number defines the screen to display to
+        program on (e.g. 1, 2, 3...). When used with two parameters, the first defines
+        the renderer to use (e.g. P2D) and the second defines the screen. The ``SPAN``
+        parameter can be used in place of a screen number to draw the Sketch as a full-
+        screen window across all of the attached displays if there are more than one.
         """
         pass
 
     @overload
     def full_screen(self, renderer: str, /) -> None:
-        """This function is new for Processing 3.0.
+        """Open a Sketch using the full size of the computer's display.
 
         Underlying Java method: PApplet.fullScreen
 
@@ -8560,7 +8458,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         display: int
-            the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
+            the screen to run the Sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
 
         renderer: str
             the renderer to use, e.g. P2D, P3D, JAVA2D (default)
@@ -8568,27 +8466,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new for Processing 3.0. It opens a sketch using the full size
-        of the computer's display. This function must be the first line in ``setup()``.
-        The ``size()`` and ``full_screen()`` functions cannot both be used in the same
-        program, just choose one.
+        Open a Sketch using the full size of the computer's display. This function must
+        be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+        cannot both be used in the same program.
 
-        When ``full_screen()`` is used without a parameter, it draws the sketch to the
-        screen currently selected inside the Preferences window. When it is used with a
-        single parameter, this number defines the screen to display to program on (e.g.
-        1, 2, 3...). When used with two parameters, the first defines the renderer to
-        use (e.g. P2D) and the second defines the screen. The ``SPAN`` parameter can be
-        used in place of a screen number to draw the sketch as a full-screen window
-        across all of the attached displays if there are more than one.
-
-        Prior to Processing 3.0, a full-screen program was defined with
-        ``size(display_width, display_height)``.
+        When ``full_screen()`` is used without a parameter on a computer with multiple
+        monitors, it will (probably) draw the Sketch to the primary display. When it is
+        used with a single parameter, this number defines the screen to display to
+        program on (e.g. 1, 2, 3...). When used with two parameters, the first defines
+        the renderer to use (e.g. P2D) and the second defines the screen. The ``SPAN``
+        parameter can be used in place of a screen number to draw the Sketch as a full-
+        screen window across all of the attached displays if there are more than one.
         """
         pass
 
     @overload
     def full_screen(self, renderer: str, display: int, /) -> None:
-        """This function is new for Processing 3.0.
+        """Open a Sketch using the full size of the computer's display.
 
         Underlying Java method: PApplet.fullScreen
 
@@ -8606,7 +8500,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         display: int
-            the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
+            the screen to run the Sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
 
         renderer: str
             the renderer to use, e.g. P2D, P3D, JAVA2D (default)
@@ -8614,26 +8508,22 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new for Processing 3.0. It opens a sketch using the full size
-        of the computer's display. This function must be the first line in ``setup()``.
-        The ``size()`` and ``full_screen()`` functions cannot both be used in the same
-        program, just choose one.
+        Open a Sketch using the full size of the computer's display. This function must
+        be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+        cannot both be used in the same program.
 
-        When ``full_screen()`` is used without a parameter, it draws the sketch to the
-        screen currently selected inside the Preferences window. When it is used with a
-        single parameter, this number defines the screen to display to program on (e.g.
-        1, 2, 3...). When used with two parameters, the first defines the renderer to
-        use (e.g. P2D) and the second defines the screen. The ``SPAN`` parameter can be
-        used in place of a screen number to draw the sketch as a full-screen window
-        across all of the attached displays if there are more than one.
-
-        Prior to Processing 3.0, a full-screen program was defined with
-        ``size(display_width, display_height)``.
+        When ``full_screen()`` is used without a parameter on a computer with multiple
+        monitors, it will (probably) draw the Sketch to the primary display. When it is
+        used with a single parameter, this number defines the screen to display to
+        program on (e.g. 1, 2, 3...). When used with two parameters, the first defines
+        the renderer to use (e.g. P2D) and the second defines the screen. The ``SPAN``
+        parameter can be used in place of a screen number to draw the Sketch as a full-
+        screen window across all of the attached displays if there are more than one.
         """
         pass
 
     def full_screen(self, *args):
-        """This function is new for Processing 3.0.
+        """Open a Sketch using the full size of the computer's display.
 
         Underlying Java method: PApplet.fullScreen
 
@@ -8651,7 +8541,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         display: int
-            the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
+            the screen to run the Sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
 
         renderer: str
             the renderer to use, e.g. P2D, P3D, JAVA2D (default)
@@ -8659,21 +8549,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new for Processing 3.0. It opens a sketch using the full size
-        of the computer's display. This function must be the first line in ``setup()``.
-        The ``size()`` and ``full_screen()`` functions cannot both be used in the same
-        program, just choose one.
+        Open a Sketch using the full size of the computer's display. This function must
+        be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+        cannot both be used in the same program.
 
-        When ``full_screen()`` is used without a parameter, it draws the sketch to the
-        screen currently selected inside the Preferences window. When it is used with a
-        single parameter, this number defines the screen to display to program on (e.g.
-        1, 2, 3...). When used with two parameters, the first defines the renderer to
-        use (e.g. P2D) and the second defines the screen. The ``SPAN`` parameter can be
-        used in place of a screen number to draw the sketch as a full-screen window
-        across all of the attached displays if there are more than one.
-
-        Prior to Processing 3.0, a full-screen program was defined with
-        ``size(display_width, display_height)``.
+        When ``full_screen()`` is used without a parameter on a computer with multiple
+        monitors, it will (probably) draw the Sketch to the primary display. When it is
+        used with a single parameter, this number defines the screen to display to
+        program on (e.g. 1, 2, 3...). When used with two parameters, the first defines
+        the renderer to use (e.g. P2D) and the second defines the screen. The ``SPAN``
+        parameter can be used in place of a screen number to draw the Sketch as a full-
+        screen window across all of the attached displays if there are more than one.
         """
         return self._instance.fullScreen(*args)
 
@@ -8715,22 +8601,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         to get the value of one pixel. Get a section of the display window by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
         ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current ``image_mode()``.
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
-        If a width and a height are specified, ``get(x, y, w, h)`` returns a PImage
-        corresponding to the part of the original PImage where the top left pixel is at
-        the ``(x, y)`` position with a width of ``w`` a height of ``h``.
+        If a width and a height are specified, ``get(x, y, w, h)`` returns a Py5Image
+        corresponding to the part of the original Py5Image where the top left pixel is
+        at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        pixels[] for more information.
+        as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
+        equivalent statement to ``get(x, y)`` using :doc:`pixels` is
+        ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
+        reference for :doc:`pixels` and :doc:`np_pixels` for more information.
         """
         pass
 
@@ -8772,22 +8659,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         to get the value of one pixel. Get a section of the display window by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
         ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current ``image_mode()``.
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
-        If a width and a height are specified, ``get(x, y, w, h)`` returns a PImage
-        corresponding to the part of the original PImage where the top left pixel is at
-        the ``(x, y)`` position with a width of ``w`` a height of ``h``.
+        If a width and a height are specified, ``get(x, y, w, h)`` returns a Py5Image
+        corresponding to the part of the original Py5Image where the top left pixel is
+        at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        pixels[] for more information.
+        as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
+        equivalent statement to ``get(x, y)`` using :doc:`pixels` is
+        ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
+        reference for :doc:`pixels` and :doc:`np_pixels` for more information.
         """
         pass
 
@@ -8829,22 +8717,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         to get the value of one pixel. Get a section of the display window by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
         ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current ``image_mode()``.
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
-        If a width and a height are specified, ``get(x, y, w, h)`` returns a PImage
-        corresponding to the part of the original PImage where the top left pixel is at
-        the ``(x, y)`` position with a width of ``w`` a height of ``h``.
+        If a width and a height are specified, ``get(x, y, w, h)`` returns a Py5Image
+        corresponding to the part of the original Py5Image where the top left pixel is
+        at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        pixels[] for more information.
+        as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
+        equivalent statement to ``get(x, y)`` using :doc:`pixels` is
+        ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
+        reference for :doc:`pixels` and :doc:`np_pixels` for more information.
         """
         pass
 
@@ -8886,22 +8775,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         to get the value of one pixel. Get a section of the display window by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
         ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current ``image_mode()``.
+        regardless of the current :doc:`image_mode`.
 
         If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only RGB
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in RGB
-        format.
+        numbers returned are scaled according to the current color ranges, but only
+        ``RGB`` values are returned by this function. For example, even though you may
+        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
+        ``RGB`` format.
 
-        If a width and a height are specified, ``get(x, y, w, h)`` returns a PImage
-        corresponding to the part of the original PImage where the top left pixel is at
-        the ``(x, y)`` position with a width of ``w`` a height of ``h``.
+        If a width and a height are specified, ``get(x, y, w, h)`` returns a Py5Image
+        corresponding to the part of the original Py5Image where the top left pixel is
+        at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``pixels[]``. The equivalent statement to
-        ``get(x, y)`` using ``pixels[]`` is ``pixels[y*width+x]``. See the reference for
-        pixels[] for more information.
+        as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
+        equivalent statement to ``get(x, y)`` using :doc:`pixels` is
+        ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
+        reference for :doc:`pixels` and :doc:`np_pixels` for more information.
         """
         return self._instance.get(*args)
 
@@ -9070,21 +8960,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @_return_py5surface
     def get_surface(self) -> Py5Surface:
-        """The documentation for this field or method has not yet been written.
+        """Get the Py5Surface object used for the Sketch.
 
         Underlying Java method: PApplet.getSurface
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+        Get the Py5Surface object used for the Sketch.
         """
         return self._instance.getSurface()
 
     def green(self, rgb: int, /) -> float:
-        """Extracts the green value from a color, scaled to match current ``color_mode()``.
+        """Extracts the green value from a color, scaled to match current
+        :doc:`color_mode`.
 
         Underlying Java method: PApplet.green
 
@@ -9097,19 +8986,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Extracts the green value from a color, scaled to match current ``color_mode()``.
-        The value is always returned as a float, so be careful not to assign it to an
-        int value.
+        Extracts the green value from a color, scaled to match current
+        :doc:`color_mode`. The value is always returned as a float, so be careful not to
+        assign it to an int value.
 
         The ``green()`` function is easy to use and understand, but it is slower than a
         technique called bit shifting. When working in ``color_mode(RGB, 255)``, you can
-        acheive the same results as ``green()`` but with greater speed by using the
-        right shift operator (``>>``) with a bit mask. For example, the following two
-        lines of code are equivalent means of getting the green value of the color value
-        ``c``:
-
-        ``g1 = green(c)  # simpler, but slower to calculate
-        g2 = c >> 8 & 0xFF  # very fast to calculate``
+        achieve the same results as ``green()`` but with greater speed by using the
+        right shift operator (``>>``) with a bit mask. For example, ``green(c)`` and ``c
+        >> 8 & 0xFF`` both extract the green value from a color variable ``c`` but the
+        later is faster.
         """
         return self._instance.green(rgb)
 
@@ -9123,101 +9009,90 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         which: int
-            missing variable description
+            hint to use when rendering Sketch
 
         Notes
         -----
 
         This function is used to enable or disable special features that control how
-        graphics are drawn. In the course of developing Processing, we had to make hard
-        decisions about tradeoffs between performance and visual quality. We put
-        significant effort into determining what makes most sense for the largest number
-        of users, and then use functions like ``hint()`` to allow people to tune the
-        settings for their particular sketch. Implementing a ``hint()`` is a last resort
-        that's used when a more elegant solution cannot be found. Some options might
-        graduate to standard features instead of hints over time, or be added and
-        removed between (major) releases.
+        graphics are drawn. In the course of developing Processing, the developers had
+        to make hard decisions about tradeoffs between performance and visual quality.
+        They put significant effort into determining what makes most sense for the
+        largest number of users, and then use functions like ``hint()`` to allow people
+        to tune the settings for their particular Sketch. Implementing a ``hint()`` is a
+        last resort that's used when a more elegant solution cannot be found. Some
+        options might graduate to standard features instead of hints over time, or be
+        added and removed between (major) releases.
+
+        Hints used by the Default Renderer
+        ----------------------------------
+
+        * ``ENABLE_STROKE_PURE``: Fixes a problem with shapes that have a stroke and are
+        rendered using small steps (for instance, using :doc:`vertex` with points that
+        are close to one another), or are drawn at small sizes.
+
+        Hints for use with ``P2D`` and ``P3D``
+        --------------------------------------
+
+        * ``DISABLE_OPENGL_ERRORS``: Speeds up the ``P3D`` renderer setting by not
+        checking for errors while running.
+        * ``DISABLE_TEXTURE_MIPMAPS``: Disable generation of texture mipmaps in ``P2D``
+        or ``P3D``. This results in lower quality - but faster - rendering of texture
+        images when they appear smaller than their native resolutions (the mipmaps are
+        scaled-down versions of a texture that make it look better when drawing it at a
+        small size). However, the difference in performance is fairly minor on recent
+        desktop video cards.
 
 
-        ``hints used by the default renderer:``
+        Hints for use with ``P3D`` only
+        -------------------------------
 
-        ``ENABLE_STROKE_PURE``
-        Fixes a problem with shapes that have a stroke and are rendered using small
-        steps (for instance, using ``vertex()`` with points that are close to one
-        another), or are drawn at small sizes.
-
-
-        ``hints for use with P2D and P3D:``
-
-        ``DISABLE_ASYNC_SAVEFRAME``
-        ``save()`` and ``save_frame()`` will not use separate threads for saving and
-        will block until the image is written to the drive. This was the default
-        behavior in 3.0b7 and before. To enable, call hint(ENABLE_ASYNC_SAVEFRAME).
-
-        ``DISABLE_OPENGL_ERRORS``
-        Speeds up the P3D renderer setting by not checking for errors while running.
-
-        ``DISABLE_TEXTURE_MIPMAPS``
-        Disable generation of texture mipmaps in P2D or P3D. This results in lower
-        quality - but faster - rendering of texture images when they appear smaller than
-        their native resolutions (the mipmaps are scaled-down versions of a texture that
-        make it look better when drawing it at a small size). However, the difference in
-        performance is fairly minor on recent desktop video cards.
-
-
-        ``hints for use with P3D only:``
-
-        ``DISABLE_DEPTH_MASK``
-        Disables writing into the depth buffer. This means that a shape drawn with this
-        hint can be hidden by another shape drawn later, irrespective of their distances
-        to the camera. Note that this is different from disabling the depth test. The
-        depth test is still applied, as long as the DISABLE_DEPTH_TEST hint is not
-        called, but the depth values of the objects are not recorded. This is useful
-        when drawing a semi-transparent 3D object without depth sorting, in order to
-        avoid visual glitches due the faces of the object being at different distances
-        from the camera, but still having the object properly occluded by the rest of
-        the objects in the scene.
-
-        ``ENABLE_DEPTH_SORT``
-        Enable primitive z-sorting of triangles and lines in P3D. This can slow
-        performance considerably, and the algorithm is not yet perfect.
-
-        ``DISABLE_DEPTH_TEST``
-        Disable the zbuffer, allowing you to draw on top of everything at will. When
-        depth testing is disabled, items will be drawn to the screen sequentially, like
-        a painting. This hint is most often used to draw in 3D, then draw in 2D on top
-        of it (for instance, to draw GUI controls in 2D on top of a 3D interface). When
-        called, this will also clear the depth buffer. Restore the default with
-        ``hint(ENABLE_DEPTH_TEST)``, but note that with the depth buffer cleared, any 3D
-        drawing that happens later in will ignore existing shapes on the screen.
-
-        ``DISABLE_OPTIMIZED_STROKE``
-        Forces the P3D renderer to draw each shape (including its strokes) separately,
-        instead of batching them into larger groups for better performance. One
-        consequence of this is that 2D items drawn with P3D are correctly stacked on the
-        screen, depending on the order in which they were drawn. Otherwise, glitches
-        such as the stroke lines being drawn on top of the interior of all the shapes
-        will occur. However, this hint can make rendering substantially slower, so it is
-        recommended to use it only when drawing a small amount of shapes. For drawing
-        two-dimensional scenes, use the P2D renderer instead, which doesn't need the
-        hint to properly stack shapes and their strokes.
-
-        ``ENABLE_STROKE_PERSPECTIVE``
-        Enables stroke geometry (lines and points) to be affected by the perspective,
-        meaning that they will look smaller as they move away from the camera.
+        * ``DISABLE_DEPTH_MASK``: Disables writing into the depth buffer. This means
+        that a shape drawn with this hint can be hidden by another shape drawn later,
+        irrespective of their distances to the camera. Note that this is different from
+        disabling the depth test. The depth test is still applied, as long as the
+        ``DISABLE_DEPTH_TEST`` hint is not called, but the depth values of the objects
+        are not recorded. This is useful when drawing a semi-transparent 3D object
+        without depth sorting, in order to avoid visual glitches due the faces of the
+        object being at different distances from the camera, but still having the object
+        properly occluded by the rest of the objects in the scene.
+        * ``ENABLE_DEPTH_SORT``: Enable primitive z-sorting of triangles and lines in
+        ``P3D``. This can slow performance considerably, and the algorithm is not yet
+        perfect.
+        * ``DISABLE_DEPTH_TEST``: Disable the zbuffer, allowing you to draw on top of
+        everything at will. When depth testing is disabled, items will be drawn to the
+        screen sequentially, like a painting. This hint is most often used to draw in
+        3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on
+        top of a 3D interface). When called, this will also clear the depth buffer.
+        Restore the default with ``hint(ENABLE_DEPTH_TEST)``, but note that with the
+        depth buffer cleared, any 3D drawing that happens later in will ignore existing
+        shapes on the screen.
+        * ``DISABLE_OPTIMIZED_STROKE``: Forces the ``P3D`` renderer to draw each shape
+        (including its strokes) separately, instead of batching them into larger groups
+        for better performance. One consequence of this is that 2D items drawn with
+        ``P3D`` are correctly stacked on the screen, depending on the order in which
+        they were drawn. Otherwise, glitches such as the stroke lines being drawn on top
+        of the interior of all the shapes will occur. However, this hint can make
+        rendering substantially slower, so it is recommended to use it only when drawing
+        a small amount of shapes. For drawing two-dimensional scenes, use the ``P2D``
+        renderer instead, which doesn't need the hint to properly stack shapes and their
+        strokes.
+        * ``ENABLE_STROKE_PERSPECTIVE``: Enables stroke geometry (lines and points) to
+        be affected by the perspective, meaning that they will look smaller as they move
+        away from the camera.
         """
         return self._instance.hint(which)
 
     @classmethod
     def hour(cls) -> int:
-        """Processing communicates with the clock on your computer.
+        """Py5 communicates with the clock on your computer.
 
         Underlying Java method: PApplet.hour
 
         Notes
         -----
 
-        Processing communicates with the clock on your computer. The ``hour()`` function
+        Py5 communicates with the clock on your computer. The ``hour()`` function
         returns the current hour as a value from 0 - 23.
         """
         return cls._cls.hour()
@@ -9289,18 +9164,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``image()`` function draws an image to the display window. Images must be in
-        the sketch's "data" directory to load correctly. Select "Add file..." from the
-        "Sketch" menu to add the image to the data directory, or just drag the image
-        file onto the sketch window. Processing currently works with GIF, JPEG, and PNG
-        images.
+        the Sketch's "data" directory to load correctly. Py5 currently works with GIF,
+        JPEG, and PNG images.
 
         The ``img`` parameter specifies the image to display and by default the ``a``
         and ``b`` parameters define the location of its upper-left corner. The image is
         displayed at its original size unless the ``c`` and ``d`` parameters specify a
-        different size. The ``image_mode()`` function can be used to change the way
+        different size. The :doc:`image_mode` function can be used to change the way
         these parameters draw the image.
 
-        The color of an image may be modified with the ``tint()`` function. This
+        The color of an image may be modified with the :doc:`tint` function. This
         function will maintain transparency for GIF and PNG images.
         """
         pass
@@ -9355,18 +9228,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``image()`` function draws an image to the display window. Images must be in
-        the sketch's "data" directory to load correctly. Select "Add file..." from the
-        "Sketch" menu to add the image to the data directory, or just drag the image
-        file onto the sketch window. Processing currently works with GIF, JPEG, and PNG
-        images.
+        the Sketch's "data" directory to load correctly. Py5 currently works with GIF,
+        JPEG, and PNG images.
 
         The ``img`` parameter specifies the image to display and by default the ``a``
         and ``b`` parameters define the location of its upper-left corner. The image is
         displayed at its original size unless the ``c`` and ``d`` parameters specify a
-        different size. The ``image_mode()`` function can be used to change the way
+        different size. The :doc:`image_mode` function can be used to change the way
         these parameters draw the image.
 
-        The color of an image may be modified with the ``tint()`` function. This
+        The color of an image may be modified with the :doc:`tint` function. This
         function will maintain transparency for GIF and PNG images.
         """
         pass
@@ -9421,18 +9292,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``image()`` function draws an image to the display window. Images must be in
-        the sketch's "data" directory to load correctly. Select "Add file..." from the
-        "Sketch" menu to add the image to the data directory, or just drag the image
-        file onto the sketch window. Processing currently works with GIF, JPEG, and PNG
-        images.
+        the Sketch's "data" directory to load correctly. Py5 currently works with GIF,
+        JPEG, and PNG images.
 
         The ``img`` parameter specifies the image to display and by default the ``a``
         and ``b`` parameters define the location of its upper-left corner. The image is
         displayed at its original size unless the ``c`` and ``d`` parameters specify a
-        different size. The ``image_mode()`` function can be used to change the way
+        different size. The :doc:`image_mode` function can be used to change the way
         these parameters draw the image.
 
-        The color of an image may be modified with the ``tint()`` function. This
+        The color of an image may be modified with the :doc:`tint` function. This
         function will maintain transparency for GIF and PNG images.
         """
         pass
@@ -9486,25 +9355,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``image()`` function draws an image to the display window. Images must be in
-        the sketch's "data" directory to load correctly. Select "Add file..." from the
-        "Sketch" menu to add the image to the data directory, or just drag the image
-        file onto the sketch window. Processing currently works with GIF, JPEG, and PNG
-        images.
+        the Sketch's "data" directory to load correctly. Py5 currently works with GIF,
+        JPEG, and PNG images.
 
         The ``img`` parameter specifies the image to display and by default the ``a``
         and ``b`` parameters define the location of its upper-left corner. The image is
         displayed at its original size unless the ``c`` and ``d`` parameters specify a
-        different size. The ``image_mode()`` function can be used to change the way
+        different size. The :doc:`image_mode` function can be used to change the way
         these parameters draw the image.
 
-        The color of an image may be modified with the ``tint()`` function. This
+        The color of an image may be modified with the :doc:`tint` function. This
         function will maintain transparency for GIF and PNG images.
         """
         return self._instance.image(*args)
 
     def image_mode(self, mode: int, /) -> None:
         """Modifies the location from which images are drawn by changing the way in which
-        parameters given to ``image()`` are intepreted.
+        parameters given to :doc:`image` are intepreted.
 
         Underlying Java method: PApplet.imageMode
 
@@ -9518,53 +9385,25 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Modifies the location from which images are drawn by changing the way in which
-        parameters given to ``image()`` are intepreted.
+        parameters given to :doc:`image` are intepreted.
 
         The default mode is ``image_mode(CORNER)``, which interprets the second and
-        third parameters of ``image()`` as the upper-left corner of the image. If two
+        third parameters of :doc:`image` as the upper-left corner of the image. If two
         additional parameters are specified, they are used to set the image's width and
         height.
 
         ``image_mode(CORNERS)`` interprets the second and third parameters of
-        ``image()`` as the  location of one corner, and the fourth and fifth parameters
+        :doc:`image` as the  location of one corner, and the fourth and fifth parameters
         as the opposite corner.
 
-        ``image_mode(CENTER)`` interprets the second and third parameters of ``image()``
-        as the image's center point. If two additional parameters are specified, they
-        are used to set the image's width and height.
+        ``image_mode(CENTER)`` interprets the second and third parameters of
+        :doc:`image` as the image's center point. If two additional parameters are
+        specified, they are used to set the image's width and height.
 
-        The parameter must be written in ALL CAPS because Processing is a case-sensitive
+        The parameter must be written in ALL CAPS because Python is a case-sensitive
         language.
         """
         return self._instance.imageMode(mode)
-
-    def is_key_pressed(self) -> bool:
-        """The documentation for this field or method has not yet been written.
-
-        Underlying Java method: PApplet.isKeyPressed
-
-        Notes
-        -----
-
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-        """
-        return self._instance.isKeyPressed()
-
-    def is_mouse_pressed(self) -> bool:
-        """The documentation for this field or method has not yet been written.
-
-        Underlying Java method: PApplet.isMousePressed
-
-        Notes
-        -----
-
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-        """
-        return self._instance.isMousePressed()
 
     @overload
     def lerp_color(self, c1: int, c2: int, amt: float, /) -> int:
@@ -9604,7 +9443,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         etc.
 
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
-        at 1. This is different from the behavior of ``lerp()``, but necessary because
+        at 1. This is different from the behavior of :doc:`lerp`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
         """
         pass
@@ -9647,7 +9486,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         etc.
 
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
-        at 1. This is different from the behavior of ``lerp()``, but necessary because
+        at 1. This is different from the behavior of :doc:`lerp`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
         """
         pass
@@ -9689,7 +9528,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         etc.
 
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
-        at 1. This is different from the behavior of ``lerp()``, but necessary because
+        at 1. This is different from the behavior of :doc:`lerp`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
         """
         return self._instance.lerpColor(*args)
@@ -9716,12 +9555,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the falloff rates for point lights, spot lights, and ambient lights. Like
-        ``fill()``, it affects only the elements which are created after it in the code.
-        The default value is ``light_falloff(1.0, 0.0, 0.0)``, and the parameters are
-        used to calculate the falloff with the following equation:
-
-        d = distance from light position to vertex position
-        falloff = 1 / (CONSTANT + d * LINEAR + (d*d) * QUADRATIC)
+        :doc:`fill`, it affects only the elements which are created after it in the
+        code. The default value is ``light_falloff(1.0, 0.0, 0.0)``, and the parameters
+        are used to calculate the falloff with the equation ``falloff = 1 / (CONSTANT +
+        d * ``LINEAR`` + (d*d) * QUADRATIC)``, where ``d`` is the distance from light
+        position to vertex position.
 
         Thinking about an ambient light with a falloff can be tricky. If you want a
         region of your scene to be lit ambiently with one color and another region to be
@@ -9751,12 +9589,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Sets the specular color for lights. Like ``fill()``, it affects only the
+        Sets the specular color for lights. Like :doc:`fill`, it affects only the
         elements which are created after it in the code. Specular refers to light which
         bounces off a surface in a preferred direction (rather than bouncing in all
         directions like a diffuse light) and is used for creating highlights. The
         specular quality of a light interacts with the specular material qualities set
-        through the ``specular()`` and ``shininess()`` functions.
+        through the :doc:`specular` and :doc:`shininess` functions.
         """
         return self._instance.lightSpecular(v1, v2, v3)
 
@@ -9769,11 +9607,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the default ambient light, directional light, falloff, and specular values.
-        The defaults are ambientLight(128, 128, 128) and directionalLight(128, 128, 128,
-        0, 0, -1), lightFalloff(1, 0, 0), and lightSpecular(0, 0, 0). Lights need to be
-        included in the ``draw()`` to remain persistent in a looping program. Placing
-        them in the ``setup()`` of a looping program will cause them to only have an
-        effect the first time through the loop.
+        The defaults are ``ambientLight(128, 128, 128)`` and ``directionalLight(128,
+        128, 128, 0, 0, -1)``, ``lightFalloff(1, 0, 0)``, and ``lightSpecular(0, 0,
+        0)``. Lights need to be included in the ``draw()`` to remain persistent in a
+        looping program. Placing them in the ``setup()`` of a looping program will cause
+        them to only have an effect the first time through the loop.
         """
         return self._instance.lights()
 
@@ -9817,12 +9655,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws a line (a direct path between two points) to the screen. The version of
         ``line()`` with four parameters draws the line in 2D.  To color a line, use the
-        ``stroke()`` function. A line cannot be filled, therefore the ``fill()``
+        :doc:`stroke` function. A line cannot be filled, therefore the :doc:`fill`
         function will not affect the color of a line. 2D lines are drawn with a width of
-        one pixel by default, but this can be changed with the ``stroke_weight()``
+        one pixel by default, but this can be changed with the :doc:`stroke_weight`
         function. The version with six parameters allows the line to be placed anywhere
         within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
-        P3D parameter in combination with ``size()`` as shown in the above example.
+        ``P3D`` parameter in combination with :doc:`size` as shown in the third example.
         """
         pass
 
@@ -9867,12 +9705,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws a line (a direct path between two points) to the screen. The version of
         ``line()`` with four parameters draws the line in 2D.  To color a line, use the
-        ``stroke()`` function. A line cannot be filled, therefore the ``fill()``
+        :doc:`stroke` function. A line cannot be filled, therefore the :doc:`fill`
         function will not affect the color of a line. 2D lines are drawn with a width of
-        one pixel by default, but this can be changed with the ``stroke_weight()``
+        one pixel by default, but this can be changed with the :doc:`stroke_weight`
         function. The version with six parameters allows the line to be placed anywhere
         within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
-        P3D parameter in combination with ``size()`` as shown in the above example.
+        ``P3D`` parameter in combination with :doc:`size` as shown in the third example.
         """
         pass
 
@@ -9915,12 +9753,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws a line (a direct path between two points) to the screen. The version of
         ``line()`` with four parameters draws the line in 2D.  To color a line, use the
-        ``stroke()`` function. A line cannot be filled, therefore the ``fill()``
+        :doc:`stroke` function. A line cannot be filled, therefore the :doc:`fill`
         function will not affect the color of a line. 2D lines are drawn with a width of
-        one pixel by default, but this can be changed with the ``stroke_weight()``
+        one pixel by default, but this can be changed with the :doc:`stroke_weight`
         function. The version with six parameters allows the line to be placed anywhere
         within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
-        P3D parameter in combination with ``size()`` as shown in the above example.
+        ``P3D`` parameter in combination with :doc:`size` as shown in the third example.
         """
         return self._instance.line(*args)
 
@@ -9959,57 +9797,57 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Loads a .vlw formatted font into a ``Py5Font`` object. Create a .vlw font by
-        selecting "Create Font..." from the Tools menu. This tool creates a texture for
-        each alphanumeric character and then adds them as a .vlw file to the current
-        sketch's data folder. Because the letters are defined as textures (and not
-        vector data) the size at which the fonts are created must be considered in
-        relation to the size at which they are drawn. For example, load a 32pt font if
-        the sketch displays the font at 32 pixels or smaller. Conversely, if a 12pt font
-        is loaded and displayed at 48pts, the letters will be distorted because the
-        program will be stretching a small graphic to a large size.
+        Loads a .vlw formatted font into a ``Py5Font`` object. Create a .vlw font with
+        the :doc:`create_font_file` function. This tool creates a texture for each
+        alphanumeric character and then adds them as a .vlw file to the current Sketch's
+        data folder. Because the letters are defined as textures (and not vector data)
+        the size at which the fonts are created must be considered in relation to the
+        size at which they are drawn. For example, load a 32pt font if the Sketch
+        displays the font at 32 pixels or smaller. Conversely, if a 12pt font is loaded
+        and displayed at 48pts, the letters will be distorted because the program will
+        be stretching a small graphic to a large size.
 
-        Like ``load_image()`` and other functions that load data, the ``load_font()``
+        Like :doc:`load_image` and other functions that load data, the ``load_font()``
         function should not be used inside ``draw()``, because it will slow down the
-        sketch considerably, as the font will be re-loaded from the disk (or network) on
-        each frame. It's recommended to load files inside ``setup()``
+        Sketch considerably, as the font will be re-loaded from the disk (or network) on
+        each frame. It's recommended to load files inside ``setup()``.
 
         To load correctly, fonts must be located in the "data" folder of the current
-        sketch. Alternatively, the file maybe be loaded from anywhere on the local
+        Sketch. Alternatively, the file maybe be loaded from anywhere on the local
         computer using an absolute path (something that starts with / on Unix and Linux,
         or a drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause an error if your code does not
+        check whether the value returned is ``None``.
 
-        Use ``create_font()`` (instead of ``load_font()``) to enable vector data to be
+        Use :doc:`create_font` (instead of ``load_font()``) to enable vector data to be
         used with the default renderer setting. This can be helpful when many font sizes
         are needed, or when using any renderer based on the default renderer, such as
-        the PDF library.
+        the ``PDF`` renderer.
         """
         return self._instance.loadFont(filename)
 
     def load_pixels(self) -> None:
-        """Loads the pixel data of the current display window into the ``pixels[]`` array.
+        """Loads the pixel data of the current display window into the :doc:`pixels` array.
 
         Underlying Java method: PApplet.loadPixels
 
         Notes
         -----
 
-        Loads the pixel data of the current display window into the ``pixels[]`` array.
+        Loads the pixel data of the current display window into the :doc:`pixels` array.
         This function must always be called before reading from or writing to
-        ``pixels[]``. Subsequent changes to the display window will not be reflected in
-        ``pixels`` until ``load_pixels()`` is called again.
+        :doc:`pixels`. Subsequent changes to the display window will not be reflected in
+        :doc:`pixels` until ``load_pixels()`` is called again.
         """
         return self._instance.loadPixels()
 
     @overload
     def load_shader(self, frag_filename: str, /) -> Py5Shader:
-        """Loads a shader into the PShader object.
+        """Loads a shader into a ``Py5Shader`` object.
 
         Underlying Java method: PApplet.loadShader
 
@@ -10033,9 +9871,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Loads a shader into the PShader object. The shader file must be loaded in the
-        sketch's "data" folder/directory to load correctly. Shaders are compatible with
-        the P2D and P3D renderers, but not with the default renderer.
+        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        the Sketch's "data" directory to load correctly. Shaders are compatible with the
+        ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
         Alternatively, the file maybe be loaded from anywhere on the local computer
         using an absolute path (something that starts with / on Unix and Linux, or a
@@ -10044,15 +9882,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause an error if your code does not
+        check whether the value returned is ``None``.
         """
         pass
 
     @overload
     def load_shader(self, frag_filename: str,
                     vert_filename: str, /) -> Py5Shader:
-        """Loads a shader into the PShader object.
+        """Loads a shader into a ``Py5Shader`` object.
 
         Underlying Java method: PApplet.loadShader
 
@@ -10076,9 +9914,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Loads a shader into the PShader object. The shader file must be loaded in the
-        sketch's "data" folder/directory to load correctly. Shaders are compatible with
-        the P2D and P3D renderers, but not with the default renderer.
+        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        the Sketch's "data" directory to load correctly. Shaders are compatible with the
+        ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
         Alternatively, the file maybe be loaded from anywhere on the local computer
         using an absolute path (something that starts with / on Unix and Linux, or a
@@ -10087,14 +9925,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause an error if your code does not
+        check whether the value returned is ``None``.
         """
         pass
 
     @_load_py5shader
     def load_shader(self, *args):
-        """Loads a shader into the PShader object.
+        """Loads a shader into a ``Py5Shader`` object.
 
         Underlying Java method: PApplet.loadShader
 
@@ -10118,9 +9956,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Loads a shader into the PShader object. The shader file must be loaded in the
-        sketch's "data" folder/directory to load correctly. Shaders are compatible with
-        the P2D and P3D renderers, but not with the default renderer.
+        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        the Sketch's "data" directory to load correctly. Shaders are compatible with the
+        ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
         Alternatively, the file maybe be loaded from anywhere on the local computer
         using an absolute path (something that starts with / on Unix and Linux, or a
@@ -10129,8 +9967,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause an error if your code does not
+        check whether the value returned is ``None``.
         """
         return self._instance.loadShader(*args)
 
@@ -10162,9 +10000,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Loads geometry into a variable of type ``Py5Shape``. SVG and OBJ files may be
         loaded. To load correctly, the file must be located in the data directory of the
-        current sketch. In most cases, ``load_shape()`` should be used inside
+        current Sketch. In most cases, ``load_shape()`` should be used inside
         ``setup()`` because loading shapes inside ``draw()`` will reduce the speed of a
-        sketch.
+        Sketch.
 
         Alternatively, the file maybe be loaded from anywhere on the local computer
         using an absolute path (something that starts with / on Unix and Linux, or a
@@ -10173,8 +10011,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause errors if your code does not
+        check whether the value returned is ``None``.
         """
         pass
 
@@ -10206,9 +10044,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Loads geometry into a variable of type ``Py5Shape``. SVG and OBJ files may be
         loaded. To load correctly, the file must be located in the data directory of the
-        current sketch. In most cases, ``load_shape()`` should be used inside
+        current Sketch. In most cases, ``load_shape()`` should be used inside
         ``setup()`` because loading shapes inside ``draw()`` will reduce the speed of a
-        sketch.
+        Sketch.
 
         Alternatively, the file maybe be loaded from anywhere on the local computer
         using an absolute path (something that starts with / on Unix and Linux, or a
@@ -10217,8 +10055,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause errors if your code does not
+        check whether the value returned is ``None``.
         """
         pass
 
@@ -10250,9 +10088,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Loads geometry into a variable of type ``Py5Shape``. SVG and OBJ files may be
         loaded. To load correctly, the file must be located in the data directory of the
-        current sketch. In most cases, ``load_shape()`` should be used inside
+        current Sketch. In most cases, ``load_shape()`` should be used inside
         ``setup()`` because loading shapes inside ``draw()`` will reduce the speed of a
-        sketch.
+        Sketch.
 
         Alternatively, the file maybe be loaded from anywhere on the local computer
         using an absolute path (something that starts with / on Unix and Linux, or a
@@ -10261,23 +10099,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         If the file is not available or an error occurs, ``None`` will be returned and
         an error message will be printed to the console. The error message does not halt
-        the program, however the null value may cause a NullPointerException if your
-        code does not check whether the value returned is null.
+        the program, however the ``None`` value may cause errors if your code does not
+        check whether the value returned is ``None``.
         """
         return self._instance.loadShape(*args)
 
     def loop(self) -> None:
-        """By default, Processing loops through ``draw()`` continuously, executing the code
-        within it.
+        """By default, py5 loops through ``draw()`` continuously, executing the code within
+        it.
 
         Underlying Java method: PApplet.loop
 
         Notes
         -----
 
-        By default, Processing loops through ``draw()`` continuously, executing the code
-        within it. However, the ``draw()`` loop may be stopped by calling ``no_loop()``.
-        In that case, the ``draw()`` loop can be resumed with ``loop()``.
+        By default, py5 loops through ``draw()`` continuously, executing the code within
+        it. However, the ``draw()`` loop may be stopped by calling :doc:`no_loop`. In
+        that case, the ``draw()`` loop can be resumed with ``loop()``.
         """
         return self._instance.loop()
 
@@ -10298,15 +10136,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @classmethod
     def minute(cls) -> int:
-        """Processing communicates with the clock on your computer.
+        """Py5 communicates with the clock on your computer.
 
         Underlying Java method: PApplet.minute
 
         Notes
         -----
 
-        Processing communicates with the clock on your computer. The ``minute()``
-        function returns the current minute as a value from 0 - 59.
+        Py5 communicates with the clock on your computer. The ``minute()`` function
+        returns the current minute as a value from 0 - 59.
         """
         return cls._cls.minute()
 
@@ -10336,9 +10174,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         space relative to the location of the original point once the transformations
         are no longer in use.
 
-        In the example, the ``model_x()``, ``model_y()``, and ``model_z()`` functions
+        In the example, the ``model_x()``, :doc:`model_y`, and :doc:`model_z` functions
         record the location of a box in space after being placed using a series of
-        translate and rotate commands. After ``pop_matrix()`` is called, those
+        translate and rotate commands. After :doc:`pop_matrix` is called, those
         transformations no longer apply, but the (x, y, z) coordinate returned by the
         model functions is used to place another box in the same location.
         """
@@ -10370,9 +10208,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         space relative to the location of the original point once the transformations
         are no longer in use.
 
-        In the example, the ``model_x()``, ``model_y()``, and ``model_z()`` functions
+        In the example, the :doc:`model_x`, ``model_y()``, and :doc:`model_z` functions
         record the location of a box in space after being placed using a series of
-        translate and rotate commands. After ``pop_matrix()`` is called, those
+        translate and rotate commands. After :doc:`pop_matrix` is called, those
         transformations no longer apply, but the (x, y, z) coordinate returned by the
         model functions is used to place another box in the same location.
         """
@@ -10404,9 +10242,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         space relative to the location of the original point once the transformations
         are no longer in use.
 
-        In the example, the ``model_x()``, ``model_y()``, and ``model_z()`` functions
+        In the example, the :doc:`model_x`, :doc:`model_y`, and ``model_z()`` functions
         record the location of a box in space after being placed using a series of
-        translate and rotate commands. After ``pop_matrix()`` is called, those
+        translate and rotate commands. After :doc:`pop_matrix` is called, those
         transformations no longer apply, but the (x, y, z) coordinate returned by the
         model functions is used to place another box in the same location.
         """
@@ -10414,27 +10252,27 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @classmethod
     def month(cls) -> int:
-        """Processing communicates with the clock on your computer.
+        """Py5 communicates with the clock on your computer.
 
         Underlying Java method: PApplet.month
 
         Notes
         -----
 
-        Processing communicates with the clock on your computer. The ``month()``
-        function returns the current month as a value from 1 - 12.
+        Py5 communicates with the clock on your computer. The ``month()`` function
+        returns the current month as a value from 1 - 12.
         """
         return cls._cls.month()
 
     def no_clip(self) -> None:
-        """Disables the clipping previously started by the ``clip()`` function.
+        """Disables the clipping previously started by the :doc:`clip` function.
 
         Underlying Java method: PApplet.noClip
 
         Notes
         -----
 
-        Disables the clipping previously started by the ``clip()`` function.
+        Disables the clipping previously started by the :doc:`clip` function.
         """
         return self._instance.noClip()
 
@@ -10446,8 +10284,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Hides the cursor from view. Will not work when running the program in a web
-        browser or in full screen (Present) mode.
+        Hides the cursor from view. Will not work when running the program in full
+        screen (Present) mode.
         """
         return self._instance.noCursor()
 
@@ -10459,8 +10297,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Disables filling geometry. If both ``no_stroke()`` and ``no_fill()`` are called,
-        nothing will be drawn to the screen.
+        Disables filling geometry. If both :doc:`no_stroke` and ``no_fill()`` are
+        called, nothing will be drawn to the screen.
         """
         return self._instance.noFill()
 
@@ -10473,35 +10311,34 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Disable all lighting. Lighting is turned off by default and enabled with the
-        ``lights()`` function. This function can be used to disable lighting so that 2D
+        :doc:`lights` function. This function can be used to disable lighting so that 2D
         geometry (which does not require lighting) can be drawn after a set of lighted
         3D geometry.
         """
         return self._instance.noLights()
 
     def no_loop(self) -> None:
-        """Stops Processing from continuously executing the code within ``draw()``.
+        """Stops py5 from continuously executing the code within ``draw()``.
 
         Underlying Java method: PApplet.noLoop
 
         Notes
         -----
 
-        Stops Processing from continuously executing the code within ``draw()``. If
-        ``loop()`` is called, the code in ``draw()`` begins to run continuously again.
-        If using ``no_loop()`` in ``setup()``, it should be the last line inside the
-        block.
+        Stops py5 from continuously executing the code within ``draw()``. If :doc:`loop`
+        is called, the code in ``draw()`` begins to run continuously again. If using
+        ``no_loop()`` in ``setup()``, it should be the last line inside the block.
 
         When ``no_loop()`` is used, it's not possible to manipulate or access the screen
         inside event handling functions such as ``mouse_pressed()`` or
-        ``key_pressed()``. Instead, use those functions to call ``redraw()`` or
-        ``loop()``, which will run ``draw()``, which can update the screen properly.
+        ``key_pressed()``. Instead, use those functions to call :doc:`redraw` or
+        :doc:`loop`, which will run ``draw()``, which can update the screen properly.
         This means that when ``no_loop()`` has been called, no drawing can happen, and
-        functions like ``save_frame()`` or ``load_pixels()`` may not be used.
+        functions like :doc:`save_frame` or :doc:`load_pixels` may not be used.
 
-        Note that if the sketch is resized, ``redraw()`` will be called to update the
-        sketch, even after ``no_loop()`` has been specified. Otherwise, the sketch would
-        enter an odd state until ``loop()`` was called.
+        Note that if the Sketch is resized, :doc:`redraw` will be called to update the
+        Sketch, even after ``no_loop()`` has been specified. Otherwise, the Sketch would
+        enter an odd state until :doc:`loop` was called.
         """
         return self._instance.noLoop()
 
@@ -10516,12 +10353,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.  Note
-        that ``smooth()`` is active by default, so it is necessary to call
-        ``no_smooth()`` to disable smoothing of geometry, fonts, and images. Since the
-        release of Processing 3.0, the ``no_smooth()`` function can only be run once for
-        each sketch, either at the top of a sketch without a ``setup()``, or after the
-        ``size()`` function when used in a sketch with ``setup()``. See the examples
-        above for both scenarios.
+        that :doc:`smooth` is active by default, so it is necessary to call
+        ``no_smooth()`` to disable smoothing of geometry, fonts, and images. The
+        ``no_smooth()`` function can only be run once for each Sketch and must be called
+        in ``settings()``.
         """
         return self._instance.noSmooth()
 
@@ -10533,8 +10368,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Disables drawing the stroke (outline). If both ``no_stroke()`` and ``no_fill()``
-        are called, nothing will be drawn to the screen.
+        Disables drawing the stroke (outline). If both ``no_stroke()`` and
+        :doc:`no_fill` are called, nothing will be drawn to the screen.
         """
         return self._instance.noStroke()
 
@@ -10588,7 +10423,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the current normal vector. Used for drawing three dimensional shapes and
         surfaces, ``normal()`` specifies a vector perpendicular to a shape's surface
-        which, in turn, determines how lighting affects it. Processing attempts to
+        which, in turn, determines how lighting affects it. Py5 attempts to
         automatically assign normals to shapes, but since that's imperfect, this is a
         better option when you want more control. This function is identical to
         ``gl_normal3f()`` in OpenGL.
@@ -10640,7 +10475,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         clipping volume where left and right are the minimum and maximum x values, top
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
-        ortho(-width/2, width/2, -height/2, height/2).
+        ``ortho(-width/2, width/2, -height/2, height/2)``.
         """
         pass
 
@@ -10690,7 +10525,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         clipping volume where left and right are the minimum and maximum x values, top
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
-        ortho(-width/2, width/2, -height/2, height/2).
+        ``ortho(-width/2, width/2, -height/2, height/2)``.
         """
         pass
 
@@ -10740,7 +10575,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         clipping volume where left and right are the minimum and maximum x values, top
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
-        ortho(-width/2, width/2, -height/2, height/2).
+        ``ortho(-width/2, width/2, -height/2, height/2)``.
         """
         pass
 
@@ -10788,7 +10623,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         clipping volume where left and right are the minimum and maximum x values, top
         and bottom are the minimum and maximum y values, and near and far are the
         minimum and maximum z values. If no parameters are given, the default is used:
-        ortho(-width/2, width/2, -height/2, height/2).
+        ``ortho(-width/2, width/2, -height/2, height/2)``.
         """
         return self._instance.ortho(*args)
 
@@ -10846,8 +10681,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         perspective of the world more accurately than orthographic projection. The
         version of perspective without parameters sets the default perspective and the
         version with four parameters allows the programmer to set the area precisely.
-        The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
-        cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+        The default values are: ``perspective(PI/3.0, width/height, cameraZ/10.0,
+        cameraZ*10.0)`` where cameraZ is ``((height/2.0) / tan(PI*60.0/360.0))``.
         """
         pass
 
@@ -10892,8 +10727,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         perspective of the world more accurately than orthographic projection. The
         version of perspective without parameters sets the default perspective and the
         version with four parameters allows the programmer to set the area precisely.
-        The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
-        cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+        The default values are: ``perspective(PI/3.0, width/height, cameraZ/10.0,
+        cameraZ*10.0)`` where cameraZ is ``((height/2.0) / tan(PI*60.0/360.0))``.
         """
         pass
 
@@ -10936,13 +10771,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         perspective of the world more accurately than orthographic projection. The
         version of perspective without parameters sets the default perspective and the
         version with four parameters allows the programmer to set the area precisely.
-        The default values are: perspective(PI/3.0, width/height, cameraZ/10.0,
-        cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+        The default values are: ``perspective(PI/3.0, width/height, cameraZ/10.0,
+        cameraZ*10.0)`` where cameraZ is ``((height/2.0) / tan(PI*60.0/360.0))``.
         """
         return self._instance.perspective(*args)
 
     def pixel_density(self, density: int, /) -> None:
-        """This function is new with Processing 3.0.
+        """This function makes it possible for py5 to render using all of the pixels on
+        high resolutions screens like Apple Retina displays and Windows High-DPI
+        displays.
 
         Underlying Java method: PApplet.pixelDensity
 
@@ -10955,23 +10792,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        This function is new with Processing 3.0. It makes it possible for Processing to
-        render using all of the pixels on high resolutions screens like Apple Retina
-        displays and Windows High-DPI displays. This function can only be run once
-        within a program and it must be used right after ``size()`` in a program without
-        a ``setup()`` and used within ``setup()`` when a program has one.  The
-        ``pixel_density()`` should only be used with hardcoded numbers (in almost all
-        cases this number will be 2) or in combination with ``display_density()`` as in
-        the third example above.
+        This function makes it possible for py5 to render using all of the pixels on
+        high resolutions screens like Apple Retina displays and Windows High-DPI
+        displays. This function can only be run once within a program and it must be
+        called in ``settings()``.  The ``pixel_density()`` should only be used with
+        hardcoded numbers (in almost all cases this number will be 2) or in combination
+        with :doc:`display_density` as in the second example.
 
         When the pixel density is set to more than 1, it changes all of the pixel
-        operations including the way ``get()``, ``set()``, ``blend()``, ``copy()``, and
-        ``update_pixels()`` all work. See the reference for ``pixel_width`` and
-        ``pixel_height`` for more information.
+        operations including the way :doc:`get`, :doc:`blend`, :doc:`copy`,
+        :doc:`update_pixels`, and :doc:`update_np_pixels` all work. See the reference
+        for :doc:`pixel_width` and :doc:`pixel_height` for more information.
 
         To use variables as the arguments to ``pixel_density()`` function, place the
-        ``pixel_density()`` function within the ``settings()`` function. There is more
-        information about this on the ``settings()`` reference page.
+        ``pixel_density()`` function within the ``settings()`` function.
         """
         return self._instance.pixelDensity(density)
 
@@ -11007,19 +10841,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Draws a point, a coordinate in space at the dimension of one pixel. The first
         parameter is the horizontal value for the point, the second value is the
         vertical value for the point, and the optional third value is the depth value.
-        Drawing this shape in 3D with the ``z`` parameter requires the P3D parameter in
-        combination with ``size()`` as shown in the above example.
+        Drawing this shape in 3D with the ``z`` parameter requires the ``P3D`` parameter
+        in combination with :doc:`size` as shown in the above example.
 
-        Use ``stroke()`` to set the color of a ``point()``.
+        Use :doc:`stroke` to set the color of a ``point()``.
 
         Point appears round with the default ``stroke_cap(ROUND)`` and square with
         ``stroke_cap(PROJECT)``. Points are invisible with ``stroke_cap(SQUARE)`` (no
         cap).
 
-        Using ``point()`` with strokeWeight(1) or smaller may draw nothing to the
+        Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
         screen, depending on the graphics settings of the computer. Workarounds include
-        setting the pixel using ``set()`` or drawing the point using either ``circle()``
-        or ``square()``.
+        setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
+        the point using either :doc:`circle` or :doc:`square`.
         """
         pass
 
@@ -11055,19 +10889,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Draws a point, a coordinate in space at the dimension of one pixel. The first
         parameter is the horizontal value for the point, the second value is the
         vertical value for the point, and the optional third value is the depth value.
-        Drawing this shape in 3D with the ``z`` parameter requires the P3D parameter in
-        combination with ``size()`` as shown in the above example.
+        Drawing this shape in 3D with the ``z`` parameter requires the ``P3D`` parameter
+        in combination with :doc:`size` as shown in the above example.
 
-        Use ``stroke()`` to set the color of a ``point()``.
+        Use :doc:`stroke` to set the color of a ``point()``.
 
         Point appears round with the default ``stroke_cap(ROUND)`` and square with
         ``stroke_cap(PROJECT)``. Points are invisible with ``stroke_cap(SQUARE)`` (no
         cap).
 
-        Using ``point()`` with strokeWeight(1) or smaller may draw nothing to the
+        Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
         screen, depending on the graphics settings of the computer. Workarounds include
-        setting the pixel using ``set()`` or drawing the point using either ``circle()``
-        or ``square()``.
+        setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
+        the point using either :doc:`circle` or :doc:`square`.
         """
         pass
 
@@ -11102,19 +10936,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Draws a point, a coordinate in space at the dimension of one pixel. The first
         parameter is the horizontal value for the point, the second value is the
         vertical value for the point, and the optional third value is the depth value.
-        Drawing this shape in 3D with the ``z`` parameter requires the P3D parameter in
-        combination with ``size()`` as shown in the above example.
+        Drawing this shape in 3D with the ``z`` parameter requires the ``P3D`` parameter
+        in combination with :doc:`size` as shown in the above example.
 
-        Use ``stroke()`` to set the color of a ``point()``.
+        Use :doc:`stroke` to set the color of a ``point()``.
 
         Point appears round with the default ``stroke_cap(ROUND)`` and square with
         ``stroke_cap(PROJECT)``. Points are invisible with ``stroke_cap(SQUARE)`` (no
         cap).
 
-        Using ``point()`` with strokeWeight(1) or smaller may draw nothing to the
+        Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
         screen, depending on the graphics settings of the computer. Workarounds include
-        setting the pixel using ``set()`` or drawing the point using either ``circle()``
-        or ``square()``.
+        setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
+        the point using either :doc:`circle` or :doc:`square`.
         """
         return self._instance.point(*args)
 
@@ -11179,7 +11013,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def pop(self) -> None:
         """The ``pop()`` function restores the previous drawing style settings and
-        transformations after ``push()`` has changed them.
+        transformations after :doc:`push` has changed them.
 
         Underlying Java method: PApplet.pop
 
@@ -11187,23 +11021,23 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``pop()`` function restores the previous drawing style settings and
-        transformations after ``push()`` has changed them. Note that these functions are
-        always used together. They allow you to change the style and transformation
+        transformations after :doc:`push` has changed them. Note that these functions
+        are always used together. They allow you to change the style and transformation
         settings and later return to what you had. When a new state is started with
-        ``push()``, it builds on the current style and transform information.
+        :doc:`push`, it builds on the current style and transform information.
 
-        ``push()`` stores information related to the current transformation state and
-        style settings controlled by the following functions: ``rotate()``,
-        ``translate()``, ``scale()``, ``fill()``, ``stroke()``, ``tint()``,
-        ``stroke_weight()``, ``stroke_cap()``, ``stroke_join()``, ``image_mode()``,
-        ``rect_mode()``, ``ellipse_mode()``, ``color_mode()``, ``text_align()``,
-        ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``.
+        :doc:`push` stores information related to the current transformation state and
+        style settings controlled by the following functions: :doc:`rotate`,
+        :doc:`translate`, :doc:`scale`, :doc:`fill`, :doc:`stroke`, :doc:`tint`,
+        :doc:`stroke_weight`, :doc:`stroke_cap`, :doc:`stroke_join`, :doc:`image_mode`,
+        :doc:`rect_mode`, :doc:`ellipse_mode`, :doc:`color_mode`, :doc:`text_align`,
+        :doc:`text_font`, :doc:`text_mode`, :doc:`text_size`, and :doc:`text_leading`.
 
-        The ``push()`` and ``pop()`` functions were added with Processing 3.5. They can
-        be used in place of ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and
-        ``pop_styles()``. The difference is that ``push()`` and ``pop()`` control both
-        the transformations (rotate, scale, translate) and the drawing styles at the
-        same time.
+        The :doc:`push` and ``pop()`` functions can be used in place of
+        :doc:`push_matrix`, :doc:`pop_matrix`, ``push_styles()``, and ``pop_styles()``.
+        The difference is that :doc:`push` and ``pop()`` control both the
+        transformations (rotate, scale, translate) and the drawing styles at the same
+        time.
         """
         return self._instance.pop()
 
@@ -11217,15 +11051,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Pops the current transformation matrix off the matrix stack. Understanding
         pushing and popping requires understanding the concept of a matrix stack. The
-        ``push_matrix()`` function saves the current coordinate system to the stack and
-        ``pop_matrix()`` restores the prior coordinate system. ``push_matrix()`` and
+        :doc:`push_matrix` function saves the current coordinate system to the stack and
+        ``pop_matrix()`` restores the prior coordinate system. :doc:`push_matrix` and
         ``pop_matrix()`` are used in conjuction with the other transformation functions
         and may be embedded to control the scope of the transformations.
         """
         return self._instance.popMatrix()
 
     def pop_style(self) -> None:
-        """The ``push_style()`` function saves the current style settings and
+        """The :doc:`push_style` function saves the current style settings and
         ``pop_style()`` restores the prior settings; these functions are always used
         together.
 
@@ -11234,61 +11068,55 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        The ``push_style()`` function saves the current style settings and
+        The :doc:`push_style` function saves the current style settings and
         ``pop_style()`` restores the prior settings; these functions are always used
         together. They allow you to change the style settings and later return to what
-        you had. When a new style is started with ``push_style()``, it builds on the
-        current style information. The ``push_style()`` and ``pop_style()`` functions
-        can be embedded to provide more control (see the second example above for a
+        you had. When a new style is started with :doc:`push_style`, it builds on the
+        current style information. The :doc:`push_style` and ``pop_style()`` functions
+        can be embedded to provide more control (see the second example for a
         demonstration.)
         """
         return self._instance.popStyle()
 
     def print_camera(self) -> None:
-        """Prints the current camera matrix to the Console (the text window at the bottom
-        of Processing).
+        """Prints the current camera matrix to standard output.
 
         Underlying Java method: PApplet.printCamera
 
         Notes
         -----
 
-        Prints the current camera matrix to the Console (the text window at the bottom
-        of Processing).
+        Prints the current camera matrix to standard output.
         """
         return self._instance.printCamera()
 
     def print_matrix(self) -> None:
-        """Prints the current matrix to the Console (the text window at the bottom of
-        Processing).
+        """Prints the current matrix to standard output.
 
         Underlying Java method: PApplet.printMatrix
 
         Notes
         -----
 
-        Prints the current matrix to the Console (the text window at the bottom of
-        Processing).
+        Prints the current matrix to standard output.
         """
         return self._instance.printMatrix()
 
     def print_projection(self) -> None:
-        """Prints the current projection matrix to the Console (the text window at the
-        bottom of Processing).
+        """Prints the current projection matrix to standard output.
 
         Underlying Java method: PApplet.printProjection
 
         Notes
         -----
 
-        Prints the current projection matrix to the Console (the text window at the
-        bottom of Processing).
+        Prints the current projection matrix to standard output.
         """
         return self._instance.printProjection()
 
     def push(self) -> None:
         """The ``push()`` function saves the current drawing style settings and
-        transformations, while ``pop()`` restores these settings.
+        transformations, while :doc:`pop` restores these settings.
 
         Underlying Java method: PApplet.push
 
@@ -11296,24 +11124,24 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``push()`` function saves the current drawing style settings and
-        transformations, while ``pop()`` restores these settings. Note that these
+        transformations, while :doc:`pop` restores these settings. Note that these
         functions are always used together. They allow you to change the style and
         transformation settings and later return to what you had. When a new state is
         started with ``push()``, it builds on the current style and transform
         information.
 
         ``push()`` stores information related to the current transformation state and
-        style settings controlled by the following functions: ``rotate()``,
-        ``translate()``, ``scale()``, ``fill()``, ``stroke()``, ``tint()``,
-        ``stroke_weight()``, ``stroke_cap()``, ``stroke_join()``, ``image_mode()``,
-        ``rect_mode()``, ``ellipse_mode()``, ``color_mode()``, ``text_align()``,
-        ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``.
+        style settings controlled by the following functions: :doc:`rotate`,
+        :doc:`translate`, :doc:`scale`, :doc:`fill`, :doc:`stroke`, :doc:`tint`,
+        :doc:`stroke_weight`, :doc:`stroke_cap`, :doc:`stroke_join`, :doc:`image_mode`,
+        :doc:`rect_mode`, :doc:`ellipse_mode`, :doc:`color_mode`, :doc:`text_align`,
+        :doc:`text_font`, :doc:`text_mode`, :doc:`text_size`, :doc:`text_leading`.
 
-        The ``push()`` and ``pop()`` functions were added with Processing 3.5. They can
-        be used in place of ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and
-        ``pop_styles()``. The difference is that ``push()`` and ``pop()`` control both
-        the transformations (rotate, scale, translate) and the drawing styles at the
-        same time.
+        The ``push()`` and :doc:`pop` functions can be used in place of
+        :doc:`push_matrix`, :doc:`pop_matrix`, ``push_styles()``, and ``pop_styles()``.
+        The difference is that ``push()`` and :doc:`pop` control both the
+        transformations (rotate, scale, translate) and the drawing styles at the same
+        time.
         """
         return self._instance.push()
 
@@ -11326,10 +11154,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Pushes the current transformation matrix onto the matrix stack. Understanding
-        ``push_matrix()`` and ``pop_matrix()`` requires understanding the concept of a
+        ``push_matrix()`` and :doc:`pop_matrix` requires understanding the concept of a
         matrix stack. The ``push_matrix()`` function saves the current coordinate system
-        to the stack and ``pop_matrix()`` restores the prior coordinate system.
-        ``push_matrix()`` and ``pop_matrix()`` are used in conjuction with the other
+        to the stack and :doc:`pop_matrix` restores the prior coordinate system.
+        ``push_matrix()`` and :doc:`pop_matrix` are used in conjuction with the other
         transformation functions and may be embedded to control the scope of the
         transformations.
         """
@@ -11337,7 +11165,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def push_style(self) -> None:
         """The ``push_style()`` function saves the current style settings and
-        ``pop_style()`` restores the prior settings.
+        :doc:`pop_style` restores the prior settings.
 
         Underlying Java method: PApplet.pushStyle
 
@@ -11345,20 +11173,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         The ``push_style()`` function saves the current style settings and
-        ``pop_style()`` restores the prior settings. Note that these functions are
+        :doc:`pop_style` restores the prior settings. Note that these functions are
         always used together. They allow you to change the style settings and later
         return to what you had. When a new style is started with ``push_style()``, it
         builds on the current style information. The ``push_style()`` and
-        ``pop_style()`` functions can be embedded to provide more control. (See the
-        second example above for a demonstration.)
+        :doc:`pop_style` functions can be embedded to provide more control. (See the
+        second example for a demonstration.)
 
         The style information controlled by the following functions are included in the
-        style:
-        ``fill()``, ``stroke()``, ``tint()``, ``stroke_weight()``, ``stroke_cap()``,
-        ``stroke_join()``, ``image_mode()``, ``rect_mode()``, ``ellipse_mode()``,
-        ``shape_mode()``, ``color_mode()``, ``text_align()``, ``text_font()``,
-        ``text_mode()``, ``text_size()``, ``text_leading()``, ``emissive()``,
-        ``specular()``, ``shininess()``, ``ambient()``
+        style: :doc:`fill`, :doc:`stroke`, :doc:`tint`, :doc:`stroke_weight`,
+        :doc:`stroke_cap`, :doc:`stroke_join`, :doc:`image_mode`, :doc:`rect_mode`,
+        :doc:`ellipse_mode`, :doc:`shape_mode`, :doc:`color_mode`, :doc:`text_align`,
+        :doc:`text_font`, :doc:`text_mode`, :doc:`text_size`, :doc:`text_leading`,
+        :doc:`emissive`, :doc:`specular`, :doc:`shininess`, and :doc:`ambient`.
         """
         return self._instance.pushStyle()
 
@@ -11447,12 +11274,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies vertex coordinates for quadratic Bezier curves. Each call to
         ``quadratic_vertex()`` defines the position of one control point and one anchor
         point of a Bezier curve, adding a new segment to a line or shape. The first time
-        ``quadratic_vertex()`` is used within a ``begin_shape()`` call, it must be
-        prefaced with a call to ``vertex()`` to set the first anchor point. This
-        function must be used between ``begin_shape()`` and ``end_shape()`` and only
-        when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
-        version requires rendering with P3D (see the Environment reference for more
-        information).
+        ``quadratic_vertex()`` is used within a :doc:`begin_shape` call, it must be
+        prefaced with a call to :doc:`vertex` to set the first anchor point. This
+        function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
+        when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
+        3D version requires rendering with ``P3D``.
         """
         pass
 
@@ -11498,12 +11324,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies vertex coordinates for quadratic Bezier curves. Each call to
         ``quadratic_vertex()`` defines the position of one control point and one anchor
         point of a Bezier curve, adding a new segment to a line or shape. The first time
-        ``quadratic_vertex()`` is used within a ``begin_shape()`` call, it must be
-        prefaced with a call to ``vertex()`` to set the first anchor point. This
-        function must be used between ``begin_shape()`` and ``end_shape()`` and only
-        when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
-        version requires rendering with P3D (see the Environment reference for more
-        information).
+        ``quadratic_vertex()`` is used within a :doc:`begin_shape` call, it must be
+        prefaced with a call to :doc:`vertex` to set the first anchor point. This
+        function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
+        when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
+        3D version requires rendering with ``P3D``.
         """
         pass
 
@@ -11547,12 +11372,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies vertex coordinates for quadratic Bezier curves. Each call to
         ``quadratic_vertex()`` defines the position of one control point and one anchor
         point of a Bezier curve, adding a new segment to a line or shape. The first time
-        ``quadratic_vertex()`` is used within a ``begin_shape()`` call, it must be
-        prefaced with a call to ``vertex()`` to set the first anchor point. This
-        function must be used between ``begin_shape()`` and ``end_shape()`` and only
-        when there is no MODE parameter specified to ``begin_shape()``. Using the 3D
-        version requires rendering with P3D (see the Environment reference for more
-        information).
+        ``quadratic_vertex()`` is used within a :doc:`begin_shape` call, it must be
+        prefaced with a call to :doc:`vertex` to set the first anchor point. This
+        function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
+        when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
+        3D version requires rendering with ``P3D``.
         """
         return self._instance.quadraticVertex(*args)
 
@@ -11629,7 +11453,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         angle at ninety degrees. By default, the first two parameters set the location
         of the upper-left corner, the third sets the width, and the fourth sets the
         height. The way these parameters are interpreted, however, may be changed with
-        the ``rect_mode()`` function.
+        the :doc:`rect_mode` function.
 
         To draw a rounded rectangle, add a fifth parameter, which is used as the radius
         value for all four corners.
@@ -11694,7 +11518,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         angle at ninety degrees. By default, the first two parameters set the location
         of the upper-left corner, the third sets the width, and the fourth sets the
         height. The way these parameters are interpreted, however, may be changed with
-        the ``rect_mode()`` function.
+        the :doc:`rect_mode` function.
 
         To draw a rounded rectangle, add a fifth parameter, which is used as the radius
         value for all four corners.
@@ -11759,7 +11583,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         angle at ninety degrees. By default, the first two parameters set the location
         of the upper-left corner, the third sets the width, and the fourth sets the
         height. The way these parameters are interpreted, however, may be changed with
-        the ``rect_mode()`` function.
+        the :doc:`rect_mode` function.
 
         To draw a rounded rectangle, add a fifth parameter, which is used as the radius
         value for all four corners.
@@ -11822,7 +11646,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         angle at ninety degrees. By default, the first two parameters set the location
         of the upper-left corner, the third sets the width, and the fourth sets the
         height. The way these parameters are interpreted, however, may be changed with
-        the ``rect_mode()`` function.
+        the :doc:`rect_mode` function.
 
         To draw a rounded rectangle, add a fifth parameter, which is used as the radius
         value for all four corners.
@@ -11836,7 +11660,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     def rect_mode(self, mode: int, /) -> None:
         """Modifies the location from which rectangles are drawn by changing the way in
-        which parameters given to ``rect()`` are intepreted.
+        which parameters given to :doc:`rect` are intepreted.
 
         Underlying Java method: PApplet.rectMode
 
@@ -11850,31 +11674,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Modifies the location from which rectangles are drawn by changing the way in
-        which parameters given to ``rect()`` are intepreted.
+        which parameters given to :doc:`rect` are intepreted.
 
         The default mode is ``rect_mode(CORNER)``, which interprets the first two
-        parameters of ``rect()`` as the upper-left corner of the shape, while the third
+        parameters of :doc:`rect` as the upper-left corner of the shape, while the third
         and fourth parameters are its width and height.
 
-        ``rect_mode(CORNERS)`` interprets the first two parameters of ``rect()`` as the
+        ``rect_mode(CORNERS)`` interprets the first two parameters of :doc:`rect` as the
         location of one corner, and the third and fourth parameters as the location of
         the opposite corner.
 
-        ``rect_mode(CENTER)`` interprets the first two parameters of ``rect()`` as the
+        ``rect_mode(CENTER)`` interprets the first two parameters of :doc:`rect` as the
         shape's center point, while the third and fourth parameters are its width and
         height.
 
-        ``rect_mode(RADIUS)`` also uses the first two parameters of ``rect()`` as the
+        ``rect_mode(RADIUS)`` also uses the first two parameters of :doc:`rect` as the
         shape's center point, but uses the third and fourth parameters to specify half
         of the shapes's width and height.
 
-        The parameter must be written in ALL CAPS because Processing is a case-sensitive
+        The parameter must be written in ALL CAPS because Python is a case-sensitive
         language.
         """
         return self._instance.rectMode(mode)
 
     def red(self, rgb: int, /) -> float:
-        """Extracts the red value from a color, scaled to match current ``color_mode()``.
+        """Extracts the red value from a color, scaled to match current :doc:`color_mode`.
 
         Underlying Java method: PApplet.red
 
@@ -11887,18 +11711,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Extracts the red value from a color, scaled to match current ``color_mode()``.
+        Extracts the red value from a color, scaled to match current :doc:`color_mode`.
         The value is always returned as a float, so be careful not to assign it to an
         int value.
 
         The ``red()`` function is easy to use and understand, but it is slower than a
         technique called bit shifting. When working in ``color_mode(RGB, 255)``, you can
-        acheive the same results as ``red()`` but with greater speed by using the right
-        shift operator (``>>``) with a bit mask. For example, the following two lines of
-        code are equivalent means of getting the red value of the color value ``c``:
-
-        ``r1 = red(c)  # simpler, but slower to calculate
-        r2 = c >> 16 & 0xFF  # very fast to calculate``
+        achieve the same results as ``red()`` but with greater speed by using the right
+        shift operator (``>>``) with a bit mask. For example, ``red(c)`` and ``c >> 16 &
+        0xFF`` both extract the red value from a color variable ``c`` but the later is
+        faster.
         """
         return self._instance.red(rgb)
 
@@ -11919,7 +11741,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ``draw()`` immediately (it only sets a flag that indicates an update is needed).
 
         The ``redraw()`` function does not work properly when called inside ``draw()``.
-        To enable/disable animations, use ``loop()`` and ``no_loop()``.
+        To enable/disable animations, use :doc:`loop` and :doc:`no_loop`.
         """
         return self._instance.redraw()
 
@@ -12067,7 +11889,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Rotates the amount specified by the ``angle`` parameter. Angles must be
         specified in radians (values from ``0`` to ``TWO_PI``), or they can be converted
-        from degrees to radians with the ``radians()`` function.
+        from degrees to radians with the :doc:`radians` function.
 
         The coordinates are always rotated around their relative position to the origin.
         Positive numbers rotate objects in a clockwise direction and negative numbers
@@ -12078,8 +11900,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         tranformations are reset when ``draw()`` begins again.
 
         Technically, ``rotate()`` multiplies the current transformation matrix by a
-        rotation matrix. This function can be further controlled by ``push_matrix()``
-        and ``pop_matrix()``.
+        rotation matrix. This function can be further controlled by :doc:`push_matrix`
+        and :doc:`pop_matrix`.
         """
         pass
 
@@ -12117,7 +11939,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Rotates the amount specified by the ``angle`` parameter. Angles must be
         specified in radians (values from ``0`` to ``TWO_PI``), or they can be converted
-        from degrees to radians with the ``radians()`` function.
+        from degrees to radians with the :doc:`radians` function.
 
         The coordinates are always rotated around their relative position to the origin.
         Positive numbers rotate objects in a clockwise direction and negative numbers
@@ -12128,8 +11950,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         tranformations are reset when ``draw()`` begins again.
 
         Technically, ``rotate()`` multiplies the current transformation matrix by a
-        rotation matrix. This function can be further controlled by ``push_matrix()``
-        and ``pop_matrix()``.
+        rotation matrix. This function can be further controlled by :doc:`push_matrix`
+        and :doc:`pop_matrix`.
         """
         pass
 
@@ -12166,7 +11988,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Rotates the amount specified by the ``angle`` parameter. Angles must be
         specified in radians (values from ``0`` to ``TWO_PI``), or they can be converted
-        from degrees to radians with the ``radians()`` function.
+        from degrees to radians with the :doc:`radians` function.
 
         The coordinates are always rotated around their relative position to the origin.
         Positive numbers rotate objects in a clockwise direction and negative numbers
@@ -12177,8 +11999,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         tranformations are reset when ``draw()`` begins again.
 
         Technically, ``rotate()`` multiplies the current transformation matrix by a
-        rotation matrix. This function can be further controlled by ``push_matrix()``
-        and ``pop_matrix()``.
+        rotation matrix. This function can be further controlled by :doc:`push_matrix`
+        and :doc:`pop_matrix`.
         """
         return self._instance.rotate(*args)
 
@@ -12197,16 +12019,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Rotates around the x-axis the amount specified by the ``angle`` parameter.
-        Angles should be specified in radians (values from 0 to TWO_PI) or converted
-        from degrees to radians with the ``radians()`` function. Coordinates are always
-        rotated around their relative position to the origin. Positive numbers rotate in
-        a clockwise direction and negative numbers rotate in a counterclockwise
-        direction. Transformations apply to everything that happens after and subsequent
-        calls to the function accumulates the effect. For example, calling
-        ``rotate_x(PI/2)`` and then ``rotate_x(PI/2)`` is the same as ``rotate_x(PI)``.
-        If ``rotate_x()`` is run within the ``draw()``, the transformation is reset when
-        the loop begins again. This function requires using P3D as a third parameter to
-        ``size()`` as shown in the example above.
+        Angles should be specified in radians (values from ``0`` to ``TWO_PI``) or
+        converted from degrees to radians with the :doc:`radians` function. Coordinates
+        are always rotated around their relative position to the origin. Positive
+        numbers rotate in a clockwise direction and negative numbers rotate in a
+        counterclockwise direction. Transformations apply to everything that happens
+        after and subsequent calls to the function accumulates the effect. For example,
+        calling ``rotate_x(PI/2)`` and then ``rotate_x(PI/2)`` is the same as
+        ``rotate_x(PI)``. If ``rotate_x()`` is run within the ``draw()``, the
+        transformation is reset when the loop begins again. This function requires using
+        ``P3D`` as a third parameter to :doc:`size` as shown in the example.
         """
         return self._instance.rotateX(angle)
 
@@ -12225,16 +12047,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Rotates around the y-axis the amount specified by the ``angle`` parameter.
-        Angles should be specified in radians (values from 0 to TWO_PI) or converted
-        from degrees to radians with the ``radians()`` function. Coordinates are always
-        rotated around their relative position to the origin. Positive numbers rotate in
-        a clockwise direction and negative numbers rotate in a counterclockwise
-        direction. Transformations apply to everything that happens after and subsequent
-        calls to the function accumulates the effect. For example, calling
-        ``rotate_y(PI/2)`` and then ``rotate_y(PI/2)`` is the same as ``rotate_y(PI)``.
-        If ``rotate_y()`` is run within the ``draw()``, the transformation is reset when
-        the loop begins again. This function requires using P3D as a third parameter to
-        ``size()`` as shown in the example above.
+        Angles should be specified in radians (values from ``0`` to ``TWO_PI``) or
+        converted from degrees to radians with the :doc:`radians` function. Coordinates
+        are always rotated around their relative position to the origin. Positive
+        numbers rotate in a clockwise direction and negative numbers rotate in a
+        counterclockwise direction. Transformations apply to everything that happens
+        after and subsequent calls to the function accumulates the effect. For example,
+        calling ``rotate_y(PI/2)`` and then ``rotate_y(PI/2)`` is the same as
+        ``rotate_y(PI)``. If ``rotate_y()`` is run within the ``draw()``, the
+        transformation is reset when the loop begins again. This function requires using
+        ``P3D`` as a third parameter to :doc:`size` as shown in the example.
         """
         return self._instance.rotateY(angle)
 
@@ -12253,16 +12075,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Rotates around the z-axis the amount specified by the ``angle`` parameter.
-        Angles should be specified in radians (values from 0 to TWO_PI) or converted
-        from degrees to radians with the ``radians()`` function. Coordinates are always
-        rotated around their relative position to the origin. Positive numbers rotate in
-        a clockwise direction and negative numbers rotate in a counterclockwise
-        direction. Transformations apply to everything that happens after and subsequent
-        calls to the function accumulates the effect. For example, calling
-        ``rotate_z(PI/2)`` and then ``rotate_z(PI/2)`` is the same as ``rotate_z(PI)``.
-        If ``rotate_z()`` is run within the ``draw()``, the transformation is reset when
-        the loop begins again. This function requires using P3D as a third parameter to
-        ``size()`` as shown in the example above.
+        Angles should be specified in radians (values from ``0`` to ``TWO_PI``) or
+        converted from degrees to radians with the :doc:`radians` function. Coordinates
+        are always rotated around their relative position to the origin. Positive
+        numbers rotate in a clockwise direction and negative numbers rotate in a
+        counterclockwise direction. Transformations apply to everything that happens
+        after and subsequent calls to the function accumulates the effect. For example,
+        calling ``rotate_z(PI/2)`` and then ``rotate_z(PI/2)`` is the same as
+        ``rotate_z(PI)``. If ``rotate_z()`` is run within the ``draw()``, the
+        transformation is reset when the loop begins again. This function requires using
+        ``P3D`` as a third parameter to :doc:`size` as shown in the example.
         """
         return self._instance.rotateZ(angle)
 
@@ -12327,9 +12149,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         the function multiply the effect. For example, calling ``scale(2.0)`` and then
         ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
         ``draw()``, the transformation is reset when the loop begins again. Using this
-        function with the ``z`` parameter requires using P3D as a parameter for
-        ``size()``, as shown in the third example above. This function can be further
-        controlled with ``push_matrix()`` and ``pop_matrix()``.
+        function with the ``z`` parameter requires using ``P3D`` as a parameter for
+        :doc:`size`, as shown in the third example. This function can be further
+        controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         pass
 
@@ -12376,9 +12198,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         the function multiply the effect. For example, calling ``scale(2.0)`` and then
         ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
         ``draw()``, the transformation is reset when the loop begins again. Using this
-        function with the ``z`` parameter requires using P3D as a parameter for
-        ``size()``, as shown in the third example above. This function can be further
-        controlled with ``push_matrix()`` and ``pop_matrix()``.
+        function with the ``z`` parameter requires using ``P3D`` as a parameter for
+        :doc:`size`, as shown in the third example. This function can be further
+        controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         pass
 
@@ -12425,9 +12247,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         the function multiply the effect. For example, calling ``scale(2.0)`` and then
         ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
         ``draw()``, the transformation is reset when the loop begins again. Using this
-        function with the ``z`` parameter requires using P3D as a parameter for
-        ``size()``, as shown in the third example above. This function can be further
-        controlled with ``push_matrix()`` and ``pop_matrix()``.
+        function with the ``z`` parameter requires using ``P3D`` as a parameter for
+        :doc:`size`, as shown in the third example. This function can be further
+        controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         pass
 
@@ -12473,9 +12295,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         the function multiply the effect. For example, calling ``scale(2.0)`` and then
         ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
         ``draw()``, the transformation is reset when the loop begins again. Using this
-        function with the ``z`` parameter requires using P3D as a parameter for
-        ``size()``, as shown in the third example above. This function can be further
-        controlled with ``push_matrix()`` and ``pop_matrix()``.
+        function with the ``z`` parameter requires using ``P3D`` as a parameter for
+        :doc:`size`, as shown in the third example. This function can be further
+        controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         return self._instance.scale(*args)
 
@@ -12715,15 +12537,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @classmethod
     def second(cls) -> int:
-        """Processing communicates with the clock on your computer.
+        """Py5 communicates with the clock on your computer.
 
         Underlying Java method: PApplet.second
 
         Notes
         -----
 
-        Processing communicates with the clock on your computer. The ``second()``
-        function returns the current second as a value from 0 - 59.
+        Py5 communicates with the clock on your computer. The ``second()`` function
+        returns the current second as a value from 0 - 59.
         """
         return cls._cls.second()
 
@@ -12848,8 +12670,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Applies the shader specified by the parameters. It's compatible with the P2D and
-        P3D renderers, but not with the default renderer.
+        Applies the shader specified by the parameters. It's compatible with the ``P2D``
+        and ``P3D`` renderers, but not with the default renderer.
         """
         pass
 
@@ -12879,8 +12701,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Applies the shader specified by the parameters. It's compatible with the P2D and
-        P3D renderers, but not with the default renderer.
+        Applies the shader specified by the parameters. It's compatible with the ``P2D``
+        and ``P3D`` renderers, but not with the default renderer.
         """
         pass
 
@@ -12909,8 +12731,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Applies the shader specified by the parameters. It's compatible with the P2D and
-        P3D renderers, but not with the default renderer.
+        Applies the shader specified by the parameters. It's compatible with the ``P2D``
+        and ``P3D`` renderers, but not with the default renderer.
         """
         return self._instance.shader(*args)
 
@@ -12956,14 +12778,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Draws shapes to the display window. Shapes must be in the sketch's "data"
-        directory to load correctly. Select "Add file..." from the "Sketch" menu to add
-        the shape. Processing currently works with SVG, OBJ, and custom-created shapes.
-        The ``shape`` parameter specifies the shape to display and the coordinate
-        parameters define the location of the shape from its upper-left corner. The
-        shape is displayed at its original size unless the ``c`` and ``d`` parameters
-        specify a different size. The ``shape_mode()`` function can be used to change
-        the way these parameters are interpreted.
+        Draws shapes to the display window. Shapes must be in the Sketch's "data"
+        directory to load correctly. Py5 currently works with SVG, OBJ, and custom-
+        created shapes. The ``shape`` parameter specifies the shape to display and the
+        coordinate parameters define the location of the shape from its upper-left
+        corner. The shape is displayed at its original size unless the ``c`` and ``d``
+        parameters specify a different size. The :doc:`shape_mode` function can be used
+        to change the way these parameters are interpreted.
         """
         pass
 
@@ -13009,14 +12830,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Draws shapes to the display window. Shapes must be in the sketch's "data"
-        directory to load correctly. Select "Add file..." from the "Sketch" menu to add
-        the shape. Processing currently works with SVG, OBJ, and custom-created shapes.
-        The ``shape`` parameter specifies the shape to display and the coordinate
-        parameters define the location of the shape from its upper-left corner. The
-        shape is displayed at its original size unless the ``c`` and ``d`` parameters
-        specify a different size. The ``shape_mode()`` function can be used to change
-        the way these parameters are interpreted.
+        Draws shapes to the display window. Shapes must be in the Sketch's "data"
+        directory to load correctly. Py5 currently works with SVG, OBJ, and custom-
+        created shapes. The ``shape`` parameter specifies the shape to display and the
+        coordinate parameters define the location of the shape from its upper-left
+        corner. The shape is displayed at its original size unless the ``c`` and ``d``
+        parameters specify a different size. The :doc:`shape_mode` function can be used
+        to change the way these parameters are interpreted.
         """
         pass
 
@@ -13063,14 +12883,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Draws shapes to the display window. Shapes must be in the sketch's "data"
-        directory to load correctly. Select "Add file..." from the "Sketch" menu to add
-        the shape. Processing currently works with SVG, OBJ, and custom-created shapes.
-        The ``shape`` parameter specifies the shape to display and the coordinate
-        parameters define the location of the shape from its upper-left corner. The
-        shape is displayed at its original size unless the ``c`` and ``d`` parameters
-        specify a different size. The ``shape_mode()`` function can be used to change
-        the way these parameters are interpreted.
+        Draws shapes to the display window. Shapes must be in the Sketch's "data"
+        directory to load correctly. Py5 currently works with SVG, OBJ, and custom-
+        created shapes. The ``shape`` parameter specifies the shape to display and the
+        coordinate parameters define the location of the shape from its upper-left
+        corner. The shape is displayed at its original size unless the ``c`` and ``d``
+        parameters specify a different size. The :doc:`shape_mode` function can be used
+        to change the way these parameters are interpreted.
         """
         pass
 
@@ -13115,14 +12934,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Draws shapes to the display window. Shapes must be in the sketch's "data"
-        directory to load correctly. Select "Add file..." from the "Sketch" menu to add
-        the shape. Processing currently works with SVG, OBJ, and custom-created shapes.
-        The ``shape`` parameter specifies the shape to display and the coordinate
-        parameters define the location of the shape from its upper-left corner. The
-        shape is displayed at its original size unless the ``c`` and ``d`` parameters
-        specify a different size. The ``shape_mode()`` function can be used to change
-        the way these parameters are interpreted.
+        Draws shapes to the display window. Shapes must be in the Sketch's "data"
+        directory to load correctly. Py5 currently works with SVG, OBJ, and custom-
+        created shapes. The ``shape`` parameter specifies the shape to display and the
+        coordinate parameters define the location of the shape from its upper-left
+        corner. The shape is displayed at its original size unless the ``c`` and ``d``
+        parameters specify a different size. The :doc:`shape_mode` function can be used
+        to change the way these parameters are interpreted.
         """
         return self._instance.shape(*args)
 
@@ -13142,13 +12960,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Modifies the location from which shapes draw. The default mode is
         ``shape_mode(CORNER)``, which specifies the location to be the upper left corner
-        of the shape and uses the third and fourth parameters of ``shape()`` to specify
+        of the shape and uses the third and fourth parameters of :doc:`shape` to specify
         the width and height. The syntax ``shape_mode(CORNERS)`` uses the first and
-        second parameters of ``shape()`` to set the location of one corner and uses the
+        second parameters of :doc:`shape` to set the location of one corner and uses the
         third and fourth parameters to set the opposite corner. The syntax
         ``shape_mode(CENTER)`` draws the shape from its center point and uses the third
-        and forth parameters of ``shape()`` to specify the width and height. The
-        parameter must be written in "ALL CAPS" because Processing is a case sensitive
+        and forth parameters of :doc:`shape` to specify the width and height. The
+        parameter must be written in ALL CAPS because Python is a case sensitive
         language.
         """
         return self._instance.shapeMode(mode)
@@ -13169,18 +12987,18 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Shears a shape around the x-axis the amount specified by the ``angle``
-        parameter. Angles should be specified in radians (values from 0 to PI*2) or
-        converted to radians with the ``radians()`` function. Objects are always sheared
-        around their relative position to the origin and positive numbers shear objects
-        in a clockwise direction. Transformations apply to everything that happens after
-        and subsequent calls to the function accumulates the effect. For example,
-        calling ``shear_x(PI/2)`` and then ``shear_x(PI/2)`` is the same as
-        ``shear_x(PI)``. If ``shear_x()`` is called within the ``draw()``, the
-        transformation is reset when the loop begins again.
+        parameter. Angles should be specified in radians (values from ``0`` to
+        ``TWO_PI``) or converted to radians with the :doc:`radians` function. Objects
+        are always sheared around their relative position to the origin and positive
+        numbers shear objects in a clockwise direction. Transformations apply to
+        everything that happens after and subsequent calls to the function accumulates
+        the effect. For example, calling ``shear_x(PI/2)`` and then ``shear_x(PI/2)`` is
+        the same as ``shear_x(PI)``. If ``shear_x()`` is called within the ``draw()``,
+        the transformation is reset when the loop begins again.
 
         Technically, ``shear_x()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by the
-        ``push_matrix()`` and ``pop_matrix()`` functions.
+        :doc:`push_matrix` and :doc:`pop_matrix` functions.
         """
         return self._instance.shearX(angle)
 
@@ -13200,18 +13018,18 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Shears a shape around the y-axis the amount specified by the ``angle``
-        parameter. Angles should be specified in radians (values from 0 to PI*2) or
-        converted to radians with the ``radians()`` function. Objects are always sheared
-        around their relative position to the origin and positive numbers shear objects
-        in a clockwise direction. Transformations apply to everything that happens after
-        and subsequent calls to the function accumulates the effect. For example,
-        calling ``shear_y(PI/2)`` and then ``shear_y(PI/2)`` is the same as
-        ``shear_y(PI)``. If ``shear_y()`` is called within the ``draw()``, the
-        transformation is reset when the loop begins again.
+        parameter. Angles should be specified in radians (values from ``0`` to
+        ``TWO_PI``) or converted to radians with the :doc:`radians` function. Objects
+        are always sheared around their relative position to the origin and positive
+        numbers shear objects in a clockwise direction. Transformations apply to
+        everything that happens after and subsequent calls to the function accumulates
+        the effect. For example, calling ``shear_y(PI/2)`` and then ``shear_y(PI/2)`` is
+        the same as ``shear_y(PI)``. If ``shear_y()`` is called within the ``draw()``,
+        the transformation is reset when the loop begins again.
 
         Technically, ``shear_y()`` multiplies the current transformation matrix by a
         rotation matrix. This function can be further controlled by the
-        ``push_matrix()`` and ``pop_matrix()`` functions.
+        :doc:`push_matrix` and :doc:`pop_matrix` functions.
         """
         return self._instance.shearY(angle)
 
@@ -13230,7 +13048,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the amount of gloss in the surface of shapes. Used in combination with
-        ``ambient()``, ``specular()``, and ``emissive()`` in setting the material
+        :doc:`ambient`, :doc:`specular`, and :doc:`emissive` in setting the material
         properties of shapes.
         """
         return self._instance.shininess(shine)
@@ -13269,21 +13087,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        In a program that has the ``setup()`` function, the ``size()`` function must be
-        the first line of code inside ``setup()``, and the ``setup()`` function must
-        appear in the code tab with the same name as your sketch folder.
+        This must be called from the ``settings()`` function.
 
-        The built-in variables ``width`` and ``height`` are set by the parameters passed
-        to this function. For example, running ``size(640, 480)`` will assign 640 to the
-        ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
-        used, the window will be given a default size of 100 x 100 pixels.
+        The built-in variables :doc:`width` and :doc:`height` are set by the parameters
+        passed to this function. For example, running ``size(640, 480)`` will assign 640
+        to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
+        is not used, the window will be given a default size of 100 x 100 pixels.
 
-        The ``size()`` function can only be used once inside a sketch, and it cannot be
+        The ``size()`` function can only be used once inside a Sketch, and it cannot be
         used for resizing.
 
-        As of Processing 3, to run a sketch at the full dimensions of a screen, use the
-        ``full_screen()`` function, rather than the older way of using
-        ``size(display_width, display_height)``.
+        To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+        function, rather than the older way of using ``size(display_width,
+        display_height)``.
 
         The maximum width and height is limited by your operating system, and is usually
         the width and height of your actual screen. On some machines it may simply be
@@ -13295,34 +13111,24 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         The minimum width and height is around 100 pixels in each direction. This is the
         smallest that is supported across Windows, macOS, and Linux. We enforce the
-        minimum size so that sketches will run identically on different machines.
+        minimum size so that Sketches will run identically on different machines.
 
         The ``renderer`` parameter selects which rendering engine to use. For example,
         if you will be drawing 3D shapes, use ``P3D``. In addition to the default
         renderer, other renderers are:
 
-        ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
+        * ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
+        * ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
+        * ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
         some applications, but has some compatibility quirks.
-
-        ``PDF``: The PDF renderer draws 2D graphics directly to an Acrobat PDF file.
-        This produces excellent results when you need vector shapes for high-resolution
-        output or printing. You must first use Import Library → PDF to make use of the
-        library. More information can be found in the PDF library reference.
-
-        ``SVG``: The SVG renderer draws 2D graphics directly to an SVG file. This is
-        great for importing into other vector programs or using for digital fabrication.
-        You must first use Import Library → SVG Export to make use of the library.
-
-        As of Processing 3.0, to use variables as the parameters to ``size()`` function,
-        place the ``size()`` function within the ``settings()`` function (instead of
-        ``setup()``). There is more information about this on the ``settings()``
-        reference page.
+        * ``PDF``: The ``PDF`` renderer draws 2D graphics directly to an Acrobat PDF
+        file. This produces excellent results when you need vector shapes for high-
+        resolution output or printing.
+        * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
+        is great for importing into other vector programs or using for digital
+        fabrication.
         """
         pass
 
@@ -13360,21 +13166,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        In a program that has the ``setup()`` function, the ``size()`` function must be
-        the first line of code inside ``setup()``, and the ``setup()`` function must
-        appear in the code tab with the same name as your sketch folder.
+        This must be called from the ``settings()`` function.
 
-        The built-in variables ``width`` and ``height`` are set by the parameters passed
-        to this function. For example, running ``size(640, 480)`` will assign 640 to the
-        ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
-        used, the window will be given a default size of 100 x 100 pixels.
+        The built-in variables :doc:`width` and :doc:`height` are set by the parameters
+        passed to this function. For example, running ``size(640, 480)`` will assign 640
+        to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
+        is not used, the window will be given a default size of 100 x 100 pixels.
 
-        The ``size()`` function can only be used once inside a sketch, and it cannot be
+        The ``size()`` function can only be used once inside a Sketch, and it cannot be
         used for resizing.
 
-        As of Processing 3, to run a sketch at the full dimensions of a screen, use the
-        ``full_screen()`` function, rather than the older way of using
-        ``size(display_width, display_height)``.
+        To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+        function, rather than the older way of using ``size(display_width,
+        display_height)``.
 
         The maximum width and height is limited by your operating system, and is usually
         the width and height of your actual screen. On some machines it may simply be
@@ -13386,34 +13190,24 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         The minimum width and height is around 100 pixels in each direction. This is the
         smallest that is supported across Windows, macOS, and Linux. We enforce the
-        minimum size so that sketches will run identically on different machines.
+        minimum size so that Sketches will run identically on different machines.
 
         The ``renderer`` parameter selects which rendering engine to use. For example,
         if you will be drawing 3D shapes, use ``P3D``. In addition to the default
         renderer, other renderers are:
 
-        ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
+        * ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
+        * ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
+        * ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
         some applications, but has some compatibility quirks.
-
-        ``PDF``: The PDF renderer draws 2D graphics directly to an Acrobat PDF file.
-        This produces excellent results when you need vector shapes for high-resolution
-        output or printing. You must first use Import Library → PDF to make use of the
-        library. More information can be found in the PDF library reference.
-
-        ``SVG``: The SVG renderer draws 2D graphics directly to an SVG file. This is
-        great for importing into other vector programs or using for digital fabrication.
-        You must first use Import Library → SVG Export to make use of the library.
-
-        As of Processing 3.0, to use variables as the parameters to ``size()`` function,
-        place the ``size()`` function within the ``settings()`` function (instead of
-        ``setup()``). There is more information about this on the ``settings()``
-        reference page.
+        * ``PDF``: The ``PDF`` renderer draws 2D graphics directly to an Acrobat PDF
+        file. This produces excellent results when you need vector shapes for high-
+        resolution output or printing.
+        * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
+        is great for importing into other vector programs or using for digital
+        fabrication.
         """
         pass
 
@@ -13452,21 +13246,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        In a program that has the ``setup()`` function, the ``size()`` function must be
-        the first line of code inside ``setup()``, and the ``setup()`` function must
-        appear in the code tab with the same name as your sketch folder.
+        This must be called from the ``settings()`` function.
 
-        The built-in variables ``width`` and ``height`` are set by the parameters passed
-        to this function. For example, running ``size(640, 480)`` will assign 640 to the
-        ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
-        used, the window will be given a default size of 100 x 100 pixels.
+        The built-in variables :doc:`width` and :doc:`height` are set by the parameters
+        passed to this function. For example, running ``size(640, 480)`` will assign 640
+        to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
+        is not used, the window will be given a default size of 100 x 100 pixels.
 
-        The ``size()`` function can only be used once inside a sketch, and it cannot be
+        The ``size()`` function can only be used once inside a Sketch, and it cannot be
         used for resizing.
 
-        As of Processing 3, to run a sketch at the full dimensions of a screen, use the
-        ``full_screen()`` function, rather than the older way of using
-        ``size(display_width, display_height)``.
+        To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+        function, rather than the older way of using ``size(display_width,
+        display_height)``.
 
         The maximum width and height is limited by your operating system, and is usually
         the width and height of your actual screen. On some machines it may simply be
@@ -13478,34 +13270,24 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         The minimum width and height is around 100 pixels in each direction. This is the
         smallest that is supported across Windows, macOS, and Linux. We enforce the
-        minimum size so that sketches will run identically on different machines.
+        minimum size so that Sketches will run identically on different machines.
 
         The ``renderer`` parameter selects which rendering engine to use. For example,
         if you will be drawing 3D shapes, use ``P3D``. In addition to the default
         renderer, other renderers are:
 
-        ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
+        * ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
+        * ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
+        * ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
         some applications, but has some compatibility quirks.
-
-        ``PDF``: The PDF renderer draws 2D graphics directly to an Acrobat PDF file.
-        This produces excellent results when you need vector shapes for high-resolution
-        output or printing. You must first use Import Library → PDF to make use of the
-        library. More information can be found in the PDF library reference.
-
-        ``SVG``: The SVG renderer draws 2D graphics directly to an SVG file. This is
-        great for importing into other vector programs or using for digital fabrication.
-        You must first use Import Library → SVG Export to make use of the library.
-
-        As of Processing 3.0, to use variables as the parameters to ``size()`` function,
-        place the ``size()`` function within the ``settings()`` function (instead of
-        ``setup()``). There is more information about this on the ``settings()``
-        reference page.
+        * ``PDF``: The ``PDF`` renderer draws 2D graphics directly to an Acrobat PDF
+        file. This produces excellent results when you need vector shapes for high-
+        resolution output or printing.
+        * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
+        is great for importing into other vector programs or using for digital
+        fabrication.
         """
         pass
 
@@ -13542,21 +13324,19 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        In a program that has the ``setup()`` function, the ``size()`` function must be
-        the first line of code inside ``setup()``, and the ``setup()`` function must
-        appear in the code tab with the same name as your sketch folder.
+        This must be called from the ``settings()`` function.
 
-        The built-in variables ``width`` and ``height`` are set by the parameters passed
-        to this function. For example, running ``size(640, 480)`` will assign 640 to the
-        ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
-        used, the window will be given a default size of 100 x 100 pixels.
+        The built-in variables :doc:`width` and :doc:`height` are set by the parameters
+        passed to this function. For example, running ``size(640, 480)`` will assign 640
+        to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
+        is not used, the window will be given a default size of 100 x 100 pixels.
 
-        The ``size()`` function can only be used once inside a sketch, and it cannot be
+        The ``size()`` function can only be used once inside a Sketch, and it cannot be
         used for resizing.
 
-        As of Processing 3, to run a sketch at the full dimensions of a screen, use the
-        ``full_screen()`` function, rather than the older way of using
-        ``size(display_width, display_height)``.
+        To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+        function, rather than the older way of using ``size(display_width,
+        display_height)``.
 
         The maximum width and height is limited by your operating system, and is usually
         the width and height of your actual screen. On some machines it may simply be
@@ -13568,34 +13348,24 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         The minimum width and height is around 100 pixels in each direction. This is the
         smallest that is supported across Windows, macOS, and Linux. We enforce the
-        minimum size so that sketches will run identically on different machines.
+        minimum size so that Sketches will run identically on different machines.
 
         The ``renderer`` parameter selects which rendering engine to use. For example,
         if you will be drawing 3D shapes, use ``P3D``. In addition to the default
         renderer, other renderers are:
 
-        ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
+        * ``P2D`` (Processing 2D): 2D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
+        * ``P3D`` (Processing 3D): 3D graphics renderer that makes use of OpenGL-
         compatible graphics hardware.
-
-        ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
+        * ``FX2D`` (JavaFX 2D): A 2D renderer that uses JavaFX, which may be faster for
         some applications, but has some compatibility quirks.
-
-        ``PDF``: The PDF renderer draws 2D graphics directly to an Acrobat PDF file.
-        This produces excellent results when you need vector shapes for high-resolution
-        output or printing. You must first use Import Library → PDF to make use of the
-        library. More information can be found in the PDF library reference.
-
-        ``SVG``: The SVG renderer draws 2D graphics directly to an SVG file. This is
-        great for importing into other vector programs or using for digital fabrication.
-        You must first use Import Library → SVG Export to make use of the library.
-
-        As of Processing 3.0, to use variables as the parameters to ``size()`` function,
-        place the ``size()`` function within the ``settings()`` function (instead of
-        ``setup()``). There is more information about this on the ``settings()``
-        reference page.
+        * ``PDF``: The ``PDF`` renderer draws 2D graphics directly to an Acrobat PDF
+        file. This produces excellent results when you need vector shapes for high-
+        resolution output or printing.
+        * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
+        is great for importing into other vector programs or using for digital
+        fabrication.
         """
         return self._instance.size(*args)
 
@@ -13713,9 +13483,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         smoothing in a different way. The ``level`` parameter increases the amount of
         smoothness. This is the level of over sampling applied to the graphics buffer.
 
-        With the P2D and P3D renderers, ``smooth(2)`` is the default, this is called "2x
-        anti-aliasing." The code ``smooth(4)`` is used for 4x anti-aliasing and
-        ``smooth(8)`` is specified for "8x anti-aliasing." The maximum anti-aliasing
+        With the ``P2D`` and ``P3D`` renderers, ``smooth(2)`` is the default, this is
+        called "2x anti-aliasing." The code ``smooth(4)`` is used for 4x anti-aliasing
+        and ``smooth(8)`` is specified for "8x anti-aliasing." The maximum anti-aliasing
         level is determined by the hardware of the machine that is running the software,
         so ``smooth(4)`` and ``smooth(8)`` will not work with every computer.
 
@@ -13723,15 +13493,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The other option for the default renderer is ``smooth(2)``, which is bilinear
         smoothing.
 
-        With Processing 3.0, ``smooth()`` is different than before. It was common to use
-        ``smooth()`` and ``no_smooth()`` to turn on and off antialiasing within a
-        sketch. Now, because of how the software has changed, ``smooth()`` can only be
-        set once within a sketch. It can be used either at the top of a sketch without a
-        ``setup()``, or after the ``size()`` function when used in a sketch with
-        ``setup()``. The ``no_smooth()`` function also follows the same rules.
+        The ``smooth()`` function can only be set once within a Sketch. It must be
+        called from the `settings()`` function. The :doc:`no_smooth` function also
+        follows the same rules.
 
         When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
-        after the object is created with ``create_graphics()``, as shown in the
+        after the object is created with :doc:`create_graphics`, as shown in the
         Reference in the third example.
         """
         pass
@@ -13764,9 +13531,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         smoothing in a different way. The ``level`` parameter increases the amount of
         smoothness. This is the level of over sampling applied to the graphics buffer.
 
-        With the P2D and P3D renderers, ``smooth(2)`` is the default, this is called "2x
-        anti-aliasing." The code ``smooth(4)`` is used for 4x anti-aliasing and
-        ``smooth(8)`` is specified for "8x anti-aliasing." The maximum anti-aliasing
+        With the ``P2D`` and ``P3D`` renderers, ``smooth(2)`` is the default, this is
+        called "2x anti-aliasing." The code ``smooth(4)`` is used for 4x anti-aliasing
+        and ``smooth(8)`` is specified for "8x anti-aliasing." The maximum anti-aliasing
         level is determined by the hardware of the machine that is running the software,
         so ``smooth(4)`` and ``smooth(8)`` will not work with every computer.
 
@@ -13774,15 +13541,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The other option for the default renderer is ``smooth(2)``, which is bilinear
         smoothing.
 
-        With Processing 3.0, ``smooth()`` is different than before. It was common to use
-        ``smooth()`` and ``no_smooth()`` to turn on and off antialiasing within a
-        sketch. Now, because of how the software has changed, ``smooth()`` can only be
-        set once within a sketch. It can be used either at the top of a sketch without a
-        ``setup()``, or after the ``size()`` function when used in a sketch with
-        ``setup()``. The ``no_smooth()`` function also follows the same rules.
+        The ``smooth()`` function can only be set once within a Sketch. It must be
+        called from the `settings()`` function. The :doc:`no_smooth` function also
+        follows the same rules.
 
         When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
-        after the object is created with ``create_graphics()``, as shown in the
+        after the object is created with :doc:`create_graphics`, as shown in the
         Reference in the third example.
         """
         pass
@@ -13814,9 +13578,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         smoothing in a different way. The ``level`` parameter increases the amount of
         smoothness. This is the level of over sampling applied to the graphics buffer.
 
-        With the P2D and P3D renderers, ``smooth(2)`` is the default, this is called "2x
-        anti-aliasing." The code ``smooth(4)`` is used for 4x anti-aliasing and
-        ``smooth(8)`` is specified for "8x anti-aliasing." The maximum anti-aliasing
+        With the ``P2D`` and ``P3D`` renderers, ``smooth(2)`` is the default, this is
+        called "2x anti-aliasing." The code ``smooth(4)`` is used for 4x anti-aliasing
+        and ``smooth(8)`` is specified for "8x anti-aliasing." The maximum anti-aliasing
         level is determined by the hardware of the machine that is running the software,
         so ``smooth(4)`` and ``smooth(8)`` will not work with every computer.
 
@@ -13824,15 +13588,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         The other option for the default renderer is ``smooth(2)``, which is bilinear
         smoothing.
 
-        With Processing 3.0, ``smooth()`` is different than before. It was common to use
-        ``smooth()`` and ``no_smooth()`` to turn on and off antialiasing within a
-        sketch. Now, because of how the software has changed, ``smooth()`` can only be
-        set once within a sketch. It can be used either at the top of a sketch without a
-        ``setup()``, or after the ``size()`` function when used in a sketch with
-        ``setup()``. The ``no_smooth()`` function also follows the same rules.
+        The ``smooth()`` function can only be set once within a Sketch. It must be
+        called from the `settings()`` function. The :doc:`no_smooth` function also
+        follows the same rules.
 
         When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
-        after the object is created with ``create_graphics()``, as shown in the
+        after the object is created with :doc:`create_graphics`, as shown in the
         Reference in the third example.
         """
         return self._instance.smooth(*args)
@@ -13877,8 +13638,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights. Specular refers to light which bounces off a
         surface in a preferred direction (rather than bouncing in all directions like a
-        diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         pass
 
@@ -13922,8 +13683,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights. Specular refers to light which bounces off a
         surface in a preferred direction (rather than bouncing in all directions like a
-        diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         pass
 
@@ -13967,8 +13728,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights. Specular refers to light which bounces off a
         surface in a preferred direction (rather than bouncing in all directions like a
-        diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         pass
 
@@ -14011,8 +13772,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights. Specular refers to light which bounces off a
         surface in a preferred direction (rather than bouncing in all directions like a
-        diffuse light). Used in combination with ``emissive()``, ``ambient()``, and
-        ``shininess()`` in setting the material properties of shapes.
+        diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
+        :doc:`shininess` in setting the material properties of shapes.
         """
         return self._instance.specular(*args)
 
@@ -14066,11 +13827,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh. The default resolution is 30, which creates a fairly
-        detailed sphere definition with vertices every 360/30 = 12 degrees. If you're
-        going to render a great number of spheres per frame, it is advised to reduce the
-        level of detail using this function. The setting stays active until
+        detailed sphere definition with vertices every ``360/30 = 12`` degrees. If
+        you're going to render a great number of spheres per frame, it is advised to
+        reduce the level of detail using this function. The setting stays active until
         ``sphere_detail()`` is called again with a new parameter and so should *not* be
-        called prior to every ``sphere()`` statement, unless you wish to render spheres
+        called prior to every :doc:`sphere` statement, unless you wish to render spheres
         with different settings, e.g. using less detail for smaller spheres or ones
         further away from the camera. To control the detail of the horizontal and
         vertical resolution independently, use the version of the functions with two
@@ -14110,11 +13871,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh. The default resolution is 30, which creates a fairly
-        detailed sphere definition with vertices every 360/30 = 12 degrees. If you're
-        going to render a great number of spheres per frame, it is advised to reduce the
-        level of detail using this function. The setting stays active until
+        detailed sphere definition with vertices every ``360/30 = 12`` degrees. If
+        you're going to render a great number of spheres per frame, it is advised to
+        reduce the level of detail using this function. The setting stays active until
         ``sphere_detail()`` is called again with a new parameter and so should *not* be
-        called prior to every ``sphere()`` statement, unless you wish to render spheres
+        called prior to every :doc:`sphere` statement, unless you wish to render spheres
         with different settings, e.g. using less detail for smaller spheres or ones
         further away from the camera. To control the detail of the horizontal and
         vertical resolution independently, use the version of the functions with two
@@ -14153,11 +13914,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh. The default resolution is 30, which creates a fairly
-        detailed sphere definition with vertices every 360/30 = 12 degrees. If you're
-        going to render a great number of spheres per frame, it is advised to reduce the
-        level of detail using this function. The setting stays active until
+        detailed sphere definition with vertices every ``360/30 = 12`` degrees. If
+        you're going to render a great number of spheres per frame, it is advised to
+        reduce the level of detail using this function. The setting stays active until
         ``sphere_detail()`` is called again with a new parameter and so should *not* be
-        called prior to every ``sphere()`` statement, unless you wish to render spheres
+        called prior to every :doc:`sphere` statement, unless you wish to render spheres
         with different settings, e.g. using less detail for smaller spheres or ones
         further away from the camera. To control the detail of the horizontal and
         vertical resolution independently, use the version of the functions with two
@@ -14259,7 +14020,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ninety degrees and each side is the same length. By default, the first two
         parameters set the location of the upper-left corner, the third sets the width
         and height. The way these parameters are interpreted, however, may be changed
-        with the ``rect_mode()`` function.
+        with the :doc:`rect_mode` function.
         """
         return self._instance.square(x, y, extent)
 
@@ -14335,24 +14096,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         pass
 
@@ -14400,24 +14158,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         pass
 
@@ -14465,24 +14220,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         pass
 
@@ -14530,24 +14282,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         pass
 
@@ -14595,24 +14344,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         pass
 
@@ -14660,24 +14406,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         pass
 
@@ -14724,24 +14467,21 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the color used to draw lines and borders around shapes. This color is
         either specified in terms of the RGB or HSB color depending on the current
-        ``c``olor_mode()``.`` The default color space is RGB, with each value in the
-        range from 0 to 255.
+        :doc:`color_mode`. The default color space is RGB, with each value in the range
+        from 0 to 255.
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         When drawing in 2D with the default renderer, you may need
         ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-        performance). See the ``hint()`` documentation for more details.
+        performance). See the :doc:`hint` documentation for more details.
         """
         return self._instance.stroke(*args)
 
@@ -14761,9 +14501,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the style for rendering line endings. These ends are either squared,
         extended, or rounded, each of which specified with the corresponding parameters:
-        SQUARE, PROJECT, and ROUND. The default cap is ROUND.
+        ``SQUARE``, ``PROJECT``, and ``ROUND``. The default cap is ``ROUND``.
 
-        To make ``point()`` appear square, use ``stroke_cap(PROJECT)``. Using
+        To make :doc:`point` appear square, use ``stroke_cap(PROJECT)``. Using
         ``stroke_cap(SQUARE)`` (no cap) causes points to become invisible.
         """
         return self._instance.strokeCap(cap)
@@ -14784,7 +14524,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Sets the style of the joints which connect line segments. These joints are
         either mitered, beveled, or rounded and specified with the corresponding
-        parameters MITER, BEVEL, and ROUND. The default joint is MITER.
+        parameters ``MITER``, ``BEVEL``, and ``ROUND``. The default joint is ``MITER``.
         """
         return self._instance.strokeJoin(join)
 
@@ -14806,10 +14546,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the width of the stroke used for lines, points, and the border around
         shapes. All widths are set in units of pixels.
 
-        Using ``point()`` with strokeWeight(1) or smaller may draw nothing to the
+        Using :doc:`point` with ``strokeWeight(1)`` or smaller may draw nothing to the
         screen, depending on the graphics settings of the computer. Workarounds include
-        setting the pixel using ``set()`` or drawing the point using either ``circle()``
-        or ``square()``.
+        setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
+        the point using either :doc:`circle` or :doc:`square`.
         """
         return self._instance.strokeWeight(weight)
 
@@ -14886,20 +14626,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -14976,20 +14716,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15067,20 +14807,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15158,20 +14898,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15248,20 +14988,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15338,20 +15078,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15428,20 +15168,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15518,20 +15258,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15608,20 +15348,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15698,20 +15438,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15789,20 +15529,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         pass
 
@@ -15879,20 +15619,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         Draws text to the screen. Displays the information specified in the first
         parameter on the screen in the position specified by the additional parameters.
-        A default font will be used unless a font is set with the ``text_font()``
+        A default font will be used unless a font is set with the :doc:`text_font`
         function and a default size will be used unless a font is set with
-        ``text_size()``. Change the color of the text with the ``fill()`` function. The
-        text displays in relation to the ``text_align()`` function, which gives the
+        :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
+        The text displays in relation to the :doc:`text_align` function, which gives the
         option to draw to the left, right, and center of the coordinates.
 
         The ``x2`` and ``y2`` parameters define a rectangular area to display within and
         may only be used with string data. When these parameters are specified, they are
-        interpreted based on the current ``rect_mode()`` setting. Text that does not fit
-        completely within the rectangle specified will not be drawn to the screen.
+        interpreted based on the current :doc:`rect_mode` setting. Text that does not
+        fit completely within the rectangle specified will not be drawn to the screen.
 
-        Note that Processing now lets you call ``text()`` without first specifying a
-        PFont with ``text_font()``. In that case, a generic sans-serif font will be used
-        instead. (See the third example above.)
+        Note that py5 lets you call ``text()`` without first specifying a Py5Font with
+        :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+        (See the third example.)
         """
         return self._instance.text(*args)
 
@@ -15922,27 +15662,28 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Sets the current alignment for drawing text. The parameters LEFT, CENTER, and
-        RIGHT set the display characteristics of the letters in relation to the values
-        for the ``x`` and ``y`` parameters of the ``text()`` function.
+        Sets the current alignment for drawing text. The parameters ``LEFT``,
+        ``CENTER``, and ``RIGHT`` set the display characteristics of the letters in
+        relation to the values for the ``x`` and ``y`` parameters of the :doc:`text`
+        function.
 
-        An optional second parameter can be used to vertically align the text. BASELINE
-        is the default, and the vertical alignment will be reset to BASELINE if the
-        second parameter is not used. The TOP and CENTER parameters are straightforward.
-        The BOTTOM parameter offsets the line based on the current ``text_descent()``.
-        For multiple lines, the final line will be aligned to the bottom, with the
-        previous lines appearing above it.
+        An optional second parameter can be used to vertically align the text.
+        ``BASELINE`` is the default, and the vertical alignment will be reset to
+        ``BASELINE`` if the second parameter is not used. The ``TOP`` and ``CENTER``
+        parameters are straightforward. The ``BOTTOM`` parameter offsets the line based
+        on the current :doc:`text_descent`. For multiple lines, the final line will be
+        aligned to the bottom, with the previous lines appearing above it.
 
-        When using ``text()`` with width and height parameters, BASELINE is ignored, and
-        treated as TOP. (Otherwise, text would by default draw outside the box, since
-        BASELINE is the default setting. BASELINE is not a useful drawing mode for text
-        drawn in a rectangle.)
+        When using :doc:`text` with width and height parameters, ``BASELINE`` is
+        ignored, and treated as ``TOP``. (Otherwise, text would by default draw outside
+        the box, since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful
+        drawing mode for text drawn in a rectangle.)
 
-        The vertical alignment is based on the value of ``text_ascent()``, which many
+        The vertical alignment is based on the value of :doc:`text_ascent`, which many
         fonts do not specify correctly. It may be necessary to use a hack and offset by
         a few pixels by hand so that the offset looks correct. To do this as less of a
-        hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
-        hack works even if you change the size of the font.
+        hack, use some percentage of :doc:`text_ascent` or :doc:`text_descent` so that
+        the hack works even if you change the size of the font.
         """
         pass
 
@@ -15972,27 +15713,28 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Sets the current alignment for drawing text. The parameters LEFT, CENTER, and
-        RIGHT set the display characteristics of the letters in relation to the values
-        for the ``x`` and ``y`` parameters of the ``text()`` function.
+        Sets the current alignment for drawing text. The parameters ``LEFT``,
+        ``CENTER``, and ``RIGHT`` set the display characteristics of the letters in
+        relation to the values for the ``x`` and ``y`` parameters of the :doc:`text`
+        function.
 
-        An optional second parameter can be used to vertically align the text. BASELINE
-        is the default, and the vertical alignment will be reset to BASELINE if the
-        second parameter is not used. The TOP and CENTER parameters are straightforward.
-        The BOTTOM parameter offsets the line based on the current ``text_descent()``.
-        For multiple lines, the final line will be aligned to the bottom, with the
-        previous lines appearing above it.
+        An optional second parameter can be used to vertically align the text.
+        ``BASELINE`` is the default, and the vertical alignment will be reset to
+        ``BASELINE`` if the second parameter is not used. The ``TOP`` and ``CENTER``
+        parameters are straightforward. The ``BOTTOM`` parameter offsets the line based
+        on the current :doc:`text_descent`. For multiple lines, the final line will be
+        aligned to the bottom, with the previous lines appearing above it.
 
-        When using ``text()`` with width and height parameters, BASELINE is ignored, and
-        treated as TOP. (Otherwise, text would by default draw outside the box, since
-        BASELINE is the default setting. BASELINE is not a useful drawing mode for text
-        drawn in a rectangle.)
+        When using :doc:`text` with width and height parameters, ``BASELINE`` is
+        ignored, and treated as ``TOP``. (Otherwise, text would by default draw outside
+        the box, since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful
+        drawing mode for text drawn in a rectangle.)
 
-        The vertical alignment is based on the value of ``text_ascent()``, which many
+        The vertical alignment is based on the value of :doc:`text_ascent`, which many
         fonts do not specify correctly. It may be necessary to use a hack and offset by
         a few pixels by hand so that the offset looks correct. To do this as less of a
-        hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
-        hack works even if you change the size of the font.
+        hack, use some percentage of :doc:`text_ascent` or :doc:`text_descent` so that
+        the hack works even if you change the size of the font.
         """
         pass
 
@@ -16021,27 +15763,28 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Sets the current alignment for drawing text. The parameters LEFT, CENTER, and
-        RIGHT set the display characteristics of the letters in relation to the values
-        for the ``x`` and ``y`` parameters of the ``text()`` function.
+        Sets the current alignment for drawing text. The parameters ``LEFT``,
+        ``CENTER``, and ``RIGHT`` set the display characteristics of the letters in
+        relation to the values for the ``x`` and ``y`` parameters of the :doc:`text`
+        function.
 
-        An optional second parameter can be used to vertically align the text. BASELINE
-        is the default, and the vertical alignment will be reset to BASELINE if the
-        second parameter is not used. The TOP and CENTER parameters are straightforward.
-        The BOTTOM parameter offsets the line based on the current ``text_descent()``.
-        For multiple lines, the final line will be aligned to the bottom, with the
-        previous lines appearing above it.
+        An optional second parameter can be used to vertically align the text.
+        ``BASELINE`` is the default, and the vertical alignment will be reset to
+        ``BASELINE`` if the second parameter is not used. The ``TOP`` and ``CENTER``
+        parameters are straightforward. The ``BOTTOM`` parameter offsets the line based
+        on the current :doc:`text_descent`. For multiple lines, the final line will be
+        aligned to the bottom, with the previous lines appearing above it.
 
-        When using ``text()`` with width and height parameters, BASELINE is ignored, and
-        treated as TOP. (Otherwise, text would by default draw outside the box, since
-        BASELINE is the default setting. BASELINE is not a useful drawing mode for text
-        drawn in a rectangle.)
+        When using :doc:`text` with width and height parameters, ``BASELINE`` is
+        ignored, and treated as ``TOP``. (Otherwise, text would by default draw outside
+        the box, since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful
+        drawing mode for text drawn in a rectangle.)
 
-        The vertical alignment is based on the value of ``text_ascent()``, which many
+        The vertical alignment is based on the value of :doc:`text_ascent`, which many
         fonts do not specify correctly. It may be necessary to use a hack and offset by
         a few pixels by hand so that the offset looks correct. To do this as less of a
-        hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
-        hack works even if you change the size of the font.
+        hack, use some percentage of :doc:`text_ascent` or :doc:`text_descent` so that
+        the hack works even if you change the size of the font.
         """
         return self._instance.textAlign(*args)
 
@@ -16073,7 +15816,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @overload
     def text_font(self, which: Py5Font, /) -> None:
-        """Sets the current font that will be drawn with the ``text()`` function.
+        """Sets the current font that will be drawn with the :doc:`text` function.
 
         Underlying Java method: PApplet.textFont
 
@@ -16092,28 +15835,29 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             the size of the letters in units of pixels
 
         which: Py5Font
-            any variable of the type PFont
+            any variable of the type Py5Font
 
         Notes
         -----
 
-        Sets the current font that will be drawn with the ``text()`` function. Fonts
-        must be created for Processing with ``create_font()`` or loaded with
-        ``load_font()`` before they can be used. The font set through ``text_font()``
-        will be used in all subsequent calls to the ``text()`` function. If no ``size``
-        parameter is specified, the font size defaults to the original size (the size in
-        which it was created with the "Create Font..." tool) overriding any previous
-        calls to ``text_font()`` or ``text_size()``.
-         When fonts are rendered as an image texture (as is the case with the P2D and
-        P3D renderers as well as with ``load_font()`` and vlw files), you should create
-        fonts at the sizes that will be used most commonly. Using ``text_font()``
+        Sets the current font that will be drawn with the :doc:`text` function. Fonts
+        must be created for py5 with :doc:`create_font` or loaded with :doc:`load_font`
+        before they can be used. The font set through ``text_font()`` will be used in
+        all subsequent calls to the :doc:`text` function. If no ``size`` parameter is
+        specified, the font size defaults to the original size (the size in which it was
+        created with :doc:`create_font_file`) overriding any previous calls to
+        ``text_font()`` or :doc:`text_size`.
+
+        When fonts are rendered as an image texture (as is the case with the ``P2D`` and
+        ``P3D`` renderers as well as with :doc:`load_font` and vlw files), you should
+        create fonts at the sizes that will be used most commonly. Using ``text_font()``
         without the size parameter will result in the cleanest type.
         """
         pass
 
     @overload
     def text_font(self, which: Py5Font, size: float, /) -> None:
-        """Sets the current font that will be drawn with the ``text()`` function.
+        """Sets the current font that will be drawn with the :doc:`text` function.
 
         Underlying Java method: PApplet.textFont
 
@@ -16132,27 +15876,28 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             the size of the letters in units of pixels
 
         which: Py5Font
-            any variable of the type PFont
+            any variable of the type Py5Font
 
         Notes
         -----
 
-        Sets the current font that will be drawn with the ``text()`` function. Fonts
-        must be created for Processing with ``create_font()`` or loaded with
-        ``load_font()`` before they can be used. The font set through ``text_font()``
-        will be used in all subsequent calls to the ``text()`` function. If no ``size``
-        parameter is specified, the font size defaults to the original size (the size in
-        which it was created with the "Create Font..." tool) overriding any previous
-        calls to ``text_font()`` or ``text_size()``.
-         When fonts are rendered as an image texture (as is the case with the P2D and
-        P3D renderers as well as with ``load_font()`` and vlw files), you should create
-        fonts at the sizes that will be used most commonly. Using ``text_font()``
+        Sets the current font that will be drawn with the :doc:`text` function. Fonts
+        must be created for py5 with :doc:`create_font` or loaded with :doc:`load_font`
+        before they can be used. The font set through ``text_font()`` will be used in
+        all subsequent calls to the :doc:`text` function. If no ``size`` parameter is
+        specified, the font size defaults to the original size (the size in which it was
+        created with :doc:`create_font_file`) overriding any previous calls to
+        ``text_font()`` or :doc:`text_size`.
+
+        When fonts are rendered as an image texture (as is the case with the ``P2D`` and
+        ``P3D`` renderers as well as with :doc:`load_font` and vlw files), you should
+        create fonts at the sizes that will be used most commonly. Using ``text_font()``
         without the size parameter will result in the cleanest type.
         """
         pass
 
     def text_font(self, *args):
-        """Sets the current font that will be drawn with the ``text()`` function.
+        """Sets the current font that will be drawn with the :doc:`text` function.
 
         Underlying Java method: PApplet.textFont
 
@@ -16171,21 +15916,22 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
             the size of the letters in units of pixels
 
         which: Py5Font
-            any variable of the type PFont
+            any variable of the type Py5Font
 
         Notes
         -----
 
-        Sets the current font that will be drawn with the ``text()`` function. Fonts
-        must be created for Processing with ``create_font()`` or loaded with
-        ``load_font()`` before they can be used. The font set through ``text_font()``
-        will be used in all subsequent calls to the ``text()`` function. If no ``size``
-        parameter is specified, the font size defaults to the original size (the size in
-        which it was created with the "Create Font..." tool) overriding any previous
-        calls to ``text_font()`` or ``text_size()``.
-         When fonts are rendered as an image texture (as is the case with the P2D and
-        P3D renderers as well as with ``load_font()`` and vlw files), you should create
-        fonts at the sizes that will be used most commonly. Using ``text_font()``
+        Sets the current font that will be drawn with the :doc:`text` function. Fonts
+        must be created for py5 with :doc:`create_font` or loaded with :doc:`load_font`
+        before they can be used. The font set through ``text_font()`` will be used in
+        all subsequent calls to the :doc:`text` function. If no ``size`` parameter is
+        specified, the font size defaults to the original size (the size in which it was
+        created with :doc:`create_font_file`) overriding any previous calls to
+        ``text_font()`` or :doc:`text_size`.
+
+        When fonts are rendered as an image texture (as is the case with the ``P2D`` and
+        ``P3D`` renderers as well as with :doc:`load_font` and vlw files), you should
+        create fonts at the sizes that will be used most commonly. Using ``text_font()``
         without the size parameter will result in the cleanest type.
         """
         return self._instance.textFont(*args)
@@ -16205,8 +15951,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the spacing between lines of text in units of pixels. This setting will be
-        used in all subsequent calls to the ``text()`` function.  Note, however, that
-        the leading is reset by ``text_size()``. For example, if the leading is set to
+        used in all subsequent calls to the :doc:`text` function.  Note, however, that
+        the leading is reset by :doc:`text_size`. For example, if the leading is set to
         20 with ``text_leading(20)``, then if ``text_size(48)`` is run at a later point,
         the leading will be reset to the default for the text size of 48.
         """
@@ -16236,11 +15982,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         available, then ``text_mode(SHAPE)`` will be ignored and ``text_mode(MODEL)``
         will be used instead.
 
-        The ``text_mode(SHAPE)`` option in ``P3D`` can be combined with ``begin_raw()``
+        The ``text_mode(SHAPE)`` option in ``P3D`` can be combined with :doc:`begin_raw`
         to write vector-accurate text to 2D and 3D output files, for instance ``DXF`` or
         ``PDF``. The ``SHAPE`` mode is not currently optimized for ``P3D``, so if
         recording shape data, use ``text_mode(MODEL)`` until you're ready to capture the
-        geometry with ``begin_raw()``.
+        geometry with :doc:`begin_raw`.
         """
         return self._instance.textMode(mode)
 
@@ -16259,7 +16005,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Sets the current font size. This size will be used in all subsequent calls to
-        the ``text()`` function. Font size is measured in units of pixels.
+        the :doc:`text` function. Font size is measured in units of pixels.
         """
         return self._instance.textSize(size)
 
@@ -16434,16 +16180,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ----------
 
         image: Py5Image
-            reference to a PImage object
+            reference to a Py5Image object
 
         Notes
         -----
 
         Sets a texture to be applied to vertex points. The ``texture()`` function must
-        be called between ``begin_shape()`` and ``end_shape()`` and before any calls to
-        ``vertex()``. This function only works with the P2D and P3D renderers.
+        be called between :doc:`begin_shape` and :doc:`end_shape` and before any calls
+        to :doc:`vertex`. This function only works with the ``P2D`` and ``P3D``
+        renderers.
 
-        When textures are in use, the fill color is ignored. Instead, use ``tint()`` to
+        When textures are in use, the fill color is ignored. Instead, use :doc:`tint` to
         specify the color of the texture as it is applied to the shape.
         """
         return self._instance.texture(image)
@@ -16465,7 +16212,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Sets the coordinate space for texture mapping. The default mode is ``IMAGE``,
         which refers to the actual coordinates of the image. ``NORMAL`` refers to a
         normalized space of values ranging from 0 to 1. This function only works with
-        the P2D and P3D renderers.
+        the ``P2D`` and ``P3D`` renderers.
 
         With ``IMAGE``, if an image is 100 x 200 pixels, mapping the image onto the
         entire size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
@@ -16488,8 +16235,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         -----
 
         Defines if textures repeat or draw once within a texture map. The two parameters
-        are CLAMP (the default behavior) and REPEAT. This function only works with the
-        P2D and P3D renderers.
+        are ``CLAMP`` (the default behavior) and ``REPEAT``. This function only works
+        with the ``P2D`` and ``P3D`` renderers.
         """
         return self._instance.textureWrap(wrap)
 
@@ -16541,18 +16288,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16607,18 +16351,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16673,18 +16414,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16739,18 +16477,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16805,18 +16540,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16871,18 +16603,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16936,18 +16665,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         To apply transparency to an image without affecting its color, use white as the
         tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
         make an image 50% transparent (assuming the default alpha range of 0-255, which
-        can be changed with ``color_mode()``).
+        can be changed with :doc:`color_mode`).
 
-        When using hexadecimal notation to specify a color, use "``#``" or "``0x``"
-        before the values (e.g., ``0xCCFFAA`` or ``0xFFCCFFAA``). The ``#`` syntax uses
-        six digits to specify a color (just as colors are typically specified in HTML
-        and CSS). When using the hexadecimal notation starting with "``0x``", the
-        hexadecimal value must be specified with eight characters; the first two
-        characters define the alpha component, and the remainder define the red, green,
-        and blue components.
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
 
         The value for the gray parameter must be less than or equal to the current
-        maximum value as specified by ``color_mode()``. The default maximum value is
+        maximum value as specified by :doc:`color_mode`. The default maximum value is
         255.
 
         The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16986,15 +16712,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies an amount to displace objects within the display window. The ``x``
         parameter specifies left/right translation, the ``y`` parameter specifies
         up/down translation, and the ``z`` parameter specifies translations toward/away
-        from the screen. Using this function with the ``z`` parameter requires using P3D
-        as a parameter in combination with size as shown in the above example.
+        from the screen. Using this function with the ``z`` parameter requires using
+        ``P3D`` as a parameter in combination with size as shown in the above example.
 
         Transformations are cumulative and apply to everything that happens after and
         subsequent calls to the function accumulates the effect. For example, calling
         ``translate(50, 0)`` and then ``translate(20, 0)`` is the same as
         ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
         transformation is reset when the loop begins again. This function can be further
-        controlled by using ``push_matrix()`` and ``pop_matrix()``.
+        controlled by using :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         pass
 
@@ -17030,15 +16756,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies an amount to displace objects within the display window. The ``x``
         parameter specifies left/right translation, the ``y`` parameter specifies
         up/down translation, and the ``z`` parameter specifies translations toward/away
-        from the screen. Using this function with the ``z`` parameter requires using P3D
-        as a parameter in combination with size as shown in the above example.
+        from the screen. Using this function with the ``z`` parameter requires using
+        ``P3D`` as a parameter in combination with size as shown in the above example.
 
         Transformations are cumulative and apply to everything that happens after and
         subsequent calls to the function accumulates the effect. For example, calling
         ``translate(50, 0)`` and then ``translate(20, 0)`` is the same as
         ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
         transformation is reset when the loop begins again. This function can be further
-        controlled by using ``push_matrix()`` and ``pop_matrix()``.
+        controlled by using :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         pass
 
@@ -17073,15 +16799,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Specifies an amount to displace objects within the display window. The ``x``
         parameter specifies left/right translation, the ``y`` parameter specifies
         up/down translation, and the ``z`` parameter specifies translations toward/away
-        from the screen. Using this function with the ``z`` parameter requires using P3D
-        as a parameter in combination with size as shown in the above example.
+        from the screen. Using this function with the ``z`` parameter requires using
+        ``P3D`` as a parameter in combination with size as shown in the above example.
 
         Transformations are cumulative and apply to everything that happens after and
         subsequent calls to the function accumulates the effect. For example, calling
         ``translate(50, 0)`` and then ``translate(20, 0)`` is the same as
         ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
         transformation is reset when the loop begins again. This function can be further
-        controlled by using ``push_matrix()`` and ``pop_matrix()``.
+        controlled by using :doc:`push_matrix` and :doc:`pop_matrix`.
         """
         return self._instance.translate(*args)
 
@@ -17123,7 +16849,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @overload
     def update_pixels(self) -> None:
-        """Updates the display window with the data in the ``pixels[]`` array.
+        """Updates the display window with the data in the :doc:`pixels` array.
 
         Underlying Java method: PApplet.updatePixels
 
@@ -17153,8 +16879,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the display window with the data in the ``pixels[]`` array. Use in
-        conjunction with ``load_pixels()``. If you're only reading pixels from the
+        Updates the display window with the data in the :doc:`pixels` array. Use in
+        conjunction with :doc:`load_pixels`. If you're only reading pixels from the
         array, there's no need to call ``update_pixels()`` — updating is only necessary
         to apply changes.
         """
@@ -17162,7 +16888,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @overload
     def update_pixels(self, x1: int, y1: int, x2: int, y2: int, /) -> None:
-        """Updates the display window with the data in the ``pixels[]`` array.
+        """Updates the display window with the data in the :doc:`pixels` array.
 
         Underlying Java method: PApplet.updatePixels
 
@@ -17192,15 +16918,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the display window with the data in the ``pixels[]`` array. Use in
-        conjunction with ``load_pixels()``. If you're only reading pixels from the
+        Updates the display window with the data in the :doc:`pixels` array. Use in
+        conjunction with :doc:`load_pixels`. If you're only reading pixels from the
         array, there's no need to call ``update_pixels()`` — updating is only necessary
         to apply changes.
         """
         pass
 
     def update_pixels(self, *args):
-        """Updates the display window with the data in the ``pixels[]`` array.
+        """Updates the display window with the data in the :doc:`pixels` array.
 
         Underlying Java method: PApplet.updatePixels
 
@@ -17230,8 +16956,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the display window with the data in the ``pixels[]`` array. Use in
-        conjunction with ``load_pixels()``. If you're only reading pixels from the
+        Updates the display window with the data in the :doc:`pixels` array. Use in
+        conjunction with :doc:`load_pixels`. If you're only reading pixels from the
         array, there's no need to call ``update_pixels()`` — updating is only necessary
         to apply changes.
         """
@@ -17280,17 +17006,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         All shapes are constructed by connecting a series of vertices. ``vertex()`` is
         used to specify the vertex coordinates for points, lines, triangles, quads, and
-        polygons. It is used exclusively within the ``begin_shape()`` and
-        ``end_shape()`` functions.
+        polygons. It is used exclusively within the :doc:`begin_shape` and
+        :doc:`end_shape` functions.
 
-        Drawing a vertex in 3D using the ``z`` parameter requires the P3D parameter in
-        combination with size, as shown in the above example.
+        Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
+        in combination with size, as shown in the above example.
 
-        This function is also used to map a texture onto geometry. The ``texture()``
+        This function is also used to map a texture onto geometry. The :doc:`texture`
         function declares the texture to apply to the geometry and the ``u`` and ``v``
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
-        size in pixels, but this relation can be changed with ``texture_mode()``.
+        size in pixels, but this relation can be changed with :doc:`texture_mode`.
         """
         pass
 
@@ -17337,17 +17063,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         All shapes are constructed by connecting a series of vertices. ``vertex()`` is
         used to specify the vertex coordinates for points, lines, triangles, quads, and
-        polygons. It is used exclusively within the ``begin_shape()`` and
-        ``end_shape()`` functions.
+        polygons. It is used exclusively within the :doc:`begin_shape` and
+        :doc:`end_shape` functions.
 
-        Drawing a vertex in 3D using the ``z`` parameter requires the P3D parameter in
-        combination with size, as shown in the above example.
+        Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
+        in combination with size, as shown in the above example.
 
-        This function is also used to map a texture onto geometry. The ``texture()``
+        This function is also used to map a texture onto geometry. The :doc:`texture`
         function declares the texture to apply to the geometry and the ``u`` and ``v``
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
-        size in pixels, but this relation can be changed with ``texture_mode()``.
+        size in pixels, but this relation can be changed with :doc:`texture_mode`.
         """
         pass
 
@@ -17394,17 +17120,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         All shapes are constructed by connecting a series of vertices. ``vertex()`` is
         used to specify the vertex coordinates for points, lines, triangles, quads, and
-        polygons. It is used exclusively within the ``begin_shape()`` and
-        ``end_shape()`` functions.
+        polygons. It is used exclusively within the :doc:`begin_shape` and
+        :doc:`end_shape` functions.
 
-        Drawing a vertex in 3D using the ``z`` parameter requires the P3D parameter in
-        combination with size, as shown in the above example.
+        Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
+        in combination with size, as shown in the above example.
 
-        This function is also used to map a texture onto geometry. The ``texture()``
+        This function is also used to map a texture onto geometry. The :doc:`texture`
         function declares the texture to apply to the geometry and the ``u`` and ``v``
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
-        size in pixels, but this relation can be changed with ``texture_mode()``.
+        size in pixels, but this relation can be changed with :doc:`texture_mode`.
         """
         pass
 
@@ -17452,17 +17178,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         All shapes are constructed by connecting a series of vertices. ``vertex()`` is
         used to specify the vertex coordinates for points, lines, triangles, quads, and
-        polygons. It is used exclusively within the ``begin_shape()`` and
-        ``end_shape()`` functions.
+        polygons. It is used exclusively within the :doc:`begin_shape` and
+        :doc:`end_shape` functions.
 
-        Drawing a vertex in 3D using the ``z`` parameter requires the P3D parameter in
-        combination with size, as shown in the above example.
+        Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
+        in combination with size, as shown in the above example.
 
-        This function is also used to map a texture onto geometry. The ``texture()``
+        This function is also used to map a texture onto geometry. The :doc:`texture`
         function declares the texture to apply to the geometry and the ``u`` and ``v``
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
-        size in pixels, but this relation can be changed with ``texture_mode()``.
+        size in pixels, but this relation can be changed with :doc:`texture_mode`.
         """
         pass
 
@@ -17509,17 +17235,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         All shapes are constructed by connecting a series of vertices. ``vertex()`` is
         used to specify the vertex coordinates for points, lines, triangles, quads, and
-        polygons. It is used exclusively within the ``begin_shape()`` and
-        ``end_shape()`` functions.
+        polygons. It is used exclusively within the :doc:`begin_shape` and
+        :doc:`end_shape` functions.
 
-        Drawing a vertex in 3D using the ``z`` parameter requires the P3D parameter in
-        combination with size, as shown in the above example.
+        Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
+        in combination with size, as shown in the above example.
 
-        This function is also used to map a texture onto geometry. The ``texture()``
+        This function is also used to map a texture onto geometry. The :doc:`texture`
         function declares the texture to apply to the geometry and the ``u`` and ``v``
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
-        size in pixels, but this relation can be changed with ``texture_mode()``.
+        size in pixels, but this relation can be changed with :doc:`texture_mode`.
         """
         pass
 
@@ -17565,17 +17291,17 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         All shapes are constructed by connecting a series of vertices. ``vertex()`` is
         used to specify the vertex coordinates for points, lines, triangles, quads, and
-        polygons. It is used exclusively within the ``begin_shape()`` and
-        ``end_shape()`` functions.
+        polygons. It is used exclusively within the :doc:`begin_shape` and
+        :doc:`end_shape` functions.
 
-        Drawing a vertex in 3D using the ``z`` parameter requires the P3D parameter in
-        combination with size, as shown in the above example.
+        Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
+        in combination with size, as shown in the above example.
 
-        This function is also used to map a texture onto geometry. The ``texture()``
+        This function is also used to map a texture onto geometry. The :doc:`texture`
         function declares the texture to apply to the geometry and the ``u`` and ``v``
         coordinates set define the mapping of this texture to the form. By default, the
         coordinates used for ``u`` and ``v`` are specified in relation to the image's
-        size in pixels, but this relation can be changed with ``texture_mode()``.
+        size in pixels, but this relation can be changed with :doc:`texture_mode`.
         """
         return self._instance.vertex(*args)
 
@@ -17601,14 +17327,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
     @classmethod
     def year(cls) -> int:
-        """Processing communicates with the clock on your computer.
+        """Py5 communicates with the clock on your computer.
 
         Underlying Java method: PApplet.year
 
         Notes
         -----
 
-        Processing communicates with the clock on your computer. The ``year()`` function
+        Py5 communicates with the clock on your computer. The ``year()`` function
         returns the current year as an integer (2003, 2004, 2005, etc).
         """
         return cls._cls.year()

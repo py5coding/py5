@@ -84,20 +84,20 @@ class Py5Shape:
     -----
 
     Datatype for storing shapes. Before a shape is used, it must be loaded with the
-    ``load_shape()`` or created with the ``create_shape()``. The ``shape()``
-    function is used to draw the shape to the display window. Processing can
-    currently load and display SVG (Scalable Vector Graphics) and OBJ shapes. OBJ
-    files can only be opened using the ``P3D`` renderer. The ``load_shape()``
-    function supports SVG files created with Inkscape and Adobe Illustrator. It is
-    not a full SVG implementation, but offers some straightforward support for
-    handling vector data.
+    :doc:`load_shape` or created with the :doc:`create_shape`. The :doc:`shape`
+    function is used to draw the shape to the display window. Py5 can currently load
+    and display SVG (Scalable Vector Graphics) and OBJ shapes. OBJ files can only be
+    opened using the ``P3D`` renderer. The :doc:`load_shape` function supports SVG
+    files created with Inkscape and Adobe Illustrator. It is not a full SVG
+    implementation, but offers some straightforward support for handling vector
+    data. A more complete SVG implementation can be provided by :doc:`convert_image`
+    if Cairo is installed. See installation instructions for additional detail.
 
     The ``Py5Shape`` object contains a group of methods that can operate on the
-    shape data. Some of the methods are listed below, but the full list used for
-    creating and modifying shapes is available here in the Processing Javadoc.
+    shape data.
 
-    To create a new shape, use the ``create_shape()`` function. Do not use the
-    syntax ``new Py5Shape()``.
+    To create a new shape, use the :doc:`create_shape` function. Do not use the
+    syntax ``Py5Shape()``.
     """
 
     def __init__(self, pshape):
@@ -119,34 +119,35 @@ class Py5Shape:
     depth: float = property(fget=_get_depth)
 
     def _get_height(self) -> float:
-        """The height of the PShape document.
+        """The height of the ``Py5Shape`` document.
 
         Underlying Java field: PShape.height
 
         Notes
         -----
 
-        The height of the PShape document.
+        The height of the ``Py5Shape`` document.
         """
         return self._instance.height
     height: float = property(fget=_get_height)
 
     def _get_width(self) -> float:
-        """The width of the PShape document.
+        """The width of the ``Py5Shape`` document.
 
         Underlying Java field: PShape.width
 
         Notes
         -----
 
-        The width of the PShape document.
+        The width of the ``Py5Shape`` document.
         """
         return self._instance.width
     width: float = property(fget=_get_width)
 
     @overload
     def add_child(self, who: Py5Shape, /) -> None:
-        """Adds a child PShape to a parent PShape that is defined as a GROUP.
+        """Adds a child ``Py5Shape`` to a parent ``Py5Shape`` that is defined as a
+        ``GROUP``.
 
         Underlying Java method: PShape.addChild
 
@@ -165,20 +166,22 @@ class Py5Shape:
             the layer position in which to insert the new child
 
         who: Py5Shape
-            any variable of type PShape
+            any variable of type Py5Shape
 
         Notes
         -----
 
-        Adds a child PShape to a parent PShape that is defined as a GROUP. In the
-        example, the three shapes ``path``, ``rectangle``, and ``circle`` are added to a
-        parent PShape variable named ``house`` that is a GROUP.
+        Adds a child ``Py5Shape`` to a parent ``Py5Shape`` that is defined as a
+        ``GROUP``. In the example, the three shapes ``path``, ``rectangle``, and
+        ``circle`` are added to a parent ``Py5Shape`` variable named ``house`` that is a
+        ``GROUP``.
         """
         pass
 
     @overload
     def add_child(self, who: Py5Shape, idx: int, /) -> None:
-        """Adds a child PShape to a parent PShape that is defined as a GROUP.
+        """Adds a child ``Py5Shape`` to a parent ``Py5Shape`` that is defined as a
+        ``GROUP``.
 
         Underlying Java method: PShape.addChild
 
@@ -197,19 +200,21 @@ class Py5Shape:
             the layer position in which to insert the new child
 
         who: Py5Shape
-            any variable of type PShape
+            any variable of type Py5Shape
 
         Notes
         -----
 
-        Adds a child PShape to a parent PShape that is defined as a GROUP. In the
-        example, the three shapes ``path``, ``rectangle``, and ``circle`` are added to a
-        parent PShape variable named ``house`` that is a GROUP.
+        Adds a child ``Py5Shape`` to a parent ``Py5Shape`` that is defined as a
+        ``GROUP``. In the example, the three shapes ``path``, ``rectangle``, and
+        ``circle`` are added to a parent ``Py5Shape`` variable named ``house`` that is a
+        ``GROUP``.
         """
         pass
 
     def add_child(self, *args):
-        """Adds a child PShape to a parent PShape that is defined as a GROUP.
+        """Adds a child ``Py5Shape`` to a parent ``Py5Shape`` that is defined as a
+        ``GROUP``.
 
         Underlying Java method: PShape.addChild
 
@@ -228,14 +233,15 @@ class Py5Shape:
             the layer position in which to insert the new child
 
         who: Py5Shape
-            any variable of type PShape
+            any variable of type Py5Shape
 
         Notes
         -----
 
-        Adds a child PShape to a parent PShape that is defined as a GROUP. In the
-        example, the three shapes ``path``, ``rectangle``, and ``circle`` are added to a
-        parent PShape variable named ``house`` that is a GROUP.
+        Adds a child ``Py5Shape`` to a parent ``Py5Shape`` that is defined as a
+        ``GROUP``. In the example, the three shapes ``path``, ``rectangle``, and
+        ``circle`` are added to a parent ``Py5Shape`` variable named ``house`` that is a
+        ``GROUP``.
         """
         return self._instance.addChild(*args)
 
@@ -1112,7 +1118,7 @@ class Py5Shape:
 
     @overload
     def begin_shape(self) -> None:
-        """This method is used to start a custom shape created with the ``create_shape()``
+        """This method is used to start a custom shape created with the :doc:`create_shape`
         function.
 
         Underlying Java method: PShape.beginShape
@@ -1134,14 +1140,14 @@ class Py5Shape:
         Notes
         -----
 
-        This method is used to start a custom shape created with the ``create_shape()``
-        function. It's always and only used with ``create_shape()``.
+        This method is used to start a custom shape created with the :doc:`create_shape`
+        function. It's always and only used with :doc:`create_shape`.
         """
         pass
 
     @overload
     def begin_shape(self, kind: int, /) -> None:
-        """This method is used to start a custom shape created with the ``create_shape()``
+        """This method is used to start a custom shape created with the :doc:`create_shape`
         function.
 
         Underlying Java method: PShape.beginShape
@@ -1163,13 +1169,13 @@ class Py5Shape:
         Notes
         -----
 
-        This method is used to start a custom shape created with the ``create_shape()``
-        function. It's always and only used with ``create_shape()``.
+        This method is used to start a custom shape created with the :doc:`create_shape`
+        function. It's always and only used with :doc:`create_shape`.
         """
         pass
 
     def begin_shape(self, *args):
-        """This method is used to start a custom shape created with the ``create_shape()``
+        """This method is used to start a custom shape created with the :doc:`create_shape`
         function.
 
         Underlying Java method: PShape.beginShape
@@ -1191,8 +1197,8 @@ class Py5Shape:
         Notes
         -----
 
-        This method is used to start a custom shape created with the ``create_shape()``
-        function. It's always and only used with ``create_shape()``.
+        This method is used to start a custom shape created with the :doc:`create_shape`
+        function. It's always and only used with :doc:`create_shape`.
         """
         return self._instance.beginShape(*args)
 
@@ -1775,15 +1781,15 @@ class Py5Shape:
         return self._instance.curveVertex(*args)
 
     def disable_style(self) -> None:
-        """Disables the shape's style data and uses Processing's current styles.
+        """Disables the shape's style data and uses py5's current styles.
 
         Underlying Java method: PShape.disableStyle
 
         Notes
         -----
 
-        Disables the shape's style data and uses Processing's current styles. Styles
-        include attributes such as colors, stroke weight, and stroke joints.
+        Disables the shape's style data and uses py5's current styles. Styles include
+        attributes such as colors, stroke weight, and stroke joints.
         """
         return self._instance.disableStyle()
 
@@ -1955,15 +1961,15 @@ class Py5Shape:
         return self._instance.emissive(*args)
 
     def enable_style(self) -> None:
-        """Enables the shape's style data and ignores Processing's current styles.
+        """Enables the shape's style data and ignores py5's current styles.
 
         Underlying Java method: PShape.enableStyle
 
         Notes
         -----
 
-        Enables the shape's style data and ignores Processing's current styles. Styles
-        include attributes such as colors, stroke weight, and stroke joints.
+        Enables the shape's style data and ignores py5's current styles. Styles include
+        attributes such as colors, stroke weight, and stroke joints.
         """
         return self._instance.enableStyle()
 
@@ -1984,7 +1990,7 @@ class Py5Shape:
     @overload
     def end_shape(self) -> None:
         """This method is used to complete a custom shape created with the
-        ``create_shape()`` function.
+        :doc:`create_shape` function.
 
         Underlying Java method: PShape.endShape
 
@@ -2006,14 +2012,15 @@ class Py5Shape:
         -----
 
         This method is used to complete a custom shape created with the
-        ``create_shape()`` function. It's always and only used with ``create_shape()``.
+        :doc:`create_shape` function. It's always and only used with
+        :doc:`create_shape`.
         """
         pass
 
     @overload
     def end_shape(self, mode: int, /) -> None:
         """This method is used to complete a custom shape created with the
-        ``create_shape()`` function.
+        :doc:`create_shape` function.
 
         Underlying Java method: PShape.endShape
 
@@ -2035,13 +2042,14 @@ class Py5Shape:
         -----
 
         This method is used to complete a custom shape created with the
-        ``create_shape()`` function. It's always and only used with ``create_shape()``.
+        :doc:`create_shape` function. It's always and only used with
+        :doc:`create_shape`.
         """
         pass
 
     def end_shape(self, *args):
         """This method is used to complete a custom shape created with the
-        ``create_shape()`` function.
+        :doc:`create_shape` function.
 
         Underlying Java method: PShape.endShape
 
@@ -2063,7 +2071,8 @@ class Py5Shape:
         -----
 
         This method is used to complete a custom shape created with the
-        ``create_shape()`` function. It's always and only used with ``create_shape()``.
+        :doc:`create_shape` function. It's always and only used with
+        :doc:`create_shape`.
         """
         return self._instance.endShape(*args)
 
@@ -2561,14 +2570,14 @@ class Py5Shape:
         return self._instance.getChild(*args)
 
     def get_child_count(self) -> int:
-        """Returns the number of children within the PShape.
+        """Returns the number of children within the ``Py5Shape``.
 
         Underlying Java method: PShape.getChildCount
 
         Notes
         -----
 
-        Returns the number of children within the PShape.
+        Returns the number of children within the ``Py5Shape``.
         """
         return self._instance.getChildCount()
 
@@ -3153,8 +3162,8 @@ class Py5Shape:
 
     @overload
     def get_vertex(self, index: int, /) -> NDArray[(Any,), Float]:
-        """The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
-        point located at the position defined by the ``index`` parameter.
+        """The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        vertex point located at the position defined by the ``index`` parameter.
 
         Underlying Java method: PShape.getVertex
 
@@ -3173,14 +3182,14 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            PVector to assign the data to
+            properly sized numpy array to assign the data to
 
         Notes
         -----
 
-        The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
-        point located at the position defined by the ``index`` parameter. This method
-        works when shapes are created as shown in the example above, but won't work
+        The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        vertex point located at the position defined by the ``index`` parameter. This
+        method works when shapes are created as shown in the example, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
         80, 80)``.
         """
@@ -3189,8 +3198,8 @@ class Py5Shape:
     @overload
     def get_vertex(self, index: int, vec: NDArray[(
             Any,), Float], /) -> NDArray[(Any,), Float]:
-        """The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
-        point located at the position defined by the ``index`` parameter.
+        """The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        vertex point located at the position defined by the ``index`` parameter.
 
         Underlying Java method: PShape.getVertex
 
@@ -3209,14 +3218,14 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            PVector to assign the data to
+            properly sized numpy array to assign the data to
 
         Notes
         -----
 
-        The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
-        point located at the position defined by the ``index`` parameter. This method
-        works when shapes are created as shown in the example above, but won't work
+        The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        vertex point located at the position defined by the ``index`` parameter. This
+        method works when shapes are created as shown in the example, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
         80, 80)``.
         """
@@ -3224,8 +3233,8 @@ class Py5Shape:
 
     @_get_pvector_wrapper
     def get_vertex(self, *args):
-        """The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
-        point located at the position defined by the ``index`` parameter.
+        """The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        vertex point located at the position defined by the ``index`` parameter.
 
         Underlying Java method: PShape.getVertex
 
@@ -3244,14 +3253,14 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            PVector to assign the data to
+            properly sized numpy array to assign the data to
 
         Notes
         -----
 
-        The ``get_vertex()`` method returns a PVector with the coordinates of the vertex
-        point located at the position defined by the ``index`` parameter. This method
-        works when shapes are created as shown in the example above, but won't work
+        The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        vertex point located at the position defined by the ``index`` parameter. This
+        method works when shapes are created as shown in the example, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
         80, 80)``.
         """
@@ -3307,7 +3316,7 @@ class Py5Shape:
 
     def get_vertex_count(self) -> int:
         """The ``get_vertex_count()`` method returns the number of vertices that make up a
-        PShape.
+        ``Py5Shape``.
 
         Underlying Java method: PShape.getVertexCount
 
@@ -3315,7 +3324,7 @@ class Py5Shape:
         -----
 
         The ``get_vertex_count()`` method returns the number of vertices that make up a
-        PShape. In the above example, the value 4 is returned by the
+        ``Py5Shape``. In the example, the value 4 is returned by the
         ``get_vertex_count()`` method because 4 vertices are defined in ``setup()``.
         """
         return self._instance.getVertexCount()
@@ -3437,7 +3446,7 @@ class Py5Shape:
         return self._instance.isClosed()
 
     def is_visible(self) -> bool:
-        """Returns a boolean value "true" if the image is set to be visible, "false" if
+        """Returns a boolean value ``True`` if the image is set to be visible, ``False`` if
         not.
 
         Underlying Java method: PShape.isVisible
@@ -3445,8 +3454,8 @@ class Py5Shape:
         Notes
         -----
 
-        Returns a boolean value "true" if the image is set to be visible, "false" if
-        not. This value can be modified with the ``set_visible()`` method.
+        Returns a boolean value ``True`` if the image is set to be visible, ``False`` if
+        not. This value can be modified with the :doc:`py5shape_set_visible` method.
 
         The default visibility of a shape is usually controlled by whatever program
         created the SVG file. For instance, this parameter is controlled by showing or
@@ -3735,8 +3744,8 @@ class Py5Shape:
         -----
 
         Rotates the shape the amount specified by the ``angle`` parameter. Angles should
-        be specified in radians (values from 0 to TWO_PI) or converted from degrees to
-        radians with the ``radians()`` method.
+        be specified in radians (values from 0 to ``TWO_PI``) or converted from degrees
+        to radians with the :doc:`radians` method.
 
         Shapes are always rotated around the upper-left corner of their bounding box.
         Positive numbers rotate objects in a clockwise direction. Transformations apply
@@ -3780,8 +3789,8 @@ class Py5Shape:
         -----
 
         Rotates the shape the amount specified by the ``angle`` parameter. Angles should
-        be specified in radians (values from 0 to TWO_PI) or converted from degrees to
-        radians with the ``radians()`` method.
+        be specified in radians (values from 0 to ``TWO_PI``) or converted from degrees
+        to radians with the :doc:`radians` method.
 
         Shapes are always rotated around the upper-left corner of their bounding box.
         Positive numbers rotate objects in a clockwise direction. Transformations apply
@@ -3824,8 +3833,8 @@ class Py5Shape:
         -----
 
         Rotates the shape the amount specified by the ``angle`` parameter. Angles should
-        be specified in radians (values from 0 to TWO_PI) or converted from degrees to
-        radians with the ``radians()`` method.
+        be specified in radians (values from 0 to ``TWO_PI``) or converted from degrees
+        to radians with the :doc:`radians` method.
 
         Shapes are always rotated around the upper-left corner of their bounding box.
         Positive numbers rotate objects in a clockwise direction. Transformations apply
@@ -3852,8 +3861,8 @@ class Py5Shape:
         -----
 
         Rotates the shape around the x-axis the amount specified by the ``angle``
-        parameter. Angles should be specified in radians (values from 0 to TWO_PI) or
-        converted from degrees to radians with the ``radians()`` method.
+        parameter. Angles should be specified in radians (values from 0 to ``TWO_PI``)
+        or converted from degrees to radians with the :doc:`radians` method.
 
         Shapes are always rotated around the upper-left corner of their bounding box.
         Positive numbers rotate objects in a clockwise direction. Subsequent calls to
@@ -3862,8 +3871,8 @@ class Py5Shape:
         transformation is applied directly to the shape, it's not refreshed each time
         ``draw()`` is run.
 
-        This method requires a 3D renderer. You need to use P3D as a third parameter for
-        the ``size()`` function as shown in the example above.
+        This method requires a 3D renderer. You need to use ``P3D`` as a third parameter
+        for the :doc:`size` function as shown in the example.
         """
         return self._instance.rotateX(angle)
 
@@ -3883,8 +3892,8 @@ class Py5Shape:
         -----
 
         Rotates the shape around the y-axis the amount specified by the ``angle``
-        parameter. Angles should be specified in radians (values from 0 to TWO_PI) or
-        converted from degrees to radians with the ``radians()`` method.
+        parameter. Angles should be specified in radians (values from 0 to ``TWO_PI``)
+        or converted from degrees to radians with the :doc:`radians` method.
 
         Shapes are always rotated around the upper-left corner of their bounding box.
         Positive numbers rotate objects in a clockwise direction. Subsequent calls to
@@ -3893,8 +3902,8 @@ class Py5Shape:
         transformation is applied directly to the shape, it's not refreshed each time
         ``draw()`` is run.
 
-        This method requires a 3D renderer. You need to use P3D as a third parameter for
-        the ``size()`` function as shown in the example above.
+        This method requires a 3D renderer. You need to use ``P3D`` as a third parameter
+        for the :doc:`size` function as shown in the example.
         """
         return self._instance.rotateY(angle)
 
@@ -3914,8 +3923,8 @@ class Py5Shape:
         -----
 
         Rotates the shape around the z-axis the amount specified by the ``angle``
-        parameter. Angles should be specified in radians (values from 0 to TWO_PI) or
-        converted from degrees to radians with the ``radians()`` method.
+        parameter. Angles should be specified in radians (values from 0 to ``TWO_PI``)
+        or converted from degrees to radians with the :doc:`radians` method.
 
         Shapes are always rotated around the upper-left corner of their bounding box.
         Positive numbers rotate objects in a clockwise direction. Subsequent calls to
@@ -3924,8 +3933,8 @@ class Py5Shape:
         transformation is applied directly to the shape, it's not refreshed each time
         ``draw()`` is run.
 
-        This method requires a 3D renderer. You need to use P3D as a third parameter for
-        the ``size()`` function as shown in the example above.
+        This method requires a 3D renderer. You need to use ``P3D`` as a third parameter
+        for the :doc:`size` function as shown in the example.
         """
         return self._instance.rotateZ(angle)
 
@@ -3971,8 +3980,8 @@ class Py5Shape:
         ``scale(1.5)`` is the same as ``scale(3.0)``. This transformation is applied
         directly to the shape; it's not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         pass
 
@@ -4018,8 +4027,8 @@ class Py5Shape:
         ``scale(1.5)`` is the same as ``scale(3.0)``. This transformation is applied
         directly to the shape; it's not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         pass
 
@@ -4065,8 +4074,8 @@ class Py5Shape:
         ``scale(1.5)`` is the same as ``scale(3.0)``. This transformation is applied
         directly to the shape; it's not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         pass
 
@@ -4111,8 +4120,8 @@ class Py5Shape:
         ``scale(1.5)`` is the same as ``scale(3.0)``. This transformation is applied
         directly to the shape; it's not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         return self._instance.scale(*args)
 
@@ -4547,10 +4556,11 @@ class Py5Shape:
         The ``set_fill()`` method defines the fill color of a ``Py5Shape``. This method
         is used after shapes are created or when a shape is defined explicitly (e.g.
         ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example. When a
-        shape is created with ``begin_shape()`` and ``end_shape()``, its attributes may
-        be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
-        ``end_shape()``. However, after the shape is created, only the ``set_fill()``
-        method can define a new fill value for the ``Py5Shape``.
+        shape is created with :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`,
+        its attributes may be changed with :doc:`py5shape_fill` and
+        :doc:`py5shape_stroke` between the calls to :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`. However, after the shape is created, only the
+        ``set_fill()`` method can define a new fill value for the ``Py5Shape``.
         """
         pass
 
@@ -4587,10 +4597,11 @@ class Py5Shape:
         The ``set_fill()`` method defines the fill color of a ``Py5Shape``. This method
         is used after shapes are created or when a shape is defined explicitly (e.g.
         ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example. When a
-        shape is created with ``begin_shape()`` and ``end_shape()``, its attributes may
-        be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
-        ``end_shape()``. However, after the shape is created, only the ``set_fill()``
-        method can define a new fill value for the ``Py5Shape``.
+        shape is created with :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`,
+        its attributes may be changed with :doc:`py5shape_fill` and
+        :doc:`py5shape_stroke` between the calls to :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`. However, after the shape is created, only the
+        ``set_fill()`` method can define a new fill value for the ``Py5Shape``.
         """
         pass
 
@@ -4627,10 +4638,11 @@ class Py5Shape:
         The ``set_fill()`` method defines the fill color of a ``Py5Shape``. This method
         is used after shapes are created or when a shape is defined explicitly (e.g.
         ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example. When a
-        shape is created with ``begin_shape()`` and ``end_shape()``, its attributes may
-        be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
-        ``end_shape()``. However, after the shape is created, only the ``set_fill()``
-        method can define a new fill value for the ``Py5Shape``.
+        shape is created with :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`,
+        its attributes may be changed with :doc:`py5shape_fill` and
+        :doc:`py5shape_stroke` between the calls to :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`. However, after the shape is created, only the
+        ``set_fill()`` method can define a new fill value for the ``Py5Shape``.
         """
         pass
 
@@ -4667,10 +4679,11 @@ class Py5Shape:
         The ``set_fill()`` method defines the fill color of a ``Py5Shape``. This method
         is used after shapes are created or when a shape is defined explicitly (e.g.
         ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example. When a
-        shape is created with ``begin_shape()`` and ``end_shape()``, its attributes may
-        be changed with ``fill()`` and ``stroke()`` within ``begin_shape()`` and
-        ``end_shape()``. However, after the shape is created, only the ``set_fill()``
-        method can define a new fill value for the ``Py5Shape``.
+        shape is created with :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`,
+        its attributes may be changed with :doc:`py5shape_fill` and
+        :doc:`py5shape_stroke` between the calls to :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`. However, after the shape is created, only the
+        ``set_fill()`` method can define a new fill value for the ``Py5Shape``.
         """
         return self._instance.setFill(*args)
 
@@ -4991,10 +5004,12 @@ class Py5Shape:
         The ``set_stroke()`` method defines the outline color of a ``Py5Shape``. This
         method is used after shapes are created or when a shape is defined explicitly
         (e.g. ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example.
-        When a shape is created with ``begin_shape()`` and ``end_shape()``, its
-        attributes may be changed with ``fill()`` and ``stroke()`` within
-        ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
-        the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
+        When a shape is created with :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`, its attributes may be changed with
+        :doc:`py5shape_fill` and :doc:`py5shape_stroke` within
+        :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`. However, after the
+        shape is created, only the ``set_stroke()`` method can define a new stroke value
+        for the ``Py5Shape``.
         """
         pass
 
@@ -5031,10 +5046,12 @@ class Py5Shape:
         The ``set_stroke()`` method defines the outline color of a ``Py5Shape``. This
         method is used after shapes are created or when a shape is defined explicitly
         (e.g. ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example.
-        When a shape is created with ``begin_shape()`` and ``end_shape()``, its
-        attributes may be changed with ``fill()`` and ``stroke()`` within
-        ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
-        the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
+        When a shape is created with :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`, its attributes may be changed with
+        :doc:`py5shape_fill` and :doc:`py5shape_stroke` within
+        :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`. However, after the
+        shape is created, only the ``set_stroke()`` method can define a new stroke value
+        for the ``Py5Shape``.
         """
         pass
 
@@ -5071,10 +5088,12 @@ class Py5Shape:
         The ``set_stroke()`` method defines the outline color of a ``Py5Shape``. This
         method is used after shapes are created or when a shape is defined explicitly
         (e.g. ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example.
-        When a shape is created with ``begin_shape()`` and ``end_shape()``, its
-        attributes may be changed with ``fill()`` and ``stroke()`` within
-        ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
-        the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
+        When a shape is created with :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`, its attributes may be changed with
+        :doc:`py5shape_fill` and :doc:`py5shape_stroke` within
+        :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`. However, after the
+        shape is created, only the ``set_stroke()`` method can define a new stroke value
+        for the ``Py5Shape``.
         """
         pass
 
@@ -5111,10 +5130,12 @@ class Py5Shape:
         The ``set_stroke()`` method defines the outline color of a ``Py5Shape``. This
         method is used after shapes are created or when a shape is defined explicitly
         (e.g. ``create_shape(RECT, 20, 20, 80, 80)``) as shown in the above example.
-        When a shape is created with ``begin_shape()`` and ``end_shape()``, its
-        attributes may be changed with ``fill()`` and ``stroke()`` within
-        ``begin_shape()`` and ``end_shape()``. However, after the shape is created, only
-        the ``set_stroke()`` method can define a new stroke value for the ``Py5Shape``.
+        When a shape is created with :doc:`py5shape_begin_shape` and
+        :doc:`py5shape_end_shape`, its attributes may be changed with
+        :doc:`py5shape_fill` and :doc:`py5shape_stroke` within
+        :doc:`py5shape_begin_shape` and :doc:`py5shape_end_shape`. However, after the
+        shape is created, only the ``set_stroke()`` method can define a new stroke value
+        for the ``Py5Shape``.
         """
         return self._instance.setStroke(*args)
 
@@ -5498,7 +5519,7 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            the PVector to define the x, y, z coordinates
+            the numpy array to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5514,8 +5535,8 @@ class Py5Shape:
 
         The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter. This method works when
-        shapes are created as shown in the example above, but won't work properly when a
-        shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
+        shapes are created as shown in the example, but won't work properly when a shape
+        is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
         """
         pass
 
@@ -5542,7 +5563,7 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            the PVector to define the x, y, z coordinates
+            the numpy array to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5558,8 +5579,8 @@ class Py5Shape:
 
         The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter. This method works when
-        shapes are created as shown in the example above, but won't work properly when a
-        shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
+        shapes are created as shown in the example, but won't work properly when a shape
+        is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
         """
         pass
 
@@ -5586,7 +5607,7 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            the PVector to define the x, y, z coordinates
+            the numpy array to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5602,8 +5623,8 @@ class Py5Shape:
 
         The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter. This method works when
-        shapes are created as shown in the example above, but won't work properly when a
-        shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
+        shapes are created as shown in the example, but won't work properly when a shape
+        is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
         """
         pass
 
@@ -5629,7 +5650,7 @@ class Py5Shape:
             the location of the vertex
 
         vec: NDArray[(Any,), Float]
-            the PVector to define the x, y, z coordinates
+            the numpy array to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5645,8 +5666,8 @@ class Py5Shape:
 
         The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter. This method works when
-        shapes are created as shown in the example above, but won't work properly when a
-        shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
+        shapes are created as shown in the example, but won't work properly when a shape
+        is defined explicitly (e.g. ``create_shape(RECT, 20, 20, 80, 80)``.
         """
         return self._instance.setVertex(*args)
 
@@ -5659,7 +5680,7 @@ class Py5Shape:
         ----------
 
         visible: bool
-            "false" makes the shape invisible and "true" makes it visible
+            ``False`` makes the shape invisible and ``True`` makes it visible
 
         Notes
         -----
@@ -6667,8 +6688,8 @@ class Py5Shape:
         ``translate(70, 0)``. This transformation is applied directly to the shape, it's
         not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         pass
 
@@ -6709,8 +6730,8 @@ class Py5Shape:
         ``translate(70, 0)``. This transformation is applied directly to the shape, it's
         not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         pass
 
@@ -6750,8 +6771,8 @@ class Py5Shape:
         ``translate(70, 0)``. This transformation is applied directly to the shape, it's
         not refreshed each time ``draw()`` is run.
 
-        Using this method with the ``z`` parameter requires using the P3D parameter in
-        combination with size.
+        Using this method with the ``z`` parameter requires using the ``P3D`` parameter
+        in combination with size.
         """
         return self._instance.translate(*args)
 

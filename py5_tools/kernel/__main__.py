@@ -17,17 +17,6 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-"""
-Utilities and accessory tools for py5.
-"""
-from . import imported  # noqa
-from .imported import set_imported_mode  # noqa
-from .jvm import *  # noqa
-from .libraries import *  # noqa
-from . import magics  # noqa
-from . import parsing  # noqa
-from . import utilities  # noqa
-from . import testing  # noqa
+from .kernel import Py5App
 
-
-__version__ = '0.4a0'
+Py5App.launch_instance()

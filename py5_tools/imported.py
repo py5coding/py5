@@ -17,90 +17,39 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-import sys
 import os
+import sys
+import ast
 from multiprocessing import Process
 from pathlib import Path
 import re
-import tempfile
 import textwrap
 
 from . import jvm
-from . import reference as ref
+from .magics import util
+from . import parsing
 
 
-_CODE_FRAMEWORK_EXTRAS = """
-def _py5_init_dynamic_variables(sketch):
-    sketch.load_pixels()
-    sketch.load_np_pixels()
-{0}
+_imported_mode = False
 
-def _py5_update_dynamic_variables(sketch):
-{0}
 
-py5._py5sketch._add_pre_hook('setup', '_py5_init_dynamic_variables', _py5_init_dynamic_variables)
-py5._py5sketch._add_pre_hook('draw', '_py5_update_dynamic_variables', _py5_update_dynamic_variables)
-"""
+def set_imported_mode(imported_mode: bool):
+    global _imported_mode
+    _imported_mode = imported_mode
+
+
+def get_imported_mode() -> bool:
+    return _imported_mode
 
 
 _CODE_FRAMEWORK = """
-import py5
+{0}
 
-{2}
-
-with open('{0}', 'r') as f:
-    eval(compile(f.read(), '{0}', 'exec'))
-
-py5.run_sketch(block=True)
-if {1} and py5.is_dead_from_error:
-    py5.exit_sketch()
+run_sketch(block=True)
+if {1} and is_dead_from_error:
+    exit_sketch()
 """
 
-
-_STANDARD_CODE_TEMPLATE = """
-import py5
-
-def settings():
-    py5.size({0}, {1}, py5.{2})
-
-
-def setup():
-{4}
-
-    py5.save_frame("{3}", use_thread=False)
-    py5.exit_sketch()
-"""
-
-
-_ALT_CODE_TEMPLATE = """
-import py5
-
-def settings():
-    py5.size({0}, {1}, py5.{2}, "{3}")
-
-
-def setup():
-{4}
-
-    py5.exit_sketch()
-"""
-
-
-_DXF_CODE_TEMPLATE = """
-import py5
-
-def settings():
-    py5.size({0}, {1}, py5.P3D)
-
-
-def setup():
-    py5.begin_raw(py5.DXF, "{3}")
-
-{4}
-
-    py5.end_raw()
-    py5.exit_sketch()
-"""
 
 SETTINGS_REGEX = re.compile(r'^def settings\(\):', flags=re.MULTILINE)
 SETUP_REGEX = re.compile(r'^def setup\(\):', flags=re.MULTILINE)
@@ -119,13 +68,7 @@ CODE_REGEXES = {
         'pixel_density']}
 
 
-def fix_triple_quote_str(code):
-    for m in re.finditer(r'\"\"\"[^\"]*\"\"\"', code):
-        code = code.replace(
-            m.group(), m.group().replace('\n    ', '\n'))
-    return code
-
-
+# TODO: this is ugly and should be done with ast instead
 def prepare_code(code):
     "transform functionless or setttings-less py5 code into code that runs"
     if SETTINGS_REGEX.search(code):
@@ -153,7 +96,7 @@ def prepare_code(code):
     if no_setup and no_draw:
         # put all of the remaining code into a setup function
         remaining_code = 'def setup():\n' + textwrap.indent(code, prefix='    ')
-        remaining_code = fix_triple_quote_str(remaining_code)
+        remaining_code = util.fix_triple_quote_str(remaining_code)
     else:
         # remaining code has been modified with key lines moved from setup to
         # settings
@@ -162,7 +105,7 @@ def prepare_code(code):
     return True, f'{settings.strip()}\n\n{remaining_code.strip()}\n'
 
 
-def run_sketch(
+def run_code(
         sketch_path,
         classpath=None,
         new_process=False,
@@ -187,20 +130,37 @@ def run_sketch(
                 jvm.add_classpath(classpath)
             jvm.add_jars(sketch_path.parent / 'jars')
 
+        set_imported_mode(True)
         import py5
-        if not py5.get_current_sketch().is_ready:
-            py5.reset_py5()
+        if py5.is_running():
+            print(
+                'You must exit the currently running sketch before running another sketch.')
+            return None
+
+        with open(sketch_path, 'r') as f:
+            sketch_code = _CODE_FRAMEWORK.format(f.read(), exit_if_error)
+
+        sketch_ast = ast.parse(sketch_code, mode='exec')
+        problems = parsing.check_reserved_words(sketch_code, sketch_ast)
+        if problems:
+            if len(problems) == 1:
+                msg = 'There is a problem with your Sketch code'
+            else:
+                msg = f'There are {len(problems)} problems with your Sketch code'
+            print(msg)
+            print('=' * len(msg))
+            print('\n'.join(problems))
+            return
+
+        sketch_compiled = compile(
+            parsing.transform_py5_code(sketch_ast),
+            filename=sketch_path,
+            mode='exec')
+
         sys.path.extend([str(sketch_path.absolute().parent), os.getcwd()])
         py5_ns = dict()
         py5_ns.update(py5.__dict__)
-        update_dynamic_variables_code = '\n'.join(
-            f'    global {v}\n    {v} = sketch.{v}' for v in ref.UPDATE_DYNAMIC_VARIABLES)
-        exec(
-            _CODE_FRAMEWORK.format(
-                sketch_path,
-                exit_if_error,
-                _CODE_FRAMEWORK_EXTRAS.format(update_dynamic_variables_code)),
-            py5_ns)
+        exec(sketch_compiled, py5_ns)
 
     if new_process:
         p = Process(
@@ -215,65 +175,3 @@ def run_sketch(
         _run_sketch(sketch_path, classpath, exit_if_error)
         if tranformed:
             os.remove(temp_py)
-
-
-def run_single_frame_sketch(renderer, code, width, height, user_ns, safe_exec):
-    if renderer == 'SVG':
-        template = _ALT_CODE_TEMPLATE
-        suffix = '.svg'
-        read_mode = 'r'
-    elif renderer == 'PDF':
-        template = _ALT_CODE_TEMPLATE
-        suffix = '.pdf'
-        read_mode = 'rb'
-    elif renderer == 'DXF':
-        template = _DXF_CODE_TEMPLATE
-        suffix = '.dxf'
-        read_mode = 'r'
-    else:
-        template = _STANDARD_CODE_TEMPLATE
-        suffix = '.png'
-        read_mode = 'rb'
-
-    import py5
-    if not py5.get_current_sketch().is_ready:
-        py5.reset_py5()
-
-    if safe_exec:
-        prepared_code = textwrap.indent(code, '    ')
-        prepared_code = fix_triple_quote_str(prepared_code)
-    else:
-        user_ns['_py5_user_ns'] = user_ns
-        code = code.replace('"""', r'\"\"\"')
-        prepared_code = f'    exec("""{code}""", _py5_user_ns)'
-
-    with tempfile.TemporaryDirectory() as tempdir:
-        temp_py = Path(tempdir) / 'py5_code.py'
-        temp_out = Path(tempdir) / ('output' + suffix)
-
-        with open(temp_py, 'w') as f:
-            code = template.format(
-                width,
-                height,
-                renderer,
-                temp_out.as_posix(),
-                prepared_code)
-            f.write(code)
-
-        exec(_CODE_FRAMEWORK.format(temp_py.as_posix(), True, ''), user_ns)
-
-        if temp_out.exists():
-            with open(temp_out, read_mode) as f:
-                result = f.read()
-        else:
-            result = None
-
-    py5.reset_py5()
-
-    if not safe_exec:
-        del user_ns['_py5_user_ns']
-
-    return result
-
-
-__all__ = ['run_sketch', 'run_single_frame_sketch']

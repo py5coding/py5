@@ -28,6 +28,8 @@ _PMatrix2D = JClass('processing.core.PMatrix2D')
 _PMatrix3D = JClass('processing.core.PMatrix3D')
 
 
+# the next 3 functions are used by decorators in various places to do
+# conversions
 def _numpy_to_pvector(array):
     if array.shape in [(2,), (3,)]:
         return _PVector(*array.tolist())
@@ -44,7 +46,13 @@ def _numpy_to_pmatrix3d(array):
     return _PMatrix3D(*array.flatten().tolist())
 
 
-def _numpy_to_pmatrix(jcls, array):
+# the next two functions are only used for the jpype conversion customizer
+# they are registered in java_conversion.py
+def _numpy_to_pvector_converter(jcls, array):
+    return _numpy_to_pvector(array)
+
+
+def _numpy_to_pmatrix_converter(jcls, array):
     if array.shape == (2, 3):
         return _numpy_to_pmatrix2d(array)
     elif array.shape == (4, 4):
@@ -52,14 +60,6 @@ def _numpy_to_pmatrix(jcls, array):
     else:
         raise RuntimeError(
             'numpy array is the wrong size to convert to a pmatrix')
-
-
-_jcustomizer.JConversion(
-    'processing.core.PVector',
-    np.ndarray)(_numpy_to_pvector)
-_jcustomizer.JConversion(
-    'processing.core.PMatrix',
-    np.ndarray)(_numpy_to_pmatrix)
 
 
 def _pvector_to_numpy(pvector):
@@ -93,7 +93,7 @@ def _get_matrix_wrapper(f):
     def decorated(self_, *args):
         ret = f(self_)
         if not args:
-            return _numpy_to_pmatrix(ret)
+            return _pmatrix_to_numpy(ret)
         if len(args) == 1:
             target = args[0]
             if (isinstance(target, np.ndarray) and target.shape == (2, 3)

@@ -17,13 +17,13 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-from pathlib import Path
+import os
 from setuptools import setup
 
 with open('README.rst') as f:
     README = f.read()
 
-VERSION = '0.3a5'
+VERSION = '0.4a0'
 
 INSTALL_REQUIRES = [
     'jpype1>=1.2',
@@ -37,13 +37,23 @@ INSTALL_REQUIRES = [
     'stackprinter>=0.2.4',
 ]
 
+pjoin = os.path.join
+here = os.path.abspath(os.path.dirname(__file__))
+
+packages = []
+for d, _, _ in [*os.walk(pjoin(here, 'py5')), *
+                os.walk(pjoin(here, 'py5_tools'))]:
+    if os.path.exists(pjoin(d, '__init__.py')):
+        packages.append(d[len(here)+1:].replace(os.path.sep, '.'))
+
 setup(
     name='py5',
     version=VERSION,
-    packages=['py5', 'py5.mixins', 'py5_tools', 'py5_tools.tools'],
+    packages=packages,
     py_modules=['setup'],
     package_data={
-        "py5": ['jars/*.jar', 'jars/*/*.jar', '*.pyi', 'py.typed']
+        "py5": ['jars/*.jar', 'jars/*/*.jar'],
+        "py5_tools": ['kernel/resources/*.png'],
     },
     python_requires='>3.8',
     install_requires=INSTALL_REQUIRES,

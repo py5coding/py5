@@ -76,8 +76,7 @@ class PixelMixin:
         self._java_bb.asIntBuffer().get(self._instance.pixels)
         self._instance.updatePixels()
 
-    @property
-    def np_pixels(self) -> np.ndarray:
+    def _get_np_pixels(self) -> np.ndarray:
         """The documentation for this field or method has not yet been written.
 
         Notes
@@ -87,6 +86,7 @@ class PixelMixin:
         what it does, please help out with a pull request to the relevant file in
         https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
         return self._np_pixels
+    np_pixels: np.ndarray = property(fget=_get_np_pixels)
 
     def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
         """The documentation for this field or method has not yet been written.

@@ -18,8 +18,10 @@
 #
 # *****************************************************************************
 import json
+import re
 from pathlib import Path
-from typing import Any, Union, Dict
+from typing import Any, Union, Dict, overload
+import requests
 
 
 class DataMixin:
@@ -28,77 +30,113 @@ class DataMixin:
         super().__init__(*args, **kwargs)
 
     # *** BEGIN METHODS ***
-
-    @classmethod
-    def load_json(cls, filename: Union[str, Path],
-                  **kwargs: Dict[str, Any]) -> Any:
-        """The documentation for this field or method has not yet been written.
+    def load_json(
+            self, json_path: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
+        """Load a JSON data file from a file or URL.
 
         Parameters
         ----------
 
-        filename: Union[str, Path]
-            missing variable description
+        json_path: Union[str, Path]
+            url or file path for JSON data file
 
         kwargs: Dict[str, Any]
-            missing variable description
+            keyword arguments
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
-        with open(filename, 'r') as f:
-            return json.load(f, **kwargs)
+        Load a JSON data file from a file or URL. When loading a file, the path can be
+        in the data directory, relative to the current working directory
+        (``sketch_path()``), or an absolute path. When loading from a URL, the
+        ``json_path`` parameter must start with ``http://`` or ``https://``.
 
-    @classmethod
-    def save_json(cls,
+        When loading JSON data from a URL, the data is retrieved using the Python
+        requests library with the ``get`` method, and the ``kwargs`` parameter is passed
+        along to that method. When loading JSON data from a file, the data is loaded
+        using the Python json library with the ``load`` method, and again the ``kwargs``
+        parameter passed along to that method."""
+        if isinstance(
+                json_path,
+                str) and re.match(
+                r'https?://',
+                json_path.lower()):
+            response = requests.get(json_path, **kwargs)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise RuntimeError(
+                    'Unable to download JSON URL: ' +
+                    response.reason)
+        else:
+            path = Path(json_path)
+            if not path.is_absolute():
+                cwd = self.sketch_path()
+                if (cwd / 'data' / json_path).exists():
+                    path = cwd / 'data' / json_path
+                else:
+                    path = cwd / json_path
+            if path.exists():
+                with open(path, 'r') as f:
+                    return json.load(f, **kwargs)
+            else:
+                raise RuntimeError(
+                    'Unable to find JSON file ' + str(json_path))
+
+    def save_json(self,
                   json_data: Any,
                   filename: Union[str,
                                   Path],
                   **kwargs: Dict[str,
                                  Any]) -> None:
-        """The documentation for this field or method has not yet been written.
+        """Save JSON data to a file.
 
         Parameters
         ----------
 
         filename: Union[str, Path]
-            missing variable description
+            filename to save JSON data object to
 
         json_data: Any
-            missing variable description
+            json data object
 
         kwargs: Dict[str, Any]
-            missing variable description
+            keyword arguments
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
-        with open(filename, 'w') as f:
+        Save JSON data to a file. If ``filename`` is not an absolute path, it will be
+        saved relative to the current working directory (``sketch_path()``).
+
+        The JSON data is saved using the Python json library with the ``dump`` method,
+        and the ``kwargs`` parameter is passed along to that method."""
+        path = Path(filename)
+        if not path.is_absolute():
+            cwd = self.sketch_path()
+            path = cwd / filename
+        with open(path, 'w') as f:
             json.dump(json_data, f, **kwargs)
 
     @classmethod
     def parse_json(cls, serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
-        """The documentation for this field or method has not yet been written.
+        """Parse serialized JSON data from a string.
 
         Parameters
         ----------
 
         kwargs: Dict[str, Any]
-            missing variable description
+            keyword arguments
 
         serialized_json: Any
-            missing variable description
+            JSON data object that has been serialized as a string
 
         Notes
         -----
 
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
+        Parse serialized JSON data from a string. When reading JSON data from a file,
+        ``load_json()`` is the better choice.
+
+        The JSON data is parsed using the Python json library with the ``loads`` method,
+        and the ``kwargs`` parameter is passed along to that method."""
         return json.loads(serialized_json, **kwargs)

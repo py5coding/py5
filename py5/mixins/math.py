@@ -102,7 +102,7 @@ class MathMixin:
 
     @classmethod
     def asin(cls, value: float) -> float:
-        """The inverse of :doc:`sin`, returns the arc sine of a value.
+        """The inverse of ``sin()``, returns the arc sine of a value.
 
         Parameters
         ----------
@@ -113,8 +113,8 @@ class MathMixin:
         Notes
         -----
 
-        The inverse of :doc:`sin`, returns the arc sine of a value. This function
-        expects the values in the range of -1 to 1 and values are returned in the range
+        The inverse of ``sin()``, returns the arc sine of a value. This function expects
+        the values in the range of -1 to 1 and values are returned in the range
         ``-HALF_PI`` to ``HALF_PI``.
 
         This function makes a call to the numpy ``asin()`` function."""
@@ -122,7 +122,7 @@ class MathMixin:
 
     @classmethod
     def acos(cls, value: float) -> float:
-        """The inverse of :doc:`cos`, returns the arc cosine of a value.
+        """The inverse of ``cos()``, returns the arc cosine of a value.
 
         Parameters
         ----------
@@ -133,7 +133,7 @@ class MathMixin:
         Notes
         -----
 
-        The inverse of :doc:`cos`, returns the arc cosine of a value. This function
+        The inverse of ``cos()``, returns the arc cosine of a value. This function
         expects the values in the range of -1 to 1 and values are returned in the range
         ``0`` to ``PI``.
 
@@ -142,7 +142,7 @@ class MathMixin:
 
     @classmethod
     def atan(cls, value: float) -> float:
-        """The inverse of :doc:`tan`, returns the arc tangent of a value.
+        """The inverse of ``tan()``, returns the arc tangent of a value.
 
         Parameters
         ----------
@@ -153,7 +153,7 @@ class MathMixin:
         Notes
         -----
 
-        The inverse of :doc:`tan`, returns the arc tangent of a value. This function
+        The inverse of ``tan()``, returns the arc tangent of a value. This function
         expects the values in the range of -Infinity to Infinity and values are returned
         in the range ``-HALF_PI`` to ``HALF_PI``.
 
@@ -288,12 +288,12 @@ class MathMixin:
 
         In the first example, the number 0.5 is converted from a value in the range of 0
         to 1 into a value that ranges from the left edge of the window (0) to the right
-        edge (:doc:`width`).
+        edge (``width``).
 
         As shown in the second example, numbers outside of the range are not clamped to
         the minimum and maximum parameters values, because out-of-range values are often
         intentional and useful. If that isn't what you want, try pairing this function
-        with :doc:`constrain`.
+        with ``constrain()``.
 
         In Processing this functionality is provided by ``map()`` but was renamed in py5
         because of a name conflict with a builtin Python function."""
@@ -581,7 +581,7 @@ class MathMixin:
 
         Numbers outside of the range are not clamped to 0 and 1, because out-of-range
         values are often intentional and useful. (See the second example.) If that isn't
-        what you want, try pairing this function with :doc:`constrain`."""
+        what you want, try pairing this function with ``constrain()``."""
         return (value - start) / (stop - start)
 
     @classmethod
@@ -682,7 +682,7 @@ class MathMixin:
         -----
 
         Returns Euler's number e (2.71828...) raised to the power of the ``n``
-        parameter. This function is the compliment to :doc:`log`.
+        parameter. This function is the compliment to ``log()``.
 
         This function makes a call to the numpy ``exp()`` function."""
         return np.exp(value)
@@ -702,7 +702,7 @@ class MathMixin:
 
         Calculates the natural logarithm (the base-e logarithm) of a number. This
         function expects the ``n`` parameter to be a value greater than 0.0. This
-        function is the compliment to :doc:`exp`.
+        function is the compliment to ``exp()``.
 
         This function makes a call to the numpy ``log()`` function. If the ``n``
         parameter is less than or equal to 0.0, you will see a ``RuntimeWarning`` and
@@ -721,8 +721,8 @@ class MathMixin:
         Notes
         -----
 
-        Sets the seed value for py5's random functions. This includes :doc:`random`,
-        :doc:`random_int`, :doc:`random_choice`, and :doc:`random_gaussian`. By default,
+        Sets the seed value for py5's random functions. This includes ``random()``,
+        ``random_int()``, ``random_choice()``, and ``random_gaussian()``. By default,
         all of these functions would produce different results each time a program is
         run. Set the seed parameter to a constant value to return the same pseudo-random
         numbers each time the software is run."""
@@ -755,7 +755,7 @@ class MathMixin:
 
         Generates random numbers. Each time the ``random()`` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
@@ -768,7 +768,7 @@ class MathMixin:
         between the two values. For example, ``random(-5, 10.2)`` returns values
         starting at -5 and up to (but not including) 10.2. To convert a floating-point
         random number to an integer, use the ``int()`` function, or alternatively,
-        consider using :doc:`random_int`.
+        consider using ``random_int()``.
 
         This function makes calls to numpy to generate the random values."""
         pass
@@ -800,7 +800,7 @@ class MathMixin:
 
         Generates random numbers. Each time the ``random()`` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
@@ -813,7 +813,7 @@ class MathMixin:
         between the two values. For example, ``random(-5, 10.2)`` returns values
         starting at -5 and up to (but not including) 10.2. To convert a floating-point
         random number to an integer, use the ``int()`` function, or alternatively,
-        consider using :doc:`random_int`.
+        consider using ``random_int()``.
 
         This function makes calls to numpy to generate the random values."""
         pass
@@ -845,7 +845,7 @@ class MathMixin:
 
         Generates random numbers. Each time the ``random()`` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
@@ -858,7 +858,7 @@ class MathMixin:
         between the two values. For example, ``random(-5, 10.2)`` returns values
         starting at -5 and up to (but not including) 10.2. To convert a floating-point
         random number to an integer, use the ``int()`` function, or alternatively,
-        consider using :doc:`random_int`.
+        consider using ``random_int()``.
 
         This function makes calls to numpy to generate the random values."""
         pass
@@ -889,7 +889,7 @@ class MathMixin:
 
         Generates random numbers. Each time the ``random()`` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
@@ -902,7 +902,7 @@ class MathMixin:
         between the two values. For example, ``random(-5, 10.2)`` returns values
         starting at -5 and up to (but not including) 10.2. To convert a floating-point
         random number to an integer, use the ``int()`` function, or alternatively,
-        consider using :doc:`random_int`.
+        consider using ``random_int()``.
 
         This function makes calls to numpy to generate the random values."""
         if len(args) == 0:
@@ -949,7 +949,7 @@ class MathMixin:
 
         Generates random integers. Each time the ``random_int()`` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return either 0 or 1.
         Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -968,7 +968,7 @@ class MathMixin:
         than the list length. Therefore, to pick a random index to use in the list
         ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
         will (occasionally) result in an index out of range error. Alternatively, you
-        can also use :doc:`random_choice` to pick a random object from a list.
+        can also use ``random_choice()`` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         pass
@@ -1000,7 +1000,7 @@ class MathMixin:
 
         Generates random integers. Each time the ``random_int()`` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return either 0 or 1.
         Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -1019,7 +1019,7 @@ class MathMixin:
         than the list length. Therefore, to pick a random index to use in the list
         ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
         will (occasionally) result in an index out of range error. Alternatively, you
-        can also use :doc:`random_choice` to pick a random object from a list.
+        can also use ``random_choice()`` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         pass
@@ -1051,7 +1051,7 @@ class MathMixin:
 
         Generates random integers. Each time the ``random_int()`` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return either 0 or 1.
         Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -1070,7 +1070,7 @@ class MathMixin:
         than the list length. Therefore, to pick a random index to use in the list
         ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
         will (occasionally) result in an index out of range error. Alternatively, you
-        can also use :doc:`random_choice` to pick a random object from a list.
+        can also use ``random_choice()`` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         pass
@@ -1101,7 +1101,7 @@ class MathMixin:
 
         Generates random integers. Each time the ``random_int()`` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by :doc:`random_seed`.
+        randomness can be influenced by ``random_seed()``.
 
         If no parameters are passed to the function, it will return either 0 or 1.
         Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -1120,7 +1120,7 @@ class MathMixin:
         than the list length. Therefore, to pick a random index to use in the list
         ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
         will (occasionally) result in an index out of range error. Alternatively, you
-        can also use :doc:`random_choice` to pick a random object from a list.
+        can also use ``random_choice()`` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         if len(args) == 0:
@@ -1151,7 +1151,7 @@ class MathMixin:
         -----
 
         Select a random item from a list. The list items can be of any type. This
-        function's randomness can be influenced by :doc:`random_seed`.
+        function's randomness can be influenced by ``random_seed()``.
 
         This function makes calls to numpy to select the random items."""
         return self._rng.choice(objects)
@@ -1184,7 +1184,7 @@ class MathMixin:
         Generates random gaussian values. Each time the ``random_gaussian()`` function
         is called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        :doc:`random_seed`.
+        ``random_seed()``.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1228,7 +1228,7 @@ class MathMixin:
         Generates random gaussian values. Each time the ``random_gaussian()`` function
         is called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        :doc:`random_seed`.
+        ``random_seed()``.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1272,7 +1272,7 @@ class MathMixin:
         Generates random gaussian values. Each time the ``random_gaussian()`` function
         is called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        :doc:`random_seed`.
+        ``random_seed()``.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1315,7 +1315,7 @@ class MathMixin:
         Generates random gaussian values. Each time the ``random_gaussian()`` function
         is called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        :doc:`random_seed`.
+        ``random_seed()``.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1383,19 +1383,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates. Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the :doc:`random` function. Several well-known noise
+        numbers compared to the ``random()`` function. Several well-known noise
         algorithms were developed by Ken Perlin and have been used in graphical
         applications to generate procedural textures, shapes, terrains, and other
         seemingly organic forms.
 
-        In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` function, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
         Simplex Noise. By default, py5 will generate noise using the Simplex Noise
         algorithm. The noise value can be animated by moving through the noise space, as
         demonstrated in the examples. Any dimension can also be interpreted as time. An
         easy way to animate the noise value is to pass the ``noise()`` function the
-        :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+        ``frame_count`` divided by a scaling factor, as is done in a few of the
         examples.
 
         The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -1412,8 +1412,8 @@ class MathMixin:
         physics, both noise algorithms are computed over several octaves which are added
         together for the final result.
 
-        The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-        :doc:`noise_seed`, and :doc:`noise_detail`.
+        The nature of the noise values returned can be adjusted with ``noise_mode()``,
+        ``noise_seed()``, and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the function works within an infinite space, the value
@@ -1468,19 +1468,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates. Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the :doc:`random` function. Several well-known noise
+        numbers compared to the ``random()`` function. Several well-known noise
         algorithms were developed by Ken Perlin and have been used in graphical
         applications to generate procedural textures, shapes, terrains, and other
         seemingly organic forms.
 
-        In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` function, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
         Simplex Noise. By default, py5 will generate noise using the Simplex Noise
         algorithm. The noise value can be animated by moving through the noise space, as
         demonstrated in the examples. Any dimension can also be interpreted as time. An
         easy way to animate the noise value is to pass the ``noise()`` function the
-        :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+        ``frame_count`` divided by a scaling factor, as is done in a few of the
         examples.
 
         The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -1497,8 +1497,8 @@ class MathMixin:
         physics, both noise algorithms are computed over several octaves which are added
         together for the final result.
 
-        The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-        :doc:`noise_seed`, and :doc:`noise_detail`.
+        The nature of the noise values returned can be adjusted with ``noise_mode()``,
+        ``noise_seed()``, and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the function works within an infinite space, the value
@@ -1553,19 +1553,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates. Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the :doc:`random` function. Several well-known noise
+        numbers compared to the ``random()`` function. Several well-known noise
         algorithms were developed by Ken Perlin and have been used in graphical
         applications to generate procedural textures, shapes, terrains, and other
         seemingly organic forms.
 
-        In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` function, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
         Simplex Noise. By default, py5 will generate noise using the Simplex Noise
         algorithm. The noise value can be animated by moving through the noise space, as
         demonstrated in the examples. Any dimension can also be interpreted as time. An
         easy way to animate the noise value is to pass the ``noise()`` function the
-        :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+        ``frame_count`` divided by a scaling factor, as is done in a few of the
         examples.
 
         The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -1582,8 +1582,8 @@ class MathMixin:
         physics, both noise algorithms are computed over several octaves which are added
         together for the final result.
 
-        The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-        :doc:`noise_seed`, and :doc:`noise_detail`.
+        The nature of the noise values returned can be adjusted with ``noise_mode()``,
+        ``noise_seed()``, and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the function works within an infinite space, the value
@@ -1638,19 +1638,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates. Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the :doc:`random` function. Several well-known noise
+        numbers compared to the ``random()`` function. Several well-known noise
         algorithms were developed by Ken Perlin and have been used in graphical
         applications to generate procedural textures, shapes, terrains, and other
         seemingly organic forms.
 
-        In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` function, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
         Simplex Noise. By default, py5 will generate noise using the Simplex Noise
         algorithm. The noise value can be animated by moving through the noise space, as
         demonstrated in the examples. Any dimension can also be interpreted as time. An
         easy way to animate the noise value is to pass the ``noise()`` function the
-        :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+        ``frame_count`` divided by a scaling factor, as is done in a few of the
         examples.
 
         The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -1667,8 +1667,8 @@ class MathMixin:
         physics, both noise algorithms are computed over several octaves which are added
         together for the final result.
 
-        The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-        :doc:`noise_seed`, and :doc:`noise_detail`.
+        The nature of the noise values returned can be adjusted with ``noise_mode()``,
+        ``noise_seed()``, and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the function works within an infinite space, the value
@@ -1722,19 +1722,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates. Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the :doc:`random` function. Several well-known noise
+        numbers compared to the ``random()`` function. Several well-known noise
         algorithms were developed by Ken Perlin and have been used in graphical
         applications to generate procedural textures, shapes, terrains, and other
         seemingly organic forms.
 
-        In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` function, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
         Simplex Noise. By default, py5 will generate noise using the Simplex Noise
         algorithm. The noise value can be animated by moving through the noise space, as
         demonstrated in the examples. Any dimension can also be interpreted as time. An
         easy way to animate the noise value is to pass the ``noise()`` function the
-        :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+        ``frame_count`` divided by a scaling factor, as is done in a few of the
         examples.
 
         The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -1751,8 +1751,8 @@ class MathMixin:
         physics, both noise algorithms are computed over several octaves which are added
         together for the final result.
 
-        The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-        :doc:`noise_seed`, and :doc:`noise_detail`.
+        The nature of the noise values returned can be adjusted with ``noise_mode()``,
+        ``noise_seed()``, and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the function works within an infinite space, the value
@@ -1804,7 +1804,7 @@ class MathMixin:
         return noisef(*args, **noise_args)
 
     def noise_mode(self, mode: int) -> None:
-        """Sets the kind of noise that the :doc:`noise` function will generate.
+        """Sets the kind of noise that the ``noise()`` function will generate.
 
         Parameters
         ----------
@@ -1815,7 +1815,7 @@ class MathMixin:
         Notes
         -----
 
-        Sets the kind of noise that the :doc:`noise` function will generate. This can be
+        Sets the kind of noise that the ``noise()`` function will generate. This can be
         either Perlin Noise or Simplex Noise. By default, py5 will generate noise using
         the Simplex Noise algorithm.
 
@@ -1844,7 +1844,7 @@ class MathMixin:
 
     def noise_detail(self, octaves: float = None, persistence: float = None,
                      lacunarity: float = None) -> None:
-        """Adjusts the character and level of detail produced by the :doc:`noise` function.
+        """Adjusts the character and level of detail produced by the ``noise()`` function.
 
         Parameters
         ----------
@@ -1861,7 +1861,7 @@ class MathMixin:
         Notes
         -----
 
-        Adjusts the character and level of detail produced by the :doc:`noise` function.
+        Adjusts the character and level of detail produced by the ``noise()`` function.
         Similar to harmonics in physics, noise is computed over several octaves. Lower
         octaves contribute more to the output signal and as such define the overall
         intensity of the noise, whereas higher octaves create finer-grained details in
@@ -1878,8 +1878,8 @@ class MathMixin:
         lower octave, providing noise at a finer-grained scale than what the default
         value of 2 would provide.
 
-        By changing these parameters, the signal created by the :doc:`noise` function
-        can be adapted to fit very specific needs and characteristics.
+        By changing these parameters, the signal created by the ``noise()`` function can
+        be adapted to fit very specific needs and characteristics.
 
         Py5's noise functionality is provided by the Python noise library. The noise
         library provides more advanced features than what is documented here. To use the
@@ -1892,7 +1892,7 @@ class MathMixin:
             self._NOISE_LACUNARITY = lacunarity
 
     def noise_seed(self, seed: int) -> None:
-        """Sets the seed value for :doc:`noise`.
+        """Sets the seed value for ``noise()``.
 
         Parameters
         ----------
@@ -1903,9 +1903,9 @@ class MathMixin:
         Notes
         -----
 
-        Sets the seed value for :doc:`noise`. By default, :doc:`noise` produces
-        different results each time the program is run. Set the seed parameter to a
-        constant to return the same pseudo-random numbers each time the Sketch is run.
+        Sets the seed value for ``noise()``. By default, ``noise()`` produces different
+        results each time the program is run. Set the seed parameter to a constant to
+        return the same pseudo-random numbers each time the Sketch is run.
 
         Py5's noise functionality is provided by the Python noise library. The noise
         library provides more advanced features than what is documented here. To use the

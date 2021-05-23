@@ -26,7 +26,7 @@ from pathlib import Path
 import logging
 import inspect
 from typing import overload, Any, Callable, Union, Dict, List, Tuple  # noqa
-from nptyping import NDArray, Float  # noqa
+from nptyping import NDArray, Float, Int  # noqa
 
 import json  # noqa
 import numpy as np  # noqa
@@ -46,7 +46,7 @@ if not py5_tools.is_jvm_running():
     py5_tools.add_jars(str(base_path / 'jars'))
     # if the cwd has a jars subdirectory, add that next
     py5_tools.add_jars(Path('jars'))
-    py5_tools.start_jvm()
+    py5_tools.jvm._start_jvm()
 
 from .methods import register_exception_msg  # noqa
 from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5Promise, _in_ipython_session  # noqa
@@ -62,7 +62,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.4a0'
+__version__ = '0.4a1'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.imported.get_imported_mode()
 
@@ -269,7 +269,6 @@ focused: bool = None
 frame_count: int = None
 height: int = None
 java_platform: int = None
-java_version: float = None
 java_version_name: str = None
 key: chr = None
 key_code: int = None
@@ -278,15 +277,14 @@ mouse_x: int = None
 mouse_y: int = None
 pixel_height: int = None
 pixel_width: int = None
-pixels: JArray(JInt) = None
+pixels: NDArray[(Any,), Int] = None
 pmouse_x: int = None
 pmouse_y: int = None
 width: int = None
 
 
 def alpha(rgb: int, /) -> float:
-    """Extracts the alpha value from a color, scaled to match current
-    :doc:`color_mode`.
+    """Extracts the alpha value from a color, scaled to match current ``color_mode()``.
 
     Underlying Java method: PApplet.alpha
 
@@ -299,9 +297,7 @@ def alpha(rgb: int, /) -> float:
     Notes
     -----
 
-    Extracts the alpha value from a color, scaled to match current
-    :doc:`color_mode`. The value is always returned as a float, so be careful not to
-    assign it to an int value.
+    Extracts the alpha value from a color, scaled to match current ``color_mode()``.
 
     The ``alpha()`` function is easy to use and understand, but it is slower than a
     technique called bit shifting. When working in ``color_mode(RGB, 255)``, you can
@@ -350,12 +346,11 @@ def ambient(gray: float, /) -> None:
     -----
 
     Sets the ambient reflectance for shapes drawn to the screen. This is combined
-    with the ambient light component of environment. The color components set
+    with the ambient light component of the environment. The color components set
     through the parameters define the reflectance. For example in the default color
     mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
-    and half of the green light to reflect. Used in combination with
-    :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
-    properties of shapes.
+    and half of the green light to reflect. Use in combination with ``emissive()``,
+    ``specular()``, and ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -397,12 +392,11 @@ def ambient(v1: float, v2: float, v3: float, /) -> None:
     -----
 
     Sets the ambient reflectance for shapes drawn to the screen. This is combined
-    with the ambient light component of environment. The color components set
+    with the ambient light component of the environment. The color components set
     through the parameters define the reflectance. For example in the default color
     mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
-    and half of the green light to reflect. Used in combination with
-    :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
-    properties of shapes.
+    and half of the green light to reflect. Use in combination with ``emissive()``,
+    ``specular()``, and ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -444,12 +438,11 @@ def ambient(rgb: int, /) -> None:
     -----
 
     Sets the ambient reflectance for shapes drawn to the screen. This is combined
-    with the ambient light component of environment. The color components set
+    with the ambient light component of the environment. The color components set
     through the parameters define the reflectance. For example in the default color
     mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
-    and half of the green light to reflect. Used in combination with
-    :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
-    properties of shapes.
+    and half of the green light to reflect. Use in combination with ``emissive()``,
+    ``specular()``, and ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -490,12 +483,11 @@ def ambient(*args):
     -----
 
     Sets the ambient reflectance for shapes drawn to the screen. This is combined
-    with the ambient light component of environment. The color components set
+    with the ambient light component of the environment. The color components set
     through the parameters define the reflectance. For example in the default color
     mode, setting ``ambient(255, 127, 0)``, would cause all the red light to reflect
-    and half of the green light to reflect. Used in combination with
-    :doc:`emissive`, :doc:`specular`, and :doc:`shininess` in setting the material
-    properties of shapes.
+    and half of the green light to reflect. Use in combination with ``emissive()``,
+    ``specular()``, and ``shininess()`` to set the material properties of shapes.
     """
     return _py5sketch.ambient(*args)
 
@@ -719,10 +711,10 @@ def apply_matrix(n00: float, n01: float, n02: float,
         numbers which define the 4x4 matrix to be multiplied
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        2D transformation matrix
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        3D transformation matrix
 
     Notes
     -----
@@ -820,10 +812,10 @@ def apply_matrix(
         numbers which define the 4x4 matrix to be multiplied
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        2D transformation matrix
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        3D transformation matrix
 
     Notes
     -----
@@ -904,10 +896,10 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
         numbers which define the 4x4 matrix to be multiplied
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        2D transformation matrix
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        3D transformation matrix
 
     Notes
     -----
@@ -988,10 +980,10 @@ def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
         numbers which define the 4x4 matrix to be multiplied
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        2D transformation matrix
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        3D transformation matrix
 
     Notes
     -----
@@ -1071,10 +1063,10 @@ def apply_matrix(*args):
         numbers which define the 4x4 matrix to be multiplied
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        2D transformation matrix
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        3D transformation matrix
 
     Notes
     -----
@@ -1131,7 +1123,7 @@ def arc(a: float, b: float, c: float, d: float,
 
     Draws an arc to the screen. Arcs are drawn along the outer edge of an ellipse
     defined by the ``a``, ``b``, ``c``, and ``d`` parameters. The origin of the
-    arc's ellipse may be changed with the :doc:`ellipse_mode` function. Use the
+    arc's ellipse may be changed with the ``ellipse_mode()`` function. Use the
     ``start`` and ``stop`` parameters to specify the angles (in radians) at which to
     draw the arc. The start/stop values must be in clockwise order.
 
@@ -1143,7 +1135,7 @@ def arc(a: float, b: float, c: float, d: float,
     In some cases, the ``arc()`` function isn't accurate enough for smooth drawing.
     For example, the shape may jitter on screen when rotating slowly. If you're
     having an issue with how arcs are rendered, you'll need to draw the arc yourself
-    with :doc:`begin_shape` & :doc:`end_shape` or a ``Py5Shape``.
+    with ``begin_shape()`` & ``end_shape()`` or a ``Py5Shape``.
     """
     pass
 
@@ -1192,7 +1184,7 @@ def arc(a: float, b: float, c: float, d: float,
 
     Draws an arc to the screen. Arcs are drawn along the outer edge of an ellipse
     defined by the ``a``, ``b``, ``c``, and ``d`` parameters. The origin of the
-    arc's ellipse may be changed with the :doc:`ellipse_mode` function. Use the
+    arc's ellipse may be changed with the ``ellipse_mode()`` function. Use the
     ``start`` and ``stop`` parameters to specify the angles (in radians) at which to
     draw the arc. The start/stop values must be in clockwise order.
 
@@ -1204,7 +1196,7 @@ def arc(a: float, b: float, c: float, d: float,
     In some cases, the ``arc()`` function isn't accurate enough for smooth drawing.
     For example, the shape may jitter on screen when rotating slowly. If you're
     having an issue with how arcs are rendered, you'll need to draw the arc yourself
-    with :doc:`begin_shape` & :doc:`end_shape` or a ``Py5Shape``.
+    with ``begin_shape()`` & ``end_shape()`` or a ``Py5Shape``.
     """
     pass
 
@@ -1251,7 +1243,7 @@ def arc(*args):
 
     Draws an arc to the screen. Arcs are drawn along the outer edge of an ellipse
     defined by the ``a``, ``b``, ``c``, and ``d`` parameters. The origin of the
-    arc's ellipse may be changed with the :doc:`ellipse_mode` function. Use the
+    arc's ellipse may be changed with the ``ellipse_mode()`` function. Use the
     ``start`` and ``stop`` parameters to specify the angles (in radians) at which to
     draw the arc. The start/stop values must be in clockwise order.
 
@@ -1263,7 +1255,7 @@ def arc(*args):
     In some cases, the ``arc()`` function isn't accurate enough for smooth drawing.
     For example, the shape may jitter on screen when rotating slowly. If you're
     having an issue with how arcs are rendered, you'll need to draw the arc yourself
-    with :doc:`begin_shape` & :doc:`end_shape` or a ``Py5Shape``.
+    with ``begin_shape()`` & ``end_shape()`` or a ``Py5Shape``.
     """
     return _py5sketch.arc(*args)
 
@@ -1323,12 +1315,12 @@ def background(gray: float, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1388,12 +1380,12 @@ def background(gray: float, alpha: float, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1453,12 +1445,12 @@ def background(v1: float, v2: float, v3: float, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1518,12 +1510,12 @@ def background(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1583,12 +1575,12 @@ def background(rgb: int, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1648,12 +1640,12 @@ def background(rgb: int, alpha: float, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1713,12 +1705,12 @@ def background(image: Py5Image, /) -> None:
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     pass
 
@@ -1777,18 +1769,18 @@ def background(*args):
 
     An image can also be used as the background for a Sketch, although the image's
     width and height must match that of the Sketch window. Images used with
-    ``background()`` will ignore the current :doc:`tint` setting. To resize an image
+    ``background()`` will ignore the current ``tint()`` setting. To resize an image
     to the size of the Sketch window, use ``image.resize(width, height)``.
 
     It is not possible to use the transparency ``alpha`` parameter with background
     colors on the main drawing surface. It can only be used along with a
-    ``Py5Graphics`` object and :doc:`create_graphics`.
+    ``Py5Graphics`` object and ``create_graphics()``.
     """
     return _py5sketch.background(*args)
 
 
 def begin_camera() -> None:
-    """The ``begin_camera()`` and :doc:`end_camera` functions enable advanced
+    """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
     customization of the camera space.
 
     Underlying Java method: PApplet.beginCamera
@@ -1796,28 +1788,28 @@ def begin_camera() -> None:
     Notes
     -----
 
-    The ``begin_camera()`` and :doc:`end_camera` functions enable advanced
+    The ``begin_camera()`` and ``end_camera()`` functions enable advanced
     customization of the camera space. The functions are useful if you want to more
-    control over camera movement, however for most users, the :doc:`camera` function
+    control over camera movement, however for most users, the ``camera()`` function
     will be sufficient. The camera functions will replace any transformations (such
-    as :doc:`rotate` or :doc:`translate`) that occur before them in ``draw()``, but
+    as ``rotate()`` or ``translate()``) that occur before them in ``draw()``, but
     they will not automatically replace the camera transform itself. For this
     reason, camera functions should be placed at the beginning of ``draw()`` (so
-    that transformations happen afterwards), and the :doc:`camera` function can be
+    that transformations happen afterwards), and the ``camera()`` function can be
     used after ``begin_camera()`` if you want to reset the camera before applying
     transformations.
 
     This function sets the matrix mode to the camera matrix so calls such as
-    :doc:`translate`, :doc:`rotate`, :doc:`apply_matrix` and :doc:`reset_matrix`
-    affect the camera. ``begin_camera()`` should always be used with a following
-    :doc:`end_camera` and pairs of ``begin_camera()`` and :doc:`end_camera` cannot
-    be nested.
+    ``translate()``, ``rotate()``, ``apply_matrix()`` and ``reset_matrix()`` affect
+    the camera. ``begin_camera()`` should always be used with a following
+    ``end_camera()`` and pairs of ``begin_camera()`` and ``end_camera()`` cannot be
+    nested.
     """
     return _py5sketch.begin_camera()
 
 
 def begin_contour() -> None:
-    """Use the ``begin_contour()`` and :doc:`end_contour` function to create negative
+    """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
     shapes within shapes such as the center of the letter 'O'.
 
     Underlying Java method: PApplet.beginContour
@@ -1825,25 +1817,25 @@ def begin_contour() -> None:
     Notes
     -----
 
-    Use the ``begin_contour()`` and :doc:`end_contour` function to create negative
-    shapes within shapes such as the center of the letter 'O'. ``begin_contour()``
-    begins recording vertices for the shape and :doc:`end_contour` stops recording.
-    The vertices that define a negative shape must "wind" in the opposite direction
-    from the exterior shape. First draw vertices for the exterior shape in clockwise
-    order, then for internal shapes, draw vertices counterclockwise.
+    Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
+    shapes within shapes such as the center of the letter 'O'. The
+    ``begin_contour()`` method begins recording vertices for the shape and
+    ``end_contour()`` stops recording. The vertices that define a negative shape
+    must "wind" in the opposite direction from the exterior shape. First draw
+    vertices for the exterior shape in clockwise order, then for internal shapes,
+    draw vertices counterclockwise.
 
-    These functions can only be used within a :doc:`begin_shape` & :doc:`end_shape`
-    pair and transformations such as :doc:`translate`, :doc:`rotate`, and
-    :doc:`scale` do not work within a ``begin_contour()`` & :doc:`end_contour` pair.
-    It is also not possible to use other shapes, such as :doc:`ellipse` or
-    :doc:`rect` within.
+    These methods can only be used within a ``begin_shape()`` & ``end_shape()`` pair
+    and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
+    not work within a ``begin_contour()`` & ``end_contour()`` pair. It is also not
+    possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
     """
     return _py5sketch.begin_contour()
 
 
 @overload
 def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
-    """To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
+    """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
     Underlying Java method: PApplet.beginRaw
@@ -1871,21 +1863,21 @@ def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
     Notes
     -----
 
-    To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
+    To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands. These commands will grab the shape data just before it is rendered to
     the screen. At this stage, your entire scene is nothing but a long list of
     individual lines and triangles. This means that a shape created with
-    :doc:`sphere` function will be made up of hundreds of triangles, rather than a
+    ``sphere()`` function will be made up of hundreds of triangles, rather than a
     single object. Or that a multi-segment line shape (such as a curve) will be
     rendered as individual segments.
 
-    When using ``begin_raw()`` and :doc:`end_raw`, it's possible to write to either
-    a 2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
+    When using ``begin_raw()`` and ``end_raw()``, it's possible to write to either a
+    2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
     write the geometry as flattened triangles and lines, even if recording from the
     ``P3D`` renderer.
 
     If you want a background to show up in your files, use ``rect(0, 0, width,
-    height)`` after setting the :doc:`fill` to the background color. Otherwise the
+    height)`` after setting the ``fill()`` to the background color. Otherwise the
     background will not be rendered to the file because the background is not shape.
 
     Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
@@ -1896,7 +1888,7 @@ def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
 
 @overload
 def begin_raw(raw_graphics: Py5Graphics, /) -> None:
-    """To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
+    """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
     Underlying Java method: PApplet.beginRaw
@@ -1924,21 +1916,21 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
     Notes
     -----
 
-    To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
+    To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands. These commands will grab the shape data just before it is rendered to
     the screen. At this stage, your entire scene is nothing but a long list of
     individual lines and triangles. This means that a shape created with
-    :doc:`sphere` function will be made up of hundreds of triangles, rather than a
+    ``sphere()`` function will be made up of hundreds of triangles, rather than a
     single object. Or that a multi-segment line shape (such as a curve) will be
     rendered as individual segments.
 
-    When using ``begin_raw()`` and :doc:`end_raw`, it's possible to write to either
-    a 2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
+    When using ``begin_raw()`` and ``end_raw()``, it's possible to write to either a
+    2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
     write the geometry as flattened triangles and lines, even if recording from the
     ``P3D`` renderer.
 
     If you want a background to show up in your files, use ``rect(0, 0, width,
-    height)`` after setting the :doc:`fill` to the background color. Otherwise the
+    height)`` after setting the ``fill()`` to the background color. Otherwise the
     background will not be rendered to the file because the background is not shape.
 
     Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
@@ -1948,7 +1940,7 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
 
 
 def begin_raw(*args):
-    """To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
+    """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
     Underlying Java method: PApplet.beginRaw
@@ -1976,21 +1968,21 @@ def begin_raw(*args):
     Notes
     -----
 
-    To create vectors from 3D data, use the ``begin_raw()`` and :doc:`end_raw`
+    To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands. These commands will grab the shape data just before it is rendered to
     the screen. At this stage, your entire scene is nothing but a long list of
     individual lines and triangles. This means that a shape created with
-    :doc:`sphere` function will be made up of hundreds of triangles, rather than a
+    ``sphere()`` function will be made up of hundreds of triangles, rather than a
     single object. Or that a multi-segment line shape (such as a curve) will be
     rendered as individual segments.
 
-    When using ``begin_raw()`` and :doc:`end_raw`, it's possible to write to either
-    a 2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
+    When using ``begin_raw()`` and ``end_raw()``, it's possible to write to either a
+    2D or 3D renderer. For instance, ``begin_raw()`` with the ``PDF`` library will
     write the geometry as flattened triangles and lines, even if recording from the
     ``P3D`` renderer.
 
     If you want a background to show up in your files, use ``rect(0, 0, width,
-    height)`` after setting the :doc:`fill` to the background color. Otherwise the
+    height)`` after setting the ``fill()`` to the background color. Otherwise the
     background will not be rendered to the file because the background is not shape.
 
     Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
@@ -2032,11 +2024,11 @@ def begin_record(renderer: str, filename: str, /) -> Py5Graphics:
     Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window. The ``begin_record()`` function requires two
     parameters, the first is the renderer and the second is the file name. This
-    function is always used with :doc:`end_record` to stop the recording process and
+    function is always used with ``end_record()`` to stop the recording process and
     close the file.
 
     Note that ``begin_record()`` will only pick up any settings that happen after it
-    has been called. For instance, if you call :doc:`text_font` before
+    has been called. For instance, if you call ``text_font()`` before
     ``begin_record()``, then that font will not be set for the file that you're
     recording to.
 
@@ -2078,11 +2070,11 @@ def begin_record(recorder: Py5Graphics, /) -> None:
     Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window. The ``begin_record()`` function requires two
     parameters, the first is the renderer and the second is the file name. This
-    function is always used with :doc:`end_record` to stop the recording process and
+    function is always used with ``end_record()`` to stop the recording process and
     close the file.
 
     Note that ``begin_record()`` will only pick up any settings that happen after it
-    has been called. For instance, if you call :doc:`text_font` before
+    has been called. For instance, if you call ``text_font()`` before
     ``begin_record()``, then that font will not be set for the file that you're
     recording to.
 
@@ -2123,11 +2115,11 @@ def begin_record(*args):
     Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window. The ``begin_record()`` function requires two
     parameters, the first is the renderer and the second is the file name. This
-    function is always used with :doc:`end_record` to stop the recording process and
+    function is always used with ``end_record()`` to stop the recording process and
     close the file.
 
     Note that ``begin_record()`` will only pick up any settings that happen after it
-    has been called. For instance, if you call :doc:`text_font` before
+    has been called. For instance, if you call ``text_font()`` before
     ``begin_record()``, then that font will not be set for the file that you're
     recording to.
 
@@ -2138,7 +2130,7 @@ def begin_record(*args):
 
 @overload
 def begin_shape() -> None:
-    """Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
+    """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
     Underlying Java method: PApplet.beginShape
@@ -2160,27 +2152,27 @@ def begin_shape() -> None:
     Notes
     -----
 
-    Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
+    Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms. ``begin_shape()`` begins recording vertices for a shape and
-    :doc:`end_shape` stops recording. The value of the ``kind`` parameter tells it
+    ``end_shape()`` stops recording. The value of the ``kind`` parameter tells it
     which types of shapes to create from the provided vertices. With no mode
     specified, the shape can be any irregular polygon. The parameters available for
     ``begin_shape()`` are ``POINTS``, ``LINES``, ``TRIANGLES``, ``TRIANGLE_FAN``,
     ``TRIANGLE_STRIP``, ``QUADS``, and ``QUAD_STRIP``. After calling the
-    ``begin_shape()`` function, a series of :doc:`vertex` commands must follow. To
-    stop drawing the shape, call :doc:`end_shape`. The :doc:`vertex` function with
-    two parameters specifies a position in 2D and the :doc:`vertex` function with
-    three parameters specifies a position in 3D. Each shape will be outlined with
-    the current stroke color and filled with the fill color.
+    ``begin_shape()`` function, a series of ``vertex()`` commands must follow. To
+    stop drawing the shape, call ``end_shape()``. The ``vertex()`` function with two
+    parameters specifies a position in 2D and the ``vertex()`` function with three
+    parameters specifies a position in 3D. Each shape will be outlined with the
+    current stroke color and filled with the fill color.
 
-    Transformations such as :doc:`translate`, :doc:`rotate`, and :doc:`scale` do not
+    Transformations such as ``translate()``, ``rotate()``, and ``scale()`` do not
     work within ``begin_shape()``. It is also not possible to use other shapes, such
-    as :doc:`ellipse` or :doc:`rect` within ``begin_shape()``.
+    as ``ellipse()`` or ``rect()`` within ``begin_shape()``.
 
-    The ``P2D`` and ``P3D`` renderers allow :doc:`stroke` and :doc:`fill` to be
+    The ``P2D`` and ``P3D`` renderers allow ``stroke()`` and ``fill()`` to be
     altered on a per-vertex basis, but the default renderer does not. Settings such
-    as :doc:`stroke_weight`, :doc:`stroke_cap`, and :doc:`stroke_join` cannot be
-    changed while inside a ``begin_shape()`` & :doc:`end_shape` block with any
+    as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
+    changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
     renderer.
     """
     pass
@@ -2188,7 +2180,7 @@ def begin_shape() -> None:
 
 @overload
 def begin_shape(kind: int, /) -> None:
-    """Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
+    """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
     Underlying Java method: PApplet.beginShape
@@ -2210,34 +2202,34 @@ def begin_shape(kind: int, /) -> None:
     Notes
     -----
 
-    Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
+    Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms. ``begin_shape()`` begins recording vertices for a shape and
-    :doc:`end_shape` stops recording. The value of the ``kind`` parameter tells it
+    ``end_shape()`` stops recording. The value of the ``kind`` parameter tells it
     which types of shapes to create from the provided vertices. With no mode
     specified, the shape can be any irregular polygon. The parameters available for
     ``begin_shape()`` are ``POINTS``, ``LINES``, ``TRIANGLES``, ``TRIANGLE_FAN``,
     ``TRIANGLE_STRIP``, ``QUADS``, and ``QUAD_STRIP``. After calling the
-    ``begin_shape()`` function, a series of :doc:`vertex` commands must follow. To
-    stop drawing the shape, call :doc:`end_shape`. The :doc:`vertex` function with
-    two parameters specifies a position in 2D and the :doc:`vertex` function with
-    three parameters specifies a position in 3D. Each shape will be outlined with
-    the current stroke color and filled with the fill color.
+    ``begin_shape()`` function, a series of ``vertex()`` commands must follow. To
+    stop drawing the shape, call ``end_shape()``. The ``vertex()`` function with two
+    parameters specifies a position in 2D and the ``vertex()`` function with three
+    parameters specifies a position in 3D. Each shape will be outlined with the
+    current stroke color and filled with the fill color.
 
-    Transformations such as :doc:`translate`, :doc:`rotate`, and :doc:`scale` do not
+    Transformations such as ``translate()``, ``rotate()``, and ``scale()`` do not
     work within ``begin_shape()``. It is also not possible to use other shapes, such
-    as :doc:`ellipse` or :doc:`rect` within ``begin_shape()``.
+    as ``ellipse()`` or ``rect()`` within ``begin_shape()``.
 
-    The ``P2D`` and ``P3D`` renderers allow :doc:`stroke` and :doc:`fill` to be
+    The ``P2D`` and ``P3D`` renderers allow ``stroke()`` and ``fill()`` to be
     altered on a per-vertex basis, but the default renderer does not. Settings such
-    as :doc:`stroke_weight`, :doc:`stroke_cap`, and :doc:`stroke_join` cannot be
-    changed while inside a ``begin_shape()`` & :doc:`end_shape` block with any
+    as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
+    changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
     renderer.
     """
     pass
 
 
 def begin_shape(*args):
-    """Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
+    """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
     Underlying Java method: PApplet.beginShape
@@ -2259,27 +2251,27 @@ def begin_shape(*args):
     Notes
     -----
 
-    Using the ``begin_shape()`` and :doc:`end_shape` functions allow creating more
+    Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms. ``begin_shape()`` begins recording vertices for a shape and
-    :doc:`end_shape` stops recording. The value of the ``kind`` parameter tells it
+    ``end_shape()`` stops recording. The value of the ``kind`` parameter tells it
     which types of shapes to create from the provided vertices. With no mode
     specified, the shape can be any irregular polygon. The parameters available for
     ``begin_shape()`` are ``POINTS``, ``LINES``, ``TRIANGLES``, ``TRIANGLE_FAN``,
     ``TRIANGLE_STRIP``, ``QUADS``, and ``QUAD_STRIP``. After calling the
-    ``begin_shape()`` function, a series of :doc:`vertex` commands must follow. To
-    stop drawing the shape, call :doc:`end_shape`. The :doc:`vertex` function with
-    two parameters specifies a position in 2D and the :doc:`vertex` function with
-    three parameters specifies a position in 3D. Each shape will be outlined with
-    the current stroke color and filled with the fill color.
+    ``begin_shape()`` function, a series of ``vertex()`` commands must follow. To
+    stop drawing the shape, call ``end_shape()``. The ``vertex()`` function with two
+    parameters specifies a position in 2D and the ``vertex()`` function with three
+    parameters specifies a position in 3D. Each shape will be outlined with the
+    current stroke color and filled with the fill color.
 
-    Transformations such as :doc:`translate`, :doc:`rotate`, and :doc:`scale` do not
+    Transformations such as ``translate()``, ``rotate()``, and ``scale()`` do not
     work within ``begin_shape()``. It is also not possible to use other shapes, such
-    as :doc:`ellipse` or :doc:`rect` within ``begin_shape()``.
+    as ``ellipse()`` or ``rect()`` within ``begin_shape()``.
 
-    The ``P2D`` and ``P3D`` renderers allow :doc:`stroke` and :doc:`fill` to be
+    The ``P2D`` and ``P3D`` renderers allow ``stroke()`` and ``fill()`` to be
     altered on a per-vertex basis, but the default renderer does not. Settings such
-    as :doc:`stroke_weight`, :doc:`stroke_cap`, and :doc:`stroke_join` cannot be
-    changed while inside a ``begin_shape()`` & :doc:`end_shape` block with any
+    as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
+    changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
     renderer.
     """
     return _py5sketch.begin_shape(*args)
@@ -2347,8 +2339,7 @@ def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
     point and the last two parameters specify the other anchor point. The middle
     parameters specify the control points which define the shape of the curve.
     Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
-    version requires rendering with ``P3D`` (see the Environment reference for more
-    information).
+    version requires rendering with ``P3D``.
     """
     pass
 
@@ -2415,8 +2406,7 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
     point and the last two parameters specify the other anchor point. The middle
     parameters specify the control points which define the shape of the curve.
     Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
-    version requires rendering with ``P3D`` (see the Environment reference for more
-    information).
+    version requires rendering with ``P3D``.
     """
     pass
 
@@ -2481,8 +2471,7 @@ def bezier(*args):
     point and the last two parameters specify the other anchor point. The middle
     parameters specify the control points which define the shape of the curve.
     Bezier curves were developed by French engineer Pierre Bezier. Using the 3D
-    version requires rendering with ``P3D`` (see the Environment reference for more
-    information).
+    version requires rendering with ``P3D``.
     """
     return _py5sketch.bezier(*args)
 
@@ -2626,12 +2615,11 @@ def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
     Specifies vertex coordinates for Bezier curves. Each call to ``bezier_vertex()``
     defines the position of two control points and one anchor point of a Bezier
     curve, adding a new segment to a line or shape. The first time
-    ``bezier_vertex()`` is used within a :doc:`begin_shape` call, it must be
-    prefaced with a call to :doc:`vertex` to set the first anchor point. This
-    function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
-    when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
-    3D version requires rendering with ``P3D`` (see the Environment reference for
-    more information).
+    ``bezier_vertex()`` is used within a ``begin_shape()`` call, it must be prefaced
+    with a call to ``vertex()`` to set the first anchor point. This function must be
+    used between ``begin_shape()`` and ``end_shape()`` and only when there is no
+    ``MODE`` parameter specified to ``begin_shape()``. Using the 3D version requires
+    rendering with ``P3D``.
     """
     pass
 
@@ -2687,12 +2675,11 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
     Specifies vertex coordinates for Bezier curves. Each call to ``bezier_vertex()``
     defines the position of two control points and one anchor point of a Bezier
     curve, adding a new segment to a line or shape. The first time
-    ``bezier_vertex()`` is used within a :doc:`begin_shape` call, it must be
-    prefaced with a call to :doc:`vertex` to set the first anchor point. This
-    function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
-    when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
-    3D version requires rendering with ``P3D`` (see the Environment reference for
-    more information).
+    ``bezier_vertex()`` is used within a ``begin_shape()`` call, it must be prefaced
+    with a call to ``vertex()`` to set the first anchor point. This function must be
+    used between ``begin_shape()`` and ``end_shape()`` and only when there is no
+    ``MODE`` parameter specified to ``begin_shape()``. Using the 3D version requires
+    rendering with ``P3D``.
     """
     pass
 
@@ -2746,18 +2733,17 @@ def bezier_vertex(*args):
     Specifies vertex coordinates for Bezier curves. Each call to ``bezier_vertex()``
     defines the position of two control points and one anchor point of a Bezier
     curve, adding a new segment to a line or shape. The first time
-    ``bezier_vertex()`` is used within a :doc:`begin_shape` call, it must be
-    prefaced with a call to :doc:`vertex` to set the first anchor point. This
-    function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
-    when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
-    3D version requires rendering with ``P3D`` (see the Environment reference for
-    more information).
+    ``bezier_vertex()`` is used within a ``begin_shape()`` call, it must be prefaced
+    with a call to ``vertex()`` to set the first anchor point. This function must be
+    used between ``begin_shape()`` and ``end_shape()`` and only when there is no
+    ``MODE`` parameter specified to ``begin_shape()``. Using the 3D version requires
+    rendering with ``P3D``.
     """
     return _py5sketch.bezier_vertex(*args)
 
 
 def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Create a collection of bezier vertices.
 
     Underlying Java method: PApplet.bezierVertices
 
@@ -2765,14 +2751,21 @@ def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     ----------
 
     coordinates: NDArray[(Any, Any), Float]
-        missing variable description
+        array of bezier vertex coordinates
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Create a collection of bezier vertices. The purpose of this method is to provide
+    an alternative to repeatedly calling ``bezier_vertex()`` in a loop. For a large
+    number of bezier vertices, the performance of ``bezier_vertices()`` will be much
+    faster.
+
+    The ``coordinates`` parameter should be a numpy array with one row for each
+    bezier vertex. The first few columns are for the first control point, the next
+    few columns are for the second control point, and the final few columns are for
+    the anchor point. There should be six or nine columns for 2D or 3D points,
+    respectively.
     """
     return _py5sketch.bezier_vertices(coordinates)
 
@@ -2803,10 +2796,10 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
         destination image width
 
     dx: int
-        X coordinate of the destinations's upper left corner
+        x-coordinate of the destinations's upper left corner
 
     dy: int
-        Y coordinate of the destinations's upper left corner
+        y-coordinate of the destinations's upper left corner
 
     mode: int
         Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
@@ -2821,10 +2814,10 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -2857,7 +2850,7 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
     image will be automatically resized to match the destination size. If the
     ``src`` parameter is not used, the display window is used as the source image.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     pass
 
@@ -2888,10 +2881,10 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
         destination image width
 
     dx: int
-        X coordinate of the destinations's upper left corner
+        x-coordinate of the destinations's upper left corner
 
     dy: int
-        Y coordinate of the destinations's upper left corner
+        y-coordinate of the destinations's upper left corner
 
     mode: int
         Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
@@ -2906,10 +2899,10 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -2942,7 +2935,7 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     image will be automatically resized to match the destination size. If the
     ``src`` parameter is not used, the display window is used as the source image.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     pass
 
@@ -2971,10 +2964,10 @@ def blend(*args):
         destination image width
 
     dx: int
-        X coordinate of the destinations's upper left corner
+        x-coordinate of the destinations's upper left corner
 
     dy: int
-        Y coordinate of the destinations's upper left corner
+        y-coordinate of the destinations's upper left corner
 
     mode: int
         Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
@@ -2989,10 +2982,10 @@ def blend(*args):
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -3025,7 +3018,7 @@ def blend(*args):
     image will be automatically resized to match the destination size. If the
     ``src`` parameter is not used, the display window is used as the source image.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     return _py5sketch.blend(*args)
 
@@ -3064,8 +3057,8 @@ def blend_mode(mode: int, /) -> None:
     * REPLACE: the pixels entirely replace the others and don't utilize alpha
     (transparency) values
 
-    We recommend using ``blend_mode()`` and not the previous :doc:`blend` function.
-    However, unlike :doc:`blend`, the ``blend_mode()`` function does not support the
+    We recommend using ``blend_mode()`` and not the previous ``blend()`` function.
+    However, unlike ``blend()``, the ``blend_mode()`` function does not support the
     following: ``HARD_LIGHT``, ``SOFT_LIGHT``, ``OVERLAY``, ``DODGE``, ``BURN``. On
     older hardware, the ``LIGHTEST``, ``DARKEST``, and ``DIFFERENCE`` modes might
     not be available as well.
@@ -3074,7 +3067,7 @@ def blend_mode(mode: int, /) -> None:
 
 
 def blue(rgb: int, /) -> float:
-    """Extracts the blue value from a color, scaled to match current :doc:`color_mode`.
+    """Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
     Underlying Java method: PApplet.blue
 
@@ -3087,9 +3080,7 @@ def blue(rgb: int, /) -> float:
     Notes
     -----
 
-    Extracts the blue value from a color, scaled to match current :doc:`color_mode`.
-    The value is always returned as a float, so be careful not to assign it to an
-    int value.
+    Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
     The ``blue()`` function is easy to use and understand, but it is slower than a
     technique called bit masking. When working in ``color_mode(RGB, 255)``, you can
@@ -3438,27 +3429,9 @@ def circle(x: float, y: float, extent: float, /) -> None:
 
     Draws a circle to the screen. By default, the first two parameters set the
     location of the center, and the third sets the shape's width and height. The
-    origin may be changed with the :doc:`ellipse_mode` function.
+    origin may be changed with the ``ellipse_mode()`` function.
     """
     return _py5sketch.circle(x, y, extent)
-
-
-def clear() -> None:
-    """Clears the pixels within a buffer.
-
-    Underlying Java method: PApplet.clear
-
-    Notes
-    -----
-
-    Clears the pixels within a buffer. This function only works on ``Py5Graphics``
-    objects created with the :doc:`create_graphics` function. Unlike the main
-    graphics context (the display window), pixels in additional graphics areas
-    created with :doc:`create_graphics` can be entirely or partially transparent.
-    This function clears everything in a ``Py5Graphics`` object to make all of the
-    pixels 100% transparent.
-    """
-    return _py5sketch.clear()
 
 
 def clip(a: float, b: float, c: float, d: float, /) -> None:
@@ -3485,7 +3458,7 @@ def clip(a: float, b: float, c: float, d: float, /) -> None:
     -----
 
     Limits the rendering to the boundaries of a rectangle defined by the parameters.
-    The boundaries are drawn based on the state of the :doc:`image_mode` fuction,
+    The boundaries are drawn based on the state of the ``image_mode()`` fuction,
     either ``CORNER``, ``CORNERS``, or ``CENTER``.
     """
     return _py5sketch.clip(a, b, c, d)
@@ -3516,13 +3489,13 @@ def color(fgray: float, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -3553,7 +3526,7 @@ def color(fgray: float, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -3593,13 +3566,13 @@ def color(fgray: float, falpha: float, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -3630,7 +3603,7 @@ def color(fgray: float, falpha: float, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -3670,13 +3643,13 @@ def color(v1: float, v2: float, v3: float, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -3707,7 +3680,7 @@ def color(v1: float, v2: float, v3: float, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -3747,13 +3720,13 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -3784,7 +3757,7 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -3824,13 +3797,13 @@ def color(gray: int, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -3861,7 +3834,7 @@ def color(gray: int, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -3901,13 +3874,13 @@ def color(gray: int, alpha: int, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -3938,7 +3911,7 @@ def color(gray: int, alpha: int, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -3978,13 +3951,13 @@ def color(v1: int, v2: int, v3: int, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -4015,7 +3988,7 @@ def color(v1: int, v2: int, v3: int, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -4055,13 +4028,13 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -4092,7 +4065,7 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -4131,13 +4104,13 @@ def color(*args):
     ----------
 
     alpha: float
-        relative to current color range
+        alpha value relative to current color range
 
     alpha: int
-        relative to current color range
+        alpha value relative to current color range
 
     falpha: float
-        missing variable description
+        alpha value relative to current color range
 
     fgray: float
         number specifying value between white and black
@@ -4168,7 +4141,7 @@ def color(*args):
 
     Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer). The parameters are interpreted as ``RGB`` or ``HSB`` values depending
-    on the current :doc:`color_mode`. The default mode is ``RGB`` values from 0 to
+    on the current ``color_mode()``. The default mode is ``RGB`` values from 0 to
     255 and, therefore, ``color(255, 204, 0)`` will return a bright yellow color
     (see the first example).
 
@@ -4224,7 +4197,7 @@ def color_mode(mode: int, /) -> None:
     -----
 
     Changes the way py5 interprets color data. By default, the parameters for
-    :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+    ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
     values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
     function is used to change the numerical range used for specifying colors and to
     switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
@@ -4284,7 +4257,7 @@ def color_mode(mode: int, max: float, /) -> None:
     -----
 
     Changes the way py5 interprets color data. By default, the parameters for
-    :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+    ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
     values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
     function is used to change the numerical range used for specifying colors and to
     switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
@@ -4344,7 +4317,7 @@ def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
     -----
 
     Changes the way py5 interprets color data. By default, the parameters for
-    :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+    ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
     values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
     function is used to change the numerical range used for specifying colors and to
     switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
@@ -4405,7 +4378,7 @@ def color_mode(mode: int, max1: float, max2: float,
     -----
 
     Changes the way py5 interprets color data. By default, the parameters for
-    :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+    ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
     values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
     function is used to change the numerical range used for specifying colors and to
     switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
@@ -4464,7 +4437,7 @@ def color_mode(*args):
     -----
 
     Changes the way py5 interprets color data. By default, the parameters for
-    :doc:`fill`, :doc:`stroke`, :doc:`background`, and :doc:`color` are defined by
+    ``fill()``, ``stroke()``, ``background()``, and ``color()`` are defined by
     values between 0 and 255 using the ``RGB`` color model. The ``color_mode()``
     function is used to change the numerical range used for specifying colors and to
     switch color systems. For example, calling ``color_mode(RGB, 1.0)`` will specify
@@ -4510,10 +4483,10 @@ def copy() -> Py5Image:
         destination image width
 
     dx: int
-        X coordinate of the destination's upper left corner
+        x-coordinate of the destination's upper left corner
 
     dy: int
-        Y coordinate of the destination's upper left corner
+        y-coordinate of the destination's upper left corner
 
     sh: int
         source image height
@@ -4525,10 +4498,10 @@ def copy() -> Py5Image:
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -4540,7 +4513,7 @@ def copy() -> Py5Image:
     specified target region. No alpha information is used in the process, however if
     the source image has an alpha channel set, it will be copied as well.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     pass
 
@@ -4573,10 +4546,10 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
         destination image width
 
     dx: int
-        X coordinate of the destination's upper left corner
+        x-coordinate of the destination's upper left corner
 
     dy: int
-        Y coordinate of the destination's upper left corner
+        y-coordinate of the destination's upper left corner
 
     sh: int
         source image height
@@ -4588,10 +4561,10 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -4603,7 +4576,7 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
     specified target region. No alpha information is used in the process, however if
     the source image has an alpha channel set, it will be copied as well.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     pass
 
@@ -4636,10 +4609,10 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
         destination image width
 
     dx: int
-        X coordinate of the destination's upper left corner
+        x-coordinate of the destination's upper left corner
 
     dy: int
-        Y coordinate of the destination's upper left corner
+        y-coordinate of the destination's upper left corner
 
     sh: int
         source image height
@@ -4651,10 +4624,10 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -4666,7 +4639,7 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     specified target region. No alpha information is used in the process, however if
     the source image has an alpha channel set, it will be copied as well.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     pass
 
@@ -4697,10 +4670,10 @@ def copy(*args):
         destination image width
 
     dx: int
-        X coordinate of the destination's upper left corner
+        x-coordinate of the destination's upper left corner
 
     dy: int
-        Y coordinate of the destination's upper left corner
+        y-coordinate of the destination's upper left corner
 
     sh: int
         source image height
@@ -4712,10 +4685,10 @@ def copy(*args):
         source image width
 
     sx: int
-        X coordinate of the source's upper left corner
+        x-coordinate of the source's upper left corner
 
     sy: int
-        Y coordinate of the source's upper left corner
+        y-coordinate of the source's upper left corner
 
     Notes
     -----
@@ -4727,7 +4700,7 @@ def copy(*args):
     specified target region. No alpha information is used in the process, however if
     the source image has an alpha channel set, it will be copied as well.
 
-    This function ignores :doc:`image_mode`.
+    This function ignores ``image_mode()``.
     """
     return _py5sketch.copy(*args)
 
@@ -5025,19 +4998,19 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
-    relation to the main renderer specified in :doc:`size`. For example, it's only
+    relation to the main renderer specified in ``size()``. For example, it's only
     possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
-    is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+    is defined in ``size()``. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
     using an OpenGL renderer it's necessary for the main drawing surface to be
-    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
-    then any of the options can be used with ``create_graphics()``. If the default
-    renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in ``size()``, then
+    any of the options can be used with ``create_graphics()``. If the default
+    renderer is used in ``size()``, then only the default, ``PDF``, or ``SVG`` can
     be used with ``create_graphics()``.
 
     It's important to run all drawing functions between the
-    :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
-    to this rule, :doc:`smooth` should be run on the Py5Graphics object before
-    :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+    ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``. As the exception to
+    this rule, ``smooth()`` should be run on the Py5Graphics object before
+    ``Py5Graphics.begin_draw()``. See the reference for ``smooth()`` for more
     detail.
 
     The ``create_graphics()`` function should almost never be used inside ``draw()``
@@ -5048,7 +5021,7 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
 
     Unlike the main drawing surface which is completely opaque, surfaces created
     with ``create_graphics()`` can have transparency. This makes it possible to draw
-    into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+    into a graphics and maintain the alpha channel. By using ``save()`` to write a
     ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
     honored.
     """
@@ -5096,19 +5069,19 @@ def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
-    relation to the main renderer specified in :doc:`size`. For example, it's only
+    relation to the main renderer specified in ``size()``. For example, it's only
     possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
-    is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+    is defined in ``size()``. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
     using an OpenGL renderer it's necessary for the main drawing surface to be
-    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
-    then any of the options can be used with ``create_graphics()``. If the default
-    renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in ``size()``, then
+    any of the options can be used with ``create_graphics()``. If the default
+    renderer is used in ``size()``, then only the default, ``PDF``, or ``SVG`` can
     be used with ``create_graphics()``.
 
     It's important to run all drawing functions between the
-    :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
-    to this rule, :doc:`smooth` should be run on the Py5Graphics object before
-    :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+    ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``. As the exception to
+    this rule, ``smooth()`` should be run on the Py5Graphics object before
+    ``Py5Graphics.begin_draw()``. See the reference for ``smooth()`` for more
     detail.
 
     The ``create_graphics()`` function should almost never be used inside ``draw()``
@@ -5119,7 +5092,7 @@ def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
 
     Unlike the main drawing surface which is completely opaque, surfaces created
     with ``create_graphics()`` can have transparency. This makes it possible to draw
-    into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+    into a graphics and maintain the alpha channel. By using ``save()`` to write a
     ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
     honored.
     """
@@ -5168,19 +5141,19 @@ def create_graphics(w: int, h: int, renderer: str,
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
-    relation to the main renderer specified in :doc:`size`. For example, it's only
+    relation to the main renderer specified in ``size()``. For example, it's only
     possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
-    is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+    is defined in ``size()``. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
     using an OpenGL renderer it's necessary for the main drawing surface to be
-    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
-    then any of the options can be used with ``create_graphics()``. If the default
-    renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in ``size()``, then
+    any of the options can be used with ``create_graphics()``. If the default
+    renderer is used in ``size()``, then only the default, ``PDF``, or ``SVG`` can
     be used with ``create_graphics()``.
 
     It's important to run all drawing functions between the
-    :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
-    to this rule, :doc:`smooth` should be run on the Py5Graphics object before
-    :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+    ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``. As the exception to
+    this rule, ``smooth()`` should be run on the Py5Graphics object before
+    ``Py5Graphics.begin_draw()``. See the reference for ``smooth()`` for more
     detail.
 
     The ``create_graphics()`` function should almost never be used inside ``draw()``
@@ -5191,7 +5164,7 @@ def create_graphics(w: int, h: int, renderer: str,
 
     Unlike the main drawing surface which is completely opaque, surfaces created
     with ``create_graphics()`` can have transparency. This makes it possible to draw
-    into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+    into a graphics and maintain the alpha channel. By using ``save()`` to write a
     ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
     honored.
     """
@@ -5238,19 +5211,19 @@ def create_graphics(*args):
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
-    relation to the main renderer specified in :doc:`size`. For example, it's only
+    relation to the main renderer specified in ``size()``. For example, it's only
     possible to use ``P2D`` or ``P3D`` with ``create_graphics()`` when one of them
-    is defined in :doc:`size`. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
+    is defined in ``size()``. ``P2D`` and ``P3D`` use OpenGL for drawing, and when
     using an OpenGL renderer it's necessary for the main drawing surface to be
-    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in :doc:`size`,
-    then any of the options can be used with ``create_graphics()``. If the default
-    renderer is used in :doc:`size`, then only the default, ``PDF``, or ``SVG`` can
+    OpenGL-based. If ``P2D`` or ``P3D`` are used as the renderer in ``size()``, then
+    any of the options can be used with ``create_graphics()``. If the default
+    renderer is used in ``size()``, then only the default, ``PDF``, or ``SVG`` can
     be used with ``create_graphics()``.
 
     It's important to run all drawing functions between the
-    :doc:`py5graphics_begin_draw` and :doc:`py5graphics_end_draw`. As the exception
-    to this rule, :doc:`smooth` should be run on the Py5Graphics object before
-    :doc:`py5graphics_begin_draw`. See the reference for :doc:`smooth` for more
+    ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``. As the exception to
+    this rule, ``smooth()`` should be run on the Py5Graphics object before
+    ``Py5Graphics.begin_draw()``. See the reference for ``smooth()`` for more
     detail.
 
     The ``create_graphics()`` function should almost never be used inside ``draw()``
@@ -5261,7 +5234,7 @@ def create_graphics(*args):
 
     Unlike the main drawing surface which is completely opaque, surfaces created
     with ``create_graphics()`` can have transparency. This makes it possible to draw
-    into a graphics and maintain the alpha channel. By using :doc:`save` to write a
+    into a graphics and maintain the alpha channel. By using ``save()`` to write a
     ``PNG`` or ``TGA`` file, the transparency of the graphics object will be
     honored.
     """
@@ -5291,7 +5264,7 @@ def create_image(w: int, h: int, format: int, /) -> Py5Image:
     Creates a new Py5Image (the datatype for storing images). This provides a fresh
     buffer of pixels to play with. Set the size of the buffer with the ``w`` and
     ``h`` parameters. The ``format`` parameter defines how the pixels are stored.
-    See the :doc:`Py5Image` reference for more information.
+    See the ``Py5Image`` reference for more information.
 
     Be sure to include all three parameters, specifying only the width and height
     (but no format) will produce a strange error.
@@ -5327,25 +5300,25 @@ def create_shape() -> Py5Shape:
         parameters that match the kind of shape
 
     type: int
-        missing variable description
+        either GROUP, PATH, or GEOMETRY
 
     Notes
     -----
 
     The ``create_shape()`` function is used to define a new shape. Once created,
-    this shape can be drawn with the :doc:`shape` function. The basic way to use the
+    this shape can be drawn with the ``shape()`` function. The basic way to use the
     function defines new primitive shapes. One of the following parameters are used
     as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
     ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-    different shapes are the same as their corresponding functions: :doc:`ellipse`,
-    :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
-    :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
+    different shapes are the same as their corresponding functions: ``ellipse()``,
+    ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
+    ``line()``. The first example clarifies how this works.
 
     Custom, unique shapes can be made by using ``create_shape()`` without a
     parameter. After the shape is started, the drawing attributes and geometry can
-    be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+    be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
     methods. See the second example for specifics, and the reference for
-    :doc:`begin_shape` for all of its options.
+    ``begin_shape()`` for all of its options.
 
     The  ``create_shape()`` function can also be used to make a complex shape made
     of other shapes. This is called a "group" and it's created by using the
@@ -5353,9 +5326,9 @@ def create_shape() -> Py5Shape:
     works.
 
     After using ``create_shape()``, stroke and fill color can be set by calling
-    methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
-    the examples. The complete list of methods and fields for the :doc:`py5shape`
-    class are in the py5 documentation.
+    methods like ``Py5Shape.set_fill()`` and ``Py5Shape.set_stroke()``, as seen in
+    the examples. The complete list of methods and fields for the ``Py5Shape`` class
+    are in the py5 documentation.
     """
     pass
 
@@ -5385,25 +5358,25 @@ def create_shape(type: int, /) -> Py5Shape:
         parameters that match the kind of shape
 
     type: int
-        missing variable description
+        either GROUP, PATH, or GEOMETRY
 
     Notes
     -----
 
     The ``create_shape()`` function is used to define a new shape. Once created,
-    this shape can be drawn with the :doc:`shape` function. The basic way to use the
+    this shape can be drawn with the ``shape()`` function. The basic way to use the
     function defines new primitive shapes. One of the following parameters are used
     as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
     ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-    different shapes are the same as their corresponding functions: :doc:`ellipse`,
-    :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
-    :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
+    different shapes are the same as their corresponding functions: ``ellipse()``,
+    ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
+    ``line()``. The first example clarifies how this works.
 
     Custom, unique shapes can be made by using ``create_shape()`` without a
     parameter. After the shape is started, the drawing attributes and geometry can
-    be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+    be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
     methods. See the second example for specifics, and the reference for
-    :doc:`begin_shape` for all of its options.
+    ``begin_shape()`` for all of its options.
 
     The  ``create_shape()`` function can also be used to make a complex shape made
     of other shapes. This is called a "group" and it's created by using the
@@ -5411,9 +5384,9 @@ def create_shape(type: int, /) -> Py5Shape:
     works.
 
     After using ``create_shape()``, stroke and fill color can be set by calling
-    methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
-    the examples. The complete list of methods and fields for the :doc:`py5shape`
-    class are in the py5 documentation.
+    methods like ``Py5Shape.set_fill()`` and ``Py5Shape.set_stroke()``, as seen in
+    the examples. The complete list of methods and fields for the ``Py5Shape`` class
+    are in the py5 documentation.
     """
     pass
 
@@ -5443,25 +5416,25 @@ def create_shape(kind: int, /, *p: float) -> Py5Shape:
         parameters that match the kind of shape
 
     type: int
-        missing variable description
+        either GROUP, PATH, or GEOMETRY
 
     Notes
     -----
 
     The ``create_shape()`` function is used to define a new shape. Once created,
-    this shape can be drawn with the :doc:`shape` function. The basic way to use the
+    this shape can be drawn with the ``shape()`` function. The basic way to use the
     function defines new primitive shapes. One of the following parameters are used
     as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
     ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-    different shapes are the same as their corresponding functions: :doc:`ellipse`,
-    :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
-    :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
+    different shapes are the same as their corresponding functions: ``ellipse()``,
+    ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
+    ``line()``. The first example clarifies how this works.
 
     Custom, unique shapes can be made by using ``create_shape()`` without a
     parameter. After the shape is started, the drawing attributes and geometry can
-    be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+    be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
     methods. See the second example for specifics, and the reference for
-    :doc:`begin_shape` for all of its options.
+    ``begin_shape()`` for all of its options.
 
     The  ``create_shape()`` function can also be used to make a complex shape made
     of other shapes. This is called a "group" and it's created by using the
@@ -5469,9 +5442,9 @@ def create_shape(kind: int, /, *p: float) -> Py5Shape:
     works.
 
     After using ``create_shape()``, stroke and fill color can be set by calling
-    methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
-    the examples. The complete list of methods and fields for the :doc:`py5shape`
-    class are in the py5 documentation.
+    methods like ``Py5Shape.set_fill()`` and ``Py5Shape.set_stroke()``, as seen in
+    the examples. The complete list of methods and fields for the ``Py5Shape`` class
+    are in the py5 documentation.
     """
     pass
 
@@ -5500,25 +5473,25 @@ def create_shape(*args):
         parameters that match the kind of shape
 
     type: int
-        missing variable description
+        either GROUP, PATH, or GEOMETRY
 
     Notes
     -----
 
     The ``create_shape()`` function is used to define a new shape. Once created,
-    this shape can be drawn with the :doc:`shape` function. The basic way to use the
+    this shape can be drawn with the ``shape()`` function. The basic way to use the
     function defines new primitive shapes. One of the following parameters are used
     as the first parameter: ``ELLIPSE``, ``RECT``, ``ARC``, ``TRIANGLE``,
     ``SPHERE``, ``BOX``, ``QUAD``, or ``LINE``. The parameters for each of these
-    different shapes are the same as their corresponding functions: :doc:`ellipse`,
-    :doc:`rect`, :doc:`arc`, :doc:`triangle`, :doc:`sphere`, :doc:`box`,
-    :doc:`quad`, and :doc:`line`. The first example clarifies how this works.
+    different shapes are the same as their corresponding functions: ``ellipse()``,
+    ``rect()``, ``arc()``, ``triangle()``, ``sphere()``, ``box()``, ``quad()``, and
+    ``line()``. The first example clarifies how this works.
 
     Custom, unique shapes can be made by using ``create_shape()`` without a
     parameter. After the shape is started, the drawing attributes and geometry can
-    be set directly to the shape within the :doc:`begin_shape` and :doc:`end_shape`
+    be set directly to the shape within the ``begin_shape()`` and ``end_shape()``
     methods. See the second example for specifics, and the reference for
-    :doc:`begin_shape` for all of its options.
+    ``begin_shape()`` for all of its options.
 
     The  ``create_shape()`` function can also be used to make a complex shape made
     of other shapes. This is called a "group" and it's created by using the
@@ -5526,9 +5499,9 @@ def create_shape(*args):
     works.
 
     After using ``create_shape()``, stroke and fill color can be set by calling
-    methods like :doc:`py5shape_set_fill` and :doc:`py5shape_set_stroke`, as seen in
-    the examples. The complete list of methods and fields for the :doc:`py5shape`
-    class are in the py5 documentation.
+    methods like ``Py5Shape.set_fill()`` and ``Py5Shape.set_stroke()``, as seen in
+    the examples. The complete list of methods and fields for the ``Py5Shape`` class
+    are in the py5 documentation.
     """
     return _py5sketch.create_shape(*args)
 
@@ -5843,10 +5816,10 @@ def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
     beginning control point and the last two parameters specify the ending control
     point. The middle parameters specify the start and stop of the curve. Longer
     curves can be created by putting a series of ``curve()`` functions together or
-    using :doc:`curve_vertex`. An additional function called :doc:`curve_tightness`
+    using ``curve_vertex()``. An additional function called ``curve_tightness()``
     provides control for the visual quality of the curve. The ``curve()`` function
     is an implementation of Catmull-Rom splines. Using the 3D version requires
-    rendering with ``P3D`` (see the Environment reference for more information).
+    rendering with ``P3D``.
     """
     pass
 
@@ -5912,10 +5885,10 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
     beginning control point and the last two parameters specify the ending control
     point. The middle parameters specify the start and stop of the curve. Longer
     curves can be created by putting a series of ``curve()`` functions together or
-    using :doc:`curve_vertex`. An additional function called :doc:`curve_tightness`
+    using ``curve_vertex()``. An additional function called ``curve_tightness()``
     provides control for the visual quality of the curve. The ``curve()`` function
     is an implementation of Catmull-Rom splines. Using the 3D version requires
-    rendering with ``P3D`` (see the Environment reference for more information).
+    rendering with ``P3D``.
     """
     pass
 
@@ -5979,10 +5952,10 @@ def curve(*args):
     beginning control point and the last two parameters specify the ending control
     point. The middle parameters specify the start and stop of the curve. Longer
     curves can be created by putting a series of ``curve()`` functions together or
-    using :doc:`curve_vertex`. An additional function called :doc:`curve_tightness`
+    using ``curve_vertex()``. An additional function called ``curve_tightness()``
     provides control for the visual quality of the curve. The ``curve()`` function
     is an implementation of Catmull-Rom splines. Using the 3D version requires
-    rendering with ``P3D`` (see the Environment reference for more information).
+    rendering with ``P3D``.
     """
     return _py5sketch.curve(*args)
 
@@ -6078,7 +6051,7 @@ def curve_tangent(a: float, b: float, c: float,
 
 
 def curve_tightness(tightness: float, /) -> None:
-    """Modifies the quality of forms created with :doc:`curve` and :doc:`curve_vertex`.
+    """Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
 
     Underlying Java method: PApplet.curveTightness
 
@@ -6091,7 +6064,7 @@ def curve_tightness(tightness: float, /) -> None:
     Notes
     -----
 
-    Modifies the quality of forms created with :doc:`curve` and :doc:`curve_vertex`.
+    Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
     The parameter ``tightness`` determines how the curve fits to the vertex points.
     The value 0.0 is the default value for ``tightness`` (this value defines the
     curves to be Catmull-Rom splines) and the value 1.0 connects all the points with
@@ -6131,16 +6104,15 @@ def curve_vertex(x: float, y: float, /) -> None:
     Notes
     -----
 
-    Specifies vertex coordinates for curves. This function may only be used between
-    :doc:`begin_shape` and :doc:`end_shape` and only when there is no ``MODE``
-    parameter specified to :doc:`begin_shape`. The first and last points in a series
-    of ``curve_vertex()`` lines will be used to guide the beginning and end of a the
+    Specifies vertex coordinates for curves. This method may only be used between
+    ``begin_shape()`` and ``end_shape()`` and only when there is no ``MODE``
+    parameter specified to ``begin_shape()``. The first and last points in a series
+    of ``curve_vertex()`` lines will be used to guide the beginning and end of the
     curve. A minimum of four points is required to draw a tiny curve between the
     second and third points. Adding a fifth point with ``curve_vertex()`` will draw
     the curve between the second, third, and fourth points. The ``curve_vertex()``
-    function is an implementation of Catmull-Rom splines. Using the 3D version
-    requires rendering with ``P3D`` (see the Environment reference for more
-    information).
+    method is an implementation of Catmull-Rom splines. Using the 3D version
+    requires rendering with ``P3D``.
     """
     pass
 
@@ -6174,16 +6146,15 @@ def curve_vertex(x: float, y: float, z: float, /) -> None:
     Notes
     -----
 
-    Specifies vertex coordinates for curves. This function may only be used between
-    :doc:`begin_shape` and :doc:`end_shape` and only when there is no ``MODE``
-    parameter specified to :doc:`begin_shape`. The first and last points in a series
-    of ``curve_vertex()`` lines will be used to guide the beginning and end of a the
+    Specifies vertex coordinates for curves. This method may only be used between
+    ``begin_shape()`` and ``end_shape()`` and only when there is no ``MODE``
+    parameter specified to ``begin_shape()``. The first and last points in a series
+    of ``curve_vertex()`` lines will be used to guide the beginning and end of the
     curve. A minimum of four points is required to draw a tiny curve between the
     second and third points. Adding a fifth point with ``curve_vertex()`` will draw
     the curve between the second, third, and fourth points. The ``curve_vertex()``
-    function is an implementation of Catmull-Rom splines. Using the 3D version
-    requires rendering with ``P3D`` (see the Environment reference for more
-    information).
+    method is an implementation of Catmull-Rom splines. Using the 3D version
+    requires rendering with ``P3D``.
     """
     pass
 
@@ -6216,22 +6187,21 @@ def curve_vertex(*args):
     Notes
     -----
 
-    Specifies vertex coordinates for curves. This function may only be used between
-    :doc:`begin_shape` and :doc:`end_shape` and only when there is no ``MODE``
-    parameter specified to :doc:`begin_shape`. The first and last points in a series
-    of ``curve_vertex()`` lines will be used to guide the beginning and end of a the
+    Specifies vertex coordinates for curves. This method may only be used between
+    ``begin_shape()`` and ``end_shape()`` and only when there is no ``MODE``
+    parameter specified to ``begin_shape()``. The first and last points in a series
+    of ``curve_vertex()`` lines will be used to guide the beginning and end of the
     curve. A minimum of four points is required to draw a tiny curve between the
     second and third points. Adding a fifth point with ``curve_vertex()`` will draw
     the curve between the second, third, and fourth points. The ``curve_vertex()``
-    function is an implementation of Catmull-Rom splines. Using the 3D version
-    requires rendering with ``P3D`` (see the Environment reference for more
-    information).
+    method is an implementation of Catmull-Rom splines. Using the 3D version
+    requires rendering with ``P3D``.
     """
     return _py5sketch.curve_vertex(*args)
 
 
 def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Create a collection of curve vertices.
 
     Underlying Java method: PApplet.curveVertices
 
@@ -6239,14 +6209,19 @@ def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     ----------
 
     coordinates: NDArray[(Any, Any), Float]
-        missing variable description
+        array of curve vertex coordinates
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Create a collection of curve vertices. The purpose of this method is to provide
+    an alternative to repeatedly calling ``curve_vertex()`` in a loop. For a large
+    number of curve vertices, the performance of ``curve_vertices()`` will be much
+    faster.
+
+    The ``coordinates`` parameter should be a numpy array with one row for each
+    curve vertex.  There should be two or three columns for 2D or 3D points,
+    respectively.
     """
     return _py5sketch.curve_vertices(coordinates)
 
@@ -6433,14 +6408,14 @@ def ellipse(a: float, b: float, c: float, d: float, /) -> None:
     Draws an ellipse (oval) to the screen. An ellipse with equal width and height is
     a circle. By default, the first two parameters set the location, and the third
     and fourth parameters set the shape's width and height. The origin may be
-    changed with the :doc:`ellipse_mode` function.
+    changed with the ``ellipse_mode()`` function.
     """
     return _py5sketch.ellipse(a, b, c, d)
 
 
 def ellipse_mode(mode: int, /) -> None:
     """Modifies the location from which ellipses are drawn by changing the way in which
-    parameters given to :doc:`ellipse` are intepreted.
+    parameters given to ``ellipse()`` are intepreted.
 
     Underlying Java method: PApplet.ellipseMode
 
@@ -6454,21 +6429,21 @@ def ellipse_mode(mode: int, /) -> None:
     -----
 
     Modifies the location from which ellipses are drawn by changing the way in which
-    parameters given to :doc:`ellipse` are intepreted.
+    parameters given to ``ellipse()`` are intepreted.
 
     The default mode is ``ellipse_mode(CENTER)``, which interprets the first two
-    parameters of :doc:`ellipse` as the shape's center point, while the third and
+    parameters of ``ellipse()`` as the shape's center point, while the third and
     fourth parameters are its width and height.
 
-    ``ellipse_mode(RADIUS)`` also uses the first two parameters of :doc:`ellipse` as
+    ``ellipse_mode(RADIUS)`` also uses the first two parameters of ``ellipse()`` as
     the shape's center point, but uses the third and fourth parameters to specify
     half of the shapes's width and height.
 
-    ``ellipse_mode(CORNER)`` interprets the first two parameters of :doc:`ellipse`
-    as the upper-left corner of the shape, while the third and fourth parameters are
+    ``ellipse_mode(CORNER)`` interprets the first two parameters of ``ellipse()`` as
+    the upper-left corner of the shape, while the third and fourth parameters are
     its width and height.
 
-    ``ellipse_mode(CORNERS)`` interprets the first two parameters of :doc:`ellipse`
+    ``ellipse_mode(CORNERS)`` interprets the first two parameters of ``ellipse()``
     as the location of one corner of the ellipse's bounding box, and the third and
     fourth parameters as the location of the opposite corner.
 
@@ -6516,8 +6491,8 @@ def emissive(gray: float, /) -> None:
     -----
 
     Sets the emissive color of the material used for drawing shapes drawn to the
-    screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    screen. Use in combination with ``ambient()``, ``specular()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -6560,8 +6535,8 @@ def emissive(v1: float, v2: float, v3: float, /) -> None:
     -----
 
     Sets the emissive color of the material used for drawing shapes drawn to the
-    screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    screen. Use in combination with ``ambient()``, ``specular()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -6604,8 +6579,8 @@ def emissive(rgb: int, /) -> None:
     -----
 
     Sets the emissive color of the material used for drawing shapes drawn to the
-    screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    screen. Use in combination with ``ambient()``, ``specular()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -6647,14 +6622,14 @@ def emissive(*args):
     -----
 
     Sets the emissive color of the material used for drawing shapes drawn to the
-    screen. Used in combination with :doc:`ambient`, :doc:`specular`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    screen. Use in combination with ``ambient()``, ``specular()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     return _py5sketch.emissive(*args)
 
 
 def end_camera() -> None:
-    """The :doc:`begin_camera` and ``end_camera()`` functions enable advanced
+    """The ``begin_camera()`` and ``end_camera()`` methods enable advanced
     customization of the camera space.
 
     Underlying Java method: PApplet.endCamera
@@ -6662,15 +6637,15 @@ def end_camera() -> None:
     Notes
     -----
 
-    The :doc:`begin_camera` and ``end_camera()`` functions enable advanced
+    The ``begin_camera()`` and ``end_camera()`` methods enable advanced
     customization of the camera space. Please see the reference for
-    :doc:`begin_camera` for a description of how the functions are used.
+    ``begin_camera()`` for a description of how the methods are used.
     """
     return _py5sketch.end_camera()
 
 
 def end_contour() -> None:
-    """Use the :doc:`begin_contour` and ``end_contour()`` function to create negative
+    """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
     shapes within shapes such as the center of the letter 'O'.
 
     Underlying Java method: PApplet.endContour
@@ -6678,53 +6653,53 @@ def end_contour() -> None:
     Notes
     -----
 
-    Use the :doc:`begin_contour` and ``end_contour()`` function to create negative
-    shapes within shapes such as the center of the letter 'O'. :doc:`begin_contour`
-    begins recording vertices for the shape and ``end_contour()`` stops recording.
-    The vertices that define a negative shape must "wind" in the opposite direction
-    from the exterior shape. First draw vertices for the exterior shape in clockwise
-    order, then for internal shapes, draw vertices counterclockwise.
+    Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
+    shapes within shapes such as the center of the letter 'O'. The
+    ``begin_contour()`` method begins recording vertices for the shape and
+    ``end_contour()`` stops recording. The vertices that define a negative shape
+    must "wind" in the opposite direction from the exterior shape. First draw
+    vertices for the exterior shape in clockwise order, then for internal shapes,
+    draw vertices counterclockwise.
 
-    These functions can only be used within a :doc:`begin_shape` & :doc:`end_shape`
-    pair and transformations such as :doc:`translate`, :doc:`rotate`, and
-    :doc:`scale` do not work within a :doc:`begin_contour` & ``end_contour()`` pair.
-    It is also not possible to use other shapes, such as :doc:`ellipse` or
-    :doc:`rect` within.
+    These methods can only be used within a ``begin_shape()`` & ``end_shape()`` pair
+    and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
+    not work within a ``begin_contour()`` & ``end_contour()`` pair. It is also not
+    possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
     """
     return _py5sketch.end_contour()
 
 
 def end_raw() -> None:
-    """Complement to :doc:`begin_raw`; they must always be used together.
+    """Complement to ``begin_raw()``; they must always be used together.
 
     Underlying Java method: PApplet.endRaw
 
     Notes
     -----
 
-    Complement to :doc:`begin_raw`; they must always be used together. See the
-    :doc:`begin_raw` reference for details.
+    Complement to ``begin_raw()``; they must always be used together. See the
+    ``begin_raw()`` reference for details.
     """
     return _py5sketch.end_raw()
 
 
 def end_record() -> None:
-    """Stops the recording process started by :doc:`begin_record` and closes the file.
+    """Stops the recording process started by ``begin_record()`` and closes the file.
 
     Underlying Java method: PApplet.endRecord
 
     Notes
     -----
 
-    Stops the recording process started by :doc:`begin_record` and closes the file.
+    Stops the recording process started by ``begin_record()`` and closes the file.
     """
     return _py5sketch.end_record()
 
 
 @overload
 def end_shape() -> None:
-    """The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
-    be called after :doc:`begin_shape`.
+    """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
+    be called after ``begin_shape()``.
 
     Underlying Java method: PApplet.endShape
 
@@ -6745,9 +6720,9 @@ def end_shape() -> None:
     Notes
     -----
 
-    The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
-    be called after :doc:`begin_shape`. When ``end_shape()`` is called, all of image
-    data defined since the previous call to :doc:`begin_shape` is written into the
+    The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
+    be called after ``begin_shape()``. When ``end_shape()`` is called, all of image
+    data defined since the previous call to ``begin_shape()`` is written into the
     image buffer. The constant ``CLOSE`` as the value for the ``MODE`` parameter to
     close the shape (to connect the beginning and the end).
     """
@@ -6756,8 +6731,8 @@ def end_shape() -> None:
 
 @overload
 def end_shape(mode: int, /) -> None:
-    """The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
-    be called after :doc:`begin_shape`.
+    """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
+    be called after ``begin_shape()``.
 
     Underlying Java method: PApplet.endShape
 
@@ -6778,9 +6753,9 @@ def end_shape(mode: int, /) -> None:
     Notes
     -----
 
-    The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
-    be called after :doc:`begin_shape`. When ``end_shape()`` is called, all of image
-    data defined since the previous call to :doc:`begin_shape` is written into the
+    The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
+    be called after ``begin_shape()``. When ``end_shape()`` is called, all of image
+    data defined since the previous call to ``begin_shape()`` is written into the
     image buffer. The constant ``CLOSE`` as the value for the ``MODE`` parameter to
     close the shape (to connect the beginning and the end).
     """
@@ -6788,8 +6763,8 @@ def end_shape(mode: int, /) -> None:
 
 
 def end_shape(*args):
-    """The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
-    be called after :doc:`begin_shape`.
+    """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
+    be called after ``begin_shape()``.
 
     Underlying Java method: PApplet.endShape
 
@@ -6810,9 +6785,9 @@ def end_shape(*args):
     Notes
     -----
 
-    The ``end_shape()`` function is the companion to :doc:`begin_shape` and may only
-    be called after :doc:`begin_shape`. When ``end_shape()`` is called, all of image
-    data defined since the previous call to :doc:`begin_shape` is written into the
+    The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
+    be called after ``begin_shape()``. When ``end_shape()`` is called, all of image
+    data defined since the previous call to ``begin_shape()`` is written into the
     image buffer. The constant ``CLOSE`` as the value for the ``MODE`` parameter to
     close the shape (to connect the beginning and the end).
     """
@@ -6887,7 +6862,7 @@ def fill(gray: float, /) -> None:
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -6896,10 +6871,10 @@ def fill(gray: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     pass
 
@@ -6949,7 +6924,7 @@ def fill(gray: float, alpha: float, /) -> None:
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -6958,10 +6933,10 @@ def fill(gray: float, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     pass
 
@@ -7011,7 +6986,7 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -7020,10 +6995,10 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     pass
 
@@ -7073,7 +7048,7 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -7082,10 +7057,10 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     pass
 
@@ -7135,7 +7110,7 @@ def fill(rgb: int, /) -> None:
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -7144,10 +7119,10 @@ def fill(rgb: int, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     pass
 
@@ -7197,7 +7172,7 @@ def fill(rgb: int, alpha: float, /) -> None:
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -7206,10 +7181,10 @@ def fill(rgb: int, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     pass
 
@@ -7258,7 +7233,7 @@ def fill(*args):
     Sets the color used to fill shapes. For example, if you run ``fill(204, 102,
     0)``, all subsequent shapes will be filled with orange. This color is either
     specified in terms of the ``RGB`` or ``HSB`` color depending on the current
-    :doc:`color_mode`. The default color space is ``RGB``, with each value in the
+    ``color_mode()``. The default color space is ``RGB``, with each value in the
     range from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -7267,10 +7242,10 @@ def fill(*args):
     remainder define the red, green, and blue components.
 
     The value for the "gray" parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
-    To change the color of an image or a texture, use :doc:`tint`.
+    To change the color of an image or a texture, use ``tint()``.
     """
     return _py5sketch.fill(*args)
 
@@ -7307,7 +7282,7 @@ def apply_filter(kind: int, /) -> None:
 
     Filters the display window using a preset filter or with a custom shader. Using
     a shader with ``apply_filter()`` is much faster than without. Shaders require
-    the ``P2D`` or ``P3D`` renderer in :doc:`size`.
+    the ``P2D`` or ``P3D`` renderer in ``size()``.
 
     The presets options are:
 
@@ -7362,7 +7337,7 @@ def apply_filter(kind: int, param: float, /) -> None:
 
     Filters the display window using a preset filter or with a custom shader. Using
     a shader with ``apply_filter()`` is much faster than without. Shaders require
-    the ``P2D`` or ``P3D`` renderer in :doc:`size`.
+    the ``P2D`` or ``P3D`` renderer in ``size()``.
 
     The presets options are:
 
@@ -7417,7 +7392,7 @@ def apply_filter(shader: Py5Shader, /) -> None:
 
     Filters the display window using a preset filter or with a custom shader. Using
     a shader with ``apply_filter()`` is much faster than without. Shaders require
-    the ``P2D`` or ``P3D`` renderer in :doc:`size`.
+    the ``P2D`` or ``P3D`` renderer in ``size()``.
 
     The presets options are:
 
@@ -7471,7 +7446,7 @@ def apply_filter(*args):
 
     Filters the display window using a preset filter or with a custom shader. Using
     a shader with ``apply_filter()`` is much faster than without. Shaders require
-    the ``P2D`` or ``P3D`` renderer in :doc:`size`.
+    the ``P2D`` or ``P3D`` renderer in ``size()``.
 
     The presets options are:
 
@@ -7557,7 +7532,7 @@ def frustum(left: float, right: float, bottom: float,
 
     Setting the frustum has the effect of changing the *perspective* with which the
     scene is rendered.  This can be achieved more simply in many cases by using
-    :doc:`perspective`.
+    ``perspective()``.
 
     Note that the near value must be greater than zero (as the point of the frustum
     "pyramid" cannot converge "behind" the viewer).  Similarly, the far value must
@@ -7599,7 +7574,7 @@ def full_screen() -> None:
     -----
 
     Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
     cannot both be used in the same program.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
@@ -7642,7 +7617,7 @@ def full_screen(display: int, /) -> None:
     -----
 
     Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
     cannot both be used in the same program.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
@@ -7685,7 +7660,7 @@ def full_screen(renderer: str, /) -> None:
     -----
 
     Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
     cannot both be used in the same program.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
@@ -7728,7 +7703,7 @@ def full_screen(renderer: str, display: int, /) -> None:
     -----
 
     Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
     cannot both be used in the same program.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
@@ -7770,7 +7745,7 @@ def full_screen(*args):
     -----
 
     Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The :doc:`size` and ``full_screen()`` functions
+    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
     cannot both be used in the same program.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
@@ -7786,7 +7761,7 @@ def full_screen(*args):
 
 @overload
 def get() -> Py5Image:
-    """Reads the color of any pixel or grabs a section of an image.
+    """Reads the color of any pixel or grabs a section of the drawing surface.
 
     Underlying Java method: PApplet.get
 
@@ -7817,12 +7792,12 @@ def get() -> Py5Image:
     Notes
     -----
 
-    Reads the color of any pixel or grabs a section of an image. If no parameters
-    are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-    to get the value of one pixel. Get a section of the display window by specifying
-    additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-    ``y`` parameters define the coordinates for the upper-left corner of the image,
-    regardless of the current :doc:`image_mode`.
+    Reads the color of any pixel or grabs a section of the drawing surface. If no
+    parameters are specified, the entire drawing surface is returned. Use the ``x``
+    and ``y`` parameters to get the value of one pixel. Get a section of the display
+    window by specifying additional ``w`` and ``h`` parameters. When getting an
+    image, the ``x`` and ``y`` parameters define the coordinates for the upper-left
+    corner of the returned image, regardless of the current ``image_mode()``.
 
     If the pixel requested is outside of the image window, black is returned. The
     numbers returned are scaled according to the current color ranges, but only
@@ -7835,17 +7810,17 @@ def get() -> Py5Image:
     at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
     Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-    as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
-    equivalent statement to ``get(x, y)`` using :doc:`pixels` is
-    ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
-    reference for :doc:`pixels` and :doc:`np_pixels` for more information.
+    as grabbing the data directly from ``pixels[]`` or ``np_pixels[]``. The
+    equivalent statement to ``get(x, y)`` using ``pixels[]`` is
+    ``pixels[y*width+x]``. Using ``np_pixels[]`` it is ``np_pixels[y, x]``. See the
+    reference for ``pixels[]`` and ``np_pixels[]`` for more information.
     """
     pass
 
 
 @overload
 def get(x: int, y: int, /) -> int:
-    """Reads the color of any pixel or grabs a section of an image.
+    """Reads the color of any pixel or grabs a section of the drawing surface.
 
     Underlying Java method: PApplet.get
 
@@ -7876,12 +7851,12 @@ def get(x: int, y: int, /) -> int:
     Notes
     -----
 
-    Reads the color of any pixel or grabs a section of an image. If no parameters
-    are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-    to get the value of one pixel. Get a section of the display window by specifying
-    additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-    ``y`` parameters define the coordinates for the upper-left corner of the image,
-    regardless of the current :doc:`image_mode`.
+    Reads the color of any pixel or grabs a section of the drawing surface. If no
+    parameters are specified, the entire drawing surface is returned. Use the ``x``
+    and ``y`` parameters to get the value of one pixel. Get a section of the display
+    window by specifying additional ``w`` and ``h`` parameters. When getting an
+    image, the ``x`` and ``y`` parameters define the coordinates for the upper-left
+    corner of the returned image, regardless of the current ``image_mode()``.
 
     If the pixel requested is outside of the image window, black is returned. The
     numbers returned are scaled according to the current color ranges, but only
@@ -7894,17 +7869,17 @@ def get(x: int, y: int, /) -> int:
     at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
     Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-    as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
-    equivalent statement to ``get(x, y)`` using :doc:`pixels` is
-    ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
-    reference for :doc:`pixels` and :doc:`np_pixels` for more information.
+    as grabbing the data directly from ``pixels[]`` or ``np_pixels[]``. The
+    equivalent statement to ``get(x, y)`` using ``pixels[]`` is
+    ``pixels[y*width+x]``. Using ``np_pixels[]`` it is ``np_pixels[y, x]``. See the
+    reference for ``pixels[]`` and ``np_pixels[]`` for more information.
     """
     pass
 
 
 @overload
 def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
-    """Reads the color of any pixel or grabs a section of an image.
+    """Reads the color of any pixel or grabs a section of the drawing surface.
 
     Underlying Java method: PApplet.get
 
@@ -7935,12 +7910,12 @@ def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
     Notes
     -----
 
-    Reads the color of any pixel or grabs a section of an image. If no parameters
-    are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-    to get the value of one pixel. Get a section of the display window by specifying
-    additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-    ``y`` parameters define the coordinates for the upper-left corner of the image,
-    regardless of the current :doc:`image_mode`.
+    Reads the color of any pixel or grabs a section of the drawing surface. If no
+    parameters are specified, the entire drawing surface is returned. Use the ``x``
+    and ``y`` parameters to get the value of one pixel. Get a section of the display
+    window by specifying additional ``w`` and ``h`` parameters. When getting an
+    image, the ``x`` and ``y`` parameters define the coordinates for the upper-left
+    corner of the returned image, regardless of the current ``image_mode()``.
 
     If the pixel requested is outside of the image window, black is returned. The
     numbers returned are scaled according to the current color ranges, but only
@@ -7953,16 +7928,16 @@ def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
     at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
     Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-    as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
-    equivalent statement to ``get(x, y)`` using :doc:`pixels` is
-    ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
-    reference for :doc:`pixels` and :doc:`np_pixels` for more information.
+    as grabbing the data directly from ``pixels[]`` or ``np_pixels[]``. The
+    equivalent statement to ``get(x, y)`` using ``pixels[]`` is
+    ``pixels[y*width+x]``. Using ``np_pixels[]`` it is ``np_pixels[y, x]``. See the
+    reference for ``pixels[]`` and ``np_pixels[]`` for more information.
     """
     pass
 
 
 def get(*args):
-    """Reads the color of any pixel or grabs a section of an image.
+    """Reads the color of any pixel or grabs a section of the drawing surface.
 
     Underlying Java method: PApplet.get
 
@@ -7993,12 +7968,12 @@ def get(*args):
     Notes
     -----
 
-    Reads the color of any pixel or grabs a section of an image. If no parameters
-    are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-    to get the value of one pixel. Get a section of the display window by specifying
-    additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-    ``y`` parameters define the coordinates for the upper-left corner of the image,
-    regardless of the current :doc:`image_mode`.
+    Reads the color of any pixel or grabs a section of the drawing surface. If no
+    parameters are specified, the entire drawing surface is returned. Use the ``x``
+    and ``y`` parameters to get the value of one pixel. Get a section of the display
+    window by specifying additional ``w`` and ``h`` parameters. When getting an
+    image, the ``x`` and ``y`` parameters define the coordinates for the upper-left
+    corner of the returned image, regardless of the current ``image_mode()``.
 
     If the pixel requested is outside of the image window, black is returned. The
     numbers returned are scaled according to the current color ranges, but only
@@ -8011,47 +7986,53 @@ def get(*args):
     at the ``(x, y)`` position with a width of ``w`` a height of ``h``.
 
     Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-    as grabbing the data directly from :doc:`pixels` or :doc:`np_pixels`. The
-    equivalent statement to ``get(x, y)`` using :doc:`pixels` is
-    ``pixels[y*width+x]``. Using :doc:`np_pixels` it is ``np_pixels[y, x]``. See the
-    reference for :doc:`pixels` and :doc:`np_pixels` for more information.
+    as grabbing the data directly from ``pixels[]`` or ``np_pixels[]``. The
+    equivalent statement to ``get(x, y)`` using ``pixels[]`` is
+    ``pixels[y*width+x]``. Using ``np_pixels[]`` it is ``np_pixels[y, x]``. See the
+    reference for ``pixels[]`` and ``np_pixels[]`` for more information.
     """
     return _py5sketch.get(*args)
 
 
 def get_frame_rate() -> float:
-    """The documentation for this field or method has not yet been written.
+    """Get the running Sketch's current frame rate.
 
     Underlying Java method: PApplet.getFrameRate
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Get the running Sketch's current frame rate. This is measured in frames per
+    second (fps) and uses an exponential moving average. The returned value will not
+    be accurate until after the Sketch has run for a few seconds. You can set the
+    target frame rate with ``frame_rate()``.
+
+    This method provides the same information as Processing's ``frameRate``
+    variable. Python can't have a variable and a method with the same name, so a new
+    method was created to provide access to that variable.
     """
     return _py5sketch.get_frame_rate()
 
 
 def get_graphics() -> Py5Graphics:
-    """The documentation for this field or method has not yet been written.
+    """Get the ``Py5Graphics`` object used by the Sketch.
 
     Underlying Java method: PApplet.getGraphics
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Get the ``Py5Graphics`` object used by the Sketch. Internally, all of
+    Processing's drawing functionality comes from interaction with PGraphics
+    objects, and this will provide direct access to the PGraphics object used by the
+    Sketch.
     """
     return _py5sketch.get_graphics()
 
 
 @overload
 def get_matrix() -> NDArray[(Any, Any), Float]:
-    """The documentation for this field or method has not yet been written.
+    """Get the current matrix as a numpy array.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8068,24 +8049,23 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
     ----------
 
     target: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     target: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Get the current matrix as a numpy array. Use the ``target`` parameter to put the
+    matrix data in a properly sized and typed numpy array.
     """
     pass
 
 
 @overload
 def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
-    """The documentation for this field or method has not yet been written.
+    """Get the current matrix as a numpy array.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8102,24 +8082,23 @@ def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
     ----------
 
     target: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     target: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Get the current matrix as a numpy array. Use the ``target`` parameter to put the
+    matrix data in a properly sized and typed numpy array.
     """
     pass
 
 
 @overload
 def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
-    """The documentation for this field or method has not yet been written.
+    """Get the current matrix as a numpy array.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8136,23 +8115,22 @@ def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
     ----------
 
     target: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     target: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Get the current matrix as a numpy array. Use the ``target`` parameter to put the
+    matrix data in a properly sized and typed numpy array.
     """
     pass
 
 
 def get_matrix(*args):
-    """The documentation for this field or method has not yet been written.
+    """Get the current matrix as a numpy array.
 
     Underlying Java method: PApplet.getMatrix
 
@@ -8169,17 +8147,16 @@ def get_matrix(*args):
     ----------
 
     target: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     target: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Get the current matrix as a numpy array. Use the ``target`` parameter to put the
+    matrix data in a properly sized and typed numpy array.
     """
     return _py5sketch.get_matrix(*args)
 
@@ -8198,8 +8175,7 @@ def get_surface() -> Py5Surface:
 
 
 def green(rgb: int, /) -> float:
-    """Extracts the green value from a color, scaled to match current
-    :doc:`color_mode`.
+    """Extracts the green value from a color, scaled to match current ``color_mode()``.
 
     Underlying Java method: PApplet.green
 
@@ -8212,9 +8188,7 @@ def green(rgb: int, /) -> float:
     Notes
     -----
 
-    Extracts the green value from a color, scaled to match current
-    :doc:`color_mode`. The value is always returned as a float, so be careful not to
-    assign it to an int value.
+    Extracts the green value from a color, scaled to match current ``color_mode()``.
 
     The ``green()`` function is easy to use and understand, but it is slower than a
     technique called bit shifting. When working in ``color_mode(RGB, 255)``, you can
@@ -8255,7 +8229,7 @@ def hint(which: int, /) -> None:
     ----------------------------------
 
     * ``ENABLE_STROKE_PURE``: Fixes a problem with shapes that have a stroke and are
-    rendered using small steps (for instance, using :doc:`vertex` with points that
+    rendered using small steps (for instance, using ``vertex()`` with points that
     are close to one another), or are drawn at small sizes.
 
     Hints for use with ``P2D`` and ``P3D``
@@ -8378,16 +8352,16 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
         the image to display
 
     u1: int
-        missing variable description
+        x-coordinate of the upper left corner of image subset
 
     u2: int
-        missing variable description
+        y-coordinate of the upper left corner of image subset
 
     v1: int
-        missing variable description
+        x-coordinate of the lower right corner of image subset
 
     v2: int
-        missing variable description
+        y-coordinate of the lower right corner of image subset
 
     Notes
     -----
@@ -8399,10 +8373,14 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
     The ``img`` parameter specifies the image to display and by default the ``a``
     and ``b`` parameters define the location of its upper-left corner. The image is
     displayed at its original size unless the ``c`` and ``d`` parameters specify a
-    different size. The :doc:`image_mode` function can be used to change the way
+    different size. The ``image_mode()`` function can be used to change the way
     these parameters draw the image.
 
-    The color of an image may be modified with the :doc:`tint` function. This
+    Use the ``u1``, ``u2``, ``v1``, and ``v2`` parameters to use only a subset of
+    the image. These values are always specified in image space location, regardless
+    of the current ``texture_mode()`` setting.
+
+    The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
     """
     pass
@@ -8442,16 +8420,16 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
         the image to display
 
     u1: int
-        missing variable description
+        x-coordinate of the upper left corner of image subset
 
     u2: int
-        missing variable description
+        y-coordinate of the upper left corner of image subset
 
     v1: int
-        missing variable description
+        x-coordinate of the lower right corner of image subset
 
     v2: int
-        missing variable description
+        y-coordinate of the lower right corner of image subset
 
     Notes
     -----
@@ -8463,10 +8441,14 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
     The ``img`` parameter specifies the image to display and by default the ``a``
     and ``b`` parameters define the location of its upper-left corner. The image is
     displayed at its original size unless the ``c`` and ``d`` parameters specify a
-    different size. The :doc:`image_mode` function can be used to change the way
+    different size. The ``image_mode()`` function can be used to change the way
     these parameters draw the image.
 
-    The color of an image may be modified with the :doc:`tint` function. This
+    Use the ``u1``, ``u2``, ``v1``, and ``v2`` parameters to use only a subset of
+    the image. These values are always specified in image space location, regardless
+    of the current ``texture_mode()`` setting.
+
+    The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
     """
     pass
@@ -8507,16 +8489,16 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
         the image to display
 
     u1: int
-        missing variable description
+        x-coordinate of the upper left corner of image subset
 
     u2: int
-        missing variable description
+        y-coordinate of the upper left corner of image subset
 
     v1: int
-        missing variable description
+        x-coordinate of the lower right corner of image subset
 
     v2: int
-        missing variable description
+        y-coordinate of the lower right corner of image subset
 
     Notes
     -----
@@ -8528,10 +8510,14 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
     The ``img`` parameter specifies the image to display and by default the ``a``
     and ``b`` parameters define the location of its upper-left corner. The image is
     displayed at its original size unless the ``c`` and ``d`` parameters specify a
-    different size. The :doc:`image_mode` function can be used to change the way
+    different size. The ``image_mode()`` function can be used to change the way
     these parameters draw the image.
 
-    The color of an image may be modified with the :doc:`tint` function. This
+    Use the ``u1``, ``u2``, ``v1``, and ``v2`` parameters to use only a subset of
+    the image. These values are always specified in image space location, regardless
+    of the current ``texture_mode()`` setting.
+
+    The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
     """
     pass
@@ -8570,16 +8556,16 @@ def image(*args):
         the image to display
 
     u1: int
-        missing variable description
+        x-coordinate of the upper left corner of image subset
 
     u2: int
-        missing variable description
+        y-coordinate of the upper left corner of image subset
 
     v1: int
-        missing variable description
+        x-coordinate of the lower right corner of image subset
 
     v2: int
-        missing variable description
+        y-coordinate of the lower right corner of image subset
 
     Notes
     -----
@@ -8591,10 +8577,14 @@ def image(*args):
     The ``img`` parameter specifies the image to display and by default the ``a``
     and ``b`` parameters define the location of its upper-left corner. The image is
     displayed at its original size unless the ``c`` and ``d`` parameters specify a
-    different size. The :doc:`image_mode` function can be used to change the way
+    different size. The ``image_mode()`` function can be used to change the way
     these parameters draw the image.
 
-    The color of an image may be modified with the :doc:`tint` function. This
+    Use the ``u1``, ``u2``, ``v1``, and ``v2`` parameters to use only a subset of
+    the image. These values are always specified in image space location, regardless
+    of the current ``texture_mode()`` setting.
+
+    The color of an image may be modified with the ``tint()`` function. This
     function will maintain transparency for GIF and PNG images.
     """
     return _py5sketch.image(*args)
@@ -8602,7 +8592,7 @@ def image(*args):
 
 def image_mode(mode: int, /) -> None:
     """Modifies the location from which images are drawn by changing the way in which
-    parameters given to :doc:`image` are intepreted.
+    parameters given to ``image()`` are intepreted.
 
     Underlying Java method: PApplet.imageMode
 
@@ -8616,20 +8606,20 @@ def image_mode(mode: int, /) -> None:
     -----
 
     Modifies the location from which images are drawn by changing the way in which
-    parameters given to :doc:`image` are intepreted.
+    parameters given to ``image()`` are intepreted.
 
     The default mode is ``image_mode(CORNER)``, which interprets the second and
-    third parameters of :doc:`image` as the upper-left corner of the image. If two
+    third parameters of ``image()`` as the upper-left corner of the image. If two
     additional parameters are specified, they are used to set the image's width and
     height.
 
     ``image_mode(CORNERS)`` interprets the second and third parameters of
-    :doc:`image` as the  location of one corner, and the fourth and fifth parameters
+    ``image()`` as the location of one corner, and the fourth and fifth parameters
     as the opposite corner.
 
-    ``image_mode(CENTER)`` interprets the second and third parameters of
-    :doc:`image` as the image's center point. If two additional parameters are
-    specified, they are used to set the image's width and height.
+    ``image_mode(CENTER)`` interprets the second and third parameters of ``image()``
+    as the image's center point. If two additional parameters are specified, they
+    are used to set the image's width and height.
 
     The parameter must be written in ALL CAPS because Python is a case-sensitive
     language.
@@ -8664,7 +8654,7 @@ def lerp_color(c1: int, c2: int, amt: float, /) -> int:
         interpolate to this color
 
     mode: int
-        missing variable description
+        either RGB or HSB
 
     Notes
     -----
@@ -8675,7 +8665,7 @@ def lerp_color(c1: int, c2: int, amt: float, /) -> int:
     etc.
 
     An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
-    at 1. This is different from the behavior of :doc:`lerp`, but necessary because
+    at 1. This is different from the behavior of ``lerp()``, but necessary because
     otherwise numbers outside the range will produce strange and unexpected colors.
     """
     pass
@@ -8708,7 +8698,7 @@ def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
         interpolate to this color
 
     mode: int
-        missing variable description
+        either RGB or HSB
 
     Notes
     -----
@@ -8719,7 +8709,7 @@ def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
     etc.
 
     An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
-    at 1. This is different from the behavior of :doc:`lerp`, but necessary because
+    at 1. This is different from the behavior of ``lerp()``, but necessary because
     otherwise numbers outside the range will produce strange and unexpected colors.
     """
     pass
@@ -8751,7 +8741,7 @@ def lerp_color(*args):
         interpolate to this color
 
     mode: int
-        missing variable description
+        either RGB or HSB
 
     Notes
     -----
@@ -8762,7 +8752,7 @@ def lerp_color(*args):
     etc.
 
     An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
-    at 1. This is different from the behavior of :doc:`lerp`, but necessary because
+    at 1. This is different from the behavior of ``lerp()``, but necessary because
     otherwise numbers outside the range will produce strange and unexpected colors.
     """
     return _py5sketch.lerp_color(*args)
@@ -8789,10 +8779,10 @@ def light_falloff(constant: float, linear: float, quadratic: float, /) -> None:
     -----
 
     Sets the falloff rates for point lights, spot lights, and ambient lights. Like
-    :doc:`fill`, it affects only the elements which are created after it in the
-    code. The default value is ``light_falloff(1.0, 0.0, 0.0)``, and the parameters
-    are used to calculate the falloff with the equation ``falloff = 1 / (CONSTANT +
-    d * ``LINEAR`` + (d*d) * QUADRATIC)``, where ``d`` is the distance from light
+    ``fill()``, it affects only the elements which are created after it in the code.
+    The default value is ``light_falloff(1.0, 0.0, 0.0)``, and the parameters are
+    used to calculate the falloff with the equation ``falloff = 1 / (CONSTANT + d *
+    ``LINEAR`` + (d*d) * QUADRATIC)``, where ``d`` is the distance from light
     position to vertex position.
 
     Thinking about an ambient light with a falloff can be tricky. If you want a
@@ -8824,12 +8814,12 @@ def light_specular(v1: float, v2: float, v3: float, /) -> None:
     Notes
     -----
 
-    Sets the specular color for lights. Like :doc:`fill`, it affects only the
+    Sets the specular color for lights. Like ``fill()``, it affects only the
     elements which are created after it in the code. Specular refers to light which
     bounces off a surface in a preferred direction (rather than bouncing in all
     directions like a diffuse light) and is used for creating highlights. The
     specular quality of a light interacts with the specular material qualities set
-    through the :doc:`specular` and :doc:`shininess` functions.
+    through the ``specular()`` and ``shininess()`` functions.
     """
     return _py5sketch.light_specular(v1, v2, v3)
 
@@ -8892,12 +8882,12 @@ def line(x1: float, y1: float, x2: float, y2: float, /) -> None:
 
     Draws a line (a direct path between two points) to the screen. The version of
     ``line()`` with four parameters draws the line in 2D.  To color a line, use the
-    :doc:`stroke` function. A line cannot be filled, therefore the :doc:`fill`
+    ``stroke()`` function. A line cannot be filled, therefore the ``fill()``
     function will not affect the color of a line. 2D lines are drawn with a width of
-    one pixel by default, but this can be changed with the :doc:`stroke_weight`
+    one pixel by default, but this can be changed with the ``stroke_weight()``
     function. The version with six parameters allows the line to be placed anywhere
     within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
-    ``P3D`` parameter in combination with :doc:`size` as shown in the third example.
+    ``P3D`` parameter in combination with ``size()`` as shown in the third example.
     """
     pass
 
@@ -8943,12 +8933,12 @@ def line(x1: float, y1: float, z1: float, x2: float,
 
     Draws a line (a direct path between two points) to the screen. The version of
     ``line()`` with four parameters draws the line in 2D.  To color a line, use the
-    :doc:`stroke` function. A line cannot be filled, therefore the :doc:`fill`
+    ``stroke()`` function. A line cannot be filled, therefore the ``fill()``
     function will not affect the color of a line. 2D lines are drawn with a width of
-    one pixel by default, but this can be changed with the :doc:`stroke_weight`
+    one pixel by default, but this can be changed with the ``stroke_weight()``
     function. The version with six parameters allows the line to be placed anywhere
     within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
-    ``P3D`` parameter in combination with :doc:`size` as shown in the third example.
+    ``P3D`` parameter in combination with ``size()`` as shown in the third example.
     """
     pass
 
@@ -8992,18 +8982,18 @@ def line(*args):
 
     Draws a line (a direct path between two points) to the screen. The version of
     ``line()`` with four parameters draws the line in 2D.  To color a line, use the
-    :doc:`stroke` function. A line cannot be filled, therefore the :doc:`fill`
+    ``stroke()`` function. A line cannot be filled, therefore the ``fill()``
     function will not affect the color of a line. 2D lines are drawn with a width of
-    one pixel by default, but this can be changed with the :doc:`stroke_weight`
+    one pixel by default, but this can be changed with the ``stroke_weight()``
     function. The version with six parameters allows the line to be placed anywhere
     within XYZ space. Drawing this shape in 3D with the ``z`` parameter requires the
-    ``P3D`` parameter in combination with :doc:`size` as shown in the third example.
+    ``P3D`` parameter in combination with ``size()`` as shown in the third example.
     """
     return _py5sketch.line(*args)
 
 
 def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Draw a collection of lines to the screen.
 
     Underlying Java method: PApplet.lines
 
@@ -9011,14 +9001,19 @@ def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
     ----------
 
     coordinates: NDArray[(Any, Any), Float]
-        missing variable description
+        array of line coordinates
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Draw a collection of lines to the screen. The purpose of this method is to
+    provide an alternative to repeatedly calling ``line()`` in a loop. For a large
+    number of lines, the performance of ``lines()`` will be much faster.
+
+    The ``coordinates`` parameter should be a numpy array with one row for each
+    line. The first few columns are for the first point of each line and the next
+    few columns are for the second point of each line. There will be four or six
+    columns for 2D or 3D points, respectively.
     """
     return _py5sketch.lines(coordinates)
 
@@ -9038,7 +9033,7 @@ def load_font(filename: str, /) -> Py5Font:
     -----
 
     Loads a .vlw formatted font into a ``Py5Font`` object. Create a .vlw font with
-    the :doc:`create_font_file` function. This tool creates a texture for each
+    the ``create_font_file()`` function. This tool creates a texture for each
     alphanumeric character and then adds them as a .vlw file to the current Sketch's
     data folder. Because the letters are defined as textures (and not vector data)
     the size at which the fonts are created must be considered in relation to the
@@ -9047,7 +9042,7 @@ def load_font(filename: str, /) -> Py5Font:
     and displayed at 48pts, the letters will be distorted because the program will
     be stretching a small graphic to a large size.
 
-    Like :doc:`load_image` and other functions that load data, the ``load_font()``
+    Like ``load_image()`` and other functions that load data, the ``load_font()``
     function should not be used inside ``draw()``, because it will slow down the
     Sketch considerably, as the font will be re-loaded from the disk (or network) on
     each frame. It's recommended to load files inside ``setup()``.
@@ -9063,7 +9058,7 @@ def load_font(filename: str, /) -> Py5Font:
     the program, however the ``None`` value may cause an error if your code does not
     check whether the value returned is ``None``.
 
-    Use :doc:`create_font` (instead of ``load_font()``) to enable vector data to be
+    Use ``create_font()`` (instead of ``load_font()``) to enable vector data to be
     used with the default renderer setting. This can be helpful when many font sizes
     are needed, or when using any renderer based on the default renderer, such as
     the ``PDF`` renderer.
@@ -9072,17 +9067,17 @@ def load_font(filename: str, /) -> Py5Font:
 
 
 def load_pixels() -> None:
-    """Loads the pixel data of the current display window into the :doc:`pixels` array.
+    """Loads the pixel data of the current display window into the ``pixels[]`` array.
 
     Underlying Java method: PApplet.loadPixels
 
     Notes
     -----
 
-    Loads the pixel data of the current display window into the :doc:`pixels` array.
+    Loads the pixel data of the current display window into the ``pixels[]`` array.
     This function must always be called before reading from or writing to
-    :doc:`pixels`. Subsequent changes to the display window will not be reflected in
-    :doc:`pixels` until ``load_pixels()`` is called again.
+    ``pixels[]``. Subsequent changes to the display window will not be reflected in
+    ``pixels[]`` until ``load_pixels()`` is called again.
     """
     return _py5sketch.load_pixels()
 
@@ -9236,7 +9231,7 @@ def load_shape(filename: str, /) -> Py5Shape:
         name of file to load, can be .svg or .obj
 
     options: str
-        missing variable description
+        unused parameter
 
     Notes
     -----
@@ -9281,7 +9276,7 @@ def load_shape(filename: str, options: str, /) -> Py5Shape:
         name of file to load, can be .svg or .obj
 
     options: str
-        missing variable description
+        unused parameter
 
     Notes
     -----
@@ -9325,7 +9320,7 @@ def load_shape(*args):
         name of file to load, can be .svg or .obj
 
     options: str
-        missing variable description
+        unused parameter
 
     Notes
     -----
@@ -9359,7 +9354,7 @@ def loop() -> None:
     -----
 
     By default, py5 loops through ``draw()`` continuously, executing the code within
-    it. However, the ``draw()`` loop may be stopped by calling :doc:`no_loop`. In
+    it. However, the ``draw()`` loop may be stopped by calling ``no_loop()``. In
     that case, the ``draw()`` loop can be resumed with ``loop()``.
     """
     return _py5sketch.loop()
@@ -9421,9 +9416,9 @@ def model_x(x: float, y: float, z: float, /) -> float:
     space relative to the location of the original point once the transformations
     are no longer in use.
 
-    In the example, the ``model_x()``, :doc:`model_y`, and :doc:`model_z` functions
+    In the example, the ``model_x()``, ``model_y()``, and ``model_z()`` functions
     record the location of a box in space after being placed using a series of
-    translate and rotate commands. After :doc:`pop_matrix` is called, those
+    translate and rotate commands. After ``pop_matrix()`` is called, those
     transformations no longer apply, but the (x, y, z) coordinate returned by the
     model functions is used to place another box in the same location.
     """
@@ -9456,9 +9451,9 @@ def model_y(x: float, y: float, z: float, /) -> float:
     space relative to the location of the original point once the transformations
     are no longer in use.
 
-    In the example, the :doc:`model_x`, ``model_y()``, and :doc:`model_z` functions
+    In the example, the ``model_x()``, ``model_y()``, and ``model_z()`` functions
     record the location of a box in space after being placed using a series of
-    translate and rotate commands. After :doc:`pop_matrix` is called, those
+    translate and rotate commands. After ``pop_matrix()`` is called, those
     transformations no longer apply, but the (x, y, z) coordinate returned by the
     model functions is used to place another box in the same location.
     """
@@ -9491,9 +9486,9 @@ def model_z(x: float, y: float, z: float, /) -> float:
     space relative to the location of the original point once the transformations
     are no longer in use.
 
-    In the example, the :doc:`model_x`, :doc:`model_y`, and ``model_z()`` functions
+    In the example, the ``model_x()``, ``model_y()``, and ``model_z()`` functions
     record the location of a box in space after being placed using a series of
-    translate and rotate commands. After :doc:`pop_matrix` is called, those
+    translate and rotate commands. After ``pop_matrix()`` is called, those
     transformations no longer apply, but the (x, y, z) coordinate returned by the
     model functions is used to place another box in the same location.
     """
@@ -9515,14 +9510,14 @@ def month() -> int:
 
 
 def no_clip() -> None:
-    """Disables the clipping previously started by the :doc:`clip` function.
+    """Disables the clipping previously started by the ``clip()`` function.
 
     Underlying Java method: PApplet.noClip
 
     Notes
     -----
 
-    Disables the clipping previously started by the :doc:`clip` function.
+    Disables the clipping previously started by the ``clip()`` function.
     """
     return _py5sketch.no_clip()
 
@@ -9549,8 +9544,8 @@ def no_fill() -> None:
     Notes
     -----
 
-    Disables filling geometry. If both :doc:`no_stroke` and ``no_fill()`` are
-    called, nothing will be drawn to the screen.
+    Disables filling geometry. If both ``no_stroke()`` and ``no_fill()`` are called,
+    nothing will be drawn to the screen.
     """
     return _py5sketch.no_fill()
 
@@ -9564,7 +9559,7 @@ def no_lights() -> None:
     -----
 
     Disable all lighting. Lighting is turned off by default and enabled with the
-    :doc:`lights` function. This function can be used to disable lighting so that 2D
+    ``lights()`` function. This function can be used to disable lighting so that 2D
     geometry (which does not require lighting) can be drawn after a set of lighted
     3D geometry.
     """
@@ -9579,20 +9574,20 @@ def no_loop() -> None:
     Notes
     -----
 
-    Stops py5 from continuously executing the code within ``draw()``. If :doc:`loop`
+    Stops py5 from continuously executing the code within ``draw()``. If ``loop()``
     is called, the code in ``draw()`` begins to run continuously again. If using
     ``no_loop()`` in ``setup()``, it should be the last line inside the block.
 
     When ``no_loop()`` is used, it's not possible to manipulate or access the screen
     inside event handling functions such as ``mouse_pressed()`` or
-    ``key_pressed()``. Instead, use those functions to call :doc:`redraw` or
-    :doc:`loop`, which will run ``draw()``, which can update the screen properly.
+    ``key_pressed()``. Instead, use those functions to call ``redraw()`` or
+    ``loop()``, which will run ``draw()``, which can update the screen properly.
     This means that when ``no_loop()`` has been called, no drawing can happen, and
-    functions like :doc:`save_frame` or :doc:`load_pixels` may not be used.
+    functions like ``save_frame()`` or ``load_pixels()`` may not be used.
 
-    Note that if the Sketch is resized, :doc:`redraw` will be called to update the
+    Note that if the Sketch is resized, ``redraw()`` will be called to update the
     Sketch, even after ``no_loop()`` has been specified. Otherwise, the Sketch would
-    enter an odd state until :doc:`loop` was called.
+    enter an odd state until ``loop()`` was called.
     """
     return _py5sketch.no_loop()
 
@@ -9608,9 +9603,9 @@ def no_smooth() -> None:
 
     Draws all geometry and fonts with jagged (aliased) edges and images with hard
     edges between the pixels when enlarged rather than interpolating pixels.  Note
-    that :doc:`smooth` is active by default, so it is necessary to call
+    that ``smooth()`` is active by default, so it is necessary to call
     ``no_smooth()`` to disable smoothing of geometry, fonts, and images. The
-    ``no_smooth()`` function can only be run once for each Sketch and must be called
+    ``no_smooth()`` method can only be run once for each Sketch and must be called
     in ``settings()``.
     """
     return _py5sketch.no_smooth()
@@ -9624,25 +9619,10 @@ def no_stroke() -> None:
     Notes
     -----
 
-    Disables drawing the stroke (outline). If both ``no_stroke()`` and
-    :doc:`no_fill` are called, nothing will be drawn to the screen.
+    Disables drawing the stroke (outline). If both ``no_stroke()`` and ``no_fill()``
+    are called, nothing will be drawn to the screen.
     """
     return _py5sketch.no_stroke()
-
-
-def no_texture() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.noTexture
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.no_texture()
 
 
 def no_tint() -> None:
@@ -9890,21 +9870,6 @@ def ortho(*args):
     return _py5sketch.ortho(*args)
 
 
-def pause() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.pause
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.pause()
-
-
 @overload
 def perspective() -> None:
     """Sets a perspective projection applying foreshortening, making distant objects
@@ -10064,12 +10029,12 @@ def pixel_density(density: int, /) -> None:
     displays. This function can only be run once within a program and it must be
     called in ``settings()``.  The ``pixel_density()`` should only be used with
     hardcoded numbers (in almost all cases this number will be 2) or in combination
-    with :doc:`display_density` as in the second example.
+    with ``display_density()`` as in the second example.
 
     When the pixel density is set to more than 1, it changes all of the pixel
-    operations including the way :doc:`get`, :doc:`blend`, :doc:`copy`,
-    :doc:`update_pixels`, and :doc:`update_np_pixels` all work. See the reference
-    for :doc:`pixel_width` and :doc:`pixel_height` for more information.
+    operations including the way ``get()``, ``blend()``, ``copy()``,
+    ``update_pixels()``, and ``update_np_pixels()`` all work. See the reference for
+    ``pixel_width`` and ``pixel_height`` for more information.
 
     To use variables as the arguments to ``pixel_density()`` function, place the
     ``pixel_density()`` function within the ``settings()`` function.
@@ -10110,9 +10075,9 @@ def point(x: float, y: float, /) -> None:
     parameter is the horizontal value for the point, the second value is the
     vertical value for the point, and the optional third value is the depth value.
     Drawing this shape in 3D with the ``z`` parameter requires the ``P3D`` parameter
-    in combination with :doc:`size` as shown in the above example.
+    in combination with ``size()`` as shown in the second example.
 
-    Use :doc:`stroke` to set the color of a ``point()``.
+    Use ``stroke()`` to set the color of a ``point()``.
 
     Point appears round with the default ``stroke_cap(ROUND)`` and square with
     ``stroke_cap(PROJECT)``. Points are invisible with ``stroke_cap(SQUARE)`` (no
@@ -10120,8 +10085,8 @@ def point(x: float, y: float, /) -> None:
 
     Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
     screen, depending on the graphics settings of the computer. Workarounds include
-    setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
-    the point using either :doc:`circle` or :doc:`square`.
+    setting the pixel using the ``pixels[]`` or ``np_pixels[]`` arrays or drawing
+    the point using either ``circle()`` or ``square()``.
     """
     pass
 
@@ -10159,9 +10124,9 @@ def point(x: float, y: float, z: float, /) -> None:
     parameter is the horizontal value for the point, the second value is the
     vertical value for the point, and the optional third value is the depth value.
     Drawing this shape in 3D with the ``z`` parameter requires the ``P3D`` parameter
-    in combination with :doc:`size` as shown in the above example.
+    in combination with ``size()`` as shown in the second example.
 
-    Use :doc:`stroke` to set the color of a ``point()``.
+    Use ``stroke()`` to set the color of a ``point()``.
 
     Point appears round with the default ``stroke_cap(ROUND)`` and square with
     ``stroke_cap(PROJECT)``. Points are invisible with ``stroke_cap(SQUARE)`` (no
@@ -10169,8 +10134,8 @@ def point(x: float, y: float, z: float, /) -> None:
 
     Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
     screen, depending on the graphics settings of the computer. Workarounds include
-    setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
-    the point using either :doc:`circle` or :doc:`square`.
+    setting the pixel using the ``pixels[]`` or ``np_pixels[]`` arrays or drawing
+    the point using either ``circle()`` or ``square()``.
     """
     pass
 
@@ -10207,9 +10172,9 @@ def point(*args):
     parameter is the horizontal value for the point, the second value is the
     vertical value for the point, and the optional third value is the depth value.
     Drawing this shape in 3D with the ``z`` parameter requires the ``P3D`` parameter
-    in combination with :doc:`size` as shown in the above example.
+    in combination with ``size()`` as shown in the second example.
 
-    Use :doc:`stroke` to set the color of a ``point()``.
+    Use ``stroke()`` to set the color of a ``point()``.
 
     Point appears round with the default ``stroke_cap(ROUND)`` and square with
     ``stroke_cap(PROJECT)``. Points are invisible with ``stroke_cap(SQUARE)`` (no
@@ -10217,8 +10182,8 @@ def point(*args):
 
     Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
     screen, depending on the graphics settings of the computer. Workarounds include
-    setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
-    the point using either :doc:`circle` or :doc:`square`.
+    setting the pixel using the ``pixels[]`` or ``np_pixels[]`` arrays or drawing
+    the point using either ``circle()`` or ``square()``.
     """
     return _py5sketch.point(*args)
 
@@ -10264,7 +10229,8 @@ def point_light(v1: float, v2: float, v3: float,
 
 
 def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Draw a collection of points, each a coordinate in space at the dimension of one
+    pixel.
 
     Underlying Java method: PApplet.points
 
@@ -10272,21 +10238,25 @@ def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
     ----------
 
     coordinates: NDArray[(Any, Any), Float]
-        missing variable description
+        array of point coordinates
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Draw a collection of points, each a coordinate in space at the dimension of one
+    pixel. The purpose of this method is to provide an alternative to repeatedly
+    calling ``point()`` in a loop. For a large number of points, the performance of
+    ``points()`` will be much faster.
+
+    The ``coordinates`` parameter should be a numpy array with one row for each
+    point. There should be two or three columns for 2D or 3D points, respectively.
     """
     return _py5sketch.points(coordinates)
 
 
 def pop() -> None:
     """The ``pop()`` function restores the previous drawing style settings and
-    transformations after :doc:`push` has changed them.
+    transformations after ``push()`` has changed them.
 
     Underlying Java method: PApplet.pop
 
@@ -10294,23 +10264,22 @@ def pop() -> None:
     -----
 
     The ``pop()`` function restores the previous drawing style settings and
-    transformations after :doc:`push` has changed them. Note that these functions
-    are always used together. They allow you to change the style and transformation
+    transformations after ``push()`` has changed them. Note that these functions are
+    always used together. They allow you to change the style and transformation
     settings and later return to what you had. When a new state is started with
-    :doc:`push`, it builds on the current style and transform information.
+    ``push()``, it builds on the current style and transform information.
 
-    :doc:`push` stores information related to the current transformation state and
-    style settings controlled by the following functions: :doc:`rotate`,
-    :doc:`translate`, :doc:`scale`, :doc:`fill`, :doc:`stroke`, :doc:`tint`,
-    :doc:`stroke_weight`, :doc:`stroke_cap`, :doc:`stroke_join`, :doc:`image_mode`,
-    :doc:`rect_mode`, :doc:`ellipse_mode`, :doc:`color_mode`, :doc:`text_align`,
-    :doc:`text_font`, :doc:`text_mode`, :doc:`text_size`, and :doc:`text_leading`.
+    ``push()`` stores information related to the current transformation state and
+    style settings controlled by the following functions: ``rotate()``,
+    ``translate()``, ``scale()``, ``fill()``, ``stroke()``, ``tint()``,
+    ``stroke_weight()``, ``stroke_cap()``, ``stroke_join()``, ``image_mode()``,
+    ``rect_mode()``, ``ellipse_mode()``, ``color_mode()``, ``text_align()``,
+    ``text_font()``, ``text_mode()``, ``text_size()``, and ``text_leading()``.
 
-    The :doc:`push` and ``pop()`` functions can be used in place of
-    :doc:`push_matrix`, :doc:`pop_matrix`, ``push_styles()``, and ``pop_styles()``.
-    The difference is that :doc:`push` and ``pop()`` control both the
-    transformations (rotate, scale, translate) and the drawing styles at the same
-    time.
+    The ``push()`` and ``pop()`` functions can be used in place of
+    ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and ``pop_styles()``.
+    The difference is that ``push()`` and ``pop()`` control both the transformations
+    (rotate, scale, translate) and the drawing styles at the same time.
     """
     return _py5sketch.pop()
 
@@ -10325,8 +10294,8 @@ def pop_matrix() -> None:
 
     Pops the current transformation matrix off the matrix stack. Understanding
     pushing and popping requires understanding the concept of a matrix stack. The
-    :doc:`push_matrix` function saves the current coordinate system to the stack and
-    ``pop_matrix()`` restores the prior coordinate system. :doc:`push_matrix` and
+    ``push_matrix()`` function saves the current coordinate system to the stack and
+    ``pop_matrix()`` restores the prior coordinate system. ``push_matrix()`` and
     ``pop_matrix()`` are used in conjuction with the other transformation functions
     and may be embedded to control the scope of the transformations.
     """
@@ -10334,7 +10303,7 @@ def pop_matrix() -> None:
 
 
 def pop_style() -> None:
-    """The :doc:`push_style` function saves the current style settings and
+    """The ``push_style()`` function saves the current style settings and
     ``pop_style()`` restores the prior settings; these functions are always used
     together.
 
@@ -10343,12 +10312,12 @@ def pop_style() -> None:
     Notes
     -----
 
-    The :doc:`push_style` function saves the current style settings and
+    The ``push_style()`` function saves the current style settings and
     ``pop_style()`` restores the prior settings; these functions are always used
     together. They allow you to change the style settings and later return to what
-    you had. When a new style is started with :doc:`push_style`, it builds on the
-    current style information. The :doc:`push_style` and ``pop_style()`` functions
-    can be embedded to provide more control (see the second example for a
+    you had. When a new style is started with ``push_style()``, it builds on the
+    current style information. The ``push_style()`` and ``pop_style()`` method pairs
+    can be nested to provide more control (see the second example for a
     demonstration.)
     """
     return _py5sketch.pop_style()
@@ -10395,7 +10364,7 @@ def print_projection() -> None:
 
 def push() -> None:
     """The ``push()`` function saves the current drawing style settings and
-    transformations, while :doc:`pop` restores these settings.
+    transformations, while ``pop()`` restores these settings.
 
     Underlying Java method: PApplet.push
 
@@ -10403,24 +10372,23 @@ def push() -> None:
     -----
 
     The ``push()`` function saves the current drawing style settings and
-    transformations, while :doc:`pop` restores these settings. Note that these
+    transformations, while ``pop()`` restores these settings. Note that these
     functions are always used together. They allow you to change the style and
     transformation settings and later return to what you had. When a new state is
     started with ``push()``, it builds on the current style and transform
     information.
 
     ``push()`` stores information related to the current transformation state and
-    style settings controlled by the following functions: :doc:`rotate`,
-    :doc:`translate`, :doc:`scale`, :doc:`fill`, :doc:`stroke`, :doc:`tint`,
-    :doc:`stroke_weight`, :doc:`stroke_cap`, :doc:`stroke_join`, :doc:`image_mode`,
-    :doc:`rect_mode`, :doc:`ellipse_mode`, :doc:`color_mode`, :doc:`text_align`,
-    :doc:`text_font`, :doc:`text_mode`, :doc:`text_size`, :doc:`text_leading`.
+    style settings controlled by the following functions: ``rotate()``,
+    ``translate()``, ``scale()``, ``fill()``, ``stroke()``, ``tint()``,
+    ``stroke_weight()``, ``stroke_cap()``, ``stroke_join()``, ``image_mode()``,
+    ``rect_mode()``, ``ellipse_mode()``, ``color_mode()``, ``text_align()``,
+    ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``.
 
-    The ``push()`` and :doc:`pop` functions can be used in place of
-    :doc:`push_matrix`, :doc:`pop_matrix`, ``push_styles()``, and ``pop_styles()``.
-    The difference is that ``push()`` and :doc:`pop` control both the
-    transformations (rotate, scale, translate) and the drawing styles at the same
-    time.
+    The ``push()`` and ``pop()`` functions can be used in place of
+    ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and ``pop_styles()``.
+    The difference is that ``push()`` and ``pop()`` control both the transformations
+    (rotate, scale, translate) and the drawing styles at the same time.
     """
     return _py5sketch.push()
 
@@ -10434,10 +10402,10 @@ def push_matrix() -> None:
     -----
 
     Pushes the current transformation matrix onto the matrix stack. Understanding
-    ``push_matrix()`` and :doc:`pop_matrix` requires understanding the concept of a
+    ``push_matrix()`` and ``pop_matrix()`` requires understanding the concept of a
     matrix stack. The ``push_matrix()`` function saves the current coordinate system
-    to the stack and :doc:`pop_matrix` restores the prior coordinate system.
-    ``push_matrix()`` and :doc:`pop_matrix` are used in conjuction with the other
+    to the stack and ``pop_matrix()`` restores the prior coordinate system.
+    ``push_matrix()`` and ``pop_matrix()`` are used in conjuction with the other
     transformation functions and may be embedded to control the scope of the
     transformations.
     """
@@ -10446,7 +10414,7 @@ def push_matrix() -> None:
 
 def push_style() -> None:
     """The ``push_style()`` function saves the current style settings and
-    :doc:`pop_style` restores the prior settings.
+    ``pop_style()`` restores the prior settings.
 
     Underlying Java method: PApplet.pushStyle
 
@@ -10454,19 +10422,19 @@ def push_style() -> None:
     -----
 
     The ``push_style()`` function saves the current style settings and
-    :doc:`pop_style` restores the prior settings. Note that these functions are
+    ``pop_style()`` restores the prior settings. Note that these functions are
     always used together. They allow you to change the style settings and later
     return to what you had. When a new style is started with ``push_style()``, it
     builds on the current style information. The ``push_style()`` and
-    :doc:`pop_style` functions can be embedded to provide more control. (See the
+    ``pop_style()`` method pairs can be nested to provide more control. (See the
     second example for a demonstration.)
 
     The style information controlled by the following functions are included in the
-    style: :doc:`fill`, :doc:`stroke`, :doc:`tint`, :doc:`stroke_weight`,
-    :doc:`stroke_cap`, :doc:`stroke_join`, :doc:`image_mode`, :doc:`rect_mode`,
-    :doc:`ellipse_mode`, :doc:`shape_mode`, :doc:`color_mode`, :doc:`text_align`,
-    :doc:`text_font`, :doc:`text_mode`, :doc:`text_size`, :doc:`text_leading`,
-    :doc:`emissive`, :doc:`specular`, :doc:`shininess`, and :doc:`ambient`.
+    style: ``fill()``, ``stroke()``, ``tint()``, ``stroke_weight()``,
+    ``stroke_cap()``, ``stroke_join()``, ``image_mode()``, ``rect_mode()``,
+    ``ellipse_mode()``, ``shape_mode()``, ``color_mode()``, ``text_align()``,
+    ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``,
+    ``emissive()``, ``specular()``, ``shininess()``, and ``ambient()``.
     """
     return _py5sketch.push_style()
 
@@ -10556,11 +10524,11 @@ def quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None:
     Specifies vertex coordinates for quadratic Bezier curves. Each call to
     ``quadratic_vertex()`` defines the position of one control point and one anchor
     point of a Bezier curve, adding a new segment to a line or shape. The first time
-    ``quadratic_vertex()`` is used within a :doc:`begin_shape` call, it must be
-    prefaced with a call to :doc:`vertex` to set the first anchor point. This
-    function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
-    when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
-    3D version requires rendering with ``P3D``.
+    ``quadratic_vertex()`` is used within a ``begin_shape()`` call, it must be
+    prefaced with a call to ``vertex()`` to set the first anchor point. This method
+    must be used between ``begin_shape()`` and ``end_shape()`` and only when there
+    is no ``MODE`` parameter specified to ``begin_shape()``. Using the 3D version
+    requires rendering with ``P3D``.
     """
     pass
 
@@ -10607,11 +10575,11 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
     Specifies vertex coordinates for quadratic Bezier curves. Each call to
     ``quadratic_vertex()`` defines the position of one control point and one anchor
     point of a Bezier curve, adding a new segment to a line or shape. The first time
-    ``quadratic_vertex()`` is used within a :doc:`begin_shape` call, it must be
-    prefaced with a call to :doc:`vertex` to set the first anchor point. This
-    function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
-    when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
-    3D version requires rendering with ``P3D``.
+    ``quadratic_vertex()`` is used within a ``begin_shape()`` call, it must be
+    prefaced with a call to ``vertex()`` to set the first anchor point. This method
+    must be used between ``begin_shape()`` and ``end_shape()`` and only when there
+    is no ``MODE`` parameter specified to ``begin_shape()``. Using the 3D version
+    requires rendering with ``P3D``.
     """
     pass
 
@@ -10656,17 +10624,17 @@ def quadratic_vertex(*args):
     Specifies vertex coordinates for quadratic Bezier curves. Each call to
     ``quadratic_vertex()`` defines the position of one control point and one anchor
     point of a Bezier curve, adding a new segment to a line or shape. The first time
-    ``quadratic_vertex()`` is used within a :doc:`begin_shape` call, it must be
-    prefaced with a call to :doc:`vertex` to set the first anchor point. This
-    function must be used between :doc:`begin_shape` and :doc:`end_shape` and only
-    when there is no ``MODE`` parameter specified to :doc:`begin_shape`. Using the
-    3D version requires rendering with ``P3D``.
+    ``quadratic_vertex()`` is used within a ``begin_shape()`` call, it must be
+    prefaced with a call to ``vertex()`` to set the first anchor point. This method
+    must be used between ``begin_shape()`` and ``end_shape()`` and only when there
+    is no ``MODE`` parameter specified to ``begin_shape()``. Using the 3D version
+    requires rendering with ``P3D``.
     """
     return _py5sketch.quadratic_vertex(*args)
 
 
 def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Create a collection of quadratic vertices.
 
     Underlying Java method: PApplet.quadraticVertices
 
@@ -10674,14 +10642,20 @@ def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     ----------
 
     coordinates: NDArray[(Any, Any), Float]
-        missing variable description
+        array of quadratic vertex coordinates
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Create a collection of quadratic vertices. The purpose of this method is to
+    provide an alternative to repeatedly calling ``quadratic_vertex()`` in a loop.
+    For a large number of quadratic vertices, the performance of
+    ``quadratic_vertices()`` will be much faster.
+
+    The ``coordinates`` parameter should be a numpy array with one row for each
+    quadratic vertex. The first few columns are for the control point and the next
+    few columns are for the anchor point. There should be four or six columns for 2D
+    or 3D points, respectively.
     """
     return _py5sketch.quadratic_vertices(coordinates)
 
@@ -10738,7 +10712,7 @@ def rect(a: float, b: float, c: float, d: float, /) -> None:
     angle at ninety degrees. By default, the first two parameters set the location
     of the upper-left corner, the third sets the width, and the fourth sets the
     height. The way these parameters are interpreted, however, may be changed with
-    the :doc:`rect_mode` function.
+    the ``rect_mode()`` function.
 
     To draw a rounded rectangle, add a fifth parameter, which is used as the radius
     value for all four corners.
@@ -10803,7 +10777,7 @@ def rect(a: float, b: float, c: float, d: float, r: float, /) -> None:
     angle at ninety degrees. By default, the first two parameters set the location
     of the upper-left corner, the third sets the width, and the fourth sets the
     height. The way these parameters are interpreted, however, may be changed with
-    the :doc:`rect_mode` function.
+    the ``rect_mode()`` function.
 
     To draw a rounded rectangle, add a fifth parameter, which is used as the radius
     value for all four corners.
@@ -10869,7 +10843,7 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
     angle at ninety degrees. By default, the first two parameters set the location
     of the upper-left corner, the third sets the width, and the fourth sets the
     height. The way these parameters are interpreted, however, may be changed with
-    the :doc:`rect_mode` function.
+    the ``rect_mode()`` function.
 
     To draw a rounded rectangle, add a fifth parameter, which is used as the radius
     value for all four corners.
@@ -10933,7 +10907,7 @@ def rect(*args):
     angle at ninety degrees. By default, the first two parameters set the location
     of the upper-left corner, the third sets the width, and the fourth sets the
     height. The way these parameters are interpreted, however, may be changed with
-    the :doc:`rect_mode` function.
+    the ``rect_mode()`` function.
 
     To draw a rounded rectangle, add a fifth parameter, which is used as the radius
     value for all four corners.
@@ -10948,7 +10922,7 @@ def rect(*args):
 
 def rect_mode(mode: int, /) -> None:
     """Modifies the location from which rectangles are drawn by changing the way in
-    which parameters given to :doc:`rect` are intepreted.
+    which parameters given to ``rect()`` are intepreted.
 
     Underlying Java method: PApplet.rectMode
 
@@ -10962,21 +10936,21 @@ def rect_mode(mode: int, /) -> None:
     -----
 
     Modifies the location from which rectangles are drawn by changing the way in
-    which parameters given to :doc:`rect` are intepreted.
+    which parameters given to ``rect()`` are intepreted.
 
     The default mode is ``rect_mode(CORNER)``, which interprets the first two
-    parameters of :doc:`rect` as the upper-left corner of the shape, while the third
+    parameters of ``rect()`` as the upper-left corner of the shape, while the third
     and fourth parameters are its width and height.
 
-    ``rect_mode(CORNERS)`` interprets the first two parameters of :doc:`rect` as the
+    ``rect_mode(CORNERS)`` interprets the first two parameters of ``rect()`` as the
     location of one corner, and the third and fourth parameters as the location of
     the opposite corner.
 
-    ``rect_mode(CENTER)`` interprets the first two parameters of :doc:`rect` as the
+    ``rect_mode(CENTER)`` interprets the first two parameters of ``rect()`` as the
     shape's center point, while the third and fourth parameters are its width and
     height.
 
-    ``rect_mode(RADIUS)`` also uses the first two parameters of :doc:`rect` as the
+    ``rect_mode(RADIUS)`` also uses the first two parameters of ``rect()`` as the
     shape's center point, but uses the third and fourth parameters to specify half
     of the shapes's width and height.
 
@@ -10987,7 +10961,7 @@ def rect_mode(mode: int, /) -> None:
 
 
 def red(rgb: int, /) -> float:
-    """Extracts the red value from a color, scaled to match current :doc:`color_mode`.
+    """Extracts the red value from a color, scaled to match current ``color_mode()``.
 
     Underlying Java method: PApplet.red
 
@@ -11000,9 +10974,7 @@ def red(rgb: int, /) -> float:
     Notes
     -----
 
-    Extracts the red value from a color, scaled to match current :doc:`color_mode`.
-    The value is always returned as a float, so be careful not to assign it to an
-    int value.
+    Extracts the red value from a color, scaled to match current ``color_mode()``.
 
     The ``red()`` function is easy to use and understand, but it is slower than a
     technique called bit shifting. When working in ``color_mode(RGB, 255)``, you can
@@ -11031,7 +11003,7 @@ def redraw() -> None:
     ``draw()`` immediately (it only sets a flag that indicates an update is needed).
 
     The ``redraw()`` function does not work properly when called inside ``draw()``.
-    To enable/disable animations, use :doc:`loop` and :doc:`no_loop`.
+    To enable/disable animations, use ``loop()`` and ``no_loop()``.
     """
     return _py5sketch.redraw()
 
@@ -11136,21 +11108,6 @@ def reset_shader(*args):
     return _py5sketch.reset_shader(*args)
 
 
-def resume() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.resume
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.resume()
-
-
 @overload
 def rotate(angle: float, /) -> None:
     """Rotates the amount specified by the ``angle`` parameter.
@@ -11172,20 +11129,20 @@ def rotate(angle: float, /) -> None:
         angle of rotation specified in radians
 
     x: float
-        missing variable description
+        x-coordinate of vector to rotate around
 
     y: float
-        missing variable description
+        y-coordinate of vector to rotate around
 
     z: float
-        missing variable description
+        z-coordinate of vector to rotate around
 
     Notes
     -----
 
     Rotates the amount specified by the ``angle`` parameter. Angles must be
     specified in radians (values from ``0`` to ``TWO_PI``), or they can be converted
-    from degrees to radians with the :doc:`radians` function.
+    from degrees to radians with the ``radians()`` function.
 
     The coordinates are always rotated around their relative position to the origin.
     Positive numbers rotate objects in a clockwise direction and negative numbers
@@ -11196,8 +11153,8 @@ def rotate(angle: float, /) -> None:
     tranformations are reset when ``draw()`` begins again.
 
     Technically, ``rotate()`` multiplies the current transformation matrix by a
-    rotation matrix. This function can be further controlled by :doc:`push_matrix`
-    and :doc:`pop_matrix`.
+    rotation matrix. This function can be further controlled by ``push_matrix()``
+    and ``pop_matrix()``.
     """
     pass
 
@@ -11223,20 +11180,20 @@ def rotate(angle: float, x: float, y: float, z: float, /) -> None:
         angle of rotation specified in radians
 
     x: float
-        missing variable description
+        x-coordinate of vector to rotate around
 
     y: float
-        missing variable description
+        y-coordinate of vector to rotate around
 
     z: float
-        missing variable description
+        z-coordinate of vector to rotate around
 
     Notes
     -----
 
     Rotates the amount specified by the ``angle`` parameter. Angles must be
     specified in radians (values from ``0`` to ``TWO_PI``), or they can be converted
-    from degrees to radians with the :doc:`radians` function.
+    from degrees to radians with the ``radians()`` function.
 
     The coordinates are always rotated around their relative position to the origin.
     Positive numbers rotate objects in a clockwise direction and negative numbers
@@ -11247,8 +11204,8 @@ def rotate(angle: float, x: float, y: float, z: float, /) -> None:
     tranformations are reset when ``draw()`` begins again.
 
     Technically, ``rotate()`` multiplies the current transformation matrix by a
-    rotation matrix. This function can be further controlled by :doc:`push_matrix`
-    and :doc:`pop_matrix`.
+    rotation matrix. This function can be further controlled by ``push_matrix()``
+    and ``pop_matrix()``.
     """
     pass
 
@@ -11273,20 +11230,20 @@ def rotate(*args):
         angle of rotation specified in radians
 
     x: float
-        missing variable description
+        x-coordinate of vector to rotate around
 
     y: float
-        missing variable description
+        y-coordinate of vector to rotate around
 
     z: float
-        missing variable description
+        z-coordinate of vector to rotate around
 
     Notes
     -----
 
     Rotates the amount specified by the ``angle`` parameter. Angles must be
     specified in radians (values from ``0`` to ``TWO_PI``), or they can be converted
-    from degrees to radians with the :doc:`radians` function.
+    from degrees to radians with the ``radians()`` function.
 
     The coordinates are always rotated around their relative position to the origin.
     Positive numbers rotate objects in a clockwise direction and negative numbers
@@ -11297,8 +11254,8 @@ def rotate(*args):
     tranformations are reset when ``draw()`` begins again.
 
     Technically, ``rotate()`` multiplies the current transformation matrix by a
-    rotation matrix. This function can be further controlled by :doc:`push_matrix`
-    and :doc:`pop_matrix`.
+    rotation matrix. This function can be further controlled by ``push_matrix()``
+    and ``pop_matrix()``.
     """
     return _py5sketch.rotate(*args)
 
@@ -11319,7 +11276,7 @@ def rotate_x(angle: float, /) -> None:
 
     Rotates around the x-axis the amount specified by the ``angle`` parameter.
     Angles should be specified in radians (values from ``0`` to ``TWO_PI``) or
-    converted from degrees to radians with the :doc:`radians` function. Coordinates
+    converted from degrees to radians with the ``radians()`` function. Coordinates
     are always rotated around their relative position to the origin. Positive
     numbers rotate in a clockwise direction and negative numbers rotate in a
     counterclockwise direction. Transformations apply to everything that happens
@@ -11327,7 +11284,7 @@ def rotate_x(angle: float, /) -> None:
     calling ``rotate_x(PI/2)`` and then ``rotate_x(PI/2)`` is the same as
     ``rotate_x(PI)``. If ``rotate_x()`` is run within the ``draw()``, the
     transformation is reset when the loop begins again. This function requires using
-    ``P3D`` as a third parameter to :doc:`size` as shown in the example.
+    ``P3D`` as a third parameter to ``size()`` as shown in the example.
     """
     return _py5sketch.rotate_x(angle)
 
@@ -11348,7 +11305,7 @@ def rotate_y(angle: float, /) -> None:
 
     Rotates around the y-axis the amount specified by the ``angle`` parameter.
     Angles should be specified in radians (values from ``0`` to ``TWO_PI``) or
-    converted from degrees to radians with the :doc:`radians` function. Coordinates
+    converted from degrees to radians with the ``radians()`` function. Coordinates
     are always rotated around their relative position to the origin. Positive
     numbers rotate in a clockwise direction and negative numbers rotate in a
     counterclockwise direction. Transformations apply to everything that happens
@@ -11356,7 +11313,7 @@ def rotate_y(angle: float, /) -> None:
     calling ``rotate_y(PI/2)`` and then ``rotate_y(PI/2)`` is the same as
     ``rotate_y(PI)``. If ``rotate_y()`` is run within the ``draw()``, the
     transformation is reset when the loop begins again. This function requires using
-    ``P3D`` as a third parameter to :doc:`size` as shown in the example.
+    ``P3D`` as a third parameter to ``size()`` as shown in the example.
     """
     return _py5sketch.rotate_y(angle)
 
@@ -11377,7 +11334,7 @@ def rotate_z(angle: float, /) -> None:
 
     Rotates around the z-axis the amount specified by the ``angle`` parameter.
     Angles should be specified in radians (values from ``0`` to ``TWO_PI``) or
-    converted from degrees to radians with the :doc:`radians` function. Coordinates
+    converted from degrees to radians with the ``radians()`` function. Coordinates
     are always rotated around their relative position to the origin. Positive
     numbers rotate in a clockwise direction and negative numbers rotate in a
     counterclockwise direction. Transformations apply to everything that happens
@@ -11385,7 +11342,7 @@ def rotate_z(angle: float, /) -> None:
     calling ``rotate_z(PI/2)`` and then ``rotate_z(PI/2)`` is the same as
     ``rotate_z(PI)``. If ``rotate_z()`` is run within the ``draw()``, the
     transformation is reset when the loop begins again. This function requires using
-    ``P3D`` as a third parameter to :doc:`size` as shown in the example.
+    ``P3D`` as a third parameter to ``size()`` as shown in the example.
     """
     return _py5sketch.rotate_z(angle)
 
@@ -11453,8 +11410,8 @@ def scale(s: float, /) -> None:
     ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
     ``draw()``, the transformation is reset when the loop begins again. Using this
     function with the ``z`` parameter requires using ``P3D`` as a parameter for
-    :doc:`size`, as shown in the third example. This function can be further
-    controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
+    ``size()``, as shown in the third example. This function can be further
+    controlled with ``push_matrix()`` and ``pop_matrix()``.
     """
     pass
 
@@ -11503,8 +11460,8 @@ def scale(x: float, y: float, /) -> None:
     ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
     ``draw()``, the transformation is reset when the loop begins again. Using this
     function with the ``z`` parameter requires using ``P3D`` as a parameter for
-    :doc:`size`, as shown in the third example. This function can be further
-    controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
+    ``size()``, as shown in the third example. This function can be further
+    controlled with ``push_matrix()`` and ``pop_matrix()``.
     """
     pass
 
@@ -11553,8 +11510,8 @@ def scale(x: float, y: float, z: float, /) -> None:
     ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
     ``draw()``, the transformation is reset when the loop begins again. Using this
     function with the ``z`` parameter requires using ``P3D`` as a parameter for
-    :doc:`size`, as shown in the third example. This function can be further
-    controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
+    ``size()``, as shown in the third example. This function can be further
+    controlled with ``push_matrix()`` and ``pop_matrix()``.
     """
     pass
 
@@ -11602,8 +11559,8 @@ def scale(*args):
     ``scale(1.5)`` is the same as ``scale(3.0)``. If ``scale()`` is called within
     ``draw()``, the transformation is reset when the loop begins again. Using this
     function with the ``z`` parameter requires using ``P3D`` as a parameter for
-    :doc:`size`, as shown in the third example. This function can be further
-    controlled with :doc:`push_matrix` and :doc:`pop_matrix`.
+    ``size()``, as shown in the third example. This function can be further
+    controlled with ``push_matrix()`` and ``pop_matrix()``.
     """
     return _py5sketch.scale(*args)
 
@@ -11865,7 +11822,7 @@ def second() -> int:
 
 @overload
 def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Set the current matrix to the one specified through the parameter ``source``.
 
     Underlying Java method: PApplet.setMatrix
 
@@ -11881,24 +11838,25 @@ def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
     ----------
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Set the current matrix to the one specified through the parameter ``source``.
+    Inside the Processing code it will call ``reset_matrix()`` followed by
+    ``apply_matrix()``. This will be very slow because ``apply_matrix()`` will try
+    to calculate the inverse of the transform, so avoid it whenever possible.
     """
     pass
 
 
 @overload
 def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Set the current matrix to the one specified through the parameter ``source``.
 
     Underlying Java method: PApplet.setMatrix
 
@@ -11914,23 +11872,24 @@ def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
     ----------
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Set the current matrix to the one specified through the parameter ``source``.
+    Inside the Processing code it will call ``reset_matrix()`` followed by
+    ``apply_matrix()``. This will be very slow because ``apply_matrix()`` will try
+    to calculate the inverse of the transform, so avoid it whenever possible.
     """
     pass
 
 
 def set_matrix(*args):
-    """The documentation for this field or method has not yet been written.
+    """Set the current matrix to the one specified through the parameter ``source``.
 
     Underlying Java method: PApplet.setMatrix
 
@@ -11946,17 +11905,18 @@ def set_matrix(*args):
     ----------
 
     source: NDArray[(2, 3), Float]
-        missing variable description
+        transformation matrix data
 
     source: NDArray[(4, 4), Float]
-        missing variable description
+        transformation matrix data
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Set the current matrix to the one specified through the parameter ``source``.
+    Inside the Processing code it will call ``reset_matrix()`` followed by
+    ``apply_matrix()``. This will be very slow because ``apply_matrix()`` will try
+    to calculate the inverse of the transform, so avoid it whenever possible.
     """
     return _py5sketch.set_matrix(*args)
 
@@ -12103,7 +12063,7 @@ def shape(shape: Py5Shape, /) -> None:
     created shapes. The ``shape`` parameter specifies the shape to display and the
     coordinate parameters define the location of the shape from its upper-left
     corner. The shape is displayed at its original size unless the ``c`` and ``d``
-    parameters specify a different size. The :doc:`shape_mode` function can be used
+    parameters specify a different size. The ``shape_mode()`` function can be used
     to change the way these parameters are interpreted.
     """
     pass
@@ -12156,7 +12116,7 @@ def shape(shape: Py5Shape, x: float, y: float, /) -> None:
     created shapes. The ``shape`` parameter specifies the shape to display and the
     coordinate parameters define the location of the shape from its upper-left
     corner. The shape is displayed at its original size unless the ``c`` and ``d``
-    parameters specify a different size. The :doc:`shape_mode` function can be used
+    parameters specify a different size. The ``shape_mode()`` function can be used
     to change the way these parameters are interpreted.
     """
     pass
@@ -12209,7 +12169,7 @@ def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
     created shapes. The ``shape`` parameter specifies the shape to display and the
     coordinate parameters define the location of the shape from its upper-left
     corner. The shape is displayed at its original size unless the ``c`` and ``d``
-    parameters specify a different size. The :doc:`shape_mode` function can be used
+    parameters specify a different size. The ``shape_mode()`` function can be used
     to change the way these parameters are interpreted.
     """
     pass
@@ -12261,7 +12221,7 @@ def shape(*args):
     created shapes. The ``shape`` parameter specifies the shape to display and the
     coordinate parameters define the location of the shape from its upper-left
     corner. The shape is displayed at its original size unless the ``c`` and ``d``
-    parameters specify a different size. The :doc:`shape_mode` function can be used
+    parameters specify a different size. The ``shape_mode()`` function can be used
     to change the way these parameters are interpreted.
     """
     return _py5sketch.shape(*args)
@@ -12283,12 +12243,12 @@ def shape_mode(mode: int, /) -> None:
 
     Modifies the location from which shapes draw. The default mode is
     ``shape_mode(CORNER)``, which specifies the location to be the upper left corner
-    of the shape and uses the third and fourth parameters of :doc:`shape` to specify
+    of the shape and uses the third and fourth parameters of ``shape()`` to specify
     the width and height. The syntax ``shape_mode(CORNERS)`` uses the first and
-    second parameters of :doc:`shape` to set the location of one corner and uses the
+    second parameters of ``shape()`` to set the location of one corner and uses the
     third and fourth parameters to set the opposite corner. The syntax
     ``shape_mode(CENTER)`` draws the shape from its center point and uses the third
-    and forth parameters of :doc:`shape` to specify the width and height. The
+    and forth parameters of ``shape()`` to specify the width and height. The
     parameter must be written in ALL CAPS because Python is a case sensitive
     language.
     """
@@ -12312,17 +12272,17 @@ def shear_x(angle: float, /) -> None:
 
     Shears a shape around the x-axis the amount specified by the ``angle``
     parameter. Angles should be specified in radians (values from ``0`` to
-    ``TWO_PI``) or converted to radians with the :doc:`radians` function. Objects
-    are always sheared around their relative position to the origin and positive
-    numbers shear objects in a clockwise direction. Transformations apply to
-    everything that happens after and subsequent calls to the function accumulates
-    the effect. For example, calling ``shear_x(PI/2)`` and then ``shear_x(PI/2)`` is
-    the same as ``shear_x(PI)``. If ``shear_x()`` is called within the ``draw()``,
-    the transformation is reset when the loop begins again.
+    ``TWO_PI``) or converted to radians with the ``radians()`` function. Objects are
+    always sheared around their relative position to the origin and positive numbers
+    shear objects in a clockwise direction. Transformations apply to everything that
+    happens after and subsequent calls to the function accumulates the effect. For
+    example, calling ``shear_x(PI/2)`` and then ``shear_x(PI/2)`` is the same as
+    ``shear_x(PI)``. If ``shear_x()`` is called within the ``draw()``, the
+    transformation is reset when the loop begins again.
 
     Technically, ``shear_x()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by the
-    :doc:`push_matrix` and :doc:`pop_matrix` functions.
+    ``push_matrix()`` and ``pop_matrix()`` functions.
     """
     return _py5sketch.shear_x(angle)
 
@@ -12344,17 +12304,17 @@ def shear_y(angle: float, /) -> None:
 
     Shears a shape around the y-axis the amount specified by the ``angle``
     parameter. Angles should be specified in radians (values from ``0`` to
-    ``TWO_PI``) or converted to radians with the :doc:`radians` function. Objects
-    are always sheared around their relative position to the origin and positive
-    numbers shear objects in a clockwise direction. Transformations apply to
-    everything that happens after and subsequent calls to the function accumulates
-    the effect. For example, calling ``shear_y(PI/2)`` and then ``shear_y(PI/2)`` is
-    the same as ``shear_y(PI)``. If ``shear_y()`` is called within the ``draw()``,
-    the transformation is reset when the loop begins again.
+    ``TWO_PI``) or converted to radians with the ``radians()`` function. Objects are
+    always sheared around their relative position to the origin and positive numbers
+    shear objects in a clockwise direction. Transformations apply to everything that
+    happens after and subsequent calls to the function accumulates the effect. For
+    example, calling ``shear_y(PI/2)`` and then ``shear_y(PI/2)`` is the same as
+    ``shear_y(PI)``. If ``shear_y()`` is called within the ``draw()``, the
+    transformation is reset when the loop begins again.
 
     Technically, ``shear_y()`` multiplies the current transformation matrix by a
     rotation matrix. This function can be further controlled by the
-    :doc:`push_matrix` and :doc:`pop_matrix` functions.
+    ``push_matrix()`` and ``pop_matrix()`` functions.
     """
     return _py5sketch.shear_y(angle)
 
@@ -12373,9 +12333,9 @@ def shininess(shine: float, /) -> None:
     Notes
     -----
 
-    Sets the amount of gloss in the surface of shapes. Used in combination with
-    :doc:`ambient`, :doc:`specular`, and :doc:`emissive` in setting the material
-    properties of shapes.
+    Sets the amount of gloss in the surface of shapes. Use in combination with
+    ``ambient()``, ``specular()``, and ``emissive()`` to set the material properties
+    of shapes.
     """
     return _py5sketch.shininess(shine)
 
@@ -12416,15 +12376,15 @@ def size(width: int, height: int, /) -> None:
     Defines the dimension of the display window width and height in units of pixels.
     This must be called from the ``settings()`` function.
 
-    The built-in variables :doc:`width` and :doc:`height` are set by the parameters
-    passed to this function. For example, running ``size(640, 480)`` will assign 640
-    to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
-    is not used, the window will be given a default size of 100 x 100 pixels.
+    The built-in variables ``width`` and ``height`` are set by the parameters passed
+    to this function. For example, running ``size(640, 480)`` will assign 640 to the
+    ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
+    used, the window will be given a default size of 100 x 100 pixels.
 
     The ``size()`` function can only be used once inside a Sketch, and it cannot be
     used for resizing.
 
-    To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+    To run a Sketch at the full dimensions of a screen, use the ``full_screen()``
     function, rather than the older way of using ``size(display_width,
     display_height)``.
 
@@ -12496,15 +12456,15 @@ def size(width: int, height: int, renderer: str, /) -> None:
     Defines the dimension of the display window width and height in units of pixels.
     This must be called from the ``settings()`` function.
 
-    The built-in variables :doc:`width` and :doc:`height` are set by the parameters
-    passed to this function. For example, running ``size(640, 480)`` will assign 640
-    to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
-    is not used, the window will be given a default size of 100 x 100 pixels.
+    The built-in variables ``width`` and ``height`` are set by the parameters passed
+    to this function. For example, running ``size(640, 480)`` will assign 640 to the
+    ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
+    used, the window will be given a default size of 100 x 100 pixels.
 
     The ``size()`` function can only be used once inside a Sketch, and it cannot be
     used for resizing.
 
-    To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+    To run a Sketch at the full dimensions of a screen, use the ``full_screen()``
     function, rather than the older way of using ``size(display_width,
     display_height)``.
 
@@ -12576,15 +12536,15 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
     Defines the dimension of the display window width and height in units of pixels.
     This must be called from the ``settings()`` function.
 
-    The built-in variables :doc:`width` and :doc:`height` are set by the parameters
-    passed to this function. For example, running ``size(640, 480)`` will assign 640
-    to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
-    is not used, the window will be given a default size of 100 x 100 pixels.
+    The built-in variables ``width`` and ``height`` are set by the parameters passed
+    to this function. For example, running ``size(640, 480)`` will assign 640 to the
+    ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
+    used, the window will be given a default size of 100 x 100 pixels.
 
     The ``size()`` function can only be used once inside a Sketch, and it cannot be
     used for resizing.
 
-    To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+    To run a Sketch at the full dimensions of a screen, use the ``full_screen()``
     function, rather than the older way of using ``size(display_width,
     display_height)``.
 
@@ -12655,15 +12615,15 @@ def size(*args):
     Defines the dimension of the display window width and height in units of pixels.
     This must be called from the ``settings()`` function.
 
-    The built-in variables :doc:`width` and :doc:`height` are set by the parameters
-    passed to this function. For example, running ``size(640, 480)`` will assign 640
-    to the :doc:`width` variable and 480 to the height ``variable``. If ``size()``
-    is not used, the window will be given a default size of 100 x 100 pixels.
+    The built-in variables ``width`` and ``height`` are set by the parameters passed
+    to this function. For example, running ``size(640, 480)`` will assign 640 to the
+    ``width`` variable and 480 to the height ``variable``. If ``size()`` is not
+    used, the window will be given a default size of 100 x 100 pixels.
 
     The ``size()`` function can only be used once inside a Sketch, and it cannot be
     used for resizing.
 
-    To run a Sketch at the full dimensions of a screen, use the :doc:`full_screen`
+    To run a Sketch at the full dimensions of a screen, use the ``full_screen()``
     function, rather than the older way of using ``size(display_width,
     display_height)``.
 
@@ -12697,95 +12657,6 @@ def size(*args):
     fabrication.
     """
     return _py5sketch.size(*args)
-
-
-@overload
-def sketch_path() -> str:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.sketchPath
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * sketch_path() -> str
-     * sketch_path(where: str, /) -> str
-
-    Parameters
-    ----------
-
-    where: str
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    pass
-
-
-@overload
-def sketch_path(where: str, /) -> str:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.sketchPath
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * sketch_path() -> str
-     * sketch_path(where: str, /) -> str
-
-    Parameters
-    ----------
-
-    where: str
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    pass
-
-
-def sketch_path(*args):
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.sketchPath
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * sketch_path() -> str
-     * sketch_path(where: str, /) -> str
-
-    Parameters
-    ----------
-
-    where: str
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.sketch_path(*args)
 
 
 @overload
@@ -12827,12 +12698,8 @@ def smooth() -> None:
     smoothing.
 
     The ``smooth()`` function can only be set once within a Sketch. It must be
-    called from the `settings()`` function. The :doc:`no_smooth` function also
+    called from the `settings()`` function. The ``no_smooth()`` function also
     follows the same rules.
-
-    When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
-    after the object is created with :doc:`create_graphics`, as shown in the
-    Reference in the third example.
     """
     pass
 
@@ -12876,12 +12743,8 @@ def smooth(level: int, /) -> None:
     smoothing.
 
     The ``smooth()`` function can only be set once within a Sketch. It must be
-    called from the `settings()`` function. The :doc:`no_smooth` function also
+    called from the `settings()`` function. The ``no_smooth()`` function also
     follows the same rules.
-
-    When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
-    after the object is created with :doc:`create_graphics`, as shown in the
-    Reference in the third example.
     """
     pass
 
@@ -12924,12 +12787,8 @@ def smooth(*args):
     smoothing.
 
     The ``smooth()`` function can only be set once within a Sketch. It must be
-    called from the `settings()`` function. The :doc:`no_smooth` function also
+    called from the `settings()`` function. The ``no_smooth()`` function also
     follows the same rules.
-
-    When ``smooth()`` is used with a ``Py5Graphics`` object, it should be run right
-    after the object is created with :doc:`create_graphics`, as shown in the
-    Reference in the third example.
     """
     return _py5sketch.smooth(*args)
 
@@ -12974,8 +12833,8 @@ def specular(gray: float, /) -> None:
     Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights. Specular refers to light which bounces off a
     surface in a preferred direction (rather than bouncing in all directions like a
-    diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    diffuse light). Use in combination with ``emissive()``, ``ambient()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -13020,8 +12879,8 @@ def specular(v1: float, v2: float, v3: float, /) -> None:
     Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights. Specular refers to light which bounces off a
     surface in a preferred direction (rather than bouncing in all directions like a
-    diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    diffuse light). Use in combination with ``emissive()``, ``ambient()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -13066,8 +12925,8 @@ def specular(rgb: int, /) -> None:
     Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights. Specular refers to light which bounces off a
     surface in a preferred direction (rather than bouncing in all directions like a
-    diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    diffuse light). Use in combination with ``emissive()``, ``ambient()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     pass
 
@@ -13111,8 +12970,8 @@ def specular(*args):
     Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights. Specular refers to light which bounces off a
     surface in a preferred direction (rather than bouncing in all directions like a
-    diffuse light). Used in combination with :doc:`emissive`, :doc:`ambient`, and
-    :doc:`shininess` in setting the material properties of shapes.
+    diffuse light). Use in combination with ``emissive()``, ``ambient()``, and
+    ``shininess()`` to set the material properties of shapes.
     """
     return _py5sketch.specular(*args)
 
@@ -13172,7 +13031,7 @@ def sphere_detail(res: int, /) -> None:
     you're going to render a great number of spheres per frame, it is advised to
     reduce the level of detail using this function. The setting stays active until
     ``sphere_detail()`` is called again with a new parameter and so should *not* be
-    called prior to every :doc:`sphere` statement, unless you wish to render spheres
+    called prior to every ``sphere()`` statement, unless you wish to render spheres
     with different settings, e.g. using less detail for smaller spheres or ones
     further away from the camera. To control the detail of the horizontal and
     vertical resolution independently, use the version of the functions with two
@@ -13217,7 +13076,7 @@ def sphere_detail(ures: int, vres: int, /) -> None:
     you're going to render a great number of spheres per frame, it is advised to
     reduce the level of detail using this function. The setting stays active until
     ``sphere_detail()`` is called again with a new parameter and so should *not* be
-    called prior to every :doc:`sphere` statement, unless you wish to render spheres
+    called prior to every ``sphere()`` statement, unless you wish to render spheres
     with different settings, e.g. using less detail for smaller spheres or ones
     further away from the camera. To control the detail of the horizontal and
     vertical resolution independently, use the version of the functions with two
@@ -13261,7 +13120,7 @@ def sphere_detail(*args):
     you're going to render a great number of spheres per frame, it is advised to
     reduce the level of detail using this function. The setting stays active until
     ``sphere_detail()`` is called again with a new parameter and so should *not* be
-    called prior to every :doc:`sphere` statement, unless you wish to render spheres
+    called prior to every ``sphere()`` statement, unless you wish to render spheres
     with different settings, e.g. using less detail for smaller spheres or ones
     further away from the camera. To control the detail of the horizontal and
     vertical resolution independently, use the version of the functions with two
@@ -13353,39 +13212,9 @@ def square(x: float, y: float, extent: float, /) -> None:
     ninety degrees and each side is the same length. By default, the first two
     parameters set the location of the upper-left corner, the third sets the width
     and height. The way these parameters are interpreted, however, may be changed
-    with the :doc:`rect_mode` function.
+    with the ``rect_mode()`` function.
     """
     return _py5sketch.square(x, y, extent)
-
-
-def start() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.start
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.start()
-
-
-def stop() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Underlying Java method: PApplet.stop
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.stop()
 
 
 @overload
@@ -13432,7 +13261,7 @@ def stroke(gray: float, /) -> None:
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13441,12 +13270,12 @@ def stroke(gray: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     pass
 
@@ -13495,7 +13324,7 @@ def stroke(gray: float, alpha: float, /) -> None:
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13504,12 +13333,12 @@ def stroke(gray: float, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     pass
 
@@ -13558,7 +13387,7 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13567,12 +13396,12 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     pass
 
@@ -13621,7 +13450,7 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13630,12 +13459,12 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     pass
 
@@ -13684,7 +13513,7 @@ def stroke(rgb: int, /) -> None:
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13693,12 +13522,12 @@ def stroke(rgb: int, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     pass
 
@@ -13747,7 +13576,7 @@ def stroke(rgb: int, alpha: float, /) -> None:
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13756,12 +13585,12 @@ def stroke(rgb: int, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     pass
 
@@ -13809,7 +13638,7 @@ def stroke(*args):
 
     Sets the color used to draw lines and borders around shapes. This color is
     either specified in terms of the RGB or HSB color depending on the current
-    :doc:`color_mode`. The default color space is RGB, with each value in the range
+    ``color_mode()``. The default color space is RGB, with each value in the range
     from 0 to 255.
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
@@ -13818,12 +13647,12 @@ def stroke(*args):
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     When drawing in 2D with the default renderer, you may need
     ``hint(ENABLE_STROKE_PURE)`` to improve drawing quality (at the expense of
-    performance). See the :doc:`hint` documentation for more details.
+    performance). See the ``hint()`` documentation for more details.
     """
     return _py5sketch.stroke(*args)
 
@@ -13846,7 +13675,7 @@ def stroke_cap(cap: int, /) -> None:
     extended, or rounded, each of which specified with the corresponding parameters:
     ``SQUARE``, ``PROJECT``, and ``ROUND``. The default cap is ``ROUND``.
 
-    To make :doc:`point` appear square, use ``stroke_cap(PROJECT)``. Using
+    To make ``point()`` appear square, use ``stroke_cap(PROJECT)``. Using
     ``stroke_cap(SQUARE)`` (no cap) causes points to become invisible.
     """
     return _py5sketch.stroke_cap(cap)
@@ -13891,10 +13720,10 @@ def stroke_weight(weight: float, /) -> None:
     Sets the width of the stroke used for lines, points, and the border around
     shapes. All widths are set in units of pixels.
 
-    Using :doc:`point` with ``strokeWeight(1)`` or smaller may draw nothing to the
+    Using ``point()`` with ``strokeWeight(1)`` or smaller may draw nothing to the
     screen, depending on the graphics settings of the computer. Workarounds include
-    setting the pixel using the :doc:`pixels` or :doc:`np_pixels` arrays or drawing
-    the point using either :doc:`circle` or :doc:`square`.
+    setting the pixel using the ``pixels[]`` or ``np_pixels[]`` arrays or drawing
+    the point using either ``circle()`` or ``square()``.
     """
     return _py5sketch.stroke_weight(weight)
 
@@ -13944,7 +13773,7 @@ def text(c: chr, x: float, y: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -13972,19 +13801,19 @@ def text(c: chr, x: float, y: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14035,7 +13864,7 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14063,19 +13892,19 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14127,7 +13956,7 @@ def text(chars: List[chr], start: int, stop: int,
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14155,19 +13984,19 @@ def text(chars: List[chr], start: int, stop: int,
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14219,7 +14048,7 @@ def text(chars: List[chr], start: int, stop: int,
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14247,19 +14076,19 @@ def text(chars: List[chr], start: int, stop: int,
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14310,7 +14139,7 @@ def text(num: float, x: float, y: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14338,19 +14167,19 @@ def text(num: float, x: float, y: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14401,7 +14230,7 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14429,19 +14258,19 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14492,7 +14321,7 @@ def text(num: int, x: float, y: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14520,19 +14349,19 @@ def text(num: int, x: float, y: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14583,7 +14412,7 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14611,19 +14440,19 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14674,7 +14503,7 @@ def text(str: str, x: float, y: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14702,19 +14531,19 @@ def text(str: str, x: float, y: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14765,7 +14594,7 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14793,19 +14622,19 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14856,7 +14685,7 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14884,19 +14713,19 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     pass
@@ -14946,7 +14775,7 @@ def text(*args):
         array index at which to stop writing characters
 
     str: str
-        missing variable description
+        string to be displayed
 
     x1: float
         by default, the x-coordinate of text, see rectMode() for more info
@@ -14974,19 +14803,19 @@ def text(*args):
 
     Draws text to the screen. Displays the information specified in the first
     parameter on the screen in the position specified by the additional parameters.
-    A default font will be used unless a font is set with the :doc:`text_font`
+    A default font will be used unless a font is set with the ``text_font()``
     function and a default size will be used unless a font is set with
-    :doc:`text_size`. Change the color of the text with the :doc:`fill` function.
-    The text displays in relation to the :doc:`text_align` function, which gives the
+    ``text_size()``. Change the color of the text with the ``fill()`` function. The
+    text displays in relation to the ``text_align()`` function, which gives the
     option to draw to the left, right, and center of the coordinates.
 
     The ``x2`` and ``y2`` parameters define a rectangular area to display within and
     may only be used with string data. When these parameters are specified, they are
-    interpreted based on the current :doc:`rect_mode` setting. Text that does not
-    fit completely within the rectangle specified will not be drawn to the screen.
+    interpreted based on the current ``rect_mode()`` setting. Text that does not fit
+    completely within the rectangle specified will not be drawn to the screen.
 
     Note that py5 lets you call ``text()`` without first specifying a Py5Font with
-    :doc:`text_font`. In that case, a generic sans-serif font will be used instead.
+    ``text_font()``. In that case, a generic sans-serif font will be used instead.
     (See the third example.)
     """
     return _py5sketch.text(*args)
@@ -15020,26 +14849,26 @@ def text_align(align_x: int, /) -> None:
 
     Sets the current alignment for drawing text. The parameters ``LEFT``,
     ``CENTER``, and ``RIGHT`` set the display characteristics of the letters in
-    relation to the values for the ``x`` and ``y`` parameters of the :doc:`text`
+    relation to the values for the ``x`` and ``y`` parameters of the ``text()``
     function.
 
     An optional second parameter can be used to vertically align the text.
     ``BASELINE`` is the default, and the vertical alignment will be reset to
     ``BASELINE`` if the second parameter is not used. The ``TOP`` and ``CENTER``
     parameters are straightforward. The ``BOTTOM`` parameter offsets the line based
-    on the current :doc:`text_descent`. For multiple lines, the final line will be
+    on the current ``text_descent()``. For multiple lines, the final line will be
     aligned to the bottom, with the previous lines appearing above it.
 
-    When using :doc:`text` with width and height parameters, ``BASELINE`` is
-    ignored, and treated as ``TOP``. (Otherwise, text would by default draw outside
-    the box, since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful
-    drawing mode for text drawn in a rectangle.)
+    When using ``text()`` with width and height parameters, ``BASELINE`` is ignored,
+    and treated as ``TOP``. (Otherwise, text would by default draw outside the box,
+    since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful drawing
+    mode for text drawn in a rectangle.)
 
-    The vertical alignment is based on the value of :doc:`text_ascent`, which many
+    The vertical alignment is based on the value of ``text_ascent()``, which many
     fonts do not specify correctly. It may be necessary to use a hack and offset by
     a few pixels by hand so that the offset looks correct. To do this as less of a
-    hack, use some percentage of :doc:`text_ascent` or :doc:`text_descent` so that
-    the hack works even if you change the size of the font.
+    hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
+    hack works even if you change the size of the font.
     """
     pass
 
@@ -15072,26 +14901,26 @@ def text_align(align_x: int, align_y: int, /) -> None:
 
     Sets the current alignment for drawing text. The parameters ``LEFT``,
     ``CENTER``, and ``RIGHT`` set the display characteristics of the letters in
-    relation to the values for the ``x`` and ``y`` parameters of the :doc:`text`
+    relation to the values for the ``x`` and ``y`` parameters of the ``text()``
     function.
 
     An optional second parameter can be used to vertically align the text.
     ``BASELINE`` is the default, and the vertical alignment will be reset to
     ``BASELINE`` if the second parameter is not used. The ``TOP`` and ``CENTER``
     parameters are straightforward. The ``BOTTOM`` parameter offsets the line based
-    on the current :doc:`text_descent`. For multiple lines, the final line will be
+    on the current ``text_descent()``. For multiple lines, the final line will be
     aligned to the bottom, with the previous lines appearing above it.
 
-    When using :doc:`text` with width and height parameters, ``BASELINE`` is
-    ignored, and treated as ``TOP``. (Otherwise, text would by default draw outside
-    the box, since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful
-    drawing mode for text drawn in a rectangle.)
+    When using ``text()`` with width and height parameters, ``BASELINE`` is ignored,
+    and treated as ``TOP``. (Otherwise, text would by default draw outside the box,
+    since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful drawing
+    mode for text drawn in a rectangle.)
 
-    The vertical alignment is based on the value of :doc:`text_ascent`, which many
+    The vertical alignment is based on the value of ``text_ascent()``, which many
     fonts do not specify correctly. It may be necessary to use a hack and offset by
     a few pixels by hand so that the offset looks correct. To do this as less of a
-    hack, use some percentage of :doc:`text_ascent` or :doc:`text_descent` so that
-    the hack works even if you change the size of the font.
+    hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
+    hack works even if you change the size of the font.
     """
     pass
 
@@ -15123,26 +14952,26 @@ def text_align(*args):
 
     Sets the current alignment for drawing text. The parameters ``LEFT``,
     ``CENTER``, and ``RIGHT`` set the display characteristics of the letters in
-    relation to the values for the ``x`` and ``y`` parameters of the :doc:`text`
+    relation to the values for the ``x`` and ``y`` parameters of the ``text()``
     function.
 
     An optional second parameter can be used to vertically align the text.
     ``BASELINE`` is the default, and the vertical alignment will be reset to
     ``BASELINE`` if the second parameter is not used. The ``TOP`` and ``CENTER``
     parameters are straightforward. The ``BOTTOM`` parameter offsets the line based
-    on the current :doc:`text_descent`. For multiple lines, the final line will be
+    on the current ``text_descent()``. For multiple lines, the final line will be
     aligned to the bottom, with the previous lines appearing above it.
 
-    When using :doc:`text` with width and height parameters, ``BASELINE`` is
-    ignored, and treated as ``TOP``. (Otherwise, text would by default draw outside
-    the box, since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful
-    drawing mode for text drawn in a rectangle.)
+    When using ``text()`` with width and height parameters, ``BASELINE`` is ignored,
+    and treated as ``TOP``. (Otherwise, text would by default draw outside the box,
+    since ``BASELINE`` is the default setting. ``BASELINE`` is not a useful drawing
+    mode for text drawn in a rectangle.)
 
-    The vertical alignment is based on the value of :doc:`text_ascent`, which many
+    The vertical alignment is based on the value of ``text_ascent()``, which many
     fonts do not specify correctly. It may be necessary to use a hack and offset by
     a few pixels by hand so that the offset looks correct. To do this as less of a
-    hack, use some percentage of :doc:`text_ascent` or :doc:`text_descent` so that
-    the hack works even if you change the size of the font.
+    hack, use some percentage of ``text_ascent()`` or ``text_descent()`` so that the
+    hack works even if you change the size of the font.
     """
     return _py5sketch.text_align(*args)
 
@@ -15177,7 +15006,7 @@ def text_descent() -> float:
 
 @overload
 def text_font(which: Py5Font, /) -> None:
-    """Sets the current font that will be drawn with the :doc:`text` function.
+    """Sets the current font that will be drawn with the ``text()`` function.
 
     Underlying Java method: PApplet.textFont
 
@@ -15201,16 +15030,16 @@ def text_font(which: Py5Font, /) -> None:
     Notes
     -----
 
-    Sets the current font that will be drawn with the :doc:`text` function. Fonts
-    must be created for py5 with :doc:`create_font` or loaded with :doc:`load_font`
+    Sets the current font that will be drawn with the ``text()`` function. Fonts
+    must be created for py5 with ``create_font()`` or loaded with ``load_font()``
     before they can be used. The font set through ``text_font()`` will be used in
-    all subsequent calls to the :doc:`text` function. If no ``size`` parameter is
+    all subsequent calls to the ``text()`` function. If no ``size`` parameter is
     specified, the font size defaults to the original size (the size in which it was
-    created with :doc:`create_font_file`) overriding any previous calls to
-    ``text_font()`` or :doc:`text_size`.
+    created with ``create_font_file()``) overriding any previous calls to
+    ``text_font()`` or ``text_size()``.
 
     When fonts are rendered as an image texture (as is the case with the ``P2D`` and
-    ``P3D`` renderers as well as with :doc:`load_font` and vlw files), you should
+    ``P3D`` renderers as well as with ``load_font()`` and vlw files), you should
     create fonts at the sizes that will be used most commonly. Using ``text_font()``
     without the size parameter will result in the cleanest type.
     """
@@ -15219,7 +15048,7 @@ def text_font(which: Py5Font, /) -> None:
 
 @overload
 def text_font(which: Py5Font, size: float, /) -> None:
-    """Sets the current font that will be drawn with the :doc:`text` function.
+    """Sets the current font that will be drawn with the ``text()`` function.
 
     Underlying Java method: PApplet.textFont
 
@@ -15243,16 +15072,16 @@ def text_font(which: Py5Font, size: float, /) -> None:
     Notes
     -----
 
-    Sets the current font that will be drawn with the :doc:`text` function. Fonts
-    must be created for py5 with :doc:`create_font` or loaded with :doc:`load_font`
+    Sets the current font that will be drawn with the ``text()`` function. Fonts
+    must be created for py5 with ``create_font()`` or loaded with ``load_font()``
     before they can be used. The font set through ``text_font()`` will be used in
-    all subsequent calls to the :doc:`text` function. If no ``size`` parameter is
+    all subsequent calls to the ``text()`` function. If no ``size`` parameter is
     specified, the font size defaults to the original size (the size in which it was
-    created with :doc:`create_font_file`) overriding any previous calls to
-    ``text_font()`` or :doc:`text_size`.
+    created with ``create_font_file()``) overriding any previous calls to
+    ``text_font()`` or ``text_size()``.
 
     When fonts are rendered as an image texture (as is the case with the ``P2D`` and
-    ``P3D`` renderers as well as with :doc:`load_font` and vlw files), you should
+    ``P3D`` renderers as well as with ``load_font()`` and vlw files), you should
     create fonts at the sizes that will be used most commonly. Using ``text_font()``
     without the size parameter will result in the cleanest type.
     """
@@ -15260,7 +15089,7 @@ def text_font(which: Py5Font, size: float, /) -> None:
 
 
 def text_font(*args):
-    """Sets the current font that will be drawn with the :doc:`text` function.
+    """Sets the current font that will be drawn with the ``text()`` function.
 
     Underlying Java method: PApplet.textFont
 
@@ -15284,16 +15113,16 @@ def text_font(*args):
     Notes
     -----
 
-    Sets the current font that will be drawn with the :doc:`text` function. Fonts
-    must be created for py5 with :doc:`create_font` or loaded with :doc:`load_font`
+    Sets the current font that will be drawn with the ``text()`` function. Fonts
+    must be created for py5 with ``create_font()`` or loaded with ``load_font()``
     before they can be used. The font set through ``text_font()`` will be used in
-    all subsequent calls to the :doc:`text` function. If no ``size`` parameter is
+    all subsequent calls to the ``text()`` function. If no ``size`` parameter is
     specified, the font size defaults to the original size (the size in which it was
-    created with :doc:`create_font_file`) overriding any previous calls to
-    ``text_font()`` or :doc:`text_size`.
+    created with ``create_font_file()``) overriding any previous calls to
+    ``text_font()`` or ``text_size()``.
 
     When fonts are rendered as an image texture (as is the case with the ``P2D`` and
-    ``P3D`` renderers as well as with :doc:`load_font` and vlw files), you should
+    ``P3D`` renderers as well as with ``load_font()`` and vlw files), you should
     create fonts at the sizes that will be used most commonly. Using ``text_font()``
     without the size parameter will result in the cleanest type.
     """
@@ -15315,8 +15144,8 @@ def text_leading(leading: float, /) -> None:
     -----
 
     Sets the spacing between lines of text in units of pixels. This setting will be
-    used in all subsequent calls to the :doc:`text` function.  Note, however, that
-    the leading is reset by :doc:`text_size`. For example, if the leading is set to
+    used in all subsequent calls to the ``text()`` function.  Note, however, that
+    the leading is reset by ``text_size()``. For example, if the leading is set to
     20 with ``text_leading(20)``, then if ``text_size(48)`` is run at a later point,
     the leading will be reset to the default for the text size of 48.
     """
@@ -15347,11 +15176,11 @@ def text_mode(mode: int, /) -> None:
     available, then ``text_mode(SHAPE)`` will be ignored and ``text_mode(MODEL)``
     will be used instead.
 
-    The ``text_mode(SHAPE)`` option in ``P3D`` can be combined with :doc:`begin_raw`
+    The ``text_mode(SHAPE)`` option in ``P3D`` can be combined with ``begin_raw()``
     to write vector-accurate text to 2D and 3D output files, for instance ``DXF`` or
     ``PDF``. The ``SHAPE`` mode is not currently optimized for ``P3D``, so if
     recording shape data, use ``text_mode(MODEL)`` until you're ready to capture the
-    geometry with :doc:`begin_raw`.
+    geometry with ``begin_raw()``.
     """
     return _py5sketch.text_mode(mode)
 
@@ -15371,7 +15200,7 @@ def text_size(size: float, /) -> None:
     -----
 
     Sets the current font size. This size will be used in all subsequent calls to
-    the :doc:`text` function. Font size is measured in units of pixels.
+    the ``text()`` function. Font size is measured in units of pixels.
     """
     return _py5sketch.text_size(size)
 
@@ -15398,13 +15227,13 @@ def text_width(c: chr, /) -> float:
         the character to measure
 
     chars: List[chr]
-        missing variable description
+        the character to measure
 
     length: int
-        missing variable description
+        number of characters to measure
 
     start: int
-        missing variable description
+        first character to measure
 
     str: str
         the String of characters to measure
@@ -15439,13 +15268,13 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
         the character to measure
 
     chars: List[chr]
-        missing variable description
+        the character to measure
 
     length: int
-        missing variable description
+        number of characters to measure
 
     start: int
-        missing variable description
+        first character to measure
 
     str: str
         the String of characters to measure
@@ -15480,13 +15309,13 @@ def text_width(str: str, /) -> float:
         the character to measure
 
     chars: List[chr]
-        missing variable description
+        the character to measure
 
     length: int
-        missing variable description
+        number of characters to measure
 
     start: int
-        missing variable description
+        first character to measure
 
     str: str
         the String of characters to measure
@@ -15520,13 +15349,13 @@ def text_width(*args):
         the character to measure
 
     chars: List[chr]
-        missing variable description
+        the character to measure
 
     length: int
-        missing variable description
+        number of characters to measure
 
     start: int
-        missing variable description
+        first character to measure
 
     str: str
         the String of characters to measure
@@ -15553,12 +15382,11 @@ def texture(image: Py5Image, /) -> None:
     Notes
     -----
 
-    Sets a texture to be applied to vertex points. The ``texture()`` function must
-    be called between :doc:`begin_shape` and :doc:`end_shape` and before any calls
-    to :doc:`vertex`. This function only works with the ``P2D`` and ``P3D``
-    renderers.
+    Sets a texture to be applied to vertex points. The ``texture()`` method must be
+    called between ``begin_shape()`` and ``end_shape()`` and before any calls to
+    ``vertex()``. This method only works with the ``P2D`` and ``P3D`` renderers.
 
-    When textures are in use, the fill color is ignored. Instead, use :doc:`tint` to
+    When textures are in use, the fill color is ignored. Instead, use ``tint()`` to
     specify the color of the texture as it is applied to the shape.
     """
     return _py5sketch.texture(image)
@@ -15579,12 +15407,12 @@ def texture_mode(mode: int, /) -> None:
     -----
 
     Sets the coordinate space for texture mapping. The default mode is ``IMAGE``,
-    which refers to the actual coordinates of the image. ``NORMAL`` refers to a
-    normalized space of values ranging from 0 to 1. This function only works with
+    which refers to the actual pixel coordinates of the image. ``NORMAL`` refers to
+    a normalized space of values ranging from 0 to 1. This function only works with
     the ``P2D`` and ``P3D`` renderers.
 
     With ``IMAGE``, if an image is 100 x 200 pixels, mapping the image onto the
-    entire size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
+    entire size of a quad would require the points (0,0) (100,0) (100,200) (0,200).
     The same mapping in ``NORMAL`` is (0,0) (1,0) (1,1) (0,1).
     """
     return _py5sketch.texture_mode(mode)
@@ -15659,7 +15487,7 @@ def tint(gray: float, /) -> None:
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -15667,7 +15495,7 @@ def tint(gray: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -15723,7 +15551,7 @@ def tint(gray: float, alpha: float, /) -> None:
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -15731,7 +15559,7 @@ def tint(gray: float, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -15787,7 +15615,7 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -15795,7 +15623,7 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -15851,7 +15679,7 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -15859,7 +15687,7 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -15915,7 +15743,7 @@ def tint(rgb: int, /) -> None:
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -15923,7 +15751,7 @@ def tint(rgb: int, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -15979,7 +15807,7 @@ def tint(rgb: int, alpha: float, /) -> None:
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -15987,7 +15815,7 @@ def tint(rgb: int, alpha: float, /) -> None:
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16042,7 +15870,7 @@ def tint(*args):
     To apply transparency to an image without affecting its color, use white as the
     tint color and specify an alpha value. For instance, ``tint(255, 128)`` will
     make an image 50% transparent (assuming the default alpha range of 0-255, which
-    can be changed with :doc:`color_mode`).
+    can be changed with ``color_mode()``).
 
     When using hexadecimal notation to specify a color, use "``0x``" before the
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
@@ -16050,7 +15878,7 @@ def tint(*args):
     remainder define the red, green, and blue components.
 
     The value for the gray parameter must be less than or equal to the current
-    maximum value as specified by :doc:`color_mode`. The default maximum value is
+    maximum value as specified by ``color_mode()``. The default maximum value is
     255.
 
     The ``tint()`` function is also used to control the coloring of textures in 3D.
@@ -16091,14 +15919,14 @@ def translate(x: float, y: float, /) -> None:
     parameter specifies left/right translation, the ``y`` parameter specifies
     up/down translation, and the ``z`` parameter specifies translations toward/away
     from the screen. Using this function with the ``z`` parameter requires using
-    ``P3D`` as a parameter in combination with size as shown in the above example.
+    ``P3D`` as a parameter in combination with size as shown in the second example.
 
     Transformations are cumulative and apply to everything that happens after and
     subsequent calls to the function accumulates the effect. For example, calling
     ``translate(50, 0)`` and then ``translate(20, 0)`` is the same as
     ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
     transformation is reset when the loop begins again. This function can be further
-    controlled by using :doc:`push_matrix` and :doc:`pop_matrix`.
+    controlled by using ``push_matrix()`` and ``pop_matrix()``.
     """
     pass
 
@@ -16136,14 +15964,14 @@ def translate(x: float, y: float, z: float, /) -> None:
     parameter specifies left/right translation, the ``y`` parameter specifies
     up/down translation, and the ``z`` parameter specifies translations toward/away
     from the screen. Using this function with the ``z`` parameter requires using
-    ``P3D`` as a parameter in combination with size as shown in the above example.
+    ``P3D`` as a parameter in combination with size as shown in the second example.
 
     Transformations are cumulative and apply to everything that happens after and
     subsequent calls to the function accumulates the effect. For example, calling
     ``translate(50, 0)`` and then ``translate(20, 0)`` is the same as
     ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
     transformation is reset when the loop begins again. This function can be further
-    controlled by using :doc:`push_matrix` and :doc:`pop_matrix`.
+    controlled by using ``push_matrix()`` and ``pop_matrix()``.
     """
     pass
 
@@ -16180,14 +16008,14 @@ def translate(*args):
     parameter specifies left/right translation, the ``y`` parameter specifies
     up/down translation, and the ``z`` parameter specifies translations toward/away
     from the screen. Using this function with the ``z`` parameter requires using
-    ``P3D`` as a parameter in combination with size as shown in the above example.
+    ``P3D`` as a parameter in combination with size as shown in the second example.
 
     Transformations are cumulative and apply to everything that happens after and
     subsequent calls to the function accumulates the effect. For example, calling
     ``translate(50, 0)`` and then ``translate(20, 0)`` is the same as
     ``translate(70, 0)``. If ``translate()`` is called within ``draw()``, the
     transformation is reset when the loop begins again. This function can be further
-    controlled by using :doc:`push_matrix` and :doc:`pop_matrix`.
+    controlled by using ``push_matrix()`` and ``pop_matrix()``.
     """
     return _py5sketch.translate(*args)
 
@@ -16231,7 +16059,7 @@ def triangle(x1: float, y1: float, x2: float, y2: float,
 
 @overload
 def update_pixels() -> None:
-    """Updates the display window with the data in the :doc:`pixels` array.
+    """Updates the display window with the data in the ``pixels[]`` array.
 
     Underlying Java method: PApplet.updatePixels
 
@@ -16261,8 +16089,8 @@ def update_pixels() -> None:
     Notes
     -----
 
-    Updates the display window with the data in the :doc:`pixels` array. Use in
-    conjunction with :doc:`load_pixels`. If you're only reading pixels from the
+    Updates the display window with the data in the ``pixels[]`` array. Use in
+    conjunction with ``load_pixels()``. If you're only reading pixels from the
     array, there's no need to call ``update_pixels()`` — updating is only necessary
     to apply changes.
     """
@@ -16271,7 +16099,7 @@ def update_pixels() -> None:
 
 @overload
 def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
-    """Updates the display window with the data in the :doc:`pixels` array.
+    """Updates the display window with the data in the ``pixels[]`` array.
 
     Underlying Java method: PApplet.updatePixels
 
@@ -16301,8 +16129,8 @@ def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
     Notes
     -----
 
-    Updates the display window with the data in the :doc:`pixels` array. Use in
-    conjunction with :doc:`load_pixels`. If you're only reading pixels from the
+    Updates the display window with the data in the ``pixels[]`` array. Use in
+    conjunction with ``load_pixels()``. If you're only reading pixels from the
     array, there's no need to call ``update_pixels()`` — updating is only necessary
     to apply changes.
     """
@@ -16310,7 +16138,7 @@ def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
 
 
 def update_pixels(*args):
-    """Updates the display window with the data in the :doc:`pixels` array.
+    """Updates the display window with the data in the ``pixels[]`` array.
 
     Underlying Java method: PApplet.updatePixels
 
@@ -16340,8 +16168,8 @@ def update_pixels(*args):
     Notes
     -----
 
-    Updates the display window with the data in the :doc:`pixels` array. Use in
-    conjunction with :doc:`load_pixels`. If you're only reading pixels from the
+    Updates the display window with the data in the ``pixels[]`` array. Use in
+    conjunction with ``load_pixels()``. If you're only reading pixels from the
     array, there's no need to call ``update_pixels()`` — updating is only necessary
     to apply changes.
     """
@@ -16350,7 +16178,7 @@ def update_pixels(*args):
 
 @overload
 def vertex(x: float, y: float, /) -> None:
-    """All shapes are constructed by connecting a series of vertices.
+    """Add a new vertex to a shape.
 
     Underlying Java method: PApplet.vertex
 
@@ -16389,26 +16217,27 @@ def vertex(x: float, y: float, /) -> None:
     Notes
     -----
 
-    All shapes are constructed by connecting a series of vertices. ``vertex()`` is
-    used to specify the vertex coordinates for points, lines, triangles, quads, and
-    polygons. It is used exclusively within the :doc:`begin_shape` and
-    :doc:`end_shape` functions.
+    Add a new vertex to a shape. All shapes are constructed by connecting a series
+    of vertices. The ``vertex()`` method is used to specify the vertex coordinates
+    for points, lines, triangles, quads, and polygons. It is used exclusively within
+    the ``begin_shape()`` and ``end_shape()`` functions.
 
-    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
-    in combination with size, as shown in the above example.
+    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` renderer,
+    as shown in the second example.
 
-    This function is also used to map a texture onto geometry. The :doc:`texture`
+    This method is also used to map a texture onto geometry. The ``texture()``
     function declares the texture to apply to the geometry and the ``u`` and ``v``
-    coordinates set define the mapping of this texture to the form. By default, the
+    coordinates define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
-    size in pixels, but this relation can be changed with :doc:`texture_mode`.
+    size in pixels, but this relation can be changed with the Sketch's
+    ``texture_mode()`` method.
     """
     pass
 
 
 @overload
 def vertex(x: float, y: float, z: float, /) -> None:
-    """All shapes are constructed by connecting a series of vertices.
+    """Add a new vertex to a shape.
 
     Underlying Java method: PApplet.vertex
 
@@ -16447,26 +16276,27 @@ def vertex(x: float, y: float, z: float, /) -> None:
     Notes
     -----
 
-    All shapes are constructed by connecting a series of vertices. ``vertex()`` is
-    used to specify the vertex coordinates for points, lines, triangles, quads, and
-    polygons. It is used exclusively within the :doc:`begin_shape` and
-    :doc:`end_shape` functions.
+    Add a new vertex to a shape. All shapes are constructed by connecting a series
+    of vertices. The ``vertex()`` method is used to specify the vertex coordinates
+    for points, lines, triangles, quads, and polygons. It is used exclusively within
+    the ``begin_shape()`` and ``end_shape()`` functions.
 
-    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
-    in combination with size, as shown in the above example.
+    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` renderer,
+    as shown in the second example.
 
-    This function is also used to map a texture onto geometry. The :doc:`texture`
+    This method is also used to map a texture onto geometry. The ``texture()``
     function declares the texture to apply to the geometry and the ``u`` and ``v``
-    coordinates set define the mapping of this texture to the form. By default, the
+    coordinates define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
-    size in pixels, but this relation can be changed with :doc:`texture_mode`.
+    size in pixels, but this relation can be changed with the Sketch's
+    ``texture_mode()`` method.
     """
     pass
 
 
 @overload
 def vertex(x: float, y: float, u: float, v: float, /) -> None:
-    """All shapes are constructed by connecting a series of vertices.
+    """Add a new vertex to a shape.
 
     Underlying Java method: PApplet.vertex
 
@@ -16505,26 +16335,27 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
     Notes
     -----
 
-    All shapes are constructed by connecting a series of vertices. ``vertex()`` is
-    used to specify the vertex coordinates for points, lines, triangles, quads, and
-    polygons. It is used exclusively within the :doc:`begin_shape` and
-    :doc:`end_shape` functions.
+    Add a new vertex to a shape. All shapes are constructed by connecting a series
+    of vertices. The ``vertex()`` method is used to specify the vertex coordinates
+    for points, lines, triangles, quads, and polygons. It is used exclusively within
+    the ``begin_shape()`` and ``end_shape()`` functions.
 
-    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
-    in combination with size, as shown in the above example.
+    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` renderer,
+    as shown in the second example.
 
-    This function is also used to map a texture onto geometry. The :doc:`texture`
+    This method is also used to map a texture onto geometry. The ``texture()``
     function declares the texture to apply to the geometry and the ``u`` and ``v``
-    coordinates set define the mapping of this texture to the form. By default, the
+    coordinates define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
-    size in pixels, but this relation can be changed with :doc:`texture_mode`.
+    size in pixels, but this relation can be changed with the Sketch's
+    ``texture_mode()`` method.
     """
     pass
 
 
 @overload
 def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
-    """All shapes are constructed by connecting a series of vertices.
+    """Add a new vertex to a shape.
 
     Underlying Java method: PApplet.vertex
 
@@ -16563,26 +16394,27 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
     Notes
     -----
 
-    All shapes are constructed by connecting a series of vertices. ``vertex()`` is
-    used to specify the vertex coordinates for points, lines, triangles, quads, and
-    polygons. It is used exclusively within the :doc:`begin_shape` and
-    :doc:`end_shape` functions.
+    Add a new vertex to a shape. All shapes are constructed by connecting a series
+    of vertices. The ``vertex()`` method is used to specify the vertex coordinates
+    for points, lines, triangles, quads, and polygons. It is used exclusively within
+    the ``begin_shape()`` and ``end_shape()`` functions.
 
-    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
-    in combination with size, as shown in the above example.
+    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` renderer,
+    as shown in the second example.
 
-    This function is also used to map a texture onto geometry. The :doc:`texture`
+    This method is also used to map a texture onto geometry. The ``texture()``
     function declares the texture to apply to the geometry and the ``u`` and ``v``
-    coordinates set define the mapping of this texture to the form. By default, the
+    coordinates define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
-    size in pixels, but this relation can be changed with :doc:`texture_mode`.
+    size in pixels, but this relation can be changed with the Sketch's
+    ``texture_mode()`` method.
     """
     pass
 
 
 @overload
 def vertex(v: NDArray[(Any,), Float], /) -> None:
-    """All shapes are constructed by connecting a series of vertices.
+    """Add a new vertex to a shape.
 
     Underlying Java method: PApplet.vertex
 
@@ -16621,25 +16453,26 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
     Notes
     -----
 
-    All shapes are constructed by connecting a series of vertices. ``vertex()`` is
-    used to specify the vertex coordinates for points, lines, triangles, quads, and
-    polygons. It is used exclusively within the :doc:`begin_shape` and
-    :doc:`end_shape` functions.
+    Add a new vertex to a shape. All shapes are constructed by connecting a series
+    of vertices. The ``vertex()`` method is used to specify the vertex coordinates
+    for points, lines, triangles, quads, and polygons. It is used exclusively within
+    the ``begin_shape()`` and ``end_shape()`` functions.
 
-    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
-    in combination with size, as shown in the above example.
+    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` renderer,
+    as shown in the second example.
 
-    This function is also used to map a texture onto geometry. The :doc:`texture`
+    This method is also used to map a texture onto geometry. The ``texture()``
     function declares the texture to apply to the geometry and the ``u`` and ``v``
-    coordinates set define the mapping of this texture to the form. By default, the
+    coordinates define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
-    size in pixels, but this relation can be changed with :doc:`texture_mode`.
+    size in pixels, but this relation can be changed with the Sketch's
+    ``texture_mode()`` method.
     """
     pass
 
 
 def vertex(*args):
-    """All shapes are constructed by connecting a series of vertices.
+    """Add a new vertex to a shape.
 
     Underlying Java method: PApplet.vertex
 
@@ -16678,25 +16511,26 @@ def vertex(*args):
     Notes
     -----
 
-    All shapes are constructed by connecting a series of vertices. ``vertex()`` is
-    used to specify the vertex coordinates for points, lines, triangles, quads, and
-    polygons. It is used exclusively within the :doc:`begin_shape` and
-    :doc:`end_shape` functions.
+    Add a new vertex to a shape. All shapes are constructed by connecting a series
+    of vertices. The ``vertex()`` method is used to specify the vertex coordinates
+    for points, lines, triangles, quads, and polygons. It is used exclusively within
+    the ``begin_shape()`` and ``end_shape()`` functions.
 
-    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` parameter
-    in combination with size, as shown in the above example.
+    Drawing a vertex in 3D using the ``z`` parameter requires the ``P3D`` renderer,
+    as shown in the second example.
 
-    This function is also used to map a texture onto geometry. The :doc:`texture`
+    This method is also used to map a texture onto geometry. The ``texture()``
     function declares the texture to apply to the geometry and the ``u`` and ``v``
-    coordinates set define the mapping of this texture to the form. By default, the
+    coordinates define the mapping of this texture to the form. By default, the
     coordinates used for ``u`` and ``v`` are specified in relation to the image's
-    size in pixels, but this relation can be changed with :doc:`texture_mode`.
+    size in pixels, but this relation can be changed with the Sketch's
+    ``texture_mode()`` method.
     """
     return _py5sketch.vertex(*args)
 
 
 def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Create a collection of vertices.
 
     Underlying Java method: PApplet.vertices
 
@@ -16704,14 +16538,17 @@ def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     ----------
 
     coordinates: NDArray[(Any, Any), Float]
-        missing variable description
+        array of vertex coordinates
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Create a collection of vertices. The purpose of this method is to provide an
+    alternative to repeatedly calling ``vertex()`` in a loop. For a large number of
+    vertices, the performance of ``vertices()`` will be much faster.
+
+    The ``coordinates`` parameter should be a numpy array with one row for each
+    vertex. There should be two or three columns for 2D or 3D points, respectively.
     """
     return _py5sketch.vertices(coordinates)
 
@@ -16730,298 +16567,50 @@ def year() -> int:
     return Sketch.year()
 
 ##############################################################################
-# module functions from data.py
-##############################################################################
-
-
-def load_json(filename: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    filename: Union[str, Path]
-        missing variable description
-
-    kwargs: Dict[str, Any]
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return Sketch.load_json(filename, **kwargs)
-
-
-def save_json(json_data: Any,
-              filename: Union[str,
-                              Path],
-              **kwargs: Dict[str,
-                             Any]) -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    filename: Union[str, Path]
-        missing variable description
-
-    json_data: Any
-        missing variable description
-
-    kwargs: Dict[str, Any]
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return Sketch.save_json(json_data, filename, **kwargs)
-
-
-def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    kwargs: Dict[str, Any]
-        missing variable description
-
-    serialized_json: Any
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return Sketch.parse_json(serialized_json, **kwargs)
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(f: Callable, name: str = None, daemon: bool = True,
-                  args: Tuple = None, kwargs: Dict = None) -> str:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        missing variable description
-
-    daemon: bool = True
-        missing variable description
-
-    f: Callable
-        missing variable description
-
-    kwargs: Dict = None
-        missing variable description
-
-    name: str = None
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> Py5Promise:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        missing variable description
-
-    daemon: bool = True
-        missing variable description
-
-    f: Callable
-        missing variable description
-
-    kwargs: Dict = None
-        missing variable description
-
-    name: str = None
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_repeating_thread(f: Callable, name: str = None,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: Tuple = None, kwargs: Dict = None) -> str:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        missing variable description
-
-    daemon: bool = True
-        missing variable description
-
-    f: Callable
-        missing variable description
-
-    kwargs: Dict = None
-        missing variable description
-
-    name: str = None
-        missing variable description
-
-    time_delay: float = 0
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    name: str
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    name: str
-        missing variable description
-
-    wait: bool = False
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        missing variable description
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """The documentation for this field or method has not yet been written.
-
-    Notes
-    -----
-
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-    """
-    return _py5sketch.list_threads()
-
-##############################################################################
 # module functions from pixels.py
 ##############################################################################
 
 
 def load_np_pixels() -> None:
-    """The documentation for this field or method has not yet been written.
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
     """
     return _py5sketch.load_np_pixels()
 
 
 def update_np_pixels() -> None:
-    """The documentation for this field or method has not yet been written.
+    """Updates the display window with the data in the ``np_pixels[]`` array.
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
     """
     return _py5sketch.update_np_pixels()
 
@@ -17030,59 +16619,85 @@ np_pixels: np.ndarray = None
 
 
 def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """The documentation for this field or method has not yet been written.
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
 
     Parameters
     ----------
 
     array: np.ndarray
-        missing variable description
+        properly sized numpy array to be copied to np_pixels[]
 
     bands: str = 'ARGB'
-        missing variable description
+        color channels in the array's third dimension
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
     """
     return _py5sketch.set_np_pixels(array, bands=bands)
 
 
 def save(filename: Union[str,
                          Path],
+         *,
          format: str = None,
          drop_alpha: bool = True,
          use_thread: bool = True,
          **params) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Save image data to a file.
 
     Parameters
     ----------
 
     drop_alpha: bool = True
-        missing variable description
+        remove the alpha channel when saving the image
 
     filename: Union[str, Path]
-        missing variable description
+        output filename
 
     format: str = None
-        missing variable description
+        image format, if not determined from filename extension
 
     params
-        missing variable description
+        keyword arguments to pass to the PIL.Image save method
 
     use_thread: bool = True
-        missing variable description
+        write file in separate thread
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Save image data to a file. This method uses the Python library Pillow to write
+    the image, so it can save images in any format that that library supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
     """
     return _py5sketch.save(
         filename,
@@ -17163,7 +16778,7 @@ def tan(angle: float) -> float:
 
 
 def asin(value: float) -> float:
-    """The inverse of :doc:`sin`, returns the arc sine of a value.
+    """The inverse of ``sin()``, returns the arc sine of a value.
 
     Parameters
     ----------
@@ -17174,8 +16789,8 @@ def asin(value: float) -> float:
     Notes
     -----
 
-    The inverse of :doc:`sin`, returns the arc sine of a value. This function
-    expects the values in the range of -1 to 1 and values are returned in the range
+    The inverse of ``sin()``, returns the arc sine of a value. This function expects
+    the values in the range of -1 to 1 and values are returned in the range
     ``-HALF_PI`` to ``HALF_PI``.
 
     This function makes a call to the numpy ``asin()`` function.
@@ -17184,7 +16799,7 @@ def asin(value: float) -> float:
 
 
 def acos(value: float) -> float:
-    """The inverse of :doc:`cos`, returns the arc cosine of a value.
+    """The inverse of ``cos()``, returns the arc cosine of a value.
 
     Parameters
     ----------
@@ -17195,7 +16810,7 @@ def acos(value: float) -> float:
     Notes
     -----
 
-    The inverse of :doc:`cos`, returns the arc cosine of a value. This function
+    The inverse of ``cos()``, returns the arc cosine of a value. This function
     expects the values in the range of -1 to 1 and values are returned in the range
     ``0`` to ``PI``.
 
@@ -17205,7 +16820,7 @@ def acos(value: float) -> float:
 
 
 def atan(value: float) -> float:
-    """The inverse of :doc:`tan`, returns the arc tangent of a value.
+    """The inverse of ``tan()``, returns the arc tangent of a value.
 
     Parameters
     ----------
@@ -17216,7 +16831,7 @@ def atan(value: float) -> float:
     Notes
     -----
 
-    The inverse of :doc:`tan`, returns the arc tangent of a value. This function
+    The inverse of ``tan()``, returns the arc tangent of a value. This function
     expects the values in the range of -Infinity to Infinity and values are returned
     in the range ``-HALF_PI`` to ``HALF_PI``.
 
@@ -17355,12 +16970,12 @@ def remap(
 
     In the first example, the number 0.5 is converted from a value in the range of 0
     to 1 into a value that ranges from the left edge of the window (0) to the right
-    edge (:doc:`width`).
+    edge (``width``).
 
     As shown in the second example, numbers outside of the range are not clamped to
     the minimum and maximum parameters values, because out-of-range values are often
     intentional and useful. If that isn't what you want, try pairing this function
-    with :doc:`constrain`.
+    with ``constrain()``.
 
     In Processing this functionality is provided by ``map()`` but was renamed in py5
     because of a name conflict with a builtin Python function.
@@ -17653,7 +17268,7 @@ def norm(value: float, start: float, stop: float) -> float:
 
     Numbers outside of the range are not clamped to 0 and 1, because out-of-range
     values are often intentional and useful. (See the second example.) If that isn't
-    what you want, try pairing this function with :doc:`constrain`.
+    what you want, try pairing this function with ``constrain()``.
     """
     return Sketch.norm(value, start, stop)
 
@@ -17759,7 +17374,7 @@ def exp(value: float) -> float:
     -----
 
     Returns Euler's number e (2.71828...) raised to the power of the ``n``
-    parameter. This function is the compliment to :doc:`log`.
+    parameter. This function is the compliment to ``log()``.
 
     This function makes a call to the numpy ``exp()`` function.
     """
@@ -17780,7 +17395,7 @@ def log(value: float) -> float:
 
     Calculates the natural logarithm (the base-e logarithm) of a number. This
     function expects the ``n`` parameter to be a value greater than 0.0. This
-    function is the compliment to :doc:`exp`.
+    function is the compliment to ``exp()``.
 
     This function makes a call to the numpy ``log()`` function. If the ``n``
     parameter is less than or equal to 0.0, you will see a ``RuntimeWarning`` and
@@ -17801,8 +17416,8 @@ def random_seed(seed: int) -> None:
     Notes
     -----
 
-    Sets the seed value for py5's random functions. This includes :doc:`random`,
-    :doc:`random_int`, :doc:`random_choice`, and :doc:`random_gaussian`. By default,
+    Sets the seed value for py5's random functions. This includes ``random()``,
+    ``random_int()``, ``random_choice()``, and ``random_gaussian()``. By default,
     all of these functions would produce different results each time a program is
     run. Set the seed parameter to a constant value to return the same pseudo-random
     numbers each time the software is run.
@@ -17837,7 +17452,7 @@ def random() -> float:
 
     Generates random numbers. Each time the ``random()`` function is called, it
     returns an unexpected value within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return a float between zero
     and one.
@@ -17850,7 +17465,7 @@ def random() -> float:
     between the two values. For example, ``random(-5, 10.2)`` returns values
     starting at -5 and up to (but not including) 10.2. To convert a floating-point
     random number to an integer, use the ``int()`` function, or alternatively,
-    consider using :doc:`random_int`.
+    consider using ``random_int()``.
 
     This function makes calls to numpy to generate the random values.
     """
@@ -17884,7 +17499,7 @@ def random(high: float) -> float:
 
     Generates random numbers. Each time the ``random()`` function is called, it
     returns an unexpected value within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return a float between zero
     and one.
@@ -17897,7 +17512,7 @@ def random(high: float) -> float:
     between the two values. For example, ``random(-5, 10.2)`` returns values
     starting at -5 and up to (but not including) 10.2. To convert a floating-point
     random number to an integer, use the ``int()`` function, or alternatively,
-    consider using :doc:`random_int`.
+    consider using ``random_int()``.
 
     This function makes calls to numpy to generate the random values.
     """
@@ -17931,7 +17546,7 @@ def random(low: float, high: float) -> float:
 
     Generates random numbers. Each time the ``random()`` function is called, it
     returns an unexpected value within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return a float between zero
     and one.
@@ -17944,7 +17559,7 @@ def random(low: float, high: float) -> float:
     between the two values. For example, ``random(-5, 10.2)`` returns values
     starting at -5 and up to (but not including) 10.2. To convert a floating-point
     random number to an integer, use the ``int()`` function, or alternatively,
-    consider using :doc:`random_int`.
+    consider using ``random_int()``.
 
     This function makes calls to numpy to generate the random values.
     """
@@ -17977,7 +17592,7 @@ def random(*args: float) -> float:
 
     Generates random numbers. Each time the ``random()`` function is called, it
     returns an unexpected value within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return a float between zero
     and one.
@@ -17990,7 +17605,7 @@ def random(*args: float) -> float:
     between the two values. For example, ``random(-5, 10.2)`` returns values
     starting at -5 and up to (but not including) 10.2. To convert a floating-point
     random number to an integer, use the ``int()`` function, or alternatively,
-    consider using :doc:`random_int`.
+    consider using ``random_int()``.
 
     This function makes calls to numpy to generate the random values.
     """
@@ -18024,7 +17639,7 @@ def random_int() -> int:
 
     Generates random integers. Each time the ``random_int()`` function is called, it
     returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return either 0 or 1.
     Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -18043,7 +17658,7 @@ def random_int() -> int:
     than the list length. Therefore, to pick a random index to use in the list
     ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
     will (occasionally) result in an index out of range error. Alternatively, you
-    can also use :doc:`random_choice` to pick a random object from a list.
+    can also use ``random_choice()`` to pick a random object from a list.
 
     This function makes calls to numpy to generate the random integers.
     """
@@ -18077,7 +17692,7 @@ def random_int(high: int) -> int:
 
     Generates random integers. Each time the ``random_int()`` function is called, it
     returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return either 0 or 1.
     Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -18096,7 +17711,7 @@ def random_int(high: int) -> int:
     than the list length. Therefore, to pick a random index to use in the list
     ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
     will (occasionally) result in an index out of range error. Alternatively, you
-    can also use :doc:`random_choice` to pick a random object from a list.
+    can also use ``random_choice()`` to pick a random object from a list.
 
     This function makes calls to numpy to generate the random integers.
     """
@@ -18130,7 +17745,7 @@ def random_int(low: int, high: int) -> int:
 
     Generates random integers. Each time the ``random_int()`` function is called, it
     returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return either 0 or 1.
     Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -18149,7 +17764,7 @@ def random_int(low: int, high: int) -> int:
     than the list length. Therefore, to pick a random index to use in the list
     ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
     will (occasionally) result in an index out of range error. Alternatively, you
-    can also use :doc:`random_choice` to pick a random object from a list.
+    can also use ``random_choice()`` to pick a random object from a list.
 
     This function makes calls to numpy to generate the random integers.
     """
@@ -18182,7 +17797,7 @@ def random_int(*args: int) -> int:
 
     Generates random integers. Each time the ``random_int()`` function is called, it
     returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by :doc:`random_seed`.
+    randomness can be influenced by ``random_seed()``.
 
     If no parameters are passed to the function, it will return either 0 or 1.
     Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
@@ -18201,7 +17816,7 @@ def random_int(*args: int) -> int:
     than the list length. Therefore, to pick a random index to use in the list
     ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
     will (occasionally) result in an index out of range error. Alternatively, you
-    can also use :doc:`random_choice` to pick a random object from a list.
+    can also use ``random_choice()`` to pick a random object from a list.
 
     This function makes calls to numpy to generate the random integers.
     """
@@ -18221,7 +17836,7 @@ def random_choice(objects: List[Any]) -> Any:
     -----
 
     Select a random item from a list. The list items can be of any type. This
-    function's randomness can be influenced by :doc:`random_seed`.
+    function's randomness can be influenced by ``random_seed()``.
 
     This function makes calls to numpy to select the random items.
     """
@@ -18256,7 +17871,7 @@ def random_gaussian() -> float:
     Generates random gaussian values. Each time the ``random_gaussian()`` function
     is called, it returns an unexpected float with a probability distribution set by
     the parameters.  This function's randomness can be influenced by
-    :doc:`random_seed`.
+    ``random_seed()``.
 
     If no parameters are passed to the function, returned values will have an
     average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -18302,7 +17917,7 @@ def random_gaussian(loc: float) -> float:
     Generates random gaussian values. Each time the ``random_gaussian()`` function
     is called, it returns an unexpected float with a probability distribution set by
     the parameters.  This function's randomness can be influenced by
-    :doc:`random_seed`.
+    ``random_seed()``.
 
     If no parameters are passed to the function, returned values will have an
     average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -18348,7 +17963,7 @@ def random_gaussian(loc: float, scale: float) -> float:
     Generates random gaussian values. Each time the ``random_gaussian()`` function
     is called, it returns an unexpected float with a probability distribution set by
     the parameters.  This function's randomness can be influenced by
-    :doc:`random_seed`.
+    ``random_seed()``.
 
     If no parameters are passed to the function, returned values will have an
     average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -18393,7 +18008,7 @@ def random_gaussian(*args: float) -> float:
     Generates random gaussian values. Each time the ``random_gaussian()`` function
     is called, it returns an unexpected float with a probability distribution set by
     the parameters.  This function's randomness can be influenced by
-    :doc:`random_seed`.
+    ``random_seed()``.
 
     If no parameters are passed to the function, returned values will have an
     average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -18448,19 +18063,19 @@ def noise(x: float, **kwargs) -> float:
 
     Generate pseudo-random noise values for specific coodinates. Noise functions are
     random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the :doc:`random` function. Several well-known noise
+    numbers compared to the ``random()`` function. Several well-known noise
     algorithms were developed by Ken Perlin and have been used in graphical
     applications to generate procedural textures, shapes, terrains, and other
     seemingly organic forms.
 
-    In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+    In contrast to the ``random()`` function, noise is defined in an n-dimensional
     space, in which each coordinate corresponds to a fixed pseudo-random value
     (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
     Simplex Noise. By default, py5 will generate noise using the Simplex Noise
     algorithm. The noise value can be animated by moving through the noise space, as
     demonstrated in the examples. Any dimension can also be interpreted as time. An
     easy way to animate the noise value is to pass the ``noise()`` function the
-    :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+    ``frame_count`` divided by a scaling factor, as is done in a few of the
     examples.
 
     The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -18477,8 +18092,8 @@ def noise(x: float, **kwargs) -> float:
     physics, both noise algorithms are computed over several octaves which are added
     together for the final result.
 
-    The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-    :doc:`noise_seed`, and :doc:`noise_detail`.
+    The nature of the noise values returned can be adjusted with ``noise_mode()``,
+    ``noise_seed()``, and ``noise_detail()``.
 
     Another way to adjust the character of the resulting sequence is the scale of
     the input coordinates. As the function works within an infinite space, the value
@@ -18535,19 +18150,19 @@ def noise(x: float, y: float, **kwargs) -> float:
 
     Generate pseudo-random noise values for specific coodinates. Noise functions are
     random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the :doc:`random` function. Several well-known noise
+    numbers compared to the ``random()`` function. Several well-known noise
     algorithms were developed by Ken Perlin and have been used in graphical
     applications to generate procedural textures, shapes, terrains, and other
     seemingly organic forms.
 
-    In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+    In contrast to the ``random()`` function, noise is defined in an n-dimensional
     space, in which each coordinate corresponds to a fixed pseudo-random value
     (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
     Simplex Noise. By default, py5 will generate noise using the Simplex Noise
     algorithm. The noise value can be animated by moving through the noise space, as
     demonstrated in the examples. Any dimension can also be interpreted as time. An
     easy way to animate the noise value is to pass the ``noise()`` function the
-    :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+    ``frame_count`` divided by a scaling factor, as is done in a few of the
     examples.
 
     The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -18564,8 +18179,8 @@ def noise(x: float, y: float, **kwargs) -> float:
     physics, both noise algorithms are computed over several octaves which are added
     together for the final result.
 
-    The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-    :doc:`noise_seed`, and :doc:`noise_detail`.
+    The nature of the noise values returned can be adjusted with ``noise_mode()``,
+    ``noise_seed()``, and ``noise_detail()``.
 
     Another way to adjust the character of the resulting sequence is the scale of
     the input coordinates. As the function works within an infinite space, the value
@@ -18622,19 +18237,19 @@ def noise(x: float, y: float, z: float, **kwargs) -> float:
 
     Generate pseudo-random noise values for specific coodinates. Noise functions are
     random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the :doc:`random` function. Several well-known noise
+    numbers compared to the ``random()`` function. Several well-known noise
     algorithms were developed by Ken Perlin and have been used in graphical
     applications to generate procedural textures, shapes, terrains, and other
     seemingly organic forms.
 
-    In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+    In contrast to the ``random()`` function, noise is defined in an n-dimensional
     space, in which each coordinate corresponds to a fixed pseudo-random value
     (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
     Simplex Noise. By default, py5 will generate noise using the Simplex Noise
     algorithm. The noise value can be animated by moving through the noise space, as
     demonstrated in the examples. Any dimension can also be interpreted as time. An
     easy way to animate the noise value is to pass the ``noise()`` function the
-    :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+    ``frame_count`` divided by a scaling factor, as is done in a few of the
     examples.
 
     The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -18651,8 +18266,8 @@ def noise(x: float, y: float, z: float, **kwargs) -> float:
     physics, both noise algorithms are computed over several octaves which are added
     together for the final result.
 
-    The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-    :doc:`noise_seed`, and :doc:`noise_detail`.
+    The nature of the noise values returned can be adjusted with ``noise_mode()``,
+    ``noise_seed()``, and ``noise_detail()``.
 
     Another way to adjust the character of the resulting sequence is the scale of
     the input coordinates. As the function works within an infinite space, the value
@@ -18709,19 +18324,19 @@ def noise(x: float, y: float, z: float, w: float, **kwargs) -> float:
 
     Generate pseudo-random noise values for specific coodinates. Noise functions are
     random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the :doc:`random` function. Several well-known noise
+    numbers compared to the ``random()`` function. Several well-known noise
     algorithms were developed by Ken Perlin and have been used in graphical
     applications to generate procedural textures, shapes, terrains, and other
     seemingly organic forms.
 
-    In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+    In contrast to the ``random()`` function, noise is defined in an n-dimensional
     space, in which each coordinate corresponds to a fixed pseudo-random value
     (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
     Simplex Noise. By default, py5 will generate noise using the Simplex Noise
     algorithm. The noise value can be animated by moving through the noise space, as
     demonstrated in the examples. Any dimension can also be interpreted as time. An
     easy way to animate the noise value is to pass the ``noise()`` function the
-    :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+    ``frame_count`` divided by a scaling factor, as is done in a few of the
     examples.
 
     The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -18738,8 +18353,8 @@ def noise(x: float, y: float, z: float, w: float, **kwargs) -> float:
     physics, both noise algorithms are computed over several octaves which are added
     together for the final result.
 
-    The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-    :doc:`noise_seed`, and :doc:`noise_detail`.
+    The nature of the noise values returned can be adjusted with ``noise_mode()``,
+    ``noise_seed()``, and ``noise_detail()``.
 
     Another way to adjust the character of the resulting sequence is the scale of
     the input coordinates. As the function works within an infinite space, the value
@@ -18795,19 +18410,19 @@ def noise(*args, **kwargs) -> float:
 
     Generate pseudo-random noise values for specific coodinates. Noise functions are
     random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the :doc:`random` function. Several well-known noise
+    numbers compared to the ``random()`` function. Several well-known noise
     algorithms were developed by Ken Perlin and have been used in graphical
     applications to generate procedural textures, shapes, terrains, and other
     seemingly organic forms.
 
-    In contrast to the :doc:`random` function, noise is defined in an n-dimensional
+    In contrast to the ``random()`` function, noise is defined in an n-dimensional
     space, in which each coordinate corresponds to a fixed pseudo-random value
     (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
     Simplex Noise. By default, py5 will generate noise using the Simplex Noise
     algorithm. The noise value can be animated by moving through the noise space, as
     demonstrated in the examples. Any dimension can also be interpreted as time. An
     easy way to animate the noise value is to pass the ``noise()`` function the
-    :doc:`frame_count` divided by a scaling factor, as is done in a few of the
+    ``frame_count`` divided by a scaling factor, as is done in a few of the
     examples.
 
     The generated noise values for both Perlin Noise and Simplex Noise will be
@@ -18824,8 +18439,8 @@ def noise(*args, **kwargs) -> float:
     physics, both noise algorithms are computed over several octaves which are added
     together for the final result.
 
-    The nature of the noise values returned can be adjusted with :doc:`noise_mode`,
-    :doc:`noise_seed`, and :doc:`noise_detail`.
+    The nature of the noise values returned can be adjusted with ``noise_mode()``,
+    ``noise_seed()``, and ``noise_detail()``.
 
     Another way to adjust the character of the resulting sequence is the scale of
     the input coordinates. As the function works within an infinite space, the value
@@ -18846,7 +18461,7 @@ def noise(*args, **kwargs) -> float:
 
 
 def noise_mode(mode: int) -> None:
-    """Sets the kind of noise that the :doc:`noise` function will generate.
+    """Sets the kind of noise that the ``noise()`` function will generate.
 
     Parameters
     ----------
@@ -18857,7 +18472,7 @@ def noise_mode(mode: int) -> None:
     Notes
     -----
 
-    Sets the kind of noise that the :doc:`noise` function will generate. This can be
+    Sets the kind of noise that the ``noise()`` function will generate. This can be
     either Perlin Noise or Simplex Noise. By default, py5 will generate noise using
     the Simplex Noise algorithm.
 
@@ -18887,7 +18502,7 @@ def noise_mode(mode: int) -> None:
 
 def noise_detail(octaves: float = None, persistence: float = None,
                  lacunarity: float = None) -> None:
-    """Adjusts the character and level of detail produced by the :doc:`noise` function.
+    """Adjusts the character and level of detail produced by the ``noise()`` function.
 
     Parameters
     ----------
@@ -18904,7 +18519,7 @@ def noise_detail(octaves: float = None, persistence: float = None,
     Notes
     -----
 
-    Adjusts the character and level of detail produced by the :doc:`noise` function.
+    Adjusts the character and level of detail produced by the ``noise()`` function.
     Similar to harmonics in physics, noise is computed over several octaves. Lower
     octaves contribute more to the output signal and as such define the overall
     intensity of the noise, whereas higher octaves create finer-grained details in
@@ -18921,8 +18536,8 @@ def noise_detail(octaves: float = None, persistence: float = None,
     lower octave, providing noise at a finer-grained scale than what the default
     value of 2 would provide.
 
-    By changing these parameters, the signal created by the :doc:`noise` function
-    can be adapted to fit very specific needs and characteristics.
+    By changing these parameters, the signal created by the ``noise()`` function can
+    be adapted to fit very specific needs and characteristics.
 
     Py5's noise functionality is provided by the Python noise library. The noise
     library provides more advanced features than what is documented here. To use the
@@ -18935,7 +18550,7 @@ def noise_detail(octaves: float = None, persistence: float = None,
 
 
 def noise_seed(seed: int) -> None:
-    """Sets the seed value for :doc:`noise`.
+    """Sets the seed value for ``noise()``.
 
     Parameters
     ----------
@@ -18946,9 +18561,9 @@ def noise_seed(seed: int) -> None:
     Notes
     -----
 
-    Sets the seed value for :doc:`noise`. By default, :doc:`noise` produces
-    different results each time the program is run. Set the seed parameter to a
-    constant to return the same pseudo-random numbers each time the Sketch is run.
+    Sets the seed value for ``noise()``. By default, ``noise()`` produces different
+    results each time the program is run. Set the seed parameter to a constant to
+    return the same pseudo-random numbers each time the Sketch is run.
 
     Py5's noise functionality is provided by the Python noise library. The noise
     library provides more advanced features than what is documented here. To use the
@@ -18957,8 +18572,479 @@ def noise_seed(seed: int) -> None:
     return _py5sketch.noise_seed(seed)
 
 ##############################################################################
+# module functions from data.py
+##############################################################################
+
+
+def load_json(json_path: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
+    """Load a JSON data file from a file or URL.
+
+    Parameters
+    ----------
+
+    json_path: Union[str, Path]
+        url or file path for JSON data file
+
+    kwargs: Dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Load a JSON data file from a file or URL. When loading a file, the path can be
+    in the data directory, relative to the current working directory
+    (``sketch_path()``), or an absolute path. When loading from a URL, the
+    ``json_path`` parameter must start with ``http://`` or ``https://``.
+
+    When loading JSON data from a URL, the data is retrieved using the Python
+    requests library with the ``get`` method, and the ``kwargs`` parameter is passed
+    along to that method. When loading JSON data from a file, the data is loaded
+    using the Python json library with the ``load`` method, and again the ``kwargs``
+    parameter passed along to that method.
+    """
+    return _py5sketch.load_json(json_path, **kwargs)
+
+
+def save_json(json_data: Any,
+              filename: Union[str,
+                              Path],
+              **kwargs: Dict[str,
+                             Any]) -> None:
+    """Save JSON data to a file.
+
+    Parameters
+    ----------
+
+    filename: Union[str, Path]
+        filename to save JSON data object to
+
+    json_data: Any
+        json data object
+
+    kwargs: Dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
+    saved relative to the current working directory (``sketch_path()``).
+
+    The JSON data is saved using the Python json library with the ``dump`` method,
+    and the ``kwargs`` parameter is passed along to that method.
+    """
+    return _py5sketch.save_json(json_data, filename, **kwargs)
+
+
+def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
+    """Parse serialized JSON data from a string.
+
+    Parameters
+    ----------
+
+    kwargs: Dict[str, Any]
+        keyword arguments
+
+    serialized_json: Any
+        JSON data object that has been serialized as a string
+
+    Notes
+    -----
+
+    Parse serialized JSON data from a string. When reading JSON data from a file,
+    ``load_json()`` is the better choice.
+
+    The JSON data is parsed using the Python json library with the ``loads`` method,
+    and the ``kwargs`` parameter is passed along to that method.
+    """
+    return Sketch.parse_json(serialized_json, **kwargs)
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> Py5Promise:
+    """Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
+    when the ``result`` property contains the value function ``f`` returned. Before
+    then, the ``result`` property will be ``None``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_repeating_thread(f: Callable, name: str = None, *,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: Tuple = None, kwargs: Dict = None) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the ``time_delay`` parameter to set the time in seconds between one call to
+    function ``f`` and the next call. Set this parameter to ``0`` if you want each
+    call to happen immediately after the previous call finishes. If the function
+    ``f`` takes longer than expected to finish, py5 will wait for it to finish
+    before making the next call. There will not be overlapping calls to function
+    ``f``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with ``list_threads()``.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The ``wait`` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
+    ``False``. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use ``launch_repeating_thread()``
+    instead.
+
+    Use ``has_thread()`` to determine if a thread of a given name exists and
+    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
+    to stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The ``wait`` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
+    If you would rather the Sketch waited for threads to exit, create an ``exiting``
+    method and make a call to ``stop_all_threads(wait=True)``.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
+
+##############################################################################
 # module functions from sketch.py
 ##############################################################################
+
+
+@overload
+def sketch_path() -> Path:
+    """The Sketch's current path.
+
+    Underlying Java method: PApplet.sketchPath
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * sketch_path() -> Path
+     * sketch_path(where: str, /) -> Path
+
+    Parameters
+    ----------
+
+    where: str
+        subdirectories relative to the sketch path
+
+    Notes
+    -----
+
+    The Sketch's current path. If the ``where`` parameter is used, the result will
+    be a subdirectory of the current path.
+
+    Result will be relative to Python's current working directory (``os.getcwd()``)
+    unless it was specifically set to something else with the ``run_sketch()`` call
+    by including a ``--sketch-path`` argument in the ``py5_options`` parameters.
+    """
+    pass
+
+
+@overload
+def sketch_path(where: str, /) -> Path:
+    """The Sketch's current path.
+
+    Underlying Java method: PApplet.sketchPath
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * sketch_path() -> Path
+     * sketch_path(where: str, /) -> Path
+
+    Parameters
+    ----------
+
+    where: str
+        subdirectories relative to the sketch path
+
+    Notes
+    -----
+
+    The Sketch's current path. If the ``where`` parameter is used, the result will
+    be a subdirectory of the current path.
+
+    Result will be relative to Python's current working directory (``os.getcwd()``)
+    unless it was specifically set to something else with the ``run_sketch()`` call
+    by including a ``--sketch-path`` argument in the ``py5_options`` parameters.
+    """
+    pass
+
+
+def sketch_path(*args) -> Path:
+    """The Sketch's current path.
+
+    Underlying Java method: PApplet.sketchPath
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * sketch_path() -> Path
+     * sketch_path(where: str, /) -> Path
+
+    Parameters
+    ----------
+
+    where: str
+        subdirectories relative to the sketch path
+
+    Notes
+    -----
+
+    The Sketch's current path. If the ``where`` parameter is used, the result will
+    be a subdirectory of the current path.
+
+    Result will be relative to Python's current working directory (``os.getcwd()``)
+    unless it was specifically set to something else with the ``run_sketch()`` call
+    by including a ``--sketch-path`` argument in the ``py5_options`` parameters.
+    """
+    return _py5sketch.sketch_path(*args)
 
 
 is_ready: bool = None
@@ -18970,101 +19056,143 @@ is_key_pressed: bool = None
 
 
 def hot_reload_draw(draw: Callable) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Perform a hot reload of the Sketch's draw function.
 
     Parameters
     ----------
 
     draw: Callable
-        missing variable description
+        function to replace existing draw function
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Perform a hot reload of the Sketch's draw function. This method allows you to
+    replace a running Sketch's draw function with a different one.
     """
     return _py5sketch.hot_reload_draw(draw)
 
 
 def profile_functions(function_names: List[str]) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Profile the execution times of the Sketch's functions with a line profiler.
 
     Parameters
     ----------
 
     function_names: List[str]
-        missing variable description
+        names of py5 functions to be profiled
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Profile the execution times of the Sketch's functions with a line profiler. This
+    uses the Python library lineprofiler to provide line by line performance data.
+    The collected stats will include the number of times each line of code was
+    executed (Hits) and the total amount of time spent on each line (Time). This
+    information can be used to target the performance tuning efforts for a slow
+    Sketch.
+
+    This method can be called before or after ``run_sketch()``. You are welcome to
+    profile multiple functions, but don't initiate profiling on the same function
+    multiple times. To profile functions that do not belong to the Sketch, including
+    any functions called from ``launch_thread()`` and the like, use lineprofiler
+    directly and not through py5's performance tools.
+
+    To profile just the draw function, you can also use ``profile_draw()``. To see
+    the results, use ``print_line_profiler_stats()``.
     """
     return _py5sketch.profile_functions(function_names)
 
 
 def profile_draw() -> None:
-    """The documentation for this field or method has not yet been written.
+    """Profile the execution times of the draw function with a line profiler.
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Profile the execution times of the draw function with a line profiler. This uses
+    the Python library lineprofiler to provide line by line performance data. The
+    collected stats will include the number of times each line of code was executed
+    (Hits) and the total amount of time spent on each line (Time). This information
+    can be used to target the performance tuning efforts for a slow Sketch.
+
+    This method can be called before or after ``run_sketch()``. You are welcome to
+    profile multiple functions, but don't initiate profiling on the same function
+    multiple times. To profile functions that do not belong to the Sketch, including
+    any functions called from ``launch_thread()`` and the like, use lineprofiler
+    directly and not through py5's performance tools.
+
+    To profile a other functions besides draw, use ``profile_functions()``. To see
+    the results, use ``print_line_profiler_stats()``.
     """
     return _py5sketch.profile_draw()
 
 
 def print_line_profiler_stats() -> None:
-    """The documentation for this field or method has not yet been written.
+    """Print the line profiler stats initiated with ``profile_draw()`` or
+    ``profile_functions()``.
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Print the line profiler stats initiated with ``profile_draw()`` or
+    ``profile_functions()``. The collected stats will include the number of times
+    each line of code was executed (Hits) and the total amount of time spent on each
+    line (Time). This information can be used to target the performance tuning
+    efforts for a slow Sketch.
+
+    This method can be called multiple times on a running Sketch.
     """
     return _py5sketch.print_line_profiler_stats()
 
 
 def save_frame(filename: Union[str,
                                Path],
+               *,
                format: str = None,
                drop_alpha: bool = True,
                use_thread: bool = True,
                **params) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Save the current frame as an image.
 
     Parameters
     ----------
 
     drop_alpha: bool = True
-        missing variable description
+        remove the alpha channel when saving the image
 
     filename: Union[str, Path]
-        missing variable description
+        output filename
 
     format: str = None
-        missing variable description
+        image format, if not determined from filename extension
 
     params
-        missing variable description
+        keyword arguments to pass to the PIL.Image save method
 
     use_thread: bool = True
-        missing variable description
+        write file in separate thread
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Save the current frame as an image. This method uses the Python library Pillow
+    to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+
+    This method is the same as ``save()`` except it will replace a sequence of ``#``
+    symbols in the ``filename`` parameter with the frame number. This is useful when
+    saving an image sequence for a running animation. The first frame number will be
+    1.
     """
     return _py5sketch.save_frame(
         filename,
@@ -19075,30 +19203,47 @@ def save_frame(filename: Union[str,
 
 
 def create_image_from_numpy(
-        numpy_image: NumpyImageArray,
+        array: np.array,
+        bands: str = 'ARGB',
+        *,
         dst: Py5Image = None) -> Py5Image:
-    """The documentation for this field or method has not yet been written.
+    """Convert a numpy array into a Py5Image object.
 
     Parameters
     ----------
 
-    dst: Py5Image = None
-        missing variable description
+    array: np.array
+        numpy image array
 
-    numpy_image: NumpyImageArray
-        missing variable description
+    bands: str = 'ARGB'
+        color channels in array
+
+    dst: Py5Image = None
+        existing Py5Image object to put the image data into
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Convert a numpy array into a Py5Image object. The numpy array must have 3
+    dimensions and the array's ``dtype`` must be ``np.uint8``. The size of
+    ``array``'s first and second dimensions will be the image's height and width,
+    respectively. The third dimension is for the array's color channels.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency. If the ``bands``
+    parameter is ``'L'``, ``array``'s third dimension is optional.
+
+    The caller can optionally pass an existing Py5Image object to put the image data
+    into using the ``dst`` parameter. This can have performance benefits in code
+    that would otherwise continuously create new Py5Image objects. The array's width
+    and height must match that of the recycled Py5Image object.
     """
-    return _py5sketch.create_image_from_numpy(numpy_image, dst=dst)
+    return _py5sketch.create_image_from_numpy(array, bands=bands, dst=dst)
 
 
-def convert_image(obj: Any, dst: Py5Image = None) -> Py5Image:
+def convert_image(obj: Any, *, dst: Py5Image = None) -> Py5Image:
     """Convert non-py5 image objects into Py5Image objects.
 
     Parameters
@@ -19116,65 +19261,97 @@ def convert_image(obj: Any, dst: Py5Image = None) -> Py5Image:
     Convert non-py5 image objects into Py5Image objects. This facilitates py5
     compatability with other commonly used Python libraries.
 
-    This method is comparable to :doc:`load_image`, except instead of reading image
+    This method is comparable to ``load_image()``, except instead of reading image
     files from disk, it reads image data from other Python objects.
 
-    Passed image object types must be known to py5's builtin image conversion tools.
-    New object types and functions to effect conversions can be registered with
-    :doc:`register_image_conversion`.
+    Passed image object types must be known to py5's image conversion tools. New
+    object types and functions to effect conversions can be registered with
+    ``register_image_conversion()``.
+
+    The ``convert_image()`` method has builtin support for conversion of
+    ``PIL.Image`` objects. This will allow users to use image formats that
+    ``load_image()`` cannot read. To convert a numpy array into a Py5Image, use
+    ``create_image_from_numpy()``.
 
     The caller can optionally pass an existing Py5Image object to put the converted
-    image into. This can have performance benefits in code that would otherwise
-    continuously create new Py5Image objects. The converted image width and height
-    must match that of the recycled Py5Image object.
+    image into using the ``dst`` parameter. This can have performance benefits in
+    code that would otherwise continuously create new Py5Image objects. The
+    converted image width and height must match that of the recycled Py5Image
+    object.
     """
     return _py5sketch.convert_image(obj, dst=dst)
 
 
-def load_image(filename: Union[str, Path], dst: Py5Image = None) -> Py5Image:
-    """The documentation for this field or method has not yet been written.
+def load_image(image_path: Union[str, Path], *,
+               dst: Py5Image = None) -> Py5Image:
+    """Load an image into a variable of type ``Py5Image``.
 
     Parameters
     ----------
 
     dst: Py5Image = None
-        missing variable description
+        existing Py5Image object to load image into
 
-    filename: Union[str, Path]
-        missing variable description
+    image_path: Union[str, Path]
+        url or file path for image file
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Load an image into a variable of type ``Py5Image``. Four types of images (GIF,
+    JPG, TGA, PNG) can be loaded. To load images in other formats, consider using
+    ``convert_image()``.
+
+    The ``image_path`` parameter can be a file or a URL. When loading a file, the
+    path can be in the data directory, relative to the current working directory
+    (``sketch_path()``), or an absolute path. When loading from a URL, the
+    ``image_path`` parameter must start with ``http://`` or ``https://``. If the
+    image cannot be loaded, a Python ``RuntimeError`` will be thrown.
+
+    In most cases, load all images in ``setup()`` to preload them at the start of
+    the program. Loading images inside ``draw()`` will reduce the speed of a
+    program. In those situations, consider using ``request_image()`` instead.
+
+    The ``dst`` parameter allows users to store the loaded image into an existing
+    Py5Image object instead of creating a new object. The size of the existing
+    Py5Image object must match the size of the loaded image. Most users will not
+    find the ``dst`` parameter helpful. This feature is needed internally for
+    performance reasons.
     """
-    return _py5sketch.load_image(filename, dst=dst)
+    return _py5sketch.load_image(image_path, dst=dst)
 
 
-def request_image(filename: Union[str, Path]) -> Py5Promise:
-    """The documentation for this field or method has not yet been written.
+def request_image(image_path: Union[str, Path]) -> Py5Promise:
+    """Use a Py5Promise object to load an image into a variable of type ``Py5Image``.
 
     Parameters
     ----------
 
-    filename: Union[str, Path]
-        missing variable description
+    image_path: Union[str, Path]
+        url or file path for image file
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
+    Use a Py5Promise object to load an image into a variable of type ``Py5Image``.
+    This method provides a convenient alternative to combining
+    ``launch_promise_thread()`` with ``load_image()`` to load image data.
+
+    Consider using ``request_image()`` to load image data from within a Sketch's
+    ``draw()`` function. Using ``load_image()`` in the ``draw()`` function would
+    slow down the Sketch animation.
+
+    The returned Py5Promise object has an ``is_ready`` property that will be
+    ``True`` when the ``result`` property contains the value function ``f``
+    returned. Before then, the ``result`` property will be ``None``.
     """
-    return _py5sketch.request_image(filename)
+    return _py5sketch.request_image(image_path)
 
 
-def run_sketch(block: bool = None,
-               py5_options: List = None,
-               sketch_args: List = None) -> None:
+def run_sketch(block: bool = None, *,
+               py5_options: List[str] = None,
+               sketch_args: List[str] = None,
+               sketch_functions: Dict[str, Callable] = None) -> None:
     """Run the Sketch.
 
     Parameters
@@ -19183,19 +19360,22 @@ def run_sketch(block: bool = None,
     block: bool = None
         method returns immediately (False) or blocks until Sketch exits (True)
 
-    py5_options: List = None
+    py5_options: List[str] = None
         command line arguments to pass to Processing as arguments
 
-    sketch_args: List = None
+    sketch_args: List[str] = None
         command line arguments that become Sketch arguments
+
+    sketch_functions: Dict[str, Callable] = None
+        sketch methods when using module mode
 
     Notes
     -----
 
-    Run the Sketch. Code in the ``settings``, ``setup``, and ``draw`` functions will
-    be used to actualize your Sketch.
+    Run the Sketch. Code in the ``settings()``, ``setup()``, and ``draw()``
+    functions will be used to actualize your Sketch.
 
-    Use the ``block`` parameter to specify if the call to ``run_sketch`` should
+    Use the ``block`` parameter to specify if the call to ``run_sketch()`` should
     return immediately or block until the Sketch exits. If the ``block`` parameter
     is not specified, py5 will first attempt to determine if the Sketch is running
     in a Jupyter Notebook or an IPython shell. If it is, ``block`` will default to
@@ -19204,16 +19384,25 @@ def run_sketch(block: bool = None,
     A list of strings passed to ``py5_options`` will be passed to the Processing
     PApplet class as arguments to specify characteristics such as the window's
     location on the screen. A list of strings passed to ``sketch_args`` will be
-    available to a running Sketch using :doc:`args`. See the third example for an
-    example of how this can be used."""
+    available to a running Sketch using ``args``. See the third example for an
+    example of how this can be used.
+
+    When calling ``run_sketch()`` in module mode, py5 will by default search for
+    functions such as ``setup()``,  ``draw()``, etc. in the caller's stack frame and
+    use those in the Sketch. If for some reason that is not what you want or does
+    not work because you are hacking py5 to do something unusual, you can use the
+    ``sketch_functions`` parameter to pass a dictionary of the desired callable
+    functions. The ``sketch_functions`` parameter is not available when coding py5
+    in class mode. Don't forget you can always replace the ``draw()`` function in a
+    running Sketch using ``hot_reload_draw()``."""
     if block is None:
         block = not _in_ipython_session
 
-    caller_locals = inspect.stack()[1].frame.f_locals
-    methods = dict([(e, caller_locals[e])
-                    for e in reference.METHODS if e in caller_locals and callable(caller_locals[e])])
+    sketch_functions = sketch_functions or inspect.stack()[1].frame.f_locals
+    functions = dict([(e, sketch_functions[e])
+                      for e in reference.METHODS if e in sketch_functions and callable(sketch_functions[e])])
 
-    if not set(methods.keys()) & set(['settings', 'setup', 'draw']):
+    if not set(functions.keys()) & set(['settings', 'setup', 'draw']):
         print(("Unable to find settings, setup, or draw functions. "
                "Your sketch will be a small boring gray square. "
                "If that isn't what you intended, you need to make sure "
@@ -19228,9 +19417,9 @@ def run_sketch(block: bool = None,
     if _py5sketch.is_dead:
         _py5sketch = Sketch()
 
-    _prepare_dynamic_variables(caller_locals)
+    _prepare_dynamic_variables(sketch_functions)
 
-    _py5sketch._run_sketch(methods, block, py5_options, sketch_args)
+    _py5sketch._run_sketch(functions, block, py5_options, sketch_args)
 
 
 def get_current_sketch() -> Sketch:
@@ -19277,39 +19466,51 @@ def reset_py5() -> bool:
 
 
 def prune_tracebacks(prune: bool) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Set py5's exception handling to prune unhelpful stack trace frames when
+    exceptions are thrown by a running Sketch.
 
     Parameters
     ----------
 
     prune: bool
-        missing variable description
+        prune exception tracebacks
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
+    Set py5's exception handling to prune unhelpful stack trace frames when
+    exceptions are thrown by a running Sketch. When using any Python library,
+    exceptions are often thrown from within the library itself, resulting in stack
+    traces that are a combination of the user's code and the library's own code.
+    Often times the stack traces contributed by the library's code are not helpful
+    to users because the users are not familiar with that code and/or those stack
+    frames do not provide useful debugging information. This is particularly the
+    case for py5, where most of the real functionality is provided by Processing's
+    Java libraries and many of py5's methods are essentially thin wrappers making
+    calls to Java. By default, py5 will prune its own stack trace frames from error
+    messages. Almost always this is helpful, but when investigating bugs in py5
+    itself, sometimes it is helpful to turn off this feature."""
     from . import methods
     methods._prune_tracebacks = prune
 
 
 def set_stackprinter_style(style: str) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Set the formatting style for py5's stack traces.
 
     Parameters
     ----------
 
     style: str
-        missing variable description
+        name of stackprinter style
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
+    Set the formatting style for py5's stack traces. Py5 uses the Python library
+    stackprinter to show exception stack traces. The stackprinter library supports
+    various color styles. By default py5 will use ``'plaintext'``, which does not
+    use color. Alternative styles using color are ``'darkbg'``, ``'darkbg2'``,
+    ``'darkbg3'``, ``'lightbg'``, ``'lightbg2'``, and ``'lightbg3'``."""
     from . import methods
     methods._stackprinter_style = style
 

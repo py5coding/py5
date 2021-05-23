@@ -36,48 +36,44 @@ from .. import imported
 _CODE_FRAMEWORK = """
 import py5
 
-{2}
-
 with open('{0}', 'r') as f:
     eval(compile(f.read(), '{0}', 'exec'))
 
-py5.run_sketch(block=True)
-if {1} and py5.is_dead_from_error:
+py5.run_sketch(block=True, sketch_functions=dict(settings=_py5_settings, setup=_py5_setup))
+if py5.is_dead_from_error:
     py5.exit_sketch()
 """
 
 
 _CODE_FRAMEWORK_IMPORTED_MODE = """
-{2}
-
 with open('{0}', 'r') as f:
     eval(compile(f.read(), '{0}', 'exec'))
 
-run_sketch(block=True)
-if {1} and is_dead_from_error:
+run_sketch(block=True, sketch_functions=dict(settings=_py5_settings, setup=_py5_setup))
+if is_dead_from_error:
     exit_sketch()
 """
 
 
 _STANDARD_CODE_TEMPLATE = """
-def settings():
+def _py5_settings():
     py5.size({0}, {1}, py5.{2})
 
 
-def setup():
+def _py5_setup():
 {4}
 
-    py5.save_frame("{3}", use_thread=False)
+    py5.get(0, 0, {0}, {1}).save("{3}", use_thread=False)
     py5.exit_sketch()
 """
 
 
 _SAVE_OUTPUT_CODE_TEMPLATE = """
-def settings():
+def _py5_settings():
     py5.size({0}, {1}, py5.{2}, "{3}")
 
 
-def setup():
+def _py5_setup():
 {4}
 
     py5.exit_sketch()
@@ -85,11 +81,11 @@ def setup():
 
 
 _DXF_CODE_TEMPLATE = """
-def settings():
+def _py5_settings():
     py5.size({0}, {1}, py5.P3D)
 
 
-def setup():
+def _py5_setup():
     py5.begin_raw(py5.DXF, "{3}")
 
 {4}
@@ -118,7 +114,9 @@ def _run_sketch(renderer, code, width, height, user_ns, safe_exec):
         read_mode = 'rb'
 
     import py5
-    if py5.is_running:
+    is_running = py5.is_running
+    if (isinstance(is_running, bool) and is_running) or (
+            callable(is_running) and is_running()):
         print('You must exit the currently running sketch before running another sketch.')
         return None
 
@@ -145,7 +143,7 @@ def _run_sketch(renderer, code, width, height, user_ns, safe_exec):
                 width, height, renderer, temp_out.as_posix(), prepared_code)
             f.write(code)
 
-        exec(code_framework.format(temp_py.as_posix(), True, ''), user_ns)
+        exec(code_framework.format(temp_py.as_posix()), user_ns)
 
         if temp_out.exists():
             with open(temp_out, read_mode) as f:
@@ -189,8 +187,8 @@ class DrawingMagics(Magics):
         the code in this cell will be executed in a Sketch with no ``draw()`` function
         and your code in the ``setup()`` function. It will use the ``PDF`` renderer.
 
-        As this is creating a PDF, you cannot do operations on the :doc:`pixels` or
-        :doc:`np_pixels` arrays. Use :doc:`py5draw` instead.
+        As this is creating a PDF, you cannot do operations on the ``pixels[]`` or
+        ``np_pixels[]`` arrays. Use ``%%py5draw`` instead.
 
         Code used in this cell can reference functions and variables defined in other
         cells. By default, variables and functions created in this cell will be local to
@@ -266,8 +264,8 @@ class DrawingMagics(Magics):
         the code in this cell will be executed in a Sketch with no ``draw()`` function
         and your code in the ``setup()`` function. It will use the ``SVG`` renderer.
 
-        As this is creating a SVG drawing, you cannot do operations on the :doc:`pixels`
-        or :doc:`np_pixels` arrays. Use :doc:`py5draw` instead.
+        As this is creating a SVG drawing, you cannot do operations on the ``pixels[]``
+        or ``np_pixels[]`` arrays. Use ``%%py5draw`` instead.
 
         Code used in this cell can reference functions and variables defined in other
         cells. By default, variables and functions created in this cell will be local to

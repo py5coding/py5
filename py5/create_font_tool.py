@@ -111,7 +111,7 @@ def create_font_file(
     set the ``pause`` parameter to ``False``.
 
     Get a list of font names available on your computer with Py5Font's
-    :doc:`py5font_list` method. If you request an unavailable font, it will create
+    ``Py5Font.list()`` method. If you request an unavailable font, it will create
     the data file anyway but using a default font."""
     vlw_creator = CreateFontTool(font_name, font_size,
                                  filename=filename, characters=characters,

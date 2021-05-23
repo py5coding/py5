@@ -52,23 +52,32 @@ def _convert(obj):
 def register_image_conversion(
         precondition: Callable,
         convert_function: Callable) -> None:
-    """The documentation for this field or method has not yet been written.
+    """Register new image conversion functionality to be used by ``convert_image()``.
 
     Parameters
     ----------
 
     convert_function: Callable
-        missing variable description
+        function to convert object to relevant image data
 
     precondition: Callable
-        missing variable description
+        predicate determining if an object can be converted
 
     Notes
     -----
 
-    The documentation for this field or method has not yet been written. If you know
-    what it does, please help out with a pull request to the relevant file in
-    https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/."""
+    Register new image conversion functionality to be used by ``convert_image()``.
+    This will allow users to extend py5's capabilities and compatability within the
+    Python ecosystem.
+
+    The ``precondition`` parameter must be function that accepts an object as a
+    parameter and returns ``True`` if and only if the ``convert_function`` can
+    successfully convert the object.
+
+    The ``convert_function`` parameter must be a function that accepts an object as
+    a parameter and returns either a filename that can be read by ``load_image()``,
+    a ``py5.NumpyImageArray`` object, or a ``Py5Image`` object. View py5's source
+    code for detailed information about ``py5.NumpyImageArray`` objects."""
     pimage_functions.append((precondition, convert_function))
 
 
@@ -105,6 +114,19 @@ class NumpyImageArray:
         else:
             raise RuntimeError(
                 "bands parameter must be one of 'RGBA', 'ARGB', 'RGB', or 'L'")
+
+
+def numpy_image_array_precondition(obj):
+    return isinstance(obj, NumpyImageArray)
+
+
+def numpy_image_array_converter(obj):
+    return obj
+
+
+register_image_conversion(
+    numpy_image_array_precondition,
+    numpy_image_array_converter)
 
 
 def pillow_image_to_ndarray_precondition(obj):

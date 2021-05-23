@@ -30,3 +30,12 @@ def _text_fix_str(f):
         return f(self_, *args)
 
     return decorated
+
+
+def _ret_str(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        result = f(self_, *args)
+        return str(result) if isinstance(result, JString) else result
+
+    return decorated

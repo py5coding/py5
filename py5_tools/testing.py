@@ -35,7 +35,8 @@ def draw():
 
 
 _RUN_SKETCH_CODE = """
-py5.run_sketch(block=True)
+if py5.is_ready:
+    py5.run_sketch(block=True)
 if py5.is_dead_from_error:
     py5.exit_sketch()
 """
@@ -52,6 +53,7 @@ def run_code(code: str, image: Path) -> bool:
     import py5
     ns = dict(py5=py5)
 
+    exec("py5.reset_py5()", ns)
     exec(code, ns)
     ns['_PY5_HAS_DRAW_'] = 'draw' in ns
     ns['_PY5_SAVE_FRAME_'] = image is not None

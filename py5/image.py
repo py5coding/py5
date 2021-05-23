@@ -46,21 +46,21 @@ class Py5Image(PixelMixin, Py5Base):
     -----
 
     Datatype for storing images. Py5 can load ``.gif``, ``.jpg``, ``.tga``, and
-    ``.png`` images using the :doc:`load_image` function. Py5 can also convert
-    common Python image objects using the :doc:`convert_image` function. Images may
-    be displayed in 2D and 3D space. The ``Py5Image`` class contains fields for the
-    :doc:`py5image_width` and :doc:`py5image_height` of the image, as well as arrays
-    called :doc:`py5image_pixels` and :doc:`py5image_np_pixels` that contain the
+    ``.png`` images using the ``load_image()`` function. Py5 can also convert common
+    Python image objects using the ``convert_image()`` function. Images may be
+    displayed in 2D and 3D space. The ``Py5Image`` class contains fields for the
+    ``Py5Image.width`` and ``Py5Image.height`` of the image, as well as arrays
+    called ``Py5Image.pixels[]`` and ``Py5Image.np_pixels[]`` that contain the
     values for every pixel in the image. The methods described below allow easy
     access to the image's pixels and alpha channel and simplify the process of
     compositing.
 
-    Before using the :doc:`py5image_pixels` array, be sure to use the
-    :doc:`py5image_load_pixels` method on the image to make sure that the pixel data
-    is properly loaded. Similarly, be sure to use the :doc:`py5image_load_np_pixels`
-    method on the image before using the :doc:`py5image_np_pixels` array.
+    Before using the ``Py5Image.pixels[]`` array, be sure to use the
+    ``Py5Image.load_pixels()`` method on the image to make sure that the pixel data
+    is properly loaded. Similarly, be sure to use the ``Py5Image.load_np_pixels()``
+    method on the image before using the ``Py5Image.np_pixels[]`` array.
 
-    To create a new image, use the :doc:`create_image` function. Do not use the
+    To create a new image, use the ``create_image()`` function. Do not use the
     syntax ``Py5Image()``.
     """
 
@@ -117,87 +117,7 @@ class Py5Image(PixelMixin, Py5Base):
         return self._instance.height
     height: int = property(fget=_get_height)
 
-    def _get_pixel_density(self) -> int:
-        """This function makes it possible for py5 to render using all of the pixels on
-        high resolutions screens like Apple Retina displays and Windows High-DPI
-        displays.
-
-        Underlying Java method: PApplet.pixelDensity
-
-        Parameters
-        ----------
-
-        density: int
-            1 or 2
-
-        Notes
-        -----
-
-        This function makes it possible for py5 to render using all of the pixels on
-        high resolutions screens like Apple Retina displays and Windows High-DPI
-        displays. This function can only be run once within a program and it must be
-        called in ``settings()``.  The ``pixel_density()`` should only be used with
-        hardcoded numbers (in almost all cases this number will be 2) or in combination
-        with :doc:`display_density` as in the second example.
-
-        When the pixel density is set to more than 1, it changes all of the pixel
-        operations including the way :doc:`get`, :doc:`blend`, :doc:`copy`,
-        :doc:`update_pixels`, and :doc:`update_np_pixels` all work. See the reference
-        for :doc:`pixel_width` and :doc:`pixel_height` for more information.
-
-        To use variables as the arguments to ``pixel_density()`` function, place the
-        ``pixel_density()`` function within the ``settings()`` function.
-        """
-        return self._instance.pixelDensity
-    pixel_density: int = property(fget=_get_pixel_density)
-
-    def _get_pixel_height(self) -> int:
-        """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled.
-
-        Underlying Java field: PApplet.pixelHeight
-
-        Notes
-        -----
-
-        When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled. As a
-        result, all operations that use pixels (like :doc:`load_pixels`, :doc:`get`,
-        etc.) happen in this doubled space. As a convenience, the variables
-        :doc:`pixel_width` and ``pixel_height`` hold the actual width and height of the
-        Sketch in pixels. This is useful for any Sketch that use the :doc:`pixels` or
-        :doc:`np_pixels` arrays, for instance, because the number of elements in each
-        array will be ``pixel_width*pixel_height``, not ``width*height``.
-        """
-        return self._instance.pixelHeight
-    pixel_height: int = property(fget=_get_pixel_height)
-
-    def _get_pixel_width(self) -> int:
-        """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled.
-
-        Underlying Java field: PApplet.pixelWidth
-
-        Notes
-        -----
-
-        When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled. As a
-        result, all operations that use pixels (like :doc:`load_pixels`, :doc:`get`,
-        etc.) happen in this doubled space. As a convenience, the variables
-        ``pixel_width`` and :doc:`pixel_height` hold the actual width and height of the
-        Sketch in pixels. This is useful for any Sketch that use the :doc:`pixels` or
-        :doc:`np_pixels` arrays, for instance, because the number of elements in each
-        array will be ``pixel_width*pixel_height``, not ``width*height``.
-        """
-        return self._instance.pixelWidth
-    pixel_width: int = property(fget=_get_pixel_width)
-
-    def _get_pixels(self) -> JArray(JInt):
+    def _get_pixels(self) -> NDArray[(Any,), Int]:
         """The pixels[] array contains the values for all the pixels in the image.
 
         Underlying Java field: PImage.pixels
@@ -211,13 +131,13 @@ class Py5Image(PixelMixin, Py5Base):
         is 200 x 300 pixels, there will be 60,000 values.
 
         Before accessing this array, the data must loaded with the
-        :doc:`py5image_load_pixels` method. Failure to do so may result in a Java
+        ``Py5Image.load_pixels()`` method. Failure to do so may result in a Java
         ``NullPointerException``. After the array data has been modified, the
-        :doc:`py5image_update_pixels` method must be run to update the content of the
+        ``Py5Image.update_pixels()`` method must be run to update the content of the
         display window.
         """
         return self._instance.pixels
-    pixels: JArray(JInt) = property(fget=_get_pixels)
+    pixels: NDArray[(Any,), Int] = property(fget=_get_pixels)
 
     def _get_width(self) -> int:
         """The width of the image in units of pixels.
@@ -257,10 +177,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destinations's upper left corner
+            x-coordinate of the destinations's upper left corner
 
         dy: int
-            Y coordinate of the destinations's upper left corner
+            y-coordinate of the destinations's upper left corner
 
         mode: int
             Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
@@ -275,10 +195,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -312,7 +232,7 @@ class Py5Image(PixelMixin, Py5Base):
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         pass
 
@@ -341,10 +261,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destinations's upper left corner
+            x-coordinate of the destinations's upper left corner
 
         dy: int
-            Y coordinate of the destinations's upper left corner
+            y-coordinate of the destinations's upper left corner
 
         mode: int
             Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
@@ -359,10 +279,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -396,7 +316,7 @@ class Py5Image(PixelMixin, Py5Base):
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         pass
 
@@ -423,10 +343,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destinations's upper left corner
+            x-coordinate of the destinations's upper left corner
 
         dy: int
-            Y coordinate of the destinations's upper left corner
+            y-coordinate of the destinations's upper left corner
 
         mode: int
             Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
@@ -441,10 +361,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -478,23 +398,9 @@ class Py5Image(PixelMixin, Py5Base):
         image will be automatically resized to match the destination size. If the
         ``src`` parameter is not used, the display window is used as the source image.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         return self._instance.blend(*args)
-
-    def check_alpha(self) -> None:
-        """The documentation for this field or method has not yet been written.
-
-        Underlying Java method: PImage.checkAlpha
-
-        Notes
-        -----
-
-        The documentation for this field or method has not yet been written. If you know
-        what it does, please help out with a pull request to the relevant file in
-        https://github.com/hx2A/py5generator/tree/master/py5_docs/Reference/api_en/.
-        """
-        return self._instance.checkAlpha()
 
     @overload
     def copy(self) -> Py5Image:
@@ -521,10 +427,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destination's upper left corner
+            x-coordinate of the destination's upper left corner
 
         dy: int
-            Y coordinate of the destination's upper left corner
+            y-coordinate of the destination's upper left corner
 
         sh: int
             source image height
@@ -536,10 +442,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -550,7 +456,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         pass
 
@@ -580,10 +486,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destination's upper left corner
+            x-coordinate of the destination's upper left corner
 
         dy: int
-            Y coordinate of the destination's upper left corner
+            y-coordinate of the destination's upper left corner
 
         sh: int
             source image height
@@ -595,10 +501,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -609,7 +515,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         pass
 
@@ -639,10 +545,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destination's upper left corner
+            x-coordinate of the destination's upper left corner
 
         dy: int
-            Y coordinate of the destination's upper left corner
+            y-coordinate of the destination's upper left corner
 
         sh: int
             source image height
@@ -654,10 +560,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -668,7 +574,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         pass
 
@@ -696,10 +602,10 @@ class Py5Image(PixelMixin, Py5Base):
             destination image width
 
         dx: int
-            X coordinate of the destination's upper left corner
+            x-coordinate of the destination's upper left corner
 
         dy: int
-            Y coordinate of the destination's upper left corner
+            y-coordinate of the destination's upper left corner
 
         sh: int
             source image height
@@ -711,10 +617,10 @@ class Py5Image(PixelMixin, Py5Base):
             source image width
 
         sx: int
-            X coordinate of the source's upper left corner
+            x-coordinate of the source's upper left corner
 
         sy: int
-            Y coordinate of the source's upper left corner
+            y-coordinate of the source's upper left corner
 
         Notes
         -----
@@ -725,7 +631,7 @@ class Py5Image(PixelMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores :doc:`image_mode`.
+        This function ignores ``image_mode()``.
         """
         return self._instance.copy(*args)
 
@@ -907,22 +813,21 @@ class Py5Image(PixelMixin, Py5Base):
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the display window by specifying
+        to get the value of one pixel. Get a section of the image by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current :doc:`image_mode`.
+        ``y`` parameters define the coordinates for the upper-left corner of the
+        returned image, regardless of the current ``image_mode()``.
 
-        If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only
-        ``RGB`` values are returned by this function. For example, even though you may
-        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
-        ``RGB`` format.
+        If the pixel requested is outside of the image, black is returned. The numbers
+        returned are scaled according to the current color ranges, but only ``RGB``
+        values are returned by this function. For example, even though you may have
+        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
+        format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
-        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
-        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
-        information.
+        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
+        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
+        See the reference for ``Py5Image.pixels[]`` for more information.
         """
         pass
 
@@ -961,22 +866,21 @@ class Py5Image(PixelMixin, Py5Base):
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the display window by specifying
+        to get the value of one pixel. Get a section of the image by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current :doc:`image_mode`.
+        ``y`` parameters define the coordinates for the upper-left corner of the
+        returned image, regardless of the current ``image_mode()``.
 
-        If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only
-        ``RGB`` values are returned by this function. For example, even though you may
-        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
-        ``RGB`` format.
+        If the pixel requested is outside of the image, black is returned. The numbers
+        returned are scaled according to the current color ranges, but only ``RGB``
+        values are returned by this function. For example, even though you may have
+        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
+        format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
-        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
-        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
-        information.
+        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
+        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
+        See the reference for ``Py5Image.pixels[]`` for more information.
         """
         pass
 
@@ -1015,22 +919,21 @@ class Py5Image(PixelMixin, Py5Base):
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the display window by specifying
+        to get the value of one pixel. Get a section of the image by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current :doc:`image_mode`.
+        ``y`` parameters define the coordinates for the upper-left corner of the
+        returned image, regardless of the current ``image_mode()``.
 
-        If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only
-        ``RGB`` values are returned by this function. For example, even though you may
-        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
-        ``RGB`` format.
+        If the pixel requested is outside of the image, black is returned. The numbers
+        returned are scaled according to the current color ranges, but only ``RGB``
+        values are returned by this function. For example, even though you may have
+        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
+        format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
-        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
-        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
-        information.
+        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
+        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
+        See the reference for ``Py5Image.pixels[]`` for more information.
         """
         pass
 
@@ -1068,41 +971,40 @@ class Py5Image(PixelMixin, Py5Base):
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
         are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the display window by specifying
+        to get the value of one pixel. Get a section of the image by specifying
         additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the image,
-        regardless of the current :doc:`image_mode`.
+        ``y`` parameters define the coordinates for the upper-left corner of the
+        returned image, regardless of the current ``image_mode()``.
 
-        If the pixel requested is outside of the image window, black is returned. The
-        numbers returned are scaled according to the current color ranges, but only
-        ``RGB`` values are returned by this function. For example, even though you may
-        have drawn a shape with ``color_mode(HSB)``, the numbers returned will be in
-        ``RGB`` format.
+        If the pixel requested is outside of the image, black is returned. The numbers
+        returned are scaled according to the current color ranges, but only ``RGB``
+        values are returned by this function. For example, even though you may have
+        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
+        format.
 
         Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from :doc:`py5image_pixels`. The equivalent
-        statement to ``get(x, y)`` using :doc:`py5image_pixels` is
-        ``pixels[y*width+x]``. See the reference for :doc:`py5image_pixels` for more
-        information.
+        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
+        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
+        See the reference for ``Py5Image.pixels[]`` for more information.
         """
         return self._instance.get(*args)
 
     def load_pixels(self) -> None:
-        """Loads the pixel data for the image into its :doc:`py5image_pixels` array.
+        """Loads the pixel data for the image into its ``Py5Image.pixels[]`` array.
 
         Underlying Java method: PImage.loadPixels
 
         Notes
         -----
 
-        Loads the pixel data for the image into its :doc:`py5image_pixels` array. This
+        Loads the pixel data for the image into its ``Py5Image.pixels[]`` array. This
         function must always be called before reading from or writing to
-        :doc:`py5image_pixels`.
+        ``Py5Image.pixels[]``.
         """
         return self._instance.loadPixels()
 
     @overload
-    def mask(self, mask_array: JArray(JInt), /) -> None:
+    def mask(self, mask_array: NDArray[(Any,), Int], /) -> None:
         """Masks part of an image from displaying by loading another image and using it as
         an alpha channel.
 
@@ -1114,7 +1016,7 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: JArray(JInt), /) -> None
+         * mask(mask_array: NDArray[(Any,), Int], /) -> None
 
         Parameters
         ----------
@@ -1122,7 +1024,7 @@ class Py5Image(PixelMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: JArray(JInt)
+        mask_array: NDArray[(Any,), Int]
             array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
 
         Notes
@@ -1154,7 +1056,7 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: JArray(JInt), /) -> None
+         * mask(mask_array: NDArray[(Any,), Int], /) -> None
 
         Parameters
         ----------
@@ -1162,7 +1064,7 @@ class Py5Image(PixelMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: JArray(JInt)
+        mask_array: NDArray[(Any,), Int]
             array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
 
         Notes
@@ -1193,7 +1095,7 @@ class Py5Image(PixelMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: JArray(JInt), /) -> None
+         * mask(mask_array: NDArray[(Any,), Int], /) -> None
 
         Parameters
         ----------
@@ -1201,7 +1103,7 @@ class Py5Image(PixelMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: JArray(JInt)
+        mask_array: NDArray[(Any,), Int]
             array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
 
         Notes
@@ -1222,7 +1124,7 @@ class Py5Image(PixelMixin, Py5Base):
 
     @overload
     def update_pixels(self) -> None:
-        """Updates the image with the data in its :doc:`py5image_pixels` array.
+        """Updates the image with the data in its ``Py5Image.pixels[]`` array.
 
         Underlying Java method: PImage.updatePixels
 
@@ -1252,15 +1154,15 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its :doc:`py5image_pixels` array. Use in
-        conjunction with :doc:`py5image_load_pixels`. If you're only reading pixels from
+        Updates the image with the data in its ``Py5Image.pixels[]`` array. Use in
+        conjunction with ``Py5Image.load_pixels()``. If you're only reading pixels from
         the array, there's no need to call ``update_pixels()``.
         """
         pass
 
     @overload
     def update_pixels(self, x: int, y: int, w: int, h: int, /) -> None:
-        """Updates the image with the data in its :doc:`py5image_pixels` array.
+        """Updates the image with the data in its ``Py5Image.pixels[]`` array.
 
         Underlying Java method: PImage.updatePixels
 
@@ -1290,14 +1192,14 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its :doc:`py5image_pixels` array. Use in
-        conjunction with :doc:`py5image_load_pixels`. If you're only reading pixels from
+        Updates the image with the data in its ``Py5Image.pixels[]`` array. Use in
+        conjunction with ``Py5Image.load_pixels()``. If you're only reading pixels from
         the array, there's no need to call ``update_pixels()``.
         """
         pass
 
     def update_pixels(self, *args):
-        """Updates the image with the data in its :doc:`py5image_pixels` array.
+        """Updates the image with the data in its ``Py5Image.pixels[]`` array.
 
         Underlying Java method: PImage.updatePixels
 
@@ -1327,8 +1229,8 @@ class Py5Image(PixelMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its :doc:`py5image_pixels` array. Use in
-        conjunction with :doc:`py5image_load_pixels`. If you're only reading pixels from
+        Updates the image with the data in its ``Py5Image.pixels[]`` array. Use in
+        conjunction with ``Py5Image.load_pixels()``. If you're only reading pixels from
         the array, there's no need to call ``update_pixels()``.
         """
         return self._instance.updatePixels(*args)

@@ -76,14 +76,14 @@ class Py5Surface:
         -----
 
         Determine if the surface is currently running an animation. A Sketch that has
-        called :doc:`no_loop` or has no ``draw()`` function is not animating, and will
+        called ``no_loop()`` or has no ``draw()`` function is not animating, and will
         result in this method returning ``True``. If there is a ``draw()`` function and
-        :doc:`no_loop` has not been called, this will return ``False``. Calling
-        Py5Surface's :doc:`py5surface_stop_thread` will make all future calls to
+        ``no_loop()`` has not been called, this will return ``False``. Calling
+        Py5Surface's ``Py5Surface.stop_thread()`` will make all future calls to
         ``is_stopped()`` return ``True``.
 
-        The output of this method is independent of :doc:`py5surface_pause_thread` and
-        :doc:`py5surface_resume_thread`.
+        The output of this method is independent of ``Py5Surface.pause_thread()`` and
+        ``Py5Surface.resume_thread()``.
         """
         return self._instance.isStopped()
 
@@ -96,12 +96,12 @@ class Py5Surface:
         -----
 
         Pause a running Sketch. The Sketch window will be static and unresponsive. You
-        can resume the Sketch with :doc:`py5surface_resume_thread`.
+        can resume the Sketch with ``Py5Surface.resume_thread()``.
 
-        The :doc:`frame_count` will not increment while the Sketch is paused.
+        The ``frame_count`` will not increment while the Sketch is paused.
 
         Pausing a Sketch is not the same as stopping a Sketch, so this method will not
-        change the results of :doc:`py5surface_is_stopped`.
+        change the results of ``Py5Surface.is_stopped()``.
         """
         return self._instance.pauseThread()
 
@@ -114,9 +114,9 @@ class Py5Surface:
         -----
 
         Resume a paused Sketch. The Sketch window will resume operating as it did before
-        :doc:`py5surface_pause_thread` was called.
+        ``Py5Surface.pause_thread()`` was called.
 
-        The :doc:`frame_count` will continue incrementing after the Sketch is resumed.
+        The ``frame_count`` will continue incrementing after the Sketch is resumed.
         """
         return self._instance.resumeThread()
 
@@ -182,7 +182,7 @@ class Py5Surface:
 
         Set the Sketch's window location. Calling this repeatedly from the ``draw()``
         function may result in a sluggish Sketch. Negative or invalid coordinates are
-        ignored. To hide a Sketch window, use :doc:`py5surface_set_visible`.
+        ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
         """
         return self._instance.setLocation(x, y)
 
@@ -205,7 +205,7 @@ class Py5Surface:
         By default, the Sketch window is not resizable.
 
         Changing the window size will clear the drawing canvas. If your Sketch uses
-        this, the :doc:`width` and :doc:`height` variables will change.
+        this, the ``width`` and ``height`` variables will change.
         """
         return self._instance.setResizable(resizable)
 
@@ -227,10 +227,10 @@ class Py5Surface:
         -----
 
         Set a new width and height for the Sketch window. You do not need to call
-        :doc:`py5surface_set_resizable` before calling this.
+        ``Py5Surface.set_resizable()`` before calling this.
 
         Changing the window size will clear the drawing canvas. If your Sketch uses
-        this, the :doc:`width` and :doc:`height` variables will change.
+        this, the ``width`` and ``height`` variables will change.
         """
         return self._instance.setSize(width, height)
 
@@ -281,12 +281,11 @@ class Py5Surface:
         -----
 
         Stop the animation thread. The Sketch window will remain open but will be static
-        and unresponsive. Use :doc:`py5surface_is_stopped` to determine if a Sketch has
+        and unresponsive. Use ``Py5Surface.is_stopped()`` to determine if a Sketch has
         been stopped or not.
 
-        This method is different from :doc:`py5surface_pause_thread` in that it will
-        irreversably stop the animation. Use :doc:`py5surface_pause_thread` and
-        :doc:`py5surface_resume_thread` if you want to pause and resume a running
-        Sketch.
+        This method is different from ``Py5Surface.pause_thread()`` in that it will
+        irreversably stop the animation. Use ``Py5Surface.pause_thread()`` and
+        ``Py5Surface.resume_thread()`` if you want to pause and resume a running Sketch.
         """
         return self._instance.stopThread()

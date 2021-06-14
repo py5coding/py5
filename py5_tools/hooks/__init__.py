@@ -17,8 +17,8 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-from .drawing import DrawingMagics
-
-
-def load_ipython_extension(ipython):
-    ipython.register_magics(DrawingMagics)
+from .frame_hooks import *
+try:
+    from .zmq_hooks import *
+except BaseException:
+    from .zmq_hooks_fail import *

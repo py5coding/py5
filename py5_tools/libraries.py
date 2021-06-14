@@ -48,8 +48,8 @@ class ProcessingLibraryInfo:
         blocks = [b for b in response.text.split(
             '\n\n') if b.startswith('library')]
         block_lines = [dict([line.split('=', 1)
-                             for line in block.splitlines()
-                             if line != "library"])
+                            for line in block.splitlines()
+                            if line != "library"])
                        for block in blocks]
         df = pd.DataFrame.from_dict(block_lines, dtype="string")
         # lastUpdated is supposed to be the last column

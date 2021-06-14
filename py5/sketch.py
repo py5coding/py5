@@ -19,7 +19,6 @@
 # *****************************************************************************
 import time
 import os
-import logging
 from pathlib import Path
 import functools
 from typing import overload, Any, Callable, Union, Dict, List  # noqa
@@ -32,7 +31,7 @@ import numpy as np  # noqa
 
 from .methods import Py5Methods
 from .base import Py5Base
-from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin
+from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, _DefaultPrintlnStream, _DisplayPubPrintlnStream
 from .mixins.threads import Py5Promise  # noqa
 from .image import Py5Image, _return_py5image  # noqa
 from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
@@ -60,8 +59,6 @@ except NameError:
     _ipython_shell = None
     _in_jupyter_zmq_shell = False
 
-logger = logging.getLogger(__name__)
-
 
 def _auto_convert_to_py5image(f):
     @functools.wraps(f)
@@ -76,7 +73,13 @@ def _auto_convert_to_py5image(f):
     return decorated
 
 
-class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
+class Sketch(
+        MathMixin,
+        DataMixin,
+        ThreadsMixin,
+        PixelMixin,
+        PrintlnStream,
+        Py5Base):
     """Core py5 class for leveraging py5's functionality.
 
     Underlying Java class: PApplet.PApplet
@@ -122,6 +125,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         # otherwise, it will be garbage collected and lead to segmentation
         # faults!
         self._py5_methods = None
+        self.set_println_stream(_DisplayPubPrintlnStream(
+        ) if _in_jupyter_zmq_shell else _DefaultPrintlnStream())
 
         # attempt to instantiate Py5Utilities
         self.utils = None
@@ -156,10 +161,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         functions will be used to actualize your Sketch.
 
         Use the ``block`` parameter to specify if the call to ``run_sketch()`` should
-        return immediately or block until the Sketch exits. If the ``block`` parameter
-        is not specified, py5 will first attempt to determine if the Sketch is running
-        in a Jupyter Notebook or an IPython shell. If it is, ``block`` will default to
-        ``False``, and ``True`` otherwise.
+        return immediately (asynchronous Sketch execution) or block until the Sketch
+        exits. If the ``block`` parameter is not specified, py5 will first attempt to
+        determine if the Sketch is running in a Jupyter Notebook or an IPython shell. If
+        it is, ``block`` will default to ``False``, and ``True`` otherwise.
 
         A list of strings passed to ``py5_options`` will be passed to the Processing
         PApplet class as arguments to specify characteristics such as the window's
@@ -174,7 +179,20 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
         ``sketch_functions`` parameter to pass a dictionary of the desired callable
         functions. The ``sketch_functions`` parameter is not available when coding py5
         in class mode. Don't forget you can always replace the ``draw()`` function in a
-        running Sketch using ``hot_reload_draw()``."""
+        running Sketch using ``hot_reload_draw()``.
+
+        When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+        statements using Python's builtin function will always appear in the output of
+        the currently active cell. This will rarely be desirable, as the active cell
+        will keep changing as the user executes code elsewhere in the notebook. As an
+        alternative, use py5's ``println()`` method, which will place all text in the
+        output of the cell that made the ``run_sketch()`` call. This will continue to be
+        true if the user moves on to execute code in other Notebook cells. Use
+        ``set_println_stream()`` to customize this behavior. All py5 error messages and
+        stack traces are routed through the ``println()`` method. Be aware that some
+        error messages and warnings generated inside the Processing Jars cannot be
+        controlled in the same way, and may appear in the output of the active cell or
+        mixed in with the Jupyter Kernel logs."""
         if block is None:
             block = not _in_ipython_session
 
@@ -192,22 +210,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
                     block: bool,
                     py5_options: List[str] = None,
                     sketch_args: List[str] = None) -> None:
-        if _in_jupyter_zmq_shell:
-            display_pub = _ipython_shell.display_pub
-            parent_header = display_pub.parent_header
+        self._init_println_stream()
 
-            def zmq_shell_send_stream(name, text):
-                content = dict(name=name, text=text)
-                msg = display_pub.session.msg(
-                    'stream', content, parent=parent_header)
-                display_pub.session.send(
-                    display_pub.pub_socket, msg, ident=b'stream')
-
-            _stream_redirect = zmq_shell_send_stream
-        else:
-            _stream_redirect = None
-
-        self._py5_methods = Py5Methods(self, _stream_redirect=_stream_redirect)
+        self._py5_methods = Py5Methods(self)
         self._py5_methods.set_functions(**methods)
         self._py5_methods.profile_functions(self._methods_to_profile)
         self._py5_methods.add_pre_hooks(self._pre_hooks_to_add)
@@ -224,8 +229,11 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, Py5Base):
 
         try:
             _Sketch.runSketch(args, self._instance)
-        except Exception:
-            logger.exception('Java exception thrown by Sketch.runSketch')
+        except Exception as e:
+            self.println(
+                'Java exception thrown by Sketch.runSketch:\n' +
+                str(e),
+                stderr=True)
 
         if block:
             # wait for the sketch to finish

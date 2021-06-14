@@ -17,6 +17,7 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+import sys
 import re
 import io
 from pathlib import Path
@@ -117,7 +118,9 @@ def _run_sketch(renderer, code, width, height, user_ns, safe_exec):
     is_running = py5.is_running
     if (isinstance(is_running, bool) and is_running) or (
             callable(is_running) and is_running()):
-        print('You must exit the currently running sketch before running another sketch.')
+        print(
+            'You must exit the currently running sketch before running another sketch.',
+            file=sys.stderr)
         return None
 
     if imported.get_imported_mode():
@@ -167,7 +170,7 @@ class DrawingMagics(Magics):
         return filename
 
     def _variable_name_check(self, varname):
-        return re.match(r'^[a-zA-Z_]\w*' + chr(36), varname)
+        return re.match('^[a-zA-Z_]\\w*' + chr(36), varname)
 
     @magic_arguments()
     @argument('width', type=int, help='width of PDF output')
@@ -199,6 +202,7 @@ class DrawingMagics(Magics):
         using py5 objects in a different notebook cell or reusing them in another Sketch
         can result in nasty errors and bizzare consequences."""
         args = parse_argstring(self.py5drawpdf, line)
+
         pdf = _run_sketch('PDF', cell, args.width, args.height,
                           self.shell.user_ns, not args.unsafe)
         if pdf:
@@ -237,6 +241,7 @@ class DrawingMagics(Magics):
         using py5 objects in a different notebook cell or reusing them in another Sketch
         can result in nasty errors and bizzare consequences."""
         args = parse_argstring(self.py5drawdxf, line)
+
         dxf = _run_sketch('DXF', cell, args.width, args.height,
                           self.shell.user_ns, not args.unsafe)
         if dxf:
@@ -276,6 +281,7 @@ class DrawingMagics(Magics):
         using py5 objects in a different notebook cell or reusing them in another Sketch
         can result in nasty errors and bizzare consequences."""
         args = parse_argstring(self.py5drawsvg, line)
+
         svg = _run_sketch('SVG', cell, args.width, args.height,
                           self.shell.user_ns, not args.unsafe)
         if svg:
@@ -319,13 +325,13 @@ class DrawingMagics(Magics):
         args = parse_argstring(self.py5draw, line)
 
         if args.renderer == 'SVG':
-            print('please use %%py5drawsvg for SVG drawings.')
+            print('please use %%py5drawsvg for SVG drawings.', file=sys.stderr)
             return
         if args.renderer == 'PDF':
-            print('please use %%py5drawpdf for PDFs.')
+            print('please use %%py5drawpdf for PDFs.', file=sys.stderr)
             return
         if args.renderer not in ['HIDDEN', 'JAVA2D', 'P2D', 'P3D']:
-            print(f'unknown renderer {args.renderer}')
+            print(f'unknown renderer {args.renderer}', file=sys.stderr)
             return
 
         png = _run_sketch(args.renderer, cell, args.width, args.height,
@@ -342,5 +348,7 @@ class DrawingMagics(Magics):
                         self.shell.user_ns[args.variable] = pil_img
                         print(f'PIL Image assigned to {args.variable}')
                     else:
-                        print(f'Invalid variable name {args.variable}')
+                        print(
+                            f'Invalid variable name {args.variable}',
+                            file=sys.stderr)
             display(Image(png))

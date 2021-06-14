@@ -4,12 +4,13 @@ from typing import Callable, Tuple, Dict, List, NewType
 import numpy as np
 
 import PIL
+import PIL.ImageFile
 from PIL import Image
 
 from .sketch import Sketch
 
 
-PIL_Image = NewType('PIL_Image', PIL.Image)
+PIL_ImageFile = NewType('PIL_ImageFile', PIL.ImageFile.ImageFile)
 
 
 class RenderHelperSketch(Sketch):
@@ -125,7 +126,7 @@ class RenderHelperGraphicsCanvas(Sketch):
 def render_frame(draw: Callable, width: int, height: int,
                  renderer: str = Sketch.HIDDEN, *,
                  draw_args: Tuple = None, draw_kwargs: Dict = None,
-                 use_py5graphics=False) -> Image:
+                 use_py5graphics=False) -> PIL.ImageFile.ImageFile:
     """Helper function to render a single frame using the passed ``draw`` function
     argument.
 
@@ -193,7 +194,7 @@ def render_frame_sequence(draw: Callable, width: int, height: int,
                           limit: int = 1, setup: Callable = None,
                           setup_args: Tuple = None, setup_kwargs: Dict = None,
                           draw_args: Tuple = None, draw_kwargs: Dict = None,
-                          use_py5graphics=False) -> List[PIL_Image]:
+                          use_py5graphics=False) -> List[PIL_ImageFile]:
     """Helper function to render a sequence of frames using the passed ``draw``
     function argument.
 
@@ -277,7 +278,7 @@ def render_frame_sequence(draw: Callable, width: int, height: int,
 
 
 def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
-           use_py5graphics=False) -> Image:
+           use_py5graphics=False) -> PIL.ImageFile.ImageFile:
     """Decorator function to render a single frame using the decorated ``draw``
     function.
 
@@ -335,7 +336,7 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
 def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
                     limit: int = 1, setup: Callable = None,
                     setup_args: Tuple = None, setup_kwargs: Dict = None,
-                    use_py5graphics=False) -> List[PIL_Image]:
+                    use_py5graphics=False) -> List[PIL_ImageFile]:
     """Decorator function to render a sequence of frames using the decorated ``draw``
     function.
 

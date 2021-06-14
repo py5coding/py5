@@ -41,7 +41,7 @@ def handle_typeerror(exc_type_name, exc_msg, py5info):
             else:
                 exc_msg += 'Your parameters must match one of the following signatures:\n'
                 exc_msg += '\n'.join([' * ' + fname +
-                                      sig for sig in signatures])
+                                     sig for sig in signatures])
 
     return exc_msg
 

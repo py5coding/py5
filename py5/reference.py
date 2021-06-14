@@ -26,7 +26,7 @@ METHODS = [
     'key_pressed', 'key_typed', 'key_released',
     'mouse_clicked', 'mouse_dragged', 'mouse_moved', 'mouse_entered',
     'mouse_exited', 'mouse_pressed', 'mouse_released', 'mouse_wheel',
-    'exiting'
+    'exiting', 'movie_event'
 ]
 
 FILE_CLASS_LOOKUP = dict([
@@ -253,6 +253,8 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Sketch', 'stop_thread'), ['(name: str, wait: bool = False) -> None']),
     (('Sketch', 'stop_all_threads'), ['(wait: bool = False) -> None']),
     (('Sketch', 'list_threads'), ['() -> None']),
+    (('Sketch', 'set_println_stream'), ['(println_stream: Any) -> None']),
+    (('Sketch', 'println'), ["(*args, sep: str = ' ', end: str = '\\n', stderr: bool = False) -> None"]),
     (('Sketch', 'sketch_path'), ['() -> Path', '(where: str, /) -> Path']),
     (('Sketch', 'hot_reload_draw'), ['(draw: Callable) -> None']),
     (('Sketch', 'profile_functions'), ['(function_names: List[str]) -> None']),
@@ -540,4 +542,9 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Py5Tools', 'get_classpath'), ['() -> str']),
     (('Py5Tools', 'add_classpath'), ['(classpath: Union[Path, str]) -> None']),
     (('Py5Tools', 'add_jars'), ['(path: Union[Path, str]) -> None']),
+    (('Py5Tools', 'screenshot'), ['(*, sketch: Sketch = None, hook_post_draw: bool = False) -> PIL.Image']),
+    (('Py5Tools', 'save_frames'), ["(dirname: str, *, filename: str = 'frame_####.png', period: float = 0.0, start: int = None, limit: int = 0, sketch: Sketch = None, hook_post_draw: bool = False) -> List[str]"]),
+    (('Py5Tools', 'animated_gif'), ['(filename: str, count: int, period: float, duration: float, *, loop: int = 0, optimize: bool = True, sketch: Sketch = None, hook_post_draw: bool = False) -> str']),
+    (('Py5Tools', 'capture_frames'), ['(count: float, *, period: float = 0.0, sketch: Sketch = None, hook_post_draw: bool = False) -> List[PIL.Image]']),
+    (('Py5Tools', 'sketch_portal'), ['(*, time_limit: float = 0.0, throttle_frame_rate: float = None, scale: float = 1.0, quality: int = 75, portal_widget: Py5SketchPortal = None, sketch: Sketch = None, hook_post_draw: bool = False) -> None']),
 ])

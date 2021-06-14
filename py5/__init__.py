@@ -23,12 +23,11 @@ py5 makes Processing available to the CPython interpreter using JPype.
 """
 import sys
 from pathlib import Path
-import logging
 import inspect
 from typing import overload, Any, Callable, Union, Dict, List, Tuple  # noqa
 from nptyping import NDArray, Float, Int  # noqa
 
-import json  # noqa
+# import json  # noqa
 import numpy as np  # noqa
 from PIL import Image  # noqa
 from jpype import JClass  # noqa
@@ -62,11 +61,9 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.4a1'
+__version__ = '0.4a2'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.imported.get_imported_mode()
-
-logger = logging.getLogger(__name__)
 
 java_conversion.init_jpype_converters()
 
@@ -18945,6 +18942,80 @@ def list_threads() -> None:
     return _py5sketch.list_threads()
 
 ##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of ``println()`` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of ``println()`` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    ``println()`` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    ``set_println_stream`` to change how the output is handled. The
+    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
+    shown in the example. The example demonstrates how to configure py5 to output
+    text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(
+    *args,
+    sep: str = ' ',
+    end: str = '\n',
+        stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = '\\n'
+        string appended after the last value, defaults to newline character
+
+    sep: str = ' '
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
+    text in the output of the cell that made the ``run_sketch()`` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use ``set_println_stream()`` to customize the behavior of ``println()``.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+##############################################################################
 # module functions from sketch.py
 ##############################################################################
 
@@ -19376,10 +19447,10 @@ def run_sketch(block: bool = None, *,
     functions will be used to actualize your Sketch.
 
     Use the ``block`` parameter to specify if the call to ``run_sketch()`` should
-    return immediately or block until the Sketch exits. If the ``block`` parameter
-    is not specified, py5 will first attempt to determine if the Sketch is running
-    in a Jupyter Notebook or an IPython shell. If it is, ``block`` will default to
-    ``False``, and ``True`` otherwise.
+    return immediately (asynchronous Sketch execution) or block until the Sketch
+    exits. If the ``block`` parameter is not specified, py5 will first attempt to
+    determine if the Sketch is running in a Jupyter Notebook or an IPython shell. If
+    it is, ``block`` will default to ``False``, and ``True`` otherwise.
 
     A list of strings passed to ``py5_options`` will be passed to the Processing
     PApplet class as arguments to specify characteristics such as the window's
@@ -19394,13 +19465,26 @@ def run_sketch(block: bool = None, *,
     ``sketch_functions`` parameter to pass a dictionary of the desired callable
     functions. The ``sketch_functions`` parameter is not available when coding py5
     in class mode. Don't forget you can always replace the ``draw()`` function in a
-    running Sketch using ``hot_reload_draw()``."""
+    running Sketch using ``hot_reload_draw()``.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. As an
+    alternative, use py5's ``println()`` method, which will place all text in the
+    output of the cell that made the ``run_sketch()`` call. This will continue to be
+    true if the user moves on to execute code in other Notebook cells. Use
+    ``set_println_stream()`` to customize this behavior. All py5 error messages and
+    stack traces are routed through the ``println()`` method. Be aware that some
+    error messages and warnings generated inside the Processing Jars cannot be
+    controlled in the same way, and may appear in the output of the active cell or
+    mixed in with the Jupyter Kernel logs."""
     if block is None:
         block = not _in_ipython_session
 
     sketch_functions = sketch_functions or inspect.stack()[1].frame.f_locals
     functions = dict([(e, sketch_functions[e])
-                      for e in reference.METHODS if e in sketch_functions and callable(sketch_functions[e])])
+                     for e in reference.METHODS if e in sketch_functions and callable(sketch_functions[e])])
 
     if not set(functions.keys()) & set(['settings', 'setup', 'draw']):
         print(("Unable to find settings, setup, or draw functions. "

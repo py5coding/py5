@@ -24,10 +24,11 @@ from . import imported  # noqa
 from .imported import set_imported_mode  # noqa
 from .jvm import *  # noqa
 from .libraries import *  # noqa
+from .hooks import *  # noqa
 from . import magics  # noqa
 from . import parsing  # noqa
 from . import utilities  # noqa
 from . import testing  # noqa
 
 
-__version__ = '0.4a1'
+__version__ = '0.4a2'

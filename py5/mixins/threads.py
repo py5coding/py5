@@ -60,7 +60,7 @@ class Py5Thread:
         try:
             self.f(*self.args, **self.kwargs)
         except Exception:
-            methods.handle_exception(*sys.exc_info())
+            methods.handle_exception(self.sketch.println, *sys.exc_info())
             self.sketch._terminate_sketch()
 
 
@@ -77,7 +77,7 @@ class Py5PromiseThread(Py5Thread):
         try:
             self.promise._set_result(self.f(*self.args, **self.kwargs))
         except Exception:
-            methods.handle_exception(*sys.exc_info())
+            methods.handle_exception(self.sketch.println, *sys.exc_info())
             self.sketch._terminate_sketch()
 
 
@@ -102,7 +102,7 @@ class Py5RepeatingThread(Py5Thread):
                 self.e.wait(max(0, start_time + self.delay - time.time()))
         except Exception:
             self.stop()
-            methods.handle_exception(*sys.exc_info())
+            methods.handle_exception(self.sketch.println, *sys.exc_info())
             self.sketch._terminate_sketch()
 
 

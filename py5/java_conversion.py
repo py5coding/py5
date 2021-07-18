@@ -28,10 +28,12 @@ def init_jpype_converters():
     data = [
         ("processing.core.PImage", Py5Image),
         ("processing.core.PImage", Py5Graphics),
+        ("processing.core.PGraphics", Py5Graphics),
         ("processing.core.PFont", Py5Font),
         ("processing.core.PShape", Py5Shape),
         ("processing.opengl.PShader", Py5Shader),
         ("processing.core.PApplet", Sketch),
+        ("py5.core.Sketch", Sketch),
     ]
 
     def convert(jcls, obj):

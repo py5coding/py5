@@ -109,3 +109,6 @@ def sketch_portal(
     existing portal."""
     raise RuntimeError(
         'The sketch_widget() function can only be used with IPython and ZMQInteractiveShell (such as Jupyter Lab)')
+
+
+__all__ = ['sketch_portal']

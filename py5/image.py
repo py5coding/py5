@@ -23,7 +23,7 @@ import functools
 from typing import overload, List, Union  # noqa
 
 from .base import Py5Base
-from .mixins import PixelMixin
+from .mixins import PixelPy5ImageMixin
 
 
 def _return_py5image(f):
@@ -37,7 +37,7 @@ def _return_py5image(f):
     return decorated
 
 
-class Py5Image(PixelMixin, Py5Base):
+class Py5Image(PixelPy5ImageMixin, Py5Base):
     """Datatype for storing images.
 
     Underlying Java class: PImage.PImage
@@ -116,6 +116,51 @@ class Py5Image(PixelMixin, Py5Base):
         """
         return self._instance.height
     height: int = property(fget=_get_height)
+
+    def _get_pixel_density(self) -> int:
+        """Pixel density of the Py5Image object.
+
+        Underlying Java field: PImage.pixelDensity
+
+        Notes
+        -----
+
+        Pixel density of the Py5Image object. This will always be equal to 1, even if
+        the Sketch used ``pixel_density()`` to set the pixel density to a value greater
+        than 1.
+        """
+        return self._instance.pixelDensity
+    pixel_density: int = property(fget=_get_pixel_density)
+
+    def _get_pixel_height(self) -> int:
+        """Height of the Py5Image object in pixels.
+
+        Underlying Java field: PImage.pixelHeight
+
+        Notes
+        -----
+
+        Height of the Py5Image object in pixels. This will be the same as
+        ``Py5Image.height``, even if the Sketch used ``pixel_density()`` to set the
+        pixel density to a value greater than 1.
+        """
+        return self._instance.pixelHeight
+    pixel_height: int = property(fget=_get_pixel_height)
+
+    def _get_pixel_width(self) -> int:
+        """Width of the Py5Image object in pixels.
+
+        Underlying Java field: PImage.pixelWidth
+
+        Notes
+        -----
+
+        Width of the Py5Image object in pixels. This will be the same as
+        ``Py5Image.width``, even if the Sketch used ``pixel_density()`` to set the pixel
+        density to a value greater than 1.
+        """
+        return self._instance.pixelWidth
+    pixel_width: int = property(fget=_get_pixel_width)
 
     def _get_pixels(self) -> NDArray[(Any,), Int]:
         """The pixels[] array contains the values for all the pixels in the image.

@@ -28,7 +28,7 @@ import numpy as np  # noqa
 from jpype import JClass
 
 from .base import Py5Base
-from .mixins import PixelMixin
+from .mixins import PixelPy5GraphicsMixin
 from .font import Py5Font  # noqa
 from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
 from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
@@ -49,7 +49,7 @@ def _return_py5graphics(f):
 _Py5GraphicsHelper = JClass('py5.core.Py5GraphicsHelper')
 
 
-class Py5Graphics(PixelMixin, Py5Base):
+class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     """Main graphics and rendering context, as well as the base ``API`` implementation
     for processing "core".
 
@@ -64,6 +64,11 @@ class Py5Graphics(PixelMixin, Py5Base):
     ``create_graphics()`` function. The ``Py5Graphics.begin_draw()`` and
     ``Py5Graphics.end_draw()`` methods (see example) are necessary to set up the
     buffer and to finalize it. The fields and methods for this class are extensive.
+
+    It is critically important that calls to this object's drawing methods are only
+    used between ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``.
+    Forgetting to call ``Py5Graphics.begin_draw()`` will likely result in an ugly
+    and unhelpful Java exception.
 
     To create a new graphics context, use the ``create_graphics()`` function. Do not
     use the syntax ``Py5Graphics()``.
@@ -306,21 +311,19 @@ class Py5Graphics(PixelMixin, Py5Base):
     pixel_density: int = property(fget=_get_pixel_density)
 
     def _get_pixel_height(self) -> int:
-        """When ``pixel_density(2)`` was used in ``settings()`` to make use of a high
-        resolution display (called a Retina display on OSX or high-dpi on Windows and
-        Linux), the width and height of the Py5Graphics drawing surface does not change,
-        but the number of pixels is doubled.
+        """Height of the Py5Graphics drawing surface in pixels.
 
         Underlying Java field: PGraphics.pixelHeight
 
         Notes
         -----
 
-        When ``pixel_density(2)`` was used in ``settings()`` to make use of a high
-        resolution display (called a Retina display on OSX or high-dpi on Windows and
-        Linux), the width and height of the Py5Graphics drawing surface does not change,
-        but the number of pixels is doubled. As a result, all operations that use pixels
-        (like ``Py5Graphics.load_pixels()``, ``Py5Graphics.get()``, etc.) happen in this
+        Height of the Py5Graphics drawing surface in pixels. When ``pixel_density(2)``
+        was used in ``settings()`` to make use of a high resolution display (called a
+        Retina display on OSX or high-dpi on Windows and Linux), the width and height of
+        the Py5Graphics drawing surface does not change, but the number of pixels is
+        doubled. As a result, all operations that use pixels (like
+        ``Py5Graphics.load_pixels()``, ``Py5Graphics.get()``, etc.) happen in this
         doubled space. As a convenience, the variables ``Py5Graphics.pixel_width`` and
         ``pixel_height`` hold the actual width and height of the drawing surface in
         pixels. This is useful for any Py5Graphics objects that use the
@@ -335,21 +338,19 @@ class Py5Graphics(PixelMixin, Py5Base):
     pixel_height: int = property(fget=_get_pixel_height)
 
     def _get_pixel_width(self) -> int:
-        """When ``pixel_density(2)`` was used in ``settings()`` to make use of a high
-        resolution display (called a Retina display on OSX or high-dpi on Windows and
-        Linux), the width and height of the Py5Graphics drawing surface does not change,
-        but the number of pixels is doubled.
+        """Width of the Py5Graphics drawing surface in pixels.
 
         Underlying Java field: PGraphics.pixelWidth
 
         Notes
         -----
 
-        When ``pixel_density(2)`` was used in ``settings()`` to make use of a high
-        resolution display (called a Retina display on OSX or high-dpi on Windows and
-        Linux), the width and height of the Py5Graphics drawing surface does not change,
-        but the number of pixels is doubled. As a result, all operations that use pixels
-        (like ``Py5Graphics.load_pixels()``, ``Py5Graphics.get()``, etc.) happen in this
+        Width of the Py5Graphics drawing surface in pixels. When ``pixel_density(2)``
+        was used in ``settings()`` to make use of a high resolution display (called a
+        Retina display on OSX or high-dpi on Windows and Linux), the width and height of
+        the Py5Graphics drawing surface does not change, but the number of pixels is
+        doubled. As a result, all operations that use pixels (like
+        ``Py5Graphics.load_pixels()``, ``Py5Graphics.get()``, etc.) happen in this
         doubled space. As a convenience, the variables ``pixel_width`` and
         ``Py5Graphics.pixel_height`` hold the actual width and height of the drawing
         surface in pixels. This is useful for any Py5Graphics objects that use the
@@ -7219,6 +7220,9 @@ class Py5Graphics(PixelMixin, Py5Base):
         last resort that's used when a more elegant solution cannot be found. Some
         options might graduate to standard features instead of hints over time, or be
         added and removed between (major) releases.
+
+        Like other ``Py5Graphics`` methods, ``hint()`` can only be used between calls to
+        ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``.
 
         Hints used by the Default Renderer
         ----------------------------------

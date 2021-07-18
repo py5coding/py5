@@ -193,9 +193,9 @@ class PixelMixin:
              *,
              format: str = None,
              drop_alpha: bool = True,
-             use_thread: bool = True,
+             use_thread: bool = False,
              **params) -> None:
-        """Save image data to a file.
+        """Save the drawing surface to an image file.
 
         Parameters
         ----------
@@ -212,14 +212,15 @@ class PixelMixin:
         params
             keyword arguments to pass to the PIL.Image save method
 
-        use_thread: bool = True
+        use_thread: bool = False
             write file in separate thread
 
         Notes
         -----
 
-        Save image data to a file. This method uses the Python library Pillow to write
-        the image, so it can save images in any format that that library supports.
+        Save the drawing surface to an image file. This method uses the Python library
+        Pillow to write the image, so it can save images in any format that that library
+        supports.
 
         Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
         defaults to ``True``. Some image formats such as JPG do not support alpha
@@ -251,3 +252,367 @@ class PixelMixin:
             t.start()
         else:
             Image.fromarray(arr).save(filename, format=format, **params)
+
+    # *** END METHODS ***
+
+
+class PixelPy5GraphicsMixin(PixelMixin):
+
+    def load_np_pixels(self) -> None:
+        """Loads the pixel data of the current Py5Graphics drawing surface into the
+        ``Py5Graphics.np_pixels[]`` array.
+
+        Notes
+        -----
+
+        Loads the pixel data of the current Py5Graphics drawing surface into the
+        ``Py5Graphics.np_pixels[]`` array. This method must always be called before
+        reading from or writing to ``Py5Graphics.np_pixels[]``. It should only be used
+        between calls to ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``.
+        Subsequent changes to the Py5Graphics drawing surface will not be reflected in
+        ``Py5Graphics.np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+        The ``load_np_pixels()`` method is similar to ``Py5Graphics.load_pixels()`` in
+        that ``load_np_pixels()`` must be called before reading from or writing to
+        ``Py5Graphics.np_pixels[]`` just as ``Py5Graphics.load_pixels()`` must be called
+        before reading from or writing to ``Py5Graphics.pixels[]``.
+
+        Note that ``load_np_pixels()`` will as a side effect call
+        ``Py5Graphics.load_pixels()``, so if your code needs to read
+        ``Py5Graphics.np_pixels[]`` and ``Py5Graphics.pixels[]`` simultaneously, there
+        is no need for a separate call to ``Py5Graphics.load_pixels()``. However, be
+        aware that modifying both ``Py5Graphics.np_pixels[]`` and
+        ``Py5Graphics.pixels[]`` simultaneously will likely result in the updates to
+        ``Py5Graphics.pixels[]`` being discarded.
+
+        This method is the same as ``load_np_pixels()`` but linked to a ``Py5Graphics``
+        object."""
+        return super().load_np_pixels()
+
+    def update_np_pixels(self) -> None:
+        """Updates the Py5Graphics drawing surface with the data in the
+        ``Py5Graphics.np_pixels[]`` array.
+
+        Notes
+        -----
+
+        Updates the Py5Graphics drawing surface with the data in the
+        ``Py5Graphics.np_pixels[]`` array. Use in conjunction with
+        ``Py5Graphics.load_np_pixels()``. If you're only reading pixels from the array,
+        there's no need to call ``update_np_pixels()`` — updating is only necessary to
+        apply changes. Working with ``Py5Graphics.np_pixels[]`` can only be done between
+        calls to ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``.
+
+        The ``update_np_pixels()`` method is similar to ``Py5Graphics.update_pixels()``
+        in that ``update_np_pixels()`` must be called after modifying
+        ``Py5Graphics.np_pixels[]`` just as ``Py5Graphics.update_pixels()`` must be
+        called after modifying ``Py5Graphics.pixels[]``.
+
+        This method is the same as ``update_np_pixels()`` but linked to a
+        ``Py5Graphics`` object."""
+        return super().update_np_pixels()
+
+    def _get_np_pixels(self) -> np.ndarray:
+        """The ``np_pixels[]`` array contains the values for all the pixels in the
+        Py5Graphics drawing surface.
+
+        Notes
+        -----
+
+        The ``np_pixels[]`` array contains the values for all the pixels in the
+        Py5Graphics drawing surface. Unlike the one dimensional array
+        ``Py5Graphics.pixels[]``, the ``np_pixels[]`` array organizes the color data in
+        a 3 dimensional numpy array. The size of the array's dimensions are defined by
+        the size of the Py5Graphics drawing surface. The first dimension is the height,
+        the second is the width, and the third represents the color channels. The color
+        channels are ordered alpha, red, green, blue (ARGB). Every value in
+        ``np_pixels[]`` is an integer between 0 and 255.
+
+        This numpy array is very similar to the image arrays used by other popular
+        Python image libraries, but note that some of them like opencv will by default
+        order the color channels as RGBA.
+
+        When the pixel density is set to higher than 1 with the
+        ``Py5Graphics.pixel_density`` function, the size of ``np_pixels[]``'s height and
+        width dimensions will change. See the reference for ``Py5Graphics.pixel_width``
+        or ``Py5Graphics.pixel_height`` for more information. Nothing about
+        ``np_pixels[]`` will change as a result of calls to
+        ``Py5Graphics.color_mode()``.
+
+        Much like the ``Py5Graphics.pixels[]`` array, there are load and update methods
+        that must be called before and after making changes to the data in
+        ``np_pixels[]``. Before accessing ``np_pixels[]``, the data must be loaded with
+        the ``Py5Graphics.load_np_pixels()`` method. If this is not done, ``np_pixels``
+        will be equal to ``None`` and your code will likely result in Python exceptions.
+        After ``np_pixels[]`` has been modified, the ``Py5Graphics.update_np_pixels()``
+        method must be called to update the content of the Py5Graphics drawing surface.
+
+        Working with ``Py5Graphics.np_pixels[]`` can only be done between calls to
+        ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``.
+
+        To set the entire contents of ``np_pixels[]`` to the contents of another
+        properly sized numpy array, consider using ``Py5Graphics.set_np_pixels()``.
+
+        This field is the same as ``np_pixels[]`` but linked to a ``Py5Graphics``
+        object."""
+        return super()._get_np_pixels()
+    np_pixels: np.ndarray = property(fget=_get_np_pixels)
+
+    def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
+        """Set the entire contents of ``Py5Graphics.np_pixels[]`` to the contents of
+        another properly sized and typed numpy array.
+
+        Parameters
+        ----------
+
+        array: np.ndarray
+            properly sized numpy array to be copied to np_pixels[]
+
+        bands: str = 'ARGB'
+            color channels in the array's third dimension
+
+        Notes
+        -----
+
+        Set the entire contents of ``Py5Graphics.np_pixels[]`` to the contents of
+        another properly sized and typed numpy array. The size of ``array``'s first and
+        second dimensions must match the height and width of the Py5Graphics drawing
+        surface, respectively. The array's ``dtype`` must be ``np.uint8``. This must be
+        used after ``Py5Graphics.begin_draw()`` but can be used after
+        ``Py5Graphics.end_draw()``.
+
+        The ``bands`` parameter is used to interpret the ``array``'s color channel
+        dimension (the array's third dimension). It can be one of ``'L'`` (single-
+        channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+        channel, ``array`` is assumed to have no transparency. Unlike the main drawing
+        window, a Py5Graphics drawing surface's pixels can be transparent so using the
+        alpha channel will work properly. If the ``bands`` parameter is ``'L'``,
+        ``array``'s third dimension is optional.
+
+        This method makes its own calls to ``Py5Graphics.load_np_pixels()`` and
+        ``Py5Graphics.update_np_pixels()`` so there is no need to call either
+        explicitly.
+
+        This method exists because setting the array contents with the code
+        ``g.np_pixels = array`` will cause an error, while the correct syntax,
+        ``g.np_pixels[:] = array``, might also be unintuitive for beginners.
+
+        This method is the same as ``set_np_pixels()`` but linked to a ``Py5Graphics``
+        object."""
+        return super().set_np_pixels(array, bands)
+
+    def save(self,
+             filename: Union[str,
+                             Path],
+             *,
+             format: str = None,
+             drop_alpha: bool = True,
+             use_thread: bool = False,
+             **params) -> None:
+        """Save the Py5Graphics drawing surface to an image file.
+
+        Parameters
+        ----------
+
+        drop_alpha: bool = True
+            remove the alpha channel when saving the image
+
+        filename: Union[str, Path]
+            output filename
+
+        format: str = None
+            image format, if not determined from filename extension
+
+        params
+            keyword arguments to pass to the PIL.Image save method
+
+        use_thread: bool = False
+            write file in separate thread
+
+        Notes
+        -----
+
+        Save the Py5Graphics drawing surface to an image file. This method uses the
+        Python library Pillow to write the image, so it can save images in any format
+        that that library supports.
+
+        Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+        defaults to ``True``. Some image formats such as JPG do not support alpha
+        channels, and Pillow will throw an error if you try to save an image with the
+        alpha channel in that format.
+
+        The ``use_thread`` parameter will save the image in a separate Python thread.
+        This improves performance by returning before the image has actually been
+        written to the file.
+
+        This method is the same as ``save()`` but linked to a ``Py5Graphics`` object. To
+        see example code for how it can be used, see ``save()``."""
+        return super().save(
+            filename,
+            format=format,
+            drop_alpha=drop_alpha,
+            use_thread=use_thread,
+            **params)
+
+
+class PixelPy5ImageMixin(PixelMixin):
+
+    def load_np_pixels(self) -> None:
+        """Loads the pixel data of the image into the ``Py5Image.np_pixels[]`` array.
+
+        Notes
+        -----
+
+        Loads the pixel data of the image into the ``Py5Image.np_pixels[]`` array. This
+        method must always be called before reading from or writing to
+        ``Py5Image.np_pixels[]``. Subsequent changes to the image will not be reflected
+        in ``Py5Image.np_pixels[]`` until ``py5image_load_np_pixels()`` is called again.
+
+        The ``load_np_pixels()`` method is similar to ``Py5Image.load_pixels()`` in that
+        ``load_np_pixels()`` must be called before reading from or writing to
+        ``Py5Image.np_pixels[]`` just as ``Py5Image.load_pixels()`` must be called
+        before reading from or writing to ``Py5Image.pixels[]``.
+
+        Note that ``load_np_pixels()`` will as a side effect call
+        ``Py5Image.load_pixels()``, so if your code needs to read
+        ``Py5Image.np_pixels[]`` and ``Py5Image.pixels[]`` simultaneously, there is no
+        need for a separate call to ``Py5Image.load_pixels()``. However, be aware that
+        modifying both ``Py5Image.np_pixels[]`` and ``Py5Image.pixels[]`` simultaneously
+        will likely result in the updates to ``Py5Image.pixels[]`` being discarded."""
+        return super().load_np_pixels()
+
+    def update_np_pixels(self) -> None:
+        """Updates the image with the data in the ``Py5Image.np_pixels[]`` array.
+
+        Notes
+        -----
+
+        Updates the image with the data in the ``Py5Image.np_pixels[]`` array. Use in
+        conjunction with ``Py5Image.load_np_pixels()``. If you're only reading pixels
+        from the array, there's no need to call ``update_np_pixels()`` — updating is
+        only necessary to apply changes.
+
+        The ``update_np_pixels()`` method is similar to ``Py5Image.update_pixels()`` in
+        that ``update_np_pixels()`` must be called after modifying
+        ``Py5Image.np_pixels[]`` just as ``Py5Image.update_pixels()`` must be called
+        after modifying ``Py5Image.pixels[]``."""
+        return super().update_np_pixels()
+
+    def _get_np_pixels(self) -> np.ndarray:
+        """The ``np_pixels[]`` array contains the values for all the pixels in the image.
+
+        Notes
+        -----
+
+        The ``np_pixels[]`` array contains the values for all the pixels in the image.
+        Unlike the one dimensional array ``Py5Image.pixels[]``, the ``np_pixels[]``
+        array organizes the color data in a 3 dimensional numpy array. The size of the
+        array's dimensions are defined by the size of the image. The first dimension is
+        the height, the second is the width, and the third represents the color
+        channels. The color channels are ordered alpha, red, green, blue (ARGB). Every
+        value in ``np_pixels[]`` is an integer between 0 and 255.
+
+        This numpy array is very similar to the image arrays used by other popular
+        Python image libraries, but note that some of them like opencv will by default
+        order the color channels as RGBA.
+
+        Much like the ``Py5Image.pixels[]`` array, there are load and update methods
+        that must be called before and after making changes to the data in
+        ``np_pixels[]``. Before accessing ``np_pixels[]``, the data must be loaded with
+        the ``Py5Image.load_np_pixels()`` method. If this is not done, ``np_pixels``
+        will be equal to ``None`` and your code will likely result in Python exceptions.
+        After ``np_pixels[]`` has been modified, the ``Py5Image.update_np_pixels()``
+        method must be called to update the content of the display window.
+
+        To set the entire contents of ``np_pixels[]`` to the contents of another equally
+        sized numpy array, consider using ``Py5Image.set_np_pixels()``."""
+        return super()._get_np_pixels()
+    np_pixels: np.ndarray = property(fget=_get_np_pixels)
+
+    def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
+        """Set the entire contents of ``Py5Image.np_pixels[]`` to the contents of another
+        properly sized and typed numpy array.
+
+        Parameters
+        ----------
+
+        array: np.ndarray
+            properly sized numpy array to be copied to np_pixels[]
+
+        bands: str = 'ARGB'
+            color channels in the array's third dimension
+
+        Notes
+        -----
+
+        Set the entire contents of ``Py5Image.np_pixels[]`` to the contents of another
+        properly sized and typed numpy array. The size of ``array``'s first and second
+        dimensions must match the height and width of the image, respectively. The
+        array's ``dtype`` must be ``np.uint8``.
+
+        The ``bands`` parameter is used to interpret the ``array``'s color channel
+        dimension (the array's third dimension). It can be one of ``'L'`` (single-
+        channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+        channel, ``array`` is assumed to have no transparency. If the ``bands``
+        parameter is ``'L'``, ``array``'s third dimension is optional.
+
+        This method makes its own calls to ``Py5Image.load_np_pixels()`` and
+        ``Py5Image.update_np_pixels()`` so there is no need to call either explicitly.
+
+        This method exists because setting the array contents with the code
+        ``img.np_pixels = array`` will cause an error, while the correct syntax,
+        ``img.np_pixels[:] = array``, might also be unintuitive for beginners.
+
+        Note that the ``convert_image()`` method can also be used to convert a numpy
+        array into a new Py5Image object."""
+        return super().set_np_pixels(array, bands)
+
+    def save(self,
+             filename: Union[str,
+                             Path],
+             *,
+             format: str = None,
+             drop_alpha: bool = True,
+             use_thread: bool = False,
+             **params) -> None:
+        """Save the Py5Image object to an image file.
+
+        Parameters
+        ----------
+
+        drop_alpha: bool = True
+            remove the alpha channel when saving the image
+
+        filename: Union[str, Path]
+            output filename
+
+        format: str = None
+            image format, if not determined from filename extension
+
+        params
+            keyword arguments to pass to the PIL.Image save method
+
+        use_thread: bool = False
+            write file in separate thread
+
+        Notes
+        -----
+
+        Save the Py5Image object to an image file. This method uses the Python library
+        Pillow to write the image, so it can save images in any format that that library
+        supports.
+
+        Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+        defaults to ``True``. Some image formats such as JPG do not support alpha
+        channels, and Pillow will throw an error if you try to save an image with the
+        alpha channel in that format.
+
+        The ``use_thread`` parameter will save the image in a separate Python thread.
+        This improves performance by returning before the image has actually been
+        written to the file."""
+        return super().save(
+            filename,
+            format=format,
+            drop_alpha=drop_alpha,
+            use_thread=use_thread,
+            **params)

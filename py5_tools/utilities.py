@@ -77,35 +77,40 @@ DOT_CLASSPATH_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 BUILD_XML_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
-<project name="py5 jar" default="dist">
+<project name="py5 jar" default="clean">
 
     <description>
         compile and build the py5 utilities jar.
     </description>
 
-    <property name="src" location="src"/>
-    <property name="build" location="build"/>
-    <property name="dist" location="{jars}"/>
+    <property name="project.src" location="src"/>
+    <property name="project.bin" location="bin"/>
+    <property name="project.dist" location="{jars}"/>
+
+    <target name="project.run">
+        <antcall target="compile"></antcall>
+        <antcall target="dist"></antcall>
+    </target>
 
     <target name="compile" description="compile the source">
-        <mkdir dir="{build}"/>
-        <javac source="11" target="11" debug="true" includeantruntime="false" srcdir="{src}" destdir="{build}">
+        <mkdir dir="{bin}"/>
+        <javac source="11" target="11" debug="true" includeantruntime="false" srcdir="{src}" destdir="{bin}">
             <classpath>
                 <fileset dir="{path}">
                         <include name="**/*.jar"/>
                 </fileset>
             </classpath>
+            <compilerarg value="-Xlint"/>
         </javac>
     </target>
 
-    <target name="dist" depends="compile" description="make the jar">
+    <target name="dist" description="make the jar">
         <mkdir dir="{dist}"/>
-        <jar destfile="{dist}/py5utilities.jar" basedir="{build}"/>
+        <jar destfile="{dist}/py5utilities.jar" basedir="{bin}"/>
     </target>
 
-    <target name="clean">
-        <delete dir="{build}"/>
-        <delete dir="{dist}"/>
+    <target name="clean" depends="project.run">
+        <delete dir="{bin}"/>
     </target>
 
 </project>
@@ -120,8 +125,8 @@ def generate_utilities_framework(output_dir=None, jars_dir=None):
     py5_classpath = Path(py5.__file__).parent / 'jars'
 
     template_params = {
-        x: f'{chr(36)}{{{x}}}' for x in [
-            'build', 'dist', 'src']}
+        x: f'{chr(36)}{{project.{x}}}' for x in [
+            'bin', 'dist', 'src']}
     template_params['path'] = py5_classpath.as_posix()
     template_params['jars'] = ant_build_path.absolute(
     ).as_posix() if output_dir else ant_build_path.as_posix()

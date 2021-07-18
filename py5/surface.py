@@ -158,8 +158,8 @@ class Py5Surface:
         bar. The default window icon is the same as Processing's.
 
         This method will not work for the ``P2D`` or ``P3D`` renderers. Setting the icon
-        for those renderers is a bit tricky; see the second example to learn how to do
-        that.
+        for those renderers is a bit tricky; the icon must be a PNG file and it must be
+        done in ``settings()``. See the second example to learn how to do that.
         """
         return self._instance.setIcon(icon)
 

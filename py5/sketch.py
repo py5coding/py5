@@ -19,6 +19,7 @@
 # *****************************************************************************
 import time
 import os
+import sys
 from pathlib import Path
 import functools
 from typing import overload, Any, Callable, Union, Dict, List  # noqa
@@ -54,6 +55,9 @@ try:
     from ipykernel.zmqshell import ZMQInteractiveShell
     _ipython_shell = get_ipython()  # type: ignore
     _in_jupyter_zmq_shell = isinstance(_ipython_shell, ZMQInteractiveShell)
+    if sys.platform == 'darwin' and _ipython_shell.active_eventloop != 'osx':
+        print("Importing py5 on OSX but the necessary Jupyter OSX event loop not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library.")
+        _ipython_shell.run_line_magic('gui', 'osx')
 except NameError:
     _in_ipython_session = False
     _ipython_shell = None
@@ -127,6 +131,8 @@ class Sketch(
         self._py5_methods = None
         self.set_println_stream(_DisplayPubPrintlnStream(
         ) if _in_jupyter_zmq_shell else _DefaultPrintlnStream())
+        self._instance.setPy5IconPath(
+            str(Path(__file__).parent.parent / 'py5_tools/kernel/resources/logo-64x64.png'))
 
         # attempt to instantiate Py5Utilities
         self.utils = None
@@ -166,10 +172,14 @@ class Sketch(
         determine if the Sketch is running in a Jupyter Notebook or an IPython shell. If
         it is, ``block`` will default to ``False``, and ``True`` otherwise.
 
+        Blocking is not supported on OSX. This is because of the (current) limitations
+        of py5 on OSX. If the ``block`` parameter is set to ``True``, a warning message
+        will appear and it will be changed to ``False``.
+
         A list of strings passed to ``py5_options`` will be passed to the Processing
         PApplet class as arguments to specify characteristics such as the window's
         location on the screen. A list of strings passed to ``sketch_args`` will be
-        available to a running Sketch using ``args``. See the third example for an
+        available to a running Sketch using ``pargs``. See the third example for an
         example of how this can be used.
 
         When calling ``run_sketch()`` in module mode, py5 will by default search for
@@ -180,6 +190,16 @@ class Sketch(
         functions. The ``sketch_functions`` parameter is not available when coding py5
         in class mode. Don't forget you can always replace the ``draw()`` function in a
         running Sketch using ``hot_reload_draw()``.
+
+        When programming in module mode and imported mode, py5 will inspect the
+        ``setup()`` function and will attempt to split it into synthetic ``settings()``
+        and ``setup()`` functions if both were not created by the user and the real
+        ``setup()`` function contains calls to ``size()``, ``full_screen()``,
+        ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to those functions
+        must be at the very beginning of ``setup()``, before any other Python code
+        (except for comments). This feature allows the user to omit the ``settings()``
+        function, much like what can be done while programming in the Processing IDE.
+        This feature is not available when programming in class mode.
 
         When running a Sketch asynchronously through Jupyter Notebook, any ``print``
         statements using Python's builtin function will always appear in the output of
@@ -193,9 +213,6 @@ class Sketch(
         error messages and warnings generated inside the Processing Jars cannot be
         controlled in the same way, and may appear in the output of the active cell or
         mixed in with the Jupyter Kernel logs."""
-        if block is None:
-            block = not _in_ipython_session
-
         if not hasattr(self, '_instance'):
             raise RuntimeError(
                 ('py5 internal problem: did you create a class with an `__init__()` '
@@ -235,11 +252,21 @@ class Sketch(
                 str(e),
                 stderr=True)
 
-        if block:
+        if sys.platform == 'darwin' and _in_ipython_session and block:
+            if (renderer := self._instance.getRendererName()) in [
+                    'JAVA2D', 'P2D', 'P3D', 'FX2D']:
+                self.println(
+                    "On OSX, blocking is not allowed in Jupyter when using the",
+                    renderer,
+                    "renderer.",
+                    stderr=True)
+                block = False
+
+        if block or (block is None and not _in_ipython_session):
             # wait for the sketch to finish
             surface = self.get_surface()
             if surface._instance is not None:
-                while not surface.is_stopped():
+                while not surface.is_stopped() and not hasattr(self, '_shutdown_initiated'):
                     time.sleep(0.25)
 
             # Wait no more than 1 second for any shutdown tasks to complete.
@@ -259,9 +286,8 @@ class Sketch(
         super()._shutdown()
 
     def _terminate_sketch(self):
-        surface = self.get_surface()
-        if surface._instance is not None:
-            surface.stop_thread()
+        self._instance.noLoop()
+        self._shutdown_initiated = True
         self._shutdown()
 
     def _add_pre_hook(self, method_name, hook_name, function):
@@ -418,7 +444,7 @@ class Sketch(
             # Sketch has not been run yet
             return False
         else:
-            return not surface.is_stopped()
+            return not surface.is_stopped() and not hasattr(self, '_shutdown_initiated')
     is_running: bool = property(fget=_get_is_running)
 
     def _get_is_dead(self) -> bool:
@@ -439,7 +465,7 @@ class Sketch(
         if surface._instance is None:
             # Sketch has not been run yet
             return False
-        return surface.is_stopped()
+        return surface.is_stopped() or hasattr(self, '_shutdown_initiated')
     is_dead: bool = property(fget=_get_is_dead)
 
     def _get_is_dead_from_error(self) -> bool:
@@ -594,7 +620,7 @@ class Sketch(
                    *,
                    format: str = None,
                    drop_alpha: bool = True,
-                   use_thread: bool = True,
+                   use_thread: bool = False,
                    **params) -> None:
         """Save the current frame as an image.
 
@@ -613,7 +639,7 @@ class Sketch(
         params
             keyword arguments to pass to the PIL.Image save method
 
-        use_thread: bool = True
+        use_thread: bool = False
             write file in separate thread
 
         Notes
@@ -1020,7 +1046,7 @@ class Sketch(
     Z = 2
 
     @_return_list_str
-    def _get_args(self) -> List[str]:
+    def _get_pargs(self) -> List[str]:
         """List of strings passed to the Sketch through the call to ``run_sketch()``.
 
         Underlying Java field: PApplet.args
@@ -1033,7 +1059,7 @@ class Sketch(
         to make this more useful.
         """
         return self._instance.args
-    args: List[str] = property(fget=_get_args)
+    pargs: List[str] = property(fget=_get_pargs)
 
     def _get_display_height(self) -> int:
         """System variable that stores the height of the entire screen display.
@@ -1043,8 +1069,9 @@ class Sketch(
         Notes
         -----
 
-        System variable that stores the height of the entire screen display. This is
-        used to run a full-screen program on any display size.
+        System variable that stores the height of the entire screen display. This can be
+        used to run a full-screen program on any display size, but calling
+        ``full_screen()`` is usually a better choice.
         """
         return self._instance.displayHeight
     display_height: int = property(fget=_get_display_height)
@@ -1057,8 +1084,9 @@ class Sketch(
         Notes
         -----
 
-        System variable that stores the width of the entire screen display. This is used
-        to run a full-screen program on any display size.
+        System variable that stores the width of the entire screen display. This can be
+        used to run a full-screen program on any display size, but calling
+        ``full_screen()`` is usually a better choice.
         """
         return self._instance.displayWidth
     display_width: int = property(fget=_get_display_width)
@@ -1288,47 +1316,45 @@ class Sketch(
     mouse_y: int = property(fget=_get_mouse_y)
 
     def _get_pixel_height(self) -> int:
-        """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled.
+        """Height of the display window in pixels.
 
         Underlying Java field: PApplet.pixelHeight
 
         Notes
         -----
 
-        When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled. As a
-        result, all operations that use pixels (like ``load_pixels()``, ``get()``, etc.)
-        happen in this doubled space. As a convenience, the variables ``pixel_width``
-        and ``pixel_height`` hold the actual width and height of the Sketch in pixels.
-        This is useful for any Sketch that use the ``pixels[]`` or ``np_pixels[]``
-        arrays, for instance, because the number of elements in each array will be
-        ``pixel_width*pixel_height``, not ``width*height``.
+        Height of the display window in pixels. When ``pixel_density(2)`` is used to
+        make use of a high resolution display (called a Retina display on OSX or high-
+        dpi on Windows and Linux), the width and height of the Sketch do not change, but
+        the number of pixels is doubled. As a result, all operations that use pixels
+        (like ``load_pixels()``, ``get()``, etc.) happen in this doubled space. As a
+        convenience, the variables ``pixel_width`` and ``pixel_height`` hold the actual
+        width and height of the Sketch in pixels. This is useful for any Sketch that use
+        the ``pixels[]`` or ``np_pixels[]`` arrays, for instance, because the number of
+        elements in each array will be ``pixel_width*pixel_height``, not
+        ``width*height``.
         """
         return self._instance.pixelHeight
     pixel_height: int = property(fget=_get_pixel_height)
 
     def _get_pixel_width(self) -> int:
-        """When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled.
+        """Width of the display window in pixels.
 
         Underlying Java field: PApplet.pixelWidth
 
         Notes
         -----
 
-        When ``pixel_density(2)`` is used to make use of a high resolution display
-        (called a Retina display on OSX or high-dpi on Windows and Linux), the width and
-        height of the Sketch do not change, but the number of pixels is doubled. As a
-        result, all operations that use pixels (like ``load_pixels()``, ``get()``, etc.)
-        happen in this doubled space. As a convenience, the variables ``pixel_width``
-        and ``pixel_height`` hold the actual width and height of the Sketch in pixels.
-        This is useful for any Sketch that use the ``pixels[]`` or ``np_pixels[]``
-        arrays, for instance, because the number of elements in each array will be
-        ``pixel_width*pixel_height``, not ``width*height``.
+        Width of the display window in pixels. When ``pixel_density(2)`` is used to make
+        use of a high resolution display (called a Retina display on OSX or high-dpi on
+        Windows and Linux), the width and height of the Sketch do not change, but the
+        number of pixels is doubled. As a result, all operations that use pixels (like
+        ``load_pixels()``, ``get()``, etc.) happen in this doubled space. As a
+        convenience, the variables ``pixel_width`` and ``pixel_height`` hold the actual
+        width and height of the Sketch in pixels. This is useful for any Sketch that use
+        the ``pixels[]`` or ``np_pixels[]`` arrays, for instance, because the number of
+        elements in each array will be ``pixel_width*pixel_height``, not
+        ``width*height``.
         """
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
@@ -6076,8 +6102,8 @@ class Sketch(
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+        third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
         renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
@@ -6146,8 +6172,8 @@ class Sketch(
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+        third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
         renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
@@ -6217,8 +6243,8 @@ class Sketch(
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+        third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
         renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
@@ -6287,8 +6313,8 @@ class Sketch(
         Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
         draw into an off-screen graphics buffer. The first two parameters define the
         width and height in pixels. The third, optional parameter specifies the
-        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-        parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+        renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+        third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
         renderers require the filename parameter.
 
         It's important to consider the renderer used with ``create_graphics()`` in
@@ -8606,9 +8632,21 @@ class Sketch(
         Notes
         -----
 
-        Open a Sketch using the full size of the computer's display. This function must
-        be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-        cannot both be used in the same program.
+        Open a Sketch using the full size of the computer's display. This is intended to
+        be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+        functions cannot both be used in the same program.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+        of ``setup()``. This allows the user to omit the ``settings()`` function, much
+        like what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+        to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         When ``full_screen()`` is used without a parameter on a computer with multiple
         monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -8648,9 +8686,21 @@ class Sketch(
         Notes
         -----
 
-        Open a Sketch using the full size of the computer's display. This function must
-        be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-        cannot both be used in the same program.
+        Open a Sketch using the full size of the computer's display. This is intended to
+        be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+        functions cannot both be used in the same program.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+        of ``setup()``. This allows the user to omit the ``settings()`` function, much
+        like what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+        to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         When ``full_screen()`` is used without a parameter on a computer with multiple
         monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -8690,9 +8740,21 @@ class Sketch(
         Notes
         -----
 
-        Open a Sketch using the full size of the computer's display. This function must
-        be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-        cannot both be used in the same program.
+        Open a Sketch using the full size of the computer's display. This is intended to
+        be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+        functions cannot both be used in the same program.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+        of ``setup()``. This allows the user to omit the ``settings()`` function, much
+        like what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+        to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         When ``full_screen()`` is used without a parameter on a computer with multiple
         monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -8732,9 +8794,21 @@ class Sketch(
         Notes
         -----
 
-        Open a Sketch using the full size of the computer's display. This function must
-        be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-        cannot both be used in the same program.
+        Open a Sketch using the full size of the computer's display. This is intended to
+        be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+        functions cannot both be used in the same program.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+        of ``setup()``. This allows the user to omit the ``settings()`` function, much
+        like what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+        to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         When ``full_screen()`` is used without a parameter on a computer with multiple
         monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -8773,9 +8847,21 @@ class Sketch(
         Notes
         -----
 
-        Open a Sketch using the full size of the computer's display. This function must
-        be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-        cannot both be used in the same program.
+        Open a Sketch using the full size of the computer's display. This is intended to
+        be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+        functions cannot both be used in the same program.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+        of ``setup()``. This allows the user to omit the ``settings()`` function, much
+        like what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+        to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         When ``full_screen()`` is used without a parameter on a computer with multiple
         monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -10598,9 +10684,23 @@ class Sketch(
         Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.  Note
         that ``smooth()`` is active by default, so it is necessary to call
-        ``no_smooth()`` to disable smoothing of geometry, fonts, and images. The
-        ``no_smooth()`` method can only be run once for each Sketch and must be called
-        in ``settings()``.
+        ``no_smooth()`` to disable smoothing of geometry, fonts, and images.
+
+        The ``no_smooth()`` function can only be called once within a Sketch. It is
+        intended to be called from the ``settings()`` function. The ``smooth()``
+        function follows the same rules.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``no_smooth()`` from the ``setup()`` function if it is called at the beginning
+        of ``setup()``. This allows the user to omit the ``settings()`` function, much
+        like what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``no_smooth()``, or calls
+        to ``size()``, ``full_screen()``, ``smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
         """
         return self._instance.noSmooth()
 
@@ -11010,18 +11110,29 @@ class Sketch(
 
         This function makes it possible for py5 to render using all of the pixels on
         high resolutions screens like Apple Retina displays and Windows High-DPI
-        displays. This function can only be run once within a program and it must be
-        called in ``settings()``.  The ``pixel_density()`` should only be used with
-        hardcoded numbers (in almost all cases this number will be 2) or in combination
-        with ``display_density()`` as in the second example.
+        displays. This function can only be run once within a program. It is intended to
+        be called from the ``settings()`` function.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``pixel_density()`` from the ``setup()`` function if it is called at the
+        beginning of ``setup()``. This allows the user to omit the ``settings()``
+        function, much like what can be done while programming in the Processing IDE.
+        Py5 does this by inspecting the ``setup()`` function and attempting to split it
+        into synthetic ``settings()`` and ``setup()`` functions if both were not created
+        by the user and the real ``setup()`` function contains a call to
+        ``pixel_density()``, or calls to ``size()``, ``full_screen()``, ``smooth()``, or
+        ``no_smooth()``. Calls to those functions must be at the very beginning of
+        ``setup()``, before any other Python code (but comments are ok). This feature is
+        not available when programming in class mode.
+
+        The ``pixel_density()`` should only be used with hardcoded numbers (in almost
+        all cases this number will be 2) or in combination with ``display_density()`` as
+        in the second example.
 
         When the pixel density is set to more than 1, it changes all of the pixel
         operations including the way ``get()``, ``blend()``, ``copy()``,
         ``update_pixels()``, and ``update_np_pixels()`` all work. See the reference for
         ``pixel_width`` and ``pixel_height`` for more information.
-
-        To use variables as the arguments to ``pixel_density()`` function, place the
-        ``pixel_density()`` function within the ``settings()`` function.
         """
         return self._instance.pixelDensity(density)
 
@@ -13299,7 +13410,19 @@ class Sketch(
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        This must be called from the ``settings()`` function.
+        This is intended to be called from the ``settings()`` function.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``size()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``size()``, or calls to
+        ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+        to those functions must be at the very beginning of ``setup()``, before any
+        other Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         The built-in variables ``width`` and ``height`` are set by the parameters passed
         to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -13378,7 +13501,19 @@ class Sketch(
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        This must be called from the ``settings()`` function.
+        This is intended to be called from the ``settings()`` function.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``size()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``size()``, or calls to
+        ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+        to those functions must be at the very beginning of ``setup()``, before any
+        other Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         The built-in variables ``width`` and ``height`` are set by the parameters passed
         to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -13458,7 +13593,19 @@ class Sketch(
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        This must be called from the ``settings()`` function.
+        This is intended to be called from the ``settings()`` function.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``size()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``size()``, or calls to
+        ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+        to those functions must be at the very beginning of ``setup()``, before any
+        other Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         The built-in variables ``width`` and ``height`` are set by the parameters passed
         to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -13536,7 +13683,19 @@ class Sketch(
         -----
 
         Defines the dimension of the display window width and height in units of pixels.
-        This must be called from the ``settings()`` function.
+        This is intended to be called from the ``settings()`` function.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``size()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``size()``, or calls to
+        ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+        to those functions must be at the very beginning of ``setup()``, before any
+        other Python code (but comments are ok). This feature is not available when
+        programming in class mode.
 
         The built-in variables ``width`` and ``height`` are set by the parameters passed
         to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -13619,9 +13778,21 @@ class Sketch(
         The other option for the default renderer is ``smooth(2)``, which is bilinear
         smoothing.
 
-        The ``smooth()`` function can only be set once within a Sketch. It must be
-        called from the `settings()`` function. The ``no_smooth()`` function also
+        The ``smooth()`` function can only be set once within a Sketch. It is intended
+        to be called from the ``settings()`` function. The ``no_smooth()`` function
         follows the same rules.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``smooth()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``smooth()``, or calls to
+        ``size()``, ``full_screen()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
         """
         pass
 
@@ -13663,9 +13834,21 @@ class Sketch(
         The other option for the default renderer is ``smooth(2)``, which is bilinear
         smoothing.
 
-        The ``smooth()`` function can only be set once within a Sketch. It must be
-        called from the `settings()`` function. The ``no_smooth()`` function also
+        The ``smooth()`` function can only be set once within a Sketch. It is intended
+        to be called from the ``settings()`` function. The ``no_smooth()`` function
         follows the same rules.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``smooth()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``smooth()``, or calls to
+        ``size()``, ``full_screen()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
         """
         pass
 
@@ -13706,9 +13889,21 @@ class Sketch(
         The other option for the default renderer is ``smooth(2)``, which is bilinear
         smoothing.
 
-        The ``smooth()`` function can only be set once within a Sketch. It must be
-        called from the `settings()`` function. The ``no_smooth()`` function also
+        The ``smooth()`` function can only be set once within a Sketch. It is intended
+        to be called from the ``settings()`` function. The ``no_smooth()`` function
         follows the same rules.
+
+        When programming in module mode and imported mode, py5 will allow calls to
+        ``smooth()`` from the ``setup()`` function if it is called at the beginning of
+        ``setup()``. This allows the user to omit the ``settings()`` function, much like
+        what can be done while programming in the Processing IDE. Py5 does this by
+        inspecting the ``setup()`` function and attempting to split it into synthetic
+        ``settings()`` and ``setup()`` functions if both were not created by the user
+        and the real ``setup()`` function contains a call to ``smooth()``, or calls to
+        ``size()``, ``full_screen()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+        those functions must be at the very beginning of ``setup()``, before any other
+        Python code (but comments are ok). This feature is not available when
+        programming in class mode.
         """
         return self._instance.smooth(*args)
 

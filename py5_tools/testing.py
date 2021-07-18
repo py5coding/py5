@@ -21,14 +21,14 @@ from pathlib import Path
 
 
 _DRAW_WRAPPER_CODE_TEMPLATE = """
-if _PY5_HAS_DRAW_:
+if {1}:
     draw_ = draw
 
 def draw():
-    if _PY5_HAS_DRAW_:
+    if {1}:
         draw_()
 
-    if _PY5_SAVE_FRAME_:
+    if {2}:
         py5.save_frame("{0}", use_thread=False)
     py5.exit_sketch()
 """
@@ -53,15 +53,19 @@ def run_code(code: str, image: Path) -> bool:
     import py5
     ns = dict(py5=py5)
 
-    exec("py5.reset_py5()", ns)
-    exec(code, ns)
-    ns['_PY5_HAS_DRAW_'] = 'draw' in ns
-    ns['_PY5_SAVE_FRAME_'] = image is not None
+    code = 'py5.reset_py5()\n\n' + code + '\n\n'
 
     if code.find("py5.run_sketch") >= 0:
-        exec(_EXIT_SKETCH, ns)
+        code += _EXIT_SKETCH
     else:
-        exec(_DRAW_WRAPPER_CODE_TEMPLATE.format(image), ns)
-        exec(_RUN_SKETCH_CODE, ns)
+        code += _DRAW_WRAPPER_CODE_TEMPLATE.format(image,
+                                                   code.find("def draw():") >= 0,
+                                                   image is not None) + '\n\n' + _RUN_SKETCH_CODE
+
+    # writing code to file so inspect.getsource() works correctly
+    with open('/tmp/test_file.py', 'w') as f:
+        f.write(code)
+
+    exec(compile(code, filename='/tmp/test_file.py', mode="exec"), ns)
 
     return not py5.is_dead_from_error

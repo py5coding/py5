@@ -23,10 +23,9 @@ import ast
 from multiprocessing import Process
 from pathlib import Path
 import re
-import textwrap
 
 from . import jvm
-from .magics import util
+from .py5bot import py5bot
 from . import parsing
 
 
@@ -42,6 +41,42 @@ def get_imported_mode() -> bool:
     return _imported_mode
 
 
+_STATIC_CODE_FRAMEWORK = """
+import ast as _PY5BOT_ast
+
+import py5_tools
+py5_tools.set_imported_mode(True)
+import py5_tools.parsing as _PY5BOT_parsing
+from py5 import *
+
+
+def settings():
+    with open('{0}', 'r') as f:
+        exec(
+            compile(
+                _PY5BOT_parsing.transform_py5_code(
+                    _PY5BOT_ast.parse(f.read(), filename='{0}', mode='exec'),
+                ),
+                filename='{0}',
+                mode='exec'
+            )
+        )
+
+
+def setup():
+    with open('{1}', 'r') as f:
+        exec(
+            compile(
+                _PY5BOT_parsing.transform_py5_code(
+                    _PY5BOT_ast.parse(f.read(), filename='{1}', mode='exec'),
+                ),
+                filename='{1}',
+                mode='exec'
+            )
+        )
+"""
+
+
 _CODE_FRAMEWORK = """
 {0}
 
@@ -53,56 +88,15 @@ if {1} and is_dead_from_error:
 
 SETTINGS_REGEX = re.compile(r'^def settings\(\):', flags=re.MULTILINE)
 SETUP_REGEX = re.compile(r'^def setup\(\):', flags=re.MULTILINE)
-SETUP_CODE_REGEX = re.compile(
-    r'^def setup\(\):.*?(?=^\w|\Z)',
-    flags=re.MULTILINE | re.DOTALL)
 DRAW_REGEX = re.compile(r'^def draw\(\):', flags=re.MULTILINE)
-CODE_REGEXES = {
-    f: re.compile(
-        r'^\s*(' + f + r'\([^\)]*\))',
-        flags=re.MULTILINE) for f in [
-            'size',
-            'full_screen',
-            'smooth',
-            'no_smooth',
-        'pixel_density']}
 
 
-# TODO: this is ugly and should be done with ast instead
-def prepare_code(code):
-    "transform functionless or setttings-less py5 code into code that runs"
-    if SETTINGS_REGEX.search(code):
-        return False, code
+def is_static_mode(code):
+    no_settings = SETTINGS_REGEX.search(code) is None
     no_setup = SETUP_REGEX.search(code) is None
     no_draw = DRAW_REGEX.search(code) is None
 
-    # get just the setup function if it is defined
-    code2 = code if no_setup else SETUP_CODE_REGEX.search(code).group()
-    # find the key lines in the relevant code
-    matches = [m for m in [r.search(code2)
-                           for r in CODE_REGEXES.values()] if m]
-
-    # if anything was found, build the settings function
-    if matches:
-        lines = [(m.start(), m.group(1)) for m in matches]
-        settings = 'def settings():\n'
-        for start, line in sorted(lines):
-            settings += f'    {line}\n'
-            # replace the original line so it doesn't get called in setup
-            code = code.replace(line, f'pass  # moved to settings(): {line}')
-    else:
-        settings = ''
-
-    if no_setup and no_draw:
-        # put all of the remaining code into a setup function
-        remaining_code = 'def setup():\n' + textwrap.indent(code, prefix='    ')
-        remaining_code = util.fix_triple_quote_str(remaining_code)
-    else:
-        # remaining code has been modified with key lines moved from setup to
-        # settings
-        remaining_code = code
-
-    return True, f'{settings.strip()}\n\n{remaining_code.strip()}\n'
+    return no_settings and no_setup and no_draw
 
 
 def run_code(
@@ -117,13 +111,38 @@ def run_code(
 
     with open(sketch_path, 'r') as f:
         code = f.read()
-    tranformed, code = prepare_code(code)
-    if tranformed:
-        temp_py = sketch_path.with_suffix('.tmp.py')
-        with open(temp_py, 'w') as f:
-            f.write(code)
-        sketch_path = temp_py
 
+    if is_static_mode(code):
+        _run_static_code(
+            code,
+            sketch_path,
+            classpath,
+            new_process,
+            exit_if_error)
+    else:
+        _run_code(sketch_path, classpath, new_process, exit_if_error)
+
+
+def _run_static_code(code, sketch_path, classpath, new_process, exit_if_error):
+    py5bot_mgr = py5bot.Py5BotManager()
+    success, result = py5bot.check_for_problems(code, sketch_path)
+    if success:
+        py5bot_settings, py5bot_setup = result
+        py5bot_mgr.write_code(
+            py5bot_settings, py5bot_setup, len(
+                code.splitlines()))
+        new_sketch_path = py5bot_mgr.tempdir / '_PY5_STATIC_FRAMEWORK_CODE_.py'
+        with open(new_sketch_path, 'w') as f:
+            f.write(
+                _STATIC_CODE_FRAMEWORK.format(
+                    py5bot_mgr.settings_filename,
+                    py5bot_mgr.setup_filename))
+        _run_code(new_sketch_path, classpath, new_process, exit_if_error)
+    else:
+        print(result, file=sys.stderr)
+
+
+def _run_code(sketch_path, classpath, new_process, exit_if_error):
     def _run_sketch(sketch_path, classpath, exit_if_error):
         if not jvm.is_jvm_running():
             if classpath:
@@ -140,16 +159,13 @@ def run_code(
         with open(sketch_path, 'r') as f:
             sketch_code = _CODE_FRAMEWORK.format(f.read(), exit_if_error)
 
-        sketch_ast = ast.parse(sketch_code, mode='exec')
+        sketch_ast = ast.parse(sketch_code, filename=sketch_path, mode='exec')
         problems = parsing.check_reserved_words(sketch_code, sketch_ast)
         if problems:
-            if len(problems) == 1:
-                msg = 'There is a problem with your Sketch code'
-            else:
-                msg = f'There are {len(problems)} problems with your Sketch code'
+            msg = 'There ' + ('is a problem' if len(problems) ==
+                              1 else f'are {len(problems)} problems') + ' with your Sketch code'
+            msg += '\n' + '=' * len(msg) + '\n' + '\n'.join(problems)
             print(msg)
-            print('=' * len(msg))
-            print('\n'.join(problems))
             return
 
         sketch_compiled = compile(
@@ -173,5 +189,3 @@ def run_code(
         return p
     else:
         _run_sketch(sketch_path, classpath, exit_if_error)
-        if tranformed:
-            os.remove(temp_py)

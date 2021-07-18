@@ -20,5 +20,5 @@
 from .math import MathMixin  # noqa
 from .data import DataMixin  # noqa
 from .threads import ThreadsMixin  # noqa
-from .pixels import PixelMixin  # noqa
+from .pixels import PixelMixin, PixelPy5GraphicsMixin, PixelPy5ImageMixin  # noqa
 from .print_tools import PrintlnStream, _WidgetPrintlnStream, _DefaultPrintlnStream, _DisplayPubPrintlnStream  # noqa

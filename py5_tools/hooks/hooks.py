@@ -77,7 +77,7 @@ class SaveFramesHook(BaseHook):
             num = sketch.frame_count - self.num_offset
             frame_filename = sketch._insert_frame(
                 str(self.dirname / self.filename), num=num)
-            sketch.save_frame(frame_filename)
+            sketch.save_frame(frame_filename, use_thread=True)
             self.filenames.append(frame_filename)
             self.last_frame_time = time.time()
             if len(self.filenames) == self.limit:

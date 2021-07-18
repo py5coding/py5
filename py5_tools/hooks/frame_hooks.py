@@ -316,3 +316,6 @@ def capture_frames(count: float, *, period: float = 0.0, sketch: Sketch = None,
         return [PIL.Image.fromarray(arr, mode='RGB') for arr in hook.frames]
     elif hook.is_terminated and hook.exception:
         raise RuntimeError('error running magic: ' + str(hook.exception))
+
+
+__all__ = ['screenshot', 'save_frames', 'animated_gif', 'capture_frames']

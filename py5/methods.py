@@ -18,19 +18,18 @@
 #
 # *****************************************************************************
 import sys
+import re
 from pathlib import Path
 from collections import defaultdict
 from typing import Union
 import line_profiler
 
-from jpype import JImplements, JOverride, JString, JClass
+from jpype import JImplements, JOverride, JString
 
 import stackprinter
 
+import py5_tools
 from . import custom_exceptions
-
-
-_JavaNullPointerException = JClass('java.lang.NullPointerException')
 
 # *** stacktrace configuration ***
 # set stackprinter color style. Default is plaintext. Other choices are darkbg,
@@ -38,8 +37,12 @@ _JavaNullPointerException = JClass('java.lang.NullPointerException')
 _stackprinter_style = 'plaintext'
 # prune tracebacks to only show only show stack levels in the user's py5 code.
 _prune_tracebacks = True
-_module_install_dir = str(Path(__file__).parent)
 
+_MODULE_INSTALL_DIR = str(Path(__file__).parent)
+_PY5TOOLS_MODULE_INSTALL_DIR = str(Path(py5_tools.__file__).parent)
+
+_PY5_STATIC_CODE_FILENAME_REGEX = re.compile(
+    r'File "[^\"]*?_PY5_STATIC_(SETUP|SETTINGS|FRAMEWORK)_CODE_\.py", line \d+, in .*')
 
 _EXCEPTION_MSGS = {
     **custom_exceptions.CUSTOM_EXCEPTION_MSGS,
@@ -78,9 +81,14 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
             tb = exc_tb.tb_next
             while hasattr(tb, 'tb_next') and hasattr(tb, 'tb_frame'):
                 f_code = tb.tb_frame.f_code
-                if f_code.co_filename.startswith(_module_install_dir):
-                    py5info.append((Path(f_code.co_filename[(len(_module_install_dir) + 1):]).parts,
+                if f_code.co_filename.startswith(_MODULE_INSTALL_DIR):
+                    py5info.append((Path(f_code.co_filename[(len(_MODULE_INSTALL_DIR) + 1):]).parts,
                                     f_code.co_name))
+                    if trim_tb is None:
+                        trim_tb = prev_tb
+                elif f_code.co_filename.startswith(_PY5TOOLS_MODULE_INSTALL_DIR):
+                    py5info.append((Path(f_code.co_filename[(
+                        len(_PY5TOOLS_MODULE_INSTALL_DIR) + 1):]).parts, f_code.co_name))
                     if trim_tb is None:
                         trim_tb = prev_tb
                 prev_tb = tb
@@ -97,7 +105,8 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
         show_vals='line',
         style=_stackprinter_style,
         suppressed_paths=[r"lib/python.*?/site-packages/numpy/",
-                          r"lib/python.*?/site-packages/py5/"])
+                          r"lib/python.*?/site-packages/py5/",
+                          r"lib/python.*?/site-packages/py5tools/"])
 
     if _prune_tracebacks:
         errmsg = errmsg.replace(
@@ -107,6 +116,11 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
                 exc_type.__name__,
                 str(exc_value),
                 py5info))
+
+        m = _PY5_STATIC_CODE_FILENAME_REGEX.search(errmsg)
+        if m:
+            errmsg = "py5 encountered an error in your code:" + \
+                errmsg[m.span()[1]:]
 
     println(errmsg, stderr=True)
 

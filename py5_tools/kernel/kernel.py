@@ -48,6 +48,7 @@ _DEFAULT_STARTUP = """
 import py5_tools
 py5_tools.set_imported_mode(True)
 from py5 import *
+from py5_tools import sketch_portal
 """
 
 _KERNEL_STARTUP = (_MACOSX_PRE_STARTUP if sys.platform ==
@@ -74,7 +75,7 @@ class Py5Kernel(IPythonKernel):
                        *_PY5_HELP_LINKS]).tag(config=True)
 
     implementation = 'py5'
-    implementation_version = '0.4a2'
+    implementation_version = '0.5a0'
 
 
 class Py5App(IPKernelApp):
@@ -87,4 +88,7 @@ class Py5App(IPKernelApp):
         _KERNEL_STARTUP
     ]).tag(config=True)
 
-    extensions = List(Unicode(), ['py5_tools.magics']).tag(config=True)
+    extensions = List(
+        Unicode(), [
+            'py5_tools.magics', 'py5_tools.py5bot']).tag(
+        config=True)

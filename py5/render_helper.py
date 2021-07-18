@@ -1,3 +1,4 @@
+import sys
 import functools
 from typing import Callable, Tuple, Dict, List, NewType
 
@@ -28,13 +29,6 @@ class RenderHelperSketch(Sketch):
             draw_args=None,
             draw_kwargs=None):
         super().__init__()
-        if renderer not in [
-                Sketch.HIDDEN,
-                Sketch.JAVA2D,
-                Sketch.P2D,
-                Sketch.P3D]:
-            raise RuntimeError(
-                f'Processing Renderer {renderer} not yet supported')
         self._setup = setup
         self._draw = draw
         self._width = width
@@ -77,13 +71,6 @@ class RenderHelperGraphicsCanvas(Sketch):
             draw_args=None,
             draw_kwargs=None):
         super().__init__()
-        if renderer not in [
-                Sketch.HIDDEN,
-                Sketch.JAVA2D,
-                Sketch.P2D,
-                Sketch.P3D]:
-            raise RuntimeError(
-                f'Processing Renderer {renderer} not yet supported')
         self._setup = setup
         self._draw = draw
         self._width = width
@@ -121,6 +108,37 @@ class RenderHelperGraphicsCanvas(Sketch):
         self.output.append(Image.fromarray(g_pixels))
         if self.frame_count >= self._limit:
             self.exit_sketch()
+
+
+def _check_allowed_renderer(renderer):
+    renderer_name = {
+        Sketch.SVG: 'SVG',
+        Sketch.PDF: 'PDF',
+        Sketch.DXF: 'DXF',
+        Sketch.P2D: 'P2D',
+        Sketch.P3D: 'P3D'}.get(
+        renderer,
+        renderer)
+    renderers = [
+        Sketch.HIDDEN,
+        Sketch.JAVA2D] if sys.platform == 'darwin' else [
+        Sketch.HIDDEN,
+        Sketch.JAVA2D,
+        Sketch.P2D,
+        Sketch.P3D]
+    if renderer not in renderers:
+        return f'Sorry, the render helper tools do not support the {renderer_name} renderer' + (
+            ' on OSX.' if sys.platform == 'darwin' else '.')
+    else:
+        return None
+
+
+def _osx_renderer_check(renderer):
+    if sys.platform == 'darwin' and renderer == Sketch.JAVA2D:
+        print('The render helper tools do not support the JAVA2D renderer on OSX. Switching to the default option instead.')
+        return Sketch.HIDDEN
+    else:
+        return renderer
 
 
 def render_frame(draw: Callable, width: int, height: int,
@@ -167,7 +185,8 @@ def render_frame(draw: Callable, width: int, height: int,
     desired values as ``render_frame``'s ``draw_args`` and ``draw_kwargs``
     arguments.
 
-    Currently, only the default and OpenGL renderers are supported.
+    On OSX, only the default renderer is currently supported. Other platforms
+    support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frame can have transparent pixels if and only if the
     ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
@@ -180,6 +199,11 @@ def render_frame(draw: Callable, width: int, height: int,
     discouraged, and may fail catastrophically.
 
     This function is available in decorator form as ``@render()``."""
+    if msg := _check_allowed_renderer(renderer):
+        print(msg, file=sys.stderr)
+        return None
+    renderer = _osx_renderer_check(renderer)
+
     HelperClass = RenderHelperGraphicsCanvas if use_py5graphics else RenderHelperSketch
     ahs = HelperClass(None, draw, width, height, renderer,
                       draw_args=draw_args, draw_kwargs=draw_kwargs)
@@ -248,7 +272,8 @@ def render_frame_sequence(draw: Callable, width: int, height: int,
     desired values to ``render_frame_sequence``'s ``draw_args`` and ``draw_kwargs``
     arguments.
 
-    Currently, only the default and OpenGL renderers are supported.
+    On OSX, only the default renderer is currently supported. Other platforms
+    support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frames can have transparent pixels if and only if the
     ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
@@ -267,6 +292,11 @@ def render_frame_sequence(draw: Callable, width: int, height: int,
     discouraged, and may fail catastrophically.
 
     This function is available in decorator form as ``@render_sequence()``."""
+    if msg := _check_allowed_renderer(renderer):
+        print(msg, file=sys.stderr)
+        return None
+    renderer = _osx_renderer_check(renderer)
+
     HelperClass = RenderHelperGraphicsCanvas if use_py5graphics else RenderHelperSketch
     ahs = HelperClass(setup, draw, width, height, renderer, limit=limit,
                       setup_args=setup_args, setup_kwargs=setup_kwargs,
@@ -310,7 +340,8 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     use them, pass the desired values when you call the decorated function as you
     would to any other Python function.
 
-    Currently, only the default and OpenGL renderers are supported.
+    On OSX, only the default renderer is currently supported. Other platforms
+    support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frame can have transparent pixels if and only if the
     ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
@@ -323,6 +354,10 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     discouraged, and may fail catastrophically.
 
     This function is available in non-decorator form as ``render_frame()``."""
+    if msg := _check_allowed_renderer(renderer):
+        raise RuntimeError(msg)
+    renderer = _osx_renderer_check(renderer)
+
     def decorator(draw):
         @functools.wraps(draw)
         def run_render_frame(*draw_args, **draw_kwargs):
@@ -385,7 +420,8 @@ def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     once, just like it would for any other py5 Sketch. The type of the first
     parameter must also depend on the ``use_py5graphics`` parameter.
 
-    Currently, only the default and OpenGL renderers are supported.
+    On OSX, only the default renderer is currently supported. Other platforms
+    support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frames can have transparent pixels if and only if the
     ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
@@ -399,6 +435,10 @@ def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     discouraged, and may fail catastrophically.
 
     This function is available in non-decorator form as ``render_frame_sequence()``."""
+    if msg := _check_allowed_renderer(renderer):
+        raise RuntimeError(msg)
+    renderer = _osx_renderer_check(renderer)
+
     def decorator(draw):
         @functools.wraps(draw)
         def run_render_frames(*draw_args, **draw_kwargs):

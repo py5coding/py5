@@ -19,6 +19,7 @@
 # *****************************************************************************
 import time
 import re
+from pathlib import Path
 
 from IPython.core.magic_arguments import MagicHelpFormatter
 
@@ -48,4 +49,20 @@ def wait(wait_time, sketch):
         time.sleep(0.1)
 
 
-__all__ = ['CellMagicHelpFormatter', 'fix_triple_quote_str', 'wait']
+def filename_check(filename):
+    filename = Path(filename)
+    if not filename.parent.exists():
+        filename.parent.mkdir(parents=True)
+    return filename
+
+
+def variable_name_check(varname):
+    return re.match('^[a-zA-Z_]\\w*' + chr(36), varname)
+
+
+__all__ = [
+    'CellMagicHelpFormatter',
+    'fix_triple_quote_str',
+    'wait',
+    'filename_check',
+    'variable_name_check']

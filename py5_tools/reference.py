@@ -38,7 +38,6 @@ PY5_DIR_STR = [
     'ARC',
     'arc',
     'ARGB',
-    'args',
     'ARGS_BGCOLOR',
     'ARGS_DENSITY',
     'ARGS_DISABLE_AWT',
@@ -303,6 +302,7 @@ PY5_DIR_STR = [
     'OVERLAY',
     'P2D',
     'P3D',
+    'pargs',
     'parse_json',
     'PATH',
     'PDF',
@@ -923,7 +923,6 @@ PY5_ALL_STR = [
 ]
 
 PY5_DYNAMIC_VARIABLES = [
-    'args',
     'display_height',
     'display_width',
     'finished',
@@ -944,6 +943,7 @@ PY5_DYNAMIC_VARIABLES = [
     'mouse_x',
     'mouse_y',
     'np_pixels',
+    'pargs',
     'pixel_height',
     'pixel_width',
     'pixels',

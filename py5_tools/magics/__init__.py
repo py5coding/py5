@@ -17,8 +17,12 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-from .drawing import DrawingMagics
+import sys
+
+from .drawing import DrawingMagics, DXFDrawingMagic
 
 
 def load_ipython_extension(ipython):
     ipython.register_magics(DrawingMagics)
+    if sys.platform != 'darwin':
+        ipython.register_magics(DXFDrawingMagic)

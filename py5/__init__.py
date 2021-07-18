@@ -19,7 +19,7 @@
 # *****************************************************************************
 # -*- coding: utf-8 -*-
 """
-py5 makes Processing available to the CPython interpreter using JPype.
+py5 is a version of Processing for Python 3.8+. It makes the Processing Java libraries available to the CPython interpreter using JPype.
 """
 import sys
 from pathlib import Path
@@ -27,7 +27,6 @@ import inspect
 from typing import overload, Any, Callable, Union, Dict, List, Tuple  # noqa
 from nptyping import NDArray, Float, Int  # noqa
 
-# import json  # noqa
 import numpy as np  # noqa
 from PIL import Image  # noqa
 from jpype import JClass  # noqa
@@ -52,6 +51,7 @@ from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Sha
 from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
 from .create_font_tool import create_font_file  # noqa
 from .image_conversion import register_image_conversion, NumpyImageArray  # noqa
+from py5_tools import split_setup as _split_setup
 from . import reference
 from . import java_conversion  # noqa
 try:
@@ -61,9 +61,9 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.4a2'
+__version__ = '0.5a0'
 
-_PY5_USE_IMPORTED_MODE = py5_tools.imported.get_imported_mode()
+_PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
 java_conversion.init_jpype_converters()
 
@@ -258,7 +258,7 @@ WINDOWS = 1
 X = 0
 Y = 1
 Z = 2
-args: List[str] = None
+pargs: List[str] = None
 display_height: int = None
 display_width: int = None
 finished: bool = None
@@ -4990,8 +4990,8 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
     Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
     draw into an off-screen graphics buffer. The first two parameters define the
     width and height in pixels. The third, optional parameter specifies the
-    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-    parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+    third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
@@ -5061,8 +5061,8 @@ def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
     Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
     draw into an off-screen graphics buffer. The first two parameters define the
     width and height in pixels. The third, optional parameter specifies the
-    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-    parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+    third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
@@ -5133,8 +5133,8 @@ def create_graphics(w: int, h: int, renderer: str,
     Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
     draw into an off-screen graphics buffer. The first two parameters define the
     width and height in pixels. The third, optional parameter specifies the
-    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-    parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+    third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
@@ -5203,8 +5203,8 @@ def create_graphics(*args):
     Creates and returns a new ``Py5Graphics`` object. Use this class if you need to
     draw into an off-screen graphics buffer. The first two parameters define the
     width and height in pixels. The third, optional parameter specifies the
-    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or SVG. If the third
-    parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
+    renderer. It can be defined as ``P2D``, ``P3D``, ``PDF``, or ``SVG``. If the
+    third parameter isn't used, the default renderer is set. The ``PDF`` and ``SVG``
     renderers require the filename parameter.
 
     It's important to consider the renderer used with ``create_graphics()`` in
@@ -7570,9 +7570,21 @@ def full_screen() -> None:
     Notes
     -----
 
-    Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-    cannot both be used in the same program.
+    Open a Sketch using the full size of the computer's display. This is intended to
+    be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+    functions cannot both be used in the same program.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+    of ``setup()``. This allows the user to omit the ``settings()`` function, much
+    like what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+    to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
     monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -7613,9 +7625,21 @@ def full_screen(display: int, /) -> None:
     Notes
     -----
 
-    Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-    cannot both be used in the same program.
+    Open a Sketch using the full size of the computer's display. This is intended to
+    be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+    functions cannot both be used in the same program.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+    of ``setup()``. This allows the user to omit the ``settings()`` function, much
+    like what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+    to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
     monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -7656,9 +7680,21 @@ def full_screen(renderer: str, /) -> None:
     Notes
     -----
 
-    Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-    cannot both be used in the same program.
+    Open a Sketch using the full size of the computer's display. This is intended to
+    be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+    functions cannot both be used in the same program.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+    of ``setup()``. This allows the user to omit the ``settings()`` function, much
+    like what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+    to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
     monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -7699,9 +7735,21 @@ def full_screen(renderer: str, display: int, /) -> None:
     Notes
     -----
 
-    Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-    cannot both be used in the same program.
+    Open a Sketch using the full size of the computer's display. This is intended to
+    be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+    functions cannot both be used in the same program.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+    of ``setup()``. This allows the user to omit the ``settings()`` function, much
+    like what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+    to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
     monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -7741,9 +7789,21 @@ def full_screen(*args):
     Notes
     -----
 
-    Open a Sketch using the full size of the computer's display. This function must
-    be called in ``settings()``. The ``size()`` and ``full_screen()`` functions
-    cannot both be used in the same program.
+    Open a Sketch using the full size of the computer's display. This is intended to
+    be called from the ``settings()`` function. The ``size()`` and ``full_screen()``
+    functions cannot both be used in the same program.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``full_screen()`` from the ``setup()`` function if it is called at the beginning
+    of ``setup()``. This allows the user to omit the ``settings()`` function, much
+    like what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``full_screen()``, or calls
+    to ``size()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     When ``full_screen()`` is used without a parameter on a computer with multiple
     monitors, it will (probably) draw the Sketch to the primary display. When it is
@@ -9601,9 +9661,23 @@ def no_smooth() -> None:
     Draws all geometry and fonts with jagged (aliased) edges and images with hard
     edges between the pixels when enlarged rather than interpolating pixels.  Note
     that ``smooth()`` is active by default, so it is necessary to call
-    ``no_smooth()`` to disable smoothing of geometry, fonts, and images. The
-    ``no_smooth()`` method can only be run once for each Sketch and must be called
-    in ``settings()``.
+    ``no_smooth()`` to disable smoothing of geometry, fonts, and images.
+
+    The ``no_smooth()`` function can only be called once within a Sketch. It is
+    intended to be called from the ``settings()`` function. The ``smooth()``
+    function follows the same rules.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``no_smooth()`` from the ``setup()`` function if it is called at the beginning
+    of ``setup()``. This allows the user to omit the ``settings()`` function, much
+    like what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``no_smooth()``, or calls
+    to ``size()``, ``full_screen()``, ``smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
     """
     return _py5sketch.no_smooth()
 
@@ -10023,18 +10097,29 @@ def pixel_density(density: int, /) -> None:
 
     This function makes it possible for py5 to render using all of the pixels on
     high resolutions screens like Apple Retina displays and Windows High-DPI
-    displays. This function can only be run once within a program and it must be
-    called in ``settings()``.  The ``pixel_density()`` should only be used with
-    hardcoded numbers (in almost all cases this number will be 2) or in combination
-    with ``display_density()`` as in the second example.
+    displays. This function can only be run once within a program. It is intended to
+    be called from the ``settings()`` function.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``pixel_density()`` from the ``setup()`` function if it is called at the
+    beginning of ``setup()``. This allows the user to omit the ``settings()``
+    function, much like what can be done while programming in the Processing IDE.
+    Py5 does this by inspecting the ``setup()`` function and attempting to split it
+    into synthetic ``settings()`` and ``setup()`` functions if both were not created
+    by the user and the real ``setup()`` function contains a call to
+    ``pixel_density()``, or calls to ``size()``, ``full_screen()``, ``smooth()``, or
+    ``no_smooth()``. Calls to those functions must be at the very beginning of
+    ``setup()``, before any other Python code (but comments are ok). This feature is
+    not available when programming in class mode.
+
+    The ``pixel_density()`` should only be used with hardcoded numbers (in almost
+    all cases this number will be 2) or in combination with ``display_density()`` as
+    in the second example.
 
     When the pixel density is set to more than 1, it changes all of the pixel
     operations including the way ``get()``, ``blend()``, ``copy()``,
     ``update_pixels()``, and ``update_np_pixels()`` all work. See the reference for
     ``pixel_width`` and ``pixel_height`` for more information.
-
-    To use variables as the arguments to ``pixel_density()`` function, place the
-    ``pixel_density()`` function within the ``settings()`` function.
     """
     return _py5sketch.pixel_density(density)
 
@@ -12371,7 +12456,19 @@ def size(width: int, height: int, /) -> None:
     -----
 
     Defines the dimension of the display window width and height in units of pixels.
-    This must be called from the ``settings()`` function.
+    This is intended to be called from the ``settings()`` function.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``size()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``size()``, or calls to
+    ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+    to those functions must be at the very beginning of ``setup()``, before any
+    other Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     The built-in variables ``width`` and ``height`` are set by the parameters passed
     to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -12451,7 +12548,19 @@ def size(width: int, height: int, renderer: str, /) -> None:
     -----
 
     Defines the dimension of the display window width and height in units of pixels.
-    This must be called from the ``settings()`` function.
+    This is intended to be called from the ``settings()`` function.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``size()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``size()``, or calls to
+    ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+    to those functions must be at the very beginning of ``setup()``, before any
+    other Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     The built-in variables ``width`` and ``height`` are set by the parameters passed
     to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -12531,7 +12640,19 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
     -----
 
     Defines the dimension of the display window width and height in units of pixels.
-    This must be called from the ``settings()`` function.
+    This is intended to be called from the ``settings()`` function.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``size()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``size()``, or calls to
+    ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+    to those functions must be at the very beginning of ``setup()``, before any
+    other Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     The built-in variables ``width`` and ``height`` are set by the parameters passed
     to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -12610,7 +12731,19 @@ def size(*args):
     -----
 
     Defines the dimension of the display window width and height in units of pixels.
-    This must be called from the ``settings()`` function.
+    This is intended to be called from the ``settings()`` function.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``size()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``size()``, or calls to
+    ``full_screen()``, ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls
+    to those functions must be at the very beginning of ``setup()``, before any
+    other Python code (but comments are ok). This feature is not available when
+    programming in class mode.
 
     The built-in variables ``width`` and ``height`` are set by the parameters passed
     to this function. For example, running ``size(640, 480)`` will assign 640 to the
@@ -12694,9 +12827,21 @@ def smooth() -> None:
     The other option for the default renderer is ``smooth(2)``, which is bilinear
     smoothing.
 
-    The ``smooth()`` function can only be set once within a Sketch. It must be
-    called from the `settings()`` function. The ``no_smooth()`` function also
+    The ``smooth()`` function can only be set once within a Sketch. It is intended
+    to be called from the ``settings()`` function. The ``no_smooth()`` function
     follows the same rules.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``smooth()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``smooth()``, or calls to
+    ``size()``, ``full_screen()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
     """
     pass
 
@@ -12739,9 +12884,21 @@ def smooth(level: int, /) -> None:
     The other option for the default renderer is ``smooth(2)``, which is bilinear
     smoothing.
 
-    The ``smooth()`` function can only be set once within a Sketch. It must be
-    called from the `settings()`` function. The ``no_smooth()`` function also
+    The ``smooth()`` function can only be set once within a Sketch. It is intended
+    to be called from the ``settings()`` function. The ``no_smooth()`` function
     follows the same rules.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``smooth()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``smooth()``, or calls to
+    ``size()``, ``full_screen()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
     """
     pass
 
@@ -12783,9 +12940,21 @@ def smooth(*args):
     The other option for the default renderer is ``smooth(2)``, which is bilinear
     smoothing.
 
-    The ``smooth()`` function can only be set once within a Sketch. It must be
-    called from the `settings()`` function. The ``no_smooth()`` function also
+    The ``smooth()`` function can only be set once within a Sketch. It is intended
+    to be called from the ``settings()`` function. The ``no_smooth()`` function
     follows the same rules.
+
+    When programming in module mode and imported mode, py5 will allow calls to
+    ``smooth()`` from the ``setup()`` function if it is called at the beginning of
+    ``setup()``. This allows the user to omit the ``settings()`` function, much like
+    what can be done while programming in the Processing IDE. Py5 does this by
+    inspecting the ``setup()`` function and attempting to split it into synthetic
+    ``settings()`` and ``setup()`` functions if both were not created by the user
+    and the real ``setup()`` function contains a call to ``smooth()``, or calls to
+    ``size()``, ``full_screen()``, ``no_smooth()``, or ``pixel_density()``. Calls to
+    those functions must be at the very beginning of ``setup()``, before any other
+    Python code (but comments are ok). This feature is not available when
+    programming in class mode.
     """
     return _py5sketch.smooth(*args)
 
@@ -16563,146 +16732,6 @@ def year() -> int:
     """
     return Sketch.year()
 
-##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the ``np_pixels[]``
-    array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the ``np_pixels[]``
-    array. This method must always be called before reading from or writing to
-    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
-    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
-
-    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
-    ``load_np_pixels()`` must be called before reading from or writing to
-    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
-    writing to ``pixels[]``.
-
-    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
-    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
-    there is no need for a separate call to ``load_pixels()``. However, be aware
-    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
-    result in the updates to ``pixels[]`` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the ``np_pixels[]`` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the ``np_pixels[]`` array. Use in
-    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
-    array, there's no need to call ``update_np_pixels()`` — updating is only
-    necessary to apply changes.
-
-    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
-    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
-    ``update_pixels()`` must be called after modifying ``pixels[]``.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: np.ndarray = None
-
-
-def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: np.ndarray
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array. The size of ``array``'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    ``dtype`` must be ``np.uint8``.
-
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency, but recall that the
-    display window's pixels can never be transparent so any transparency in
-    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
-    ``array``'s third dimension is optional.
-
-    This method makes its own calls to ``load_np_pixels()`` and
-    ``update_np_pixels()`` so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
-    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = True,
-         **params) -> None:
-    """Save image data to a file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = True
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save image data to a file. This method uses the Python library Pillow to write
-    the image, so it can save images in any format that that library supports.
-
-    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
-    defaults to ``True``. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The ``use_thread`` parameter will save the image in a separate Python thread.
-    This improves performance by returning before the image has actually been
-    written to the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
-
 
 SIMPLEX_NOISE = 1
 PERLIN_NOISE = 2
@@ -18657,6 +18686,221 @@ def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
     return Sketch.parse_json(serialized_json, **kwargs)
 
 ##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of ``println()`` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of ``println()`` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    ``println()`` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    ``set_println_stream`` to change how the output is handled. The
+    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
+    shown in the example. The example demonstrates how to configure py5 to output
+    text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(
+    *args,
+    sep: str = ' ',
+    end: str = '\n',
+        stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = '\\n'
+        string appended after the last value, defaults to newline character
+
+    sep: str = ' '
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
+    text in the output of the cell that made the ``run_sketch()`` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use ``set_println_stream()`` to customize the behavior of ``println()``.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the ``np_pixels[]`` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: np.ndarray = None
+
+
+def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: np.ndarray
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = 'ARGB'
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path],
+         *,
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = False,
+         **params) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
 # module functions from threads.py
 ##############################################################################
 
@@ -18942,80 +19186,6 @@ def list_threads() -> None:
     return _py5sketch.list_threads()
 
 ##############################################################################
-# module functions from print_tools.py
-##############################################################################
-
-
-def set_println_stream(println_stream: Any) -> None:
-    """Customize where the output of ``println()`` goes.
-
-    Parameters
-    ----------
-
-    println_stream: Any
-        println stream object to be used by println method
-
-    Notes
-    -----
-
-    Customize where the output of ``println()`` goes.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. The
-    ``println()`` method was created to provide users with print functionality in a
-    Sketch without having to cope with output moving from one cell to the next. Use
-    ``set_println_stream`` to change how the output is handled. The
-    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
-    shown in the example. The example demonstrates how to configure py5 to output
-    text to an IPython Widget.
-    """
-    return _py5sketch.set_println_stream(println_stream)
-
-
-def println(
-    *args,
-    sep: str = ' ',
-    end: str = '\n',
-        stderr: bool = False) -> None:
-    """Print text or other values to the screen.
-
-    Parameters
-    ----------
-
-    args
-        values to be printed
-
-    end: str = '\\n'
-        string appended after the last value, defaults to newline character
-
-    sep: str = ' '
-        string inserted between values, defaults to a space
-
-    stderr: bool = False
-        use stderr instead of stdout
-
-    Notes
-    -----
-
-    Print text or other values to the screen. For a Sketch running outside of a
-    Jupyter Notebook, this method will behave the same as the Python's builtin
-    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
-    text in the output of the cell that made the ``run_sketch()`` call.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. This
-    method was created to provide users with print functionality in a Sketch without
-    having to cope with output moving from one cell to the next.
-
-    Use ``set_println_stream()`` to customize the behavior of ``println()``.
-    """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-##############################################################################
 # module functions from sketch.py
 ##############################################################################
 
@@ -19222,7 +19392,7 @@ def save_frame(filename: Union[str,
                *,
                format: str = None,
                drop_alpha: bool = True,
-               use_thread: bool = True,
+               use_thread: bool = False,
                **params) -> None:
     """Save the current frame as an image.
 
@@ -19241,7 +19411,7 @@ def save_frame(filename: Union[str,
     params
         keyword arguments to pass to the PIL.Image save method
 
-    use_thread: bool = True
+    use_thread: bool = False
         write file in separate thread
 
     Notes
@@ -19452,10 +19622,14 @@ def run_sketch(block: bool = None, *,
     determine if the Sketch is running in a Jupyter Notebook or an IPython shell. If
     it is, ``block`` will default to ``False``, and ``True`` otherwise.
 
+    Blocking is not supported on OSX. This is because of the (current) limitations
+    of py5 on OSX. If the ``block`` parameter is set to ``True``, a warning message
+    will appear and it will be changed to ``False``.
+
     A list of strings passed to ``py5_options`` will be passed to the Processing
     PApplet class as arguments to specify characteristics such as the window's
     location on the screen. A list of strings passed to ``sketch_args`` will be
-    available to a running Sketch using ``args``. See the third example for an
+    available to a running Sketch using ``pargs``. See the third example for an
     example of how this can be used.
 
     When calling ``run_sketch()`` in module mode, py5 will by default search for
@@ -19466,6 +19640,16 @@ def run_sketch(block: bool = None, *,
     functions. The ``sketch_functions`` parameter is not available when coding py5
     in class mode. Don't forget you can always replace the ``draw()`` function in a
     running Sketch using ``hot_reload_draw()``.
+
+    When programming in module mode and imported mode, py5 will inspect the
+    ``setup()`` function and will attempt to split it into synthetic ``settings()``
+    and ``setup()`` functions if both were not created by the user and the real
+    ``setup()`` function contains calls to ``size()``, ``full_screen()``,
+    ``smooth()``, ``no_smooth()``, or ``pixel_density()``. Calls to those functions
+    must be at the very beginning of ``setup()``, before any other Python code
+    (except for comments). This feature allows the user to omit the ``settings()``
+    function, much like what can be done while programming in the Processing IDE.
+    This feature is not available when programming in class mode.
 
     When running a Sketch asynchronously through Jupyter Notebook, any ``print``
     statements using Python's builtin function will always appear in the output of
@@ -19479,12 +19663,20 @@ def run_sketch(block: bool = None, *,
     error messages and warnings generated inside the Processing Jars cannot be
     controlled in the same way, and may appear in the output of the active cell or
     mixed in with the Jupyter Kernel logs."""
-    if block is None:
-        block = not _in_ipython_session
-
-    sketch_functions = sketch_functions or inspect.stack()[1].frame.f_locals
-    functions = dict([(e, sketch_functions[e])
-                     for e in reference.METHODS if e in sketch_functions and callable(sketch_functions[e])])
+    caller_globals = inspect.stack()[1].frame.f_globals
+    caller_locals = inspect.stack()[1].frame.f_locals
+    if sketch_functions:
+        functions = dict([(e, sketch_functions[e])
+                         for e in reference.METHODS if e in sketch_functions and callable(sketch_functions[e])])
+    else:
+        functions = dict([(e, caller_locals[e])
+                         for e in reference.METHODS if e in caller_locals and callable(caller_locals[e])])
+    functions = _split_setup.transform(
+        functions,
+        caller_globals,
+        caller_locals,
+        println,
+        mode='imported' if _PY5_USE_IMPORTED_MODE else 'module')
 
     if not set(functions.keys()) & set(['settings', 'setup', 'draw']):
         print(("Unable to find settings, setup, or draw functions. "
@@ -19501,7 +19693,7 @@ def run_sketch(block: bool = None, *,
     if _py5sketch.is_dead:
         _py5sketch = Sketch()
 
-    _prepare_dynamic_variables(sketch_functions)
+    _prepare_dynamic_variables(caller_locals)
 
     _py5sketch._run_sketch(functions, block, py5_options, sketch_args)
 

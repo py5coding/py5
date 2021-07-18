@@ -19,7 +19,7 @@
 # *****************************************************************************
 import argparse
 
-import py5_tools
+import py5_tools.utilities
 
 
 parser = argparse.ArgumentParser(description="Generate Py5Utilities framework")

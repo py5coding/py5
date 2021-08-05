@@ -40,7 +40,7 @@ from .surface import Py5Surface, _return_py5surface  # noqa
 from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
 from .font import Py5Font, _return_py5font, _load_py5font, _return_list_str  # noqa
 from .graphics import Py5Graphics, _return_py5graphics  # noqa
-from .type_decorators import _text_fix_str  # noqa
+from .type_decorators import _text_fix_str, _convert_hex_color  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
 from . import image_conversion
 from .image_conversion import NumpyImageArray, _convertable
@@ -1451,6 +1451,7 @@ class Sketch(
         return self._instance.width
     width: int = property(fget=_get_width)
 
+    @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
         """Extracts the alpha value from a color, scaled to match current ``color_mode()``.
 
@@ -1611,6 +1612,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color()
     def ambient(self, *args):
         """Sets the ambient reflectance for shapes drawn to the screen.
 
@@ -2863,6 +2865,7 @@ class Sketch(
         pass
 
     @_auto_convert_to_py5image
+    @_convert_hex_color()
     def background(self, *args):
         """The ``background()`` function sets the color used for the background of the py5
         window.
@@ -3962,14 +3965,14 @@ class Sketch(
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
         * SCREEN: Opposite multiply, uses inverse values of the colors.
-        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
         light values.
-        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-        as harsh.
+        * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+        * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+        harsh.
         * DODGE: Lightens light tones and increases contrast, ignores darks. Called
         "Color Dodge" in Illustrator and Photoshop.
         * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -4046,14 +4049,14 @@ class Sketch(
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
         * SCREEN: Opposite multiply, uses inverse values of the colors.
-        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
         light values.
-        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-        as harsh.
+        * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+        * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+        harsh.
         * DODGE: Lightens light tones and increases contrast, ignores darks. Called
         "Color Dodge" in Illustrator and Photoshop.
         * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -4129,14 +4132,14 @@ class Sketch(
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
         * SCREEN: Opposite multiply, uses inverse values of the colors.
-        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
         light values.
-        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-        as harsh.
+        * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+        * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+        harsh.
         * DODGE: Lightens light tones and increases contrast, ignores darks. Called
         "Color Dodge" in Illustrator and Photoshop.
         * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -4179,7 +4182,7 @@ class Sketch(
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: multiply the colors, result will always be darker.
         * SCREEN: opposite multiply, uses inverse values of the colors.
         * REPLACE: the pixels entirely replace the others and don't utilize alpha
@@ -4193,6 +4196,7 @@ class Sketch(
         """
         return self._instance.blendMode(mode)
 
+    @_convert_hex_color()
     def blue(self, rgb: int, /) -> float:
         """Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
@@ -4328,6 +4332,7 @@ class Sketch(
         """
         return self._instance.box(*args)
 
+    @_convert_hex_color()
     def brightness(self, rgb: int, /) -> float:
         """Extracts the brightness value from a color.
 
@@ -4662,8 +4667,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -4738,8 +4745,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -4814,8 +4823,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -4890,8 +4901,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -4966,8 +4979,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -5042,8 +5057,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -5118,8 +5135,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
@@ -5194,11 +5213,14 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         pass
 
+    @_convert_hex_color()
     def color(self, *args):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
@@ -5269,8 +5291,10 @@ class Sketch(
         transparency. When three values are specified, they are interpreted as either
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-        Note that when using hexadecimal notation, it is not necessary to use
-        ``color()``, as in: ``c = 0x006699``
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+        color notations as a parameter.
         """
         return self._instance.color(*args)
 
@@ -7666,6 +7690,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color()
     def emissive(self, *args):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
@@ -7942,6 +7967,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -8002,6 +8032,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8064,6 +8099,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -8124,6 +8164,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8186,6 +8231,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -8247,6 +8297,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -8255,6 +8310,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color()
     def fill(self, *args):
         """Sets the color used to fill shapes.
 
@@ -8306,6 +8362,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -9283,6 +9344,7 @@ class Sketch(
         """
         return self._instance.getSurface()
 
+    @_convert_hex_color()
     def green(self, rgb: int, /) -> float:
         """Extracts the green value from a color, scaled to match current ``color_mode()``.
 
@@ -9406,6 +9468,7 @@ class Sketch(
         """
         return cls._cls.hour()
 
+    @_convert_hex_color()
     def hue(self, rgb: int, /) -> float:
         """Extracts the hue value from a color.
 
@@ -9816,6 +9879,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color(indices=[0, 1])
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
 
@@ -12033,6 +12097,7 @@ class Sketch(
         """
         return self._instance.rectMode(mode)
 
+    @_convert_hex_color()
     def red(self, rgb: int, /) -> float:
         """Extracts the red value from a color, scaled to match current ``color_mode()``.
 
@@ -12408,6 +12473,7 @@ class Sketch(
         """
         return self._instance.rotateZ(angle)
 
+    @_convert_hex_color()
     def saturation(self, rgb: int, /) -> float:
         """Extracts the saturation value from a color.
 
@@ -14042,6 +14108,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color()
     def specular(self, *args):
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
@@ -14385,6 +14452,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -14446,6 +14518,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14509,6 +14586,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -14570,6 +14652,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14633,6 +14720,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -14695,6 +14787,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -14705,6 +14802,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color()
     def stroke(self, *args):
         """Sets the color used to draw lines and borders around shapes.
 
@@ -14755,6 +14853,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16575,6 +16678,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -16637,6 +16745,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16701,6 +16814,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -16763,6 +16881,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16827,6 +16950,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -16890,6 +17018,11 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -16898,6 +17031,7 @@ class Sketch(
         """
         pass
 
+    @_convert_hex_color()
     def tint(self, *args):
         """Sets the fill value for displaying images.
 
@@ -16951,6 +17085,11 @@ class Sketch(
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is

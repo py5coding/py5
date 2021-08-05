@@ -44,7 +44,26 @@ if not py5_tools.is_jvm_running():
     py5_tools.add_jars(str(base_path / 'jars'))
     # if the cwd has a jars subdirectory, add that next
     py5_tools.add_jars(Path('jars'))
-    py5_tools.jvm._start_jvm()
+    try:
+        py5_tools.jvm._start_jvm()
+        started_jvm = True
+    except BaseException:
+        started_jvm = False
+
+    debug_info = py5_tools.get_jvm_debug_info()
+    java_version = debug_info['jvm version'][0]
+    if not started_jvm or java_version < 11:
+        print(
+            "py5 is unable to start a Java 11 Virtual Machine.",
+            file=sys.stderr)
+        print(
+            "This library requires Java 11 to be installed and a properly set JAVA_HOME environment variable.",
+            file=sys.stderr)
+        print(
+            "Here is some debug info about your installation that might help you identify the source of this problem.",
+            file=sys.stderr)
+        print(debug_info, file=sys.stderr)
+        raise RuntimeError("py5 is unable to start Java 11 Virtual Machine")
 
 from .methods import register_exception_msg  # noqa
 from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5Promise, _in_ipython_session  # noqa
@@ -61,7 +80,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.5a0'
+__version__ = '0.5a1'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -2829,14 +2848,14 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
     * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
     * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
     * DIFFERENCE: subtract colors from underlying image.
-    * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+    * EXCLUSION: similar to DIFFERENCE, but less extreme.
     * MULTIPLY: Multiply the colors, result will always be darker.
     * SCREEN: Opposite multiply, uses inverse values of the colors.
-    * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+    * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
     light values.
-    * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-    * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-    as harsh.
+    * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+    * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+    harsh.
     * DODGE: Lightens light tones and increases contrast, ignores darks. Called
     "Color Dodge" in Illustrator and Photoshop.
     * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -2914,14 +2933,14 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
     * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
     * DIFFERENCE: subtract colors from underlying image.
-    * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+    * EXCLUSION: similar to DIFFERENCE, but less extreme.
     * MULTIPLY: Multiply the colors, result will always be darker.
     * SCREEN: Opposite multiply, uses inverse values of the colors.
-    * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+    * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
     light values.
-    * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-    * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-    as harsh.
+    * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+    * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+    harsh.
     * DODGE: Lightens light tones and increases contrast, ignores darks. Called
     "Color Dodge" in Illustrator and Photoshop.
     * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -2997,14 +3016,14 @@ def blend(*args):
     * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
     * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
     * DIFFERENCE: subtract colors from underlying image.
-    * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+    * EXCLUSION: similar to DIFFERENCE, but less extreme.
     * MULTIPLY: Multiply the colors, result will always be darker.
     * SCREEN: Opposite multiply, uses inverse values of the colors.
-    * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+    * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
     light values.
-    * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-    * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-    as harsh.
+    * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+    * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+    harsh.
     * DODGE: Lightens light tones and increases contrast, ignores darks. Called
     "Color Dodge" in Illustrator and Photoshop.
     * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -3048,7 +3067,7 @@ def blend_mode(mode: int, /) -> None:
     * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
     * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
     * DIFFERENCE: subtract colors from underlying image.
-    * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+    * EXCLUSION: similar to DIFFERENCE, but less extreme.
     * MULTIPLY: multiply the colors, result will always be darker.
     * SCREEN: opposite multiply, uses inverse values of the colors.
     * REPLACE: the pixels entirely replace the others and don't utilize alpha
@@ -3532,8 +3551,10 @@ def color(fgray: float, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -3609,8 +3630,10 @@ def color(fgray: float, falpha: float, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -3686,8 +3709,10 @@ def color(v1: float, v2: float, v3: float, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -3763,8 +3788,10 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -3840,8 +3867,10 @@ def color(gray: int, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -3917,8 +3946,10 @@ def color(gray: int, alpha: int, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -3994,8 +4025,10 @@ def color(v1: int, v2: int, v3: int, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -4071,8 +4104,10 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     pass
 
@@ -4147,8 +4182,10 @@ def color(*args):
     transparency. When three values are specified, they are interpreted as either
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
-    Note that when using hexadecimal notation, it is not necessary to use
-    ``color()``, as in: ``c = 0x006699``
+    Note that you can also use hexadecimal notation and web color notation to
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
+    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
+    color notations as a parameter.
     """
     return _py5sketch.color(*args)
 
@@ -6867,6 +6904,11 @@ def fill(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -6928,6 +6970,11 @@ def fill(gray: float, alpha: float, /) -> None:
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6991,6 +7038,11 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -7052,6 +7104,11 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7115,6 +7172,11 @@ def fill(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -7177,6 +7239,11 @@ def fill(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -7237,6 +7304,11 @@ def fill(*args):
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13435,6 +13507,11 @@ def stroke(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -13497,6 +13574,11 @@ def stroke(gray: float, alpha: float, /) -> None:
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13561,6 +13643,11 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -13623,6 +13710,11 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13687,6 +13779,11 @@ def stroke(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -13750,6 +13847,11 @@ def stroke(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -13811,6 +13913,11 @@ def stroke(*args):
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15660,6 +15767,11 @@ def tint(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -15723,6 +15835,11 @@ def tint(gray: float, alpha: float, /) -> None:
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15788,6 +15905,11 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -15851,6 +15973,11 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15916,6 +16043,11 @@ def tint(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -15980,6 +16112,11 @@ def tint(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
+
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
     255.
@@ -16042,6 +16179,11 @@ def tint(*args):
     values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a seven character
+    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+    "``#``" character, the remainder of the string is just like hexadecimal
+    notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16731,6 +16873,594 @@ def year() -> int:
     returns the current year as an integer (2003, 2004, 2005, etc).
     """
     return Sketch.year()
+
+##############################################################################
+# module functions from data.py
+##############################################################################
+
+
+def load_json(json_path: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
+    """Load a JSON data file from a file or URL.
+
+    Parameters
+    ----------
+
+    json_path: Union[str, Path]
+        url or file path for JSON data file
+
+    kwargs: Dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Load a JSON data file from a file or URL. When loading a file, the path can be
+    in the data directory, relative to the current working directory
+    (``sketch_path()``), or an absolute path. When loading from a URL, the
+    ``json_path`` parameter must start with ``http://`` or ``https://``.
+
+    When loading JSON data from a URL, the data is retrieved using the Python
+    requests library with the ``get`` method, and the ``kwargs`` parameter is passed
+    along to that method. When loading JSON data from a file, the data is loaded
+    using the Python json library with the ``load`` method, and again the ``kwargs``
+    parameter passed along to that method.
+    """
+    return _py5sketch.load_json(json_path, **kwargs)
+
+
+def save_json(json_data: Any,
+              filename: Union[str,
+                              Path],
+              **kwargs: Dict[str,
+                             Any]) -> None:
+    """Save JSON data to a file.
+
+    Parameters
+    ----------
+
+    filename: Union[str, Path]
+        filename to save JSON data object to
+
+    json_data: Any
+        json data object
+
+    kwargs: Dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
+    saved relative to the current working directory (``sketch_path()``).
+
+    The JSON data is saved using the Python json library with the ``dump`` method,
+    and the ``kwargs`` parameter is passed along to that method.
+    """
+    return _py5sketch.save_json(json_data, filename, **kwargs)
+
+
+def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
+    """Parse serialized JSON data from a string.
+
+    Parameters
+    ----------
+
+    kwargs: Dict[str, Any]
+        keyword arguments
+
+    serialized_json: Any
+        JSON data object that has been serialized as a string
+
+    Notes
+    -----
+
+    Parse serialized JSON data from a string. When reading JSON data from a file,
+    ``load_json()`` is the better choice.
+
+    The JSON data is parsed using the Python json library with the ``loads`` method,
+    and the ``kwargs`` parameter is passed along to that method.
+    """
+    return Sketch.parse_json(serialized_json, **kwargs)
+
+##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of ``println()`` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of ``println()`` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    ``println()`` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    ``set_println_stream`` to change how the output is handled. The
+    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
+    shown in the example. The example demonstrates how to configure py5 to output
+    text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(
+    *args,
+    sep: str = ' ',
+    end: str = '\n',
+        stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = '\\n'
+        string appended after the last value, defaults to newline character
+
+    sep: str = ' '
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
+    text in the output of the cell that made the ``run_sketch()`` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use ``set_println_stream()`` to customize the behavior of ``println()``.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the ``np_pixels[]`` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: np.ndarray = None
+
+
+def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: np.ndarray
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = 'ARGB'
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path],
+         *,
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = False,
+         **params) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> Py5Promise:
+    """Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
+    when the ``result`` property contains the value function ``f`` returned. Before
+    then, the ``result`` property will be ``None``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_repeating_thread(f: Callable, name: str = None, *,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: Tuple = None, kwargs: Dict = None) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the ``time_delay`` parameter to set the time in seconds between one call to
+    function ``f`` and the next call. Set this parameter to ``0`` if you want each
+    call to happen immediately after the previous call finishes. If the function
+    ``f`` takes longer than expected to finish, py5 will wait for it to finish
+    before making the next call. There will not be overlapping calls to function
+    ``f``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with ``list_threads()``.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The ``wait`` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
+    ``False``. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use ``launch_repeating_thread()``
+    instead.
+
+    Use ``has_thread()`` to determine if a thread of a given name exists and
+    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
+    to stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The ``wait`` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
+    If you would rather the Sketch waited for threads to exit, create an ``exiting``
+    method and make a call to ``stop_all_threads(wait=True)``.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
 
 
 SIMPLEX_NOISE = 1
@@ -18596,594 +19326,6 @@ def noise_seed(seed: int) -> None:
     more advanced features, import that library directly.
     """
     return _py5sketch.noise_seed(seed)
-
-##############################################################################
-# module functions from data.py
-##############################################################################
-
-
-def load_json(json_path: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
-    """Load a JSON data file from a file or URL.
-
-    Parameters
-    ----------
-
-    json_path: Union[str, Path]
-        url or file path for JSON data file
-
-    kwargs: Dict[str, Any]
-        keyword arguments
-
-    Notes
-    -----
-
-    Load a JSON data file from a file or URL. When loading a file, the path can be
-    in the data directory, relative to the current working directory
-    (``sketch_path()``), or an absolute path. When loading from a URL, the
-    ``json_path`` parameter must start with ``http://`` or ``https://``.
-
-    When loading JSON data from a URL, the data is retrieved using the Python
-    requests library with the ``get`` method, and the ``kwargs`` parameter is passed
-    along to that method. When loading JSON data from a file, the data is loaded
-    using the Python json library with the ``load`` method, and again the ``kwargs``
-    parameter passed along to that method.
-    """
-    return _py5sketch.load_json(json_path, **kwargs)
-
-
-def save_json(json_data: Any,
-              filename: Union[str,
-                              Path],
-              **kwargs: Dict[str,
-                             Any]) -> None:
-    """Save JSON data to a file.
-
-    Parameters
-    ----------
-
-    filename: Union[str, Path]
-        filename to save JSON data object to
-
-    json_data: Any
-        json data object
-
-    kwargs: Dict[str, Any]
-        keyword arguments
-
-    Notes
-    -----
-
-    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
-    saved relative to the current working directory (``sketch_path()``).
-
-    The JSON data is saved using the Python json library with the ``dump`` method,
-    and the ``kwargs`` parameter is passed along to that method.
-    """
-    return _py5sketch.save_json(json_data, filename, **kwargs)
-
-
-def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
-    """Parse serialized JSON data from a string.
-
-    Parameters
-    ----------
-
-    kwargs: Dict[str, Any]
-        keyword arguments
-
-    serialized_json: Any
-        JSON data object that has been serialized as a string
-
-    Notes
-    -----
-
-    Parse serialized JSON data from a string. When reading JSON data from a file,
-    ``load_json()`` is the better choice.
-
-    The JSON data is parsed using the Python json library with the ``loads`` method,
-    and the ``kwargs`` parameter is passed along to that method.
-    """
-    return Sketch.parse_json(serialized_json, **kwargs)
-
-##############################################################################
-# module functions from print_tools.py
-##############################################################################
-
-
-def set_println_stream(println_stream: Any) -> None:
-    """Customize where the output of ``println()`` goes.
-
-    Parameters
-    ----------
-
-    println_stream: Any
-        println stream object to be used by println method
-
-    Notes
-    -----
-
-    Customize where the output of ``println()`` goes.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. The
-    ``println()`` method was created to provide users with print functionality in a
-    Sketch without having to cope with output moving from one cell to the next. Use
-    ``set_println_stream`` to change how the output is handled. The
-    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
-    shown in the example. The example demonstrates how to configure py5 to output
-    text to an IPython Widget.
-    """
-    return _py5sketch.set_println_stream(println_stream)
-
-
-def println(
-    *args,
-    sep: str = ' ',
-    end: str = '\n',
-        stderr: bool = False) -> None:
-    """Print text or other values to the screen.
-
-    Parameters
-    ----------
-
-    args
-        values to be printed
-
-    end: str = '\\n'
-        string appended after the last value, defaults to newline character
-
-    sep: str = ' '
-        string inserted between values, defaults to a space
-
-    stderr: bool = False
-        use stderr instead of stdout
-
-    Notes
-    -----
-
-    Print text or other values to the screen. For a Sketch running outside of a
-    Jupyter Notebook, this method will behave the same as the Python's builtin
-    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
-    text in the output of the cell that made the ``run_sketch()`` call.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. This
-    method was created to provide users with print functionality in a Sketch without
-    having to cope with output moving from one cell to the next.
-
-    Use ``set_println_stream()`` to customize the behavior of ``println()``.
-    """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the ``np_pixels[]``
-    array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the ``np_pixels[]``
-    array. This method must always be called before reading from or writing to
-    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
-    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
-
-    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
-    ``load_np_pixels()`` must be called before reading from or writing to
-    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
-    writing to ``pixels[]``.
-
-    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
-    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
-    there is no need for a separate call to ``load_pixels()``. However, be aware
-    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
-    result in the updates to ``pixels[]`` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the ``np_pixels[]`` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the ``np_pixels[]`` array. Use in
-    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
-    array, there's no need to call ``update_np_pixels()`` — updating is only
-    necessary to apply changes.
-
-    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
-    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
-    ``update_pixels()`` must be called after modifying ``pixels[]``.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: np.ndarray = None
-
-
-def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: np.ndarray
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array. The size of ``array``'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    ``dtype`` must be ``np.uint8``.
-
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency, but recall that the
-    display window's pixels can never be transparent so any transparency in
-    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
-    ``array``'s third dimension is optional.
-
-    This method makes its own calls to ``load_np_pixels()`` and
-    ``update_np_pixels()`` so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
-    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = False,
-         **params) -> None:
-    """Save the drawing surface to an image file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = False
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save the drawing surface to an image file. This method uses the Python library
-    Pillow to write the image, so it can save images in any format that that library
-    supports.
-
-    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
-    defaults to ``True``. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The ``use_thread`` parameter will save the image in a separate Python thread.
-    This improves performance by returning before the image has actually been
-    written to the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> Py5Promise:
-    """Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
-
-    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
-    when the ``result`` property contains the value function ``f`` returned. Before
-    then, the ``result`` property will be ``None``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_repeating_thread(f: Callable, name: str = None, *,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: Tuple = None, kwargs: Dict = None) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
-
-    Notes
-    -----
-
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
-
-    Use the ``time_delay`` parameter to set the time in seconds between one call to
-    function ``f`` and the next call. Set this parameter to ``0`` if you want each
-    call to happen immediately after the previous call finishes. If the function
-    ``f`` takes longer than expected to finish, py5 will wait for it to finish
-    before making the next call. There will not be overlapping calls to function
-    ``f``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with ``list_threads()``.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The ``wait`` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
-    ``False``. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use ``launch_repeating_thread()``
-    instead.
-
-    Use ``has_thread()`` to determine if a thread of a given name exists and
-    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
-    to stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The ``wait`` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
-    If you would rather the Sketch waited for threads to exit, create an ``exiting``
-    method and make a call to ``stop_all_threads(wait=True)``.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
 
 ##############################################################################
 # module functions from sketch.py

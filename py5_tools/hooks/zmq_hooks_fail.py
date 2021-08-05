@@ -53,7 +53,7 @@ def sketch_portal(
     sketch: Sketch = None
         running Sketch
 
-    throttle_frame_rate: float = None
+    throttle_frame_rate: float = 30
         throttle portal frame rate below Sketch's frame rate
 
     time_limit: float = 0.0
@@ -89,12 +89,14 @@ def sketch_portal(
 
     Use the ``time_limit`` parameter to set a time limit (seconds). Use
     ``throttle_frame_rate`` to throttle the stream's frame rate (frames per second)
-    to a slower pace than the Sketch's actual draw frame rate. The ``scale``
-    parameter is a scaling factor that can adjust the portal height and width. The
-    ``quality`` parameter sets the JPEG quality factor (default 75) for the stream,
-    which must be between 1 (worst) and 100 (best). If the portal causes the
-    Sketch's frame rate to drop, try adjusting the portal's throttle frame rate,
-    quality, and scale.
+    to a slower pace than the Sketch's actual draw frame rate. By default,
+    ``throttle_frame_rate`` is set to 30, which is half of the Sketch's default draw
+    frame rate of 60 frames per second. Set this parameter to ``None`` to disable
+    throttling. The ``scale`` parameter is a scaling factor that can adjust the
+    portal height and width. The ``quality`` parameter sets the JPEG quality factor
+    (default 75) for the stream, which must be between 1 (worst) and 100 (best). If
+    the portal causes the Sketch's frame rate to drop, try adjusting the portal's
+    throttle frame rate, quality, and scale.
 
     If your Sketch has a ``post_draw()`` method, use the ``hook_post_draw``
     parameter to make this function run after ``post_draw()`` instead of ``draw()``.

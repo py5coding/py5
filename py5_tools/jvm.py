@@ -17,8 +17,10 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+import os
+
 from pathlib import Path
-from typing import Union, List  # noqa
+from typing import Any, Union, List, Dict  # noqa
 
 
 import jpype
@@ -143,6 +145,27 @@ def add_jars(path: Union[Path, str]) -> None:
             jpype.addClassPath(jarfile.absolute())
 
 
+def get_jvm_debug_info() -> Dict[str, Any]:
+    """Get Java Virtual Machine debug information.
+
+    Notes
+    -----
+
+    Get Java Virtual Machine debug information. The py5 library requires Java 11 or
+    greater to be installed and the `$JAVA_HOME` environment variable to be properly
+    set. If one or both of these conditions are not true, py5 will not work.
+
+    If the Java Virtual Machine cannot start, py5 will include this debug
+    information in the error message. If that doesn't help the user figure out the
+    problem, it will help whomever they go to asking for help."""
+    out = dict()
+    out['JAVA_HOME environment variable'] = os.environ.get(
+        'JAVA_HOME', '<not set>')
+    out['jvm version'] = jpype.getJVMVersion()
+    out['default jvm path'] = jpype.getDefaultJVMPath()
+    return out
+
+
 def _start_jvm() -> None:
     for c in _classpath:
         print(f'adding {c}')
@@ -155,4 +178,5 @@ __all__ = [
     'add_options',
     'get_classpath',
     'add_classpath',
-    'add_jars']
+    'add_jars',
+    'get_jvm_debug_info']

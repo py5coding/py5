@@ -33,7 +33,7 @@ from .font import Py5Font  # noqa
 from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
 from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
 from .image import Py5Image, _return_py5image  # noqa
-from .type_decorators import _text_fix_str  # noqa
+from .type_decorators import _text_fix_str, _convert_hex_color  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
 
 
@@ -414,6 +414,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.width
     width: int = property(fget=_get_width)
 
+    @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
         """Extracts the alpha value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
@@ -591,6 +592,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def ambient(self, *args):
         """Sets the ambient reflectance for shapes drawn to the screen.
 
@@ -1852,6 +1854,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def background(self, *args):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
@@ -2742,14 +2745,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
         * SCREEN: Opposite multiply, uses inverse values of the colors.
-        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
         light values.
-        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-        as harsh.
+        * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+        * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+        harsh.
         * DODGE: Lightens light tones and increases contrast, ignores darks. Called
         "Color Dodge" in Illustrator and Photoshop.
         * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -2830,14 +2833,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
         * SCREEN: Opposite multiply, uses inverse values of the colors.
-        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
         light values.
-        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-        as harsh.
+        * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+        * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+        harsh.
         * DODGE: Lightens light tones and increases contrast, ignores darks. Called
         "Color Dodge" in Illustrator and Photoshop.
         * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -2916,14 +2919,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
         * SCREEN: Opposite multiply, uses inverse values of the colors.
-        * OVERLAY: A mix of ``MULTIPLY`` and SCREEN. Multiplies dark values, and screens
+        * OVERLAY: A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens
         light values.
-        * HARD_LIGHT: ``SCREEN`` when greater than 50% gray, ``MULTIPLY`` when lower.
-        * SOFT_LIGHT: Mix of ``DARKEST`` and LIGHTEST.  Works like ``OVERLAY``, but not
-        as harsh.
+        * HARD_LIGHT: SCREEN when greater than 50% gray, MULTIPLY when lower.
+        * SOFT_LIGHT: Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as
+        harsh.
         * DODGE: Lightens light tones and increases contrast, ignores darks. Called
         "Color Dodge" in Illustrator and Photoshop.
         * BURN: Darker areas are applied, increasing contrast, ignores lights. Called
@@ -2971,7 +2974,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         * DARKEST: only the darkest color succeeds: ``C = min(A*factor, B)``
         * LIGHTEST: only the lightest color succeeds: ``C = max(A*factor, B)``
         * DIFFERENCE: subtract colors from underlying image.
-        * EXCLUSION: similar to ``DIFFERENCE``, but less extreme.
+        * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: multiply the colors, result will always be darker.
         * SCREEN: opposite multiply, uses inverse values of the colors.
         * REPLACE: the pixels entirely replace the others and don't utilize alpha
@@ -2988,6 +2991,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.blendMode(mode)
 
+    @_convert_hex_color()
     def blue(self, rgb: int, /) -> float:
         """Extracts the blue value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
@@ -3137,6 +3141,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.box(*args)
 
+    @_convert_hex_color()
     def brightness(self, rgb: int, /) -> float:
         """Extracts the brightness value from a color.
 
@@ -4180,6 +4185,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def color(self, *args):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
@@ -5805,6 +5811,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def emissive(self, *args):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
@@ -6088,6 +6095,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -6151,6 +6163,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -6216,6 +6233,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -6279,6 +6301,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -6344,6 +6371,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -6408,6 +6440,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -6419,6 +6456,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def fill(self, *args):
         """Sets the color used to fill shapes.
 
@@ -6470,6 +6508,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -7166,6 +7209,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.getMatrix(*args)
 
+    @_convert_hex_color()
     def green(self, rgb: int, /) -> float:
         """Extracts the green value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
@@ -7286,6 +7330,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.hint(which)
 
+    @_convert_hex_color()
     def hue(self, rgb: int, /) -> float:
         """Extracts the hue value from a color.
 
@@ -7719,6 +7764,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color(indices=[0, 1])
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
 
@@ -9962,6 +10008,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.rectMode(mode)
 
+    @_convert_hex_color()
     def red(self, rgb: int, /) -> float:
         """Extracts the red value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
@@ -10351,6 +10398,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.rotateZ(angle)
 
+    @_convert_hex_color()
     def saturation(self, rgb: int, /) -> float:
         """Extracts the saturation value from a color.
 
@@ -11660,6 +11708,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def specular(self, *args):
         """Sets the specular color of the materials used for shapes drawn to the
         Py5Graphics drawing surface, which sets the color of highlights.
@@ -12022,6 +12071,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -12086,6 +12140,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -12152,6 +12211,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -12216,6 +12280,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -12282,6 +12351,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -12347,6 +12421,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -12360,6 +12439,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def stroke(self, *args):
         """Sets the color used to draw lines and borders around shapes.
 
@@ -12410,6 +12490,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -14353,6 +14438,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -14418,6 +14508,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -14485,6 +14580,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -14550,6 +14650,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
@@ -14617,6 +14722,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -14683,6 +14793,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum
         value is 255.
@@ -14694,6 +14809,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
+    @_convert_hex_color()
     def tint(self, *args):
         """Sets the fill value for displaying images.
 
@@ -14747,6 +14863,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``Py5Graphics.color_mode()``. The default maximum

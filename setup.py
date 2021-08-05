@@ -23,7 +23,7 @@ from setuptools import setup
 with open('README.rst') as f:
     README = f.read()
 
-VERSION = '0.5a0'
+VERSION = '0.5a1'
 
 INSTALL_REQUIRES = [
     'ipykernel>=5.3',

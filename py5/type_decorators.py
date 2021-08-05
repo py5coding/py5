@@ -17,9 +17,14 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+import re
 import functools
 
-from jpype.types import JString
+import numpy as np
+from jpype.types import JString, JInt
+
+
+HEX_COLOR_REGEX = re.compile(r'#[0-9A-F]{6}' + chr(36))
 
 
 def _text_fix_str(f):
@@ -38,4 +43,37 @@ def _ret_str(f):
         result = f(self_, *args)
         return str(result) if isinstance(result, JString) else result
 
+    return decorated
+
+
+def _hex_converter(arg):
+    if isinstance(arg, str) and HEX_COLOR_REGEX.match(arg.upper()):
+        return JInt(int("0xFF" + arg[1:], base=16))
+    elif isinstance(arg, (int, np.integer)) and 0x7FFFFFFF < arg <= 0xFFFFFFFF:
+        return JInt(arg)
+    return None
+
+
+def _convert_hex_color(indices=[0]):
+    def _hex_color(f):
+        @functools.wraps(f)
+        def decorated(self_, *args):
+            args = list(args)
+            for i, arg in [(i, args[i]) for i in indices if i < len(args)]:
+                if (new_arg := _hex_converter(arg)) is not None:
+                    args[i] = new_arg
+            return f(self_, *args)
+        return decorated
+    return _hex_color
+
+
+def _convert_hex_color2(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        args = list(args)
+        if len(args) == 1 and (new_arg := _hex_converter(args[0])):
+            args[0] = new_arg
+        elif len(args) == 2 and (new_arg := _hex_converter(args[1])):
+            args[1] = new_arg
+        return f(self_, *args)
     return decorated

@@ -29,7 +29,7 @@ from jpype import JException
 from jpype.types import JBoolean, JInt, JFloat
 
 from .pmath import _get_pvector_wrapper  # noqa
-from .type_decorators import _ret_str  # noqa
+from .type_decorators import _ret_str, _convert_hex_color, _convert_hex_color2  # noqa
 
 
 def _return_list_py5shapes(f):
@@ -54,7 +54,7 @@ def _py5shape_type_fixer(f):
         def fix_type(arg):
             if isinstance(arg, bool):
                 return JBoolean(arg)
-            elif isinstance(arg, int):
+            elif isinstance(arg, (int, np.integer)):
                 return JInt(arg)
             elif isinstance(arg, float):
                 return JFloat(arg)
@@ -395,6 +395,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color()
     def ambient(self, *args):
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
@@ -1617,6 +1618,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color()
     def emissive(self, *args):
         """Sets the emissive color of a ``Py5Shape`` object's material.
 
@@ -1847,6 +1849,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -1914,6 +1921,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -1983,6 +1995,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -2050,6 +2067,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2119,6 +2141,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -2187,6 +2214,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -2196,6 +2228,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color()
     def fill(self, *args):
         """Sets the color used to fill the ``Py5Shape`` object.
 
@@ -2253,6 +2286,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -4013,6 +4051,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color2
     def set_ambient(self, *args):
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
@@ -4129,6 +4168,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color2
     def set_emissive(self, *args):
         """Sets a ``Py5Shape`` object's emissive color.
 
@@ -4289,6 +4329,7 @@ class Py5Shape:
         pass
 
     @_py5shape_type_fixer
+    @_convert_hex_color2
     def set_fill(self, *args):
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
@@ -4564,6 +4605,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color2
     def set_specular(self, *args):
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
@@ -4726,6 +4768,7 @@ class Py5Shape:
         pass
 
     @_py5shape_type_fixer
+    @_convert_hex_color2
     def set_stroke(self, *args):
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
@@ -5151,6 +5194,7 @@ class Py5Shape:
         pass
 
     @_py5shape_type_fixer
+    @_convert_hex_color2
     def set_tint(self, *args):
         """Apply a color tint to a shape's texture map.
 
@@ -5568,6 +5612,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color()
     def specular(self, *args):
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
@@ -5672,6 +5717,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -5736,6 +5786,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5802,6 +5857,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -5866,6 +5926,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5932,6 +5997,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -5997,6 +6067,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -6007,6 +6082,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color()
     def stroke(self, *args):
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
@@ -6060,6 +6136,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6252,6 +6333,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -6316,6 +6402,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6382,6 +6473,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -6446,6 +6542,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6512,6 +6613,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -6577,6 +6683,11 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
+
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
         255.
@@ -6585,6 +6696,7 @@ class Py5Shape:
         """
         pass
 
+    @_convert_hex_color()
     def tint(self, *args):
         """Apply a color tint to a shape's texture map.
 
@@ -6640,6 +6752,11 @@ class Py5Shape:
         values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a seven character
+        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
+        "``#``" character, the remainder of the string is just like hexadecimal
+        notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is

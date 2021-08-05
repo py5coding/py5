@@ -909,13 +909,13 @@ class MathMixin:
             return self._rng.uniform()
         elif len(args) == 1:
             high = args[0]
-            if isinstance(high, (int, float)):
+            if isinstance(high, (int, np.integer, float)):
                 return self._rng.uniform(0, high)
         elif len(args) == 2:
             low, high = args
             if isinstance(
-                    low, (int, float)) and isinstance(
-                    high, (int, float)):
+                    low, (int, np.integer, float)) and isinstance(
+                    high, (int, np.integer, float)):
                 return self._rng.uniform(low, high)
 
         types = ','.join([type(a).__name__ for a in args])
@@ -1127,11 +1127,13 @@ class MathMixin:
             return self._rng.integers(0, 1, endpoint=True)
         elif len(args) == 1:
             high = args[0]
-            if isinstance(high, int):
+            if isinstance(high, (int, np.integer)):
                 return self._rng.integers(0, high, endpoint=True)
         elif len(args) == 2:
             low, high = args
-            if isinstance(low, int) and isinstance(high, int):
+            if isinstance(
+                    low, (int, np.integer)) and isinstance(
+                    high, (int, np.integer)):
                 return self._rng.integers(low, high, endpoint=True)
 
         types = ','.join([type(a).__name__ for a in args])
@@ -1333,13 +1335,13 @@ class MathMixin:
             return self._rng.normal()
         elif len(args) == 1:
             loc = args[0]
-            if isinstance(loc, int):
+            if isinstance(loc, (int, np.integer)):
                 return self._rng.normal(loc)
         elif len(args) == 2:
             loc, scale = args
             if isinstance(
-                    loc, (int, float)) and isinstance(
-                    scale, (int, float)):
+                    loc, (int, np.integer, float)) and isinstance(
+                    scale, (int, np.integer, float)):
                 return self._rng.normal(loc, scale)
 
         types = ','.join([type(a).__name__ for a in args])

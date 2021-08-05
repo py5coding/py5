@@ -26,4 +26,4 @@ from .libraries import *  # noqa
 from .hooks import *  # noqa
 
 
-__version__ = '0.5a0'
+__version__ = '0.5a1'

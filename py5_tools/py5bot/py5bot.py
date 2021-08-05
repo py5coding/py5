@@ -39,7 +39,6 @@ import py5_tools
 py5_tools.set_imported_mode(True)
 from py5 import *
 
-import sys
 import functools
 import ast as _PY5BOT_ast
 
@@ -48,6 +47,7 @@ import py5_tools.parsing as _PY5BOT_parsing
 
 @functools.wraps(size)
 def _PY5BOT_altered_size(*args):
+    import sys
     if len(args) == 2:
         args = *args, HIDDEN
     elif len(args) >= 3 and isinstance(renderer := args[2], str):
@@ -59,10 +59,8 @@ def _PY5BOT_altered_size(*args):
         if sys.platform == 'darwin':
             args = *args[:2], HIDDEN, *args[3:]
     size(*args)
-return validate_renderer
 
 
-del sys
 del functools
 """
 
@@ -168,7 +166,8 @@ class Py5BotManager:
         self.setup_filename = self.tempdir / '_PY5_STATIC_SETUP_CODE_.py'
         self.startup_code = PY5BOT_CODE_STARTUP
         self.run_code = PY5BOT_CODE.format(
-            self.settings_filename, self.setup_filename)
+            self.settings_filename.as_posix(),
+            self.setup_filename.as_posix())
 
     def write_code(self, settings_code, setup_code, orig_line_count):
         with open(self.settings_filename, 'w') as f:

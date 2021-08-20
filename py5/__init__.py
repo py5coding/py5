@@ -80,7 +80,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.5a1'
+__version__ = '0.5a2'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -293,7 +293,6 @@ mouse_x: int = None
 mouse_y: int = None
 pixel_height: int = None
 pixel_width: int = None
-pixels: NDArray[(Any,), Int] = None
 pmouse_x: int = None
 pmouse_y: int = None
 width: int = None
@@ -6904,10 +6903,10 @@ def fill(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6971,10 +6970,10 @@ def fill(gray: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7038,10 +7037,10 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7105,10 +7104,10 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7172,10 +7171,10 @@ def fill(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7239,10 +7238,10 @@ def fill(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7305,10 +7304,10 @@ def fill(*args):
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13507,10 +13506,10 @@ def stroke(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13575,10 +13574,10 @@ def stroke(gray: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13643,10 +13642,10 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13711,10 +13710,10 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13779,10 +13778,10 @@ def stroke(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13847,10 +13846,10 @@ def stroke(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13914,10 +13913,10 @@ def stroke(*args):
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15767,10 +15766,10 @@ def tint(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15836,10 +15835,10 @@ def tint(gray: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15905,10 +15904,10 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15974,10 +15973,10 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16043,10 +16042,10 @@ def tint(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16112,10 +16111,10 @@ def tint(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16180,10 +16179,10 @@ def tint(*args):
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a seven character
-    string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-    "``#``" character, the remainder of the string is just like hexadecimal
-    notation, but without an alpha component.
+    When using web color notation to specify a color, create a four or seven
+    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+    similar to hexadecimal notation, but without an alpha component.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17035,147 +17034,6 @@ def println(
     Use ``set_println_stream()`` to customize the behavior of ``println()``.
     """
     return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the ``np_pixels[]``
-    array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the ``np_pixels[]``
-    array. This method must always be called before reading from or writing to
-    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
-    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
-
-    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
-    ``load_np_pixels()`` must be called before reading from or writing to
-    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
-    writing to ``pixels[]``.
-
-    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
-    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
-    there is no need for a separate call to ``load_pixels()``. However, be aware
-    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
-    result in the updates to ``pixels[]`` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the ``np_pixels[]`` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the ``np_pixels[]`` array. Use in
-    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
-    array, there's no need to call ``update_np_pixels()`` — updating is only
-    necessary to apply changes.
-
-    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
-    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
-    ``update_pixels()`` must be called after modifying ``pixels[]``.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: np.ndarray = None
-
-
-def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: np.ndarray
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array. The size of ``array``'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    ``dtype`` must be ``np.uint8``.
-
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency, but recall that the
-    display window's pixels can never be transparent so any transparency in
-    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
-    ``array``'s third dimension is optional.
-
-    This method makes its own calls to ``load_np_pixels()`` and
-    ``update_np_pixels()`` so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
-    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = False,
-         **params) -> None:
-    """Save the drawing surface to an image file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = False
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save the drawing surface to an image file. This method uses the Python library
-    Pillow to write the image, so it can save images in any format that that library
-    supports.
-
-    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
-    defaults to ``True``. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The ``use_thread`` parameter will save the image in a separate Python thread.
-    This improves performance by returning before the image has actually been
-    written to the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
 
 ##############################################################################
 # module functions from threads.py
@@ -19328,6 +19186,147 @@ def noise_seed(seed: int) -> None:
     return _py5sketch.noise_seed(seed)
 
 ##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the ``np_pixels[]`` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: np.ndarray = None
+
+
+def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: np.ndarray
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = 'ARGB'
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path],
+         *,
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = False,
+         **params) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
 # module functions from sketch.py
 ##############################################################################
 
@@ -19959,11 +19958,15 @@ def _prepare_dynamic_variables(caller_locals):
     When running in imported mode, place variables in the the caller's local
     namespace that link to the Sketch's dynamic variable property objects.
     """
-    for dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES:
+    for dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES + \
+            py5_tools.reference.PY5_PYTHON_DYNAMIC_VARIABLES:
         if dvar in globals():
             globals().pop(dvar)
         if _PY5_USE_IMPORTED_MODE:
-            caller_locals[dvar] = getattr(_py5sketch, '_get_' + dvar)
+            if dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES:
+                caller_locals[dvar] = getattr(_py5sketch, '_get_' + dvar)
+            else:
+                caller_locals[dvar] = getattr(_py5sketch, dvar)
 
 
 _prepare_dynamic_variables(locals())

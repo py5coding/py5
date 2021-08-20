@@ -23,7 +23,7 @@ from setuptools import setup
 with open('README.rst') as f:
     README = f.read()
 
-VERSION = '0.5a1'
+VERSION = '0.5a2'
 
 INSTALL_REQUIRES = [
     'ipykernel>=5.3',
@@ -36,6 +36,7 @@ INSTALL_REQUIRES = [
     'numpy>=1.19',
     'pandas>=1.0',
     'pillow>=8.1',
+    'pyobjc>=7.3;sys_platform=="darwin"',
     'requests>=2.25',
     'stackprinter>=0.2.4',
     'traitlets>=5.0',

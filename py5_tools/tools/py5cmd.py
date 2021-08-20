@@ -27,8 +27,7 @@ import py5_tools
 import py5_tools.imported
 
 
-parser = argparse.ArgumentParser(description="py5 command tool",
-                                 epilog="this is the epilog")
+parser = argparse.ArgumentParser(description="py5 command tool")
 
 
 LIBRARY_TEMPLATE = """[{id}] Name: {name}

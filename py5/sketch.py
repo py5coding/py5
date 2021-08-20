@@ -1359,33 +1359,6 @@ class Sketch(
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
 
-    def _get_pixels(self) -> NDArray[(Any,), Int]:
-        """The ``pixels[]`` array contains the values for all the pixels in the display
-        window.
-
-        Underlying Java field: PApplet.pixels
-
-        Notes
-        -----
-
-        The ``pixels[]`` array contains the values for all the pixels in the display
-        window. These values are of the color datatype. This array is defined by the
-        size of the display window. For example, if the window is 100 x 100 pixels,
-        there will be 10,000 values and if the window is 200 x 300 pixels, there will be
-        60,000 values. When the pixel density is set to higher than 1 with the
-        ``pixel_density()`` function, these values will change. See the reference for
-        ``pixel_width`` or ``pixel_height`` for more information.
-
-        Before accessing this array, the data must loaded with the ``load_pixels()``
-        function. Failure to do so may result in a Java ``NullPointerException``.
-        Subsequent changes to the display window will not be reflected in ``pixels``
-        until ``load_pixels()`` is called again. After ``pixels`` has been modified, the
-        ``update_pixels()`` function must be run to update the content of the display
-        window.
-        """
-        return self._instance.pixels
-    pixels: NDArray[(Any,), Int] = property(fget=_get_pixels)
-
     def _get_pmouse_x(self) -> int:
         """The system variable ``pmouse_x`` always contains the horizontal position of the
         mouse in the frame previous to the current frame.
@@ -7967,10 +7940,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8033,10 +8006,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8099,10 +8072,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8165,10 +8138,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8231,10 +8204,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8297,10 +8270,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8363,10 +8336,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14452,10 +14425,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14519,10 +14492,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14586,10 +14559,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14653,10 +14626,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14720,10 +14693,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14787,10 +14760,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14854,10 +14827,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16678,10 +16651,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16746,10 +16719,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16814,10 +16787,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16882,10 +16855,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16950,10 +16923,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17018,10 +16991,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17086,10 +17059,10 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is

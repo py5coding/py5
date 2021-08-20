@@ -25,8 +25,60 @@ import numpy as np
 from PIL import Image
 import jpype
 
+from ..type_decorators import _hex_converter
+
 
 _Sketch = jpype.JClass('py5.core.Sketch')
+
+
+class PixelArray:
+    """The ``pixels[]`` array contains the values for all the pixels in the display
+    window.
+
+    Underlying Java field: PApplet.pixels
+
+    Notes
+    -----
+
+    The ``pixels[]`` array contains the values for all the pixels in the display
+    window. These values are of the color datatype. This array is defined by the
+    size of the display window. For example, if the window is 100 x 100 pixels,
+    there will be 10,000 values and if the window is 200 x 300 pixels, there will be
+    60,000 values. When the pixel density is set to higher than 1 with the
+    ``pixel_density()`` function, these values will change. See the reference for
+    ``pixel_width`` or ``pixel_height`` for more information.
+
+    Before accessing this array, the data must loaded with the ``load_pixels()``
+    function. Failure to do so may result in a Java ``NullPointerException``.
+    Subsequent changes to the display window will not be reflected in ``pixels``
+    until ``load_pixels()`` is called again. After ``pixels`` has been modified, the
+    ``update_pixels()`` function must be run to update the content of the display
+    window."""
+
+    def __init__(self, instance):
+        self._instance = instance
+
+    def __getitem__(self, index):
+        if self._instance.pixels is None:
+            raise RuntimeError(
+                "Cannot get pixel colors because load_pixels() has not been called")
+
+        return self._instance.pixels[index]
+
+    def __setitem__(self, index, val):
+        if self._instance.pixels is None:
+            raise RuntimeError(
+                "Cannot set pixel colors because load_pixels() has not been called")
+
+        if (newval := _hex_converter(val)) is not None:
+            val = newval
+
+    def __len__(self):
+        if self._instance.pixels is None:
+            raise RuntimeError(
+                "Cannot get pixel length because load_pixels() has not been called")
+
+        return len(self._instance.pixels)
 
 
 class PixelMixin:
@@ -35,6 +87,7 @@ class PixelMixin:
         super().__init__(*args, **kwargs)
         self._instance = kwargs['instance']
         self._np_pixels = None
+        self.pixels = PixelArray(self._instance)
 
     def _replace_instance(self, new_instance):
         self._instance = new_instance

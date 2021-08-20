@@ -162,28 +162,6 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         return self._instance.pixelWidth
     pixel_width: int = property(fget=_get_pixel_width)
 
-    def _get_pixels(self) -> NDArray[(Any,), Int]:
-        """The pixels[] array contains the values for all the pixels in the image.
-
-        Underlying Java field: PImage.pixels
-
-        Notes
-        -----
-
-        The pixels[] array contains the values for all the pixels in the image. These
-        values are of the color datatype. This array is the size of the image, meaning
-        if the image is 100 x 100 pixels, there will be 10,000 values and if the window
-        is 200 x 300 pixels, there will be 60,000 values.
-
-        Before accessing this array, the data must loaded with the
-        ``Py5Image.load_pixels()`` method. Failure to do so may result in a Java
-        ``NullPointerException``. After the array data has been modified, the
-        ``Py5Image.update_pixels()`` method must be run to update the content of the
-        display window.
-        """
-        return self._instance.pixels
-    pixels: NDArray[(Any,), Int] = property(fget=_get_pixels)
-
     def _get_width(self) -> int:
         """The width of the image in units of pixels.
 

@@ -23,6 +23,7 @@
 
 
 
+
 PY5_DIR_STR = [
     '__version__',
     'acos',
@@ -754,6 +755,7 @@ PY5_ALL_STR = [
     'PI',
     'PIE',
     'pixel_density',
+    'pixels',
     'POINT',
     'point',
     'point_light',
@@ -946,8 +948,11 @@ PY5_DYNAMIC_VARIABLES = [
     'pargs',
     'pixel_height',
     'pixel_width',
-    'pixels',
     'pmouse_x',
     'pmouse_y',
     'width'
+]
+
+PY5_PYTHON_DYNAMIC_VARIABLES = [
+    'pixels'
 ]

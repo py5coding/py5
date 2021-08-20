@@ -1849,10 +1849,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -1922,10 +1922,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -1995,10 +1995,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2068,10 +2068,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2141,10 +2141,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2214,10 +2214,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2287,10 +2287,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5717,10 +5717,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5787,10 +5787,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5857,10 +5857,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5927,10 +5927,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5997,10 +5997,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6067,10 +6067,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6137,10 +6137,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6333,10 +6333,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6403,10 +6403,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6473,10 +6473,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6543,10 +6543,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6613,10 +6613,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6683,10 +6683,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6753,10 +6753,10 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a seven character
-        string beginning with the "``#``" character (e.g., ``"#FFCC33"``). After the
-        "``#``" character, the remainder of the string is just like hexadecimal
-        notation, but without an alpha component.
+        When using web color notation to specify a color, create a four or seven
+        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
+        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
+        similar to hexadecimal notation, but without an alpha component.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is

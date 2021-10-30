@@ -30,6 +30,8 @@ if sys.platform == 'darwin':
 else:
     AppHelper = None
 
+import stackprinter
+
 from . import jvm
 from .py5bot import py5bot
 from . import parsing
@@ -54,6 +56,7 @@ import py5_tools
 py5_tools.set_imported_mode(True)
 import py5_tools.parsing as _PY5BOT_parsing
 from py5 import *
+_PY5_NS_ = locals().copy()
 
 
 def settings():
@@ -65,7 +68,8 @@ def settings():
                 ),
                 filename='{0}',
                 mode='exec'
-            )
+            ),
+            _PY5_NS_
         )
 
 
@@ -78,7 +82,8 @@ def setup():
                 ),
                 filename='{1}',
                 mode='exec'
-            )
+            ),
+            _PY5_NS_
         )
 """
 
@@ -137,9 +142,9 @@ def _run_static_code(code, sketch_path, classpath, new_process, exit_if_error):
     py5bot_mgr = py5bot.Py5BotManager()
     success, result = py5bot.check_for_problems(code, sketch_path)
     if success:
-        py5bot_settings, py5bot_setup = result
+        py5bot_globals, py5bot_settings, py5bot_setup = result
         py5bot_mgr.write_code(
-            py5bot_settings, py5bot_setup, len(
+            py5bot_globals, py5bot_settings, py5bot_setup, len(
                 code.splitlines()))
         new_sketch_path = py5bot_mgr.tempdir / '_PY5_STATIC_FRAMEWORK_CODE_.py'
         new_sketch_code = _STATIC_CODE_FRAMEWORK.format(
@@ -171,7 +176,26 @@ def _run_code(sketch_path, classpath, new_process, exit_if_error):
         with open(sketch_path, 'r') as f:
             sketch_code = _CODE_FRAMEWORK.format(f.read(), exit_if_error)
 
-        sketch_ast = ast.parse(sketch_code, filename=sketch_path, mode='exec')
+        # does the code parse? if not, display an error message
+        try:
+            sketch_ast = ast.parse(
+                sketch_code, filename=sketch_path, mode='exec')
+        except IndentationError as e:
+            msg = f'There is an indentation problem with your code on line {e.lineno}:\n'
+            arrow_msg = f'--> {e.lineno}    '
+            msg += f'{arrow_msg}{e.text}'
+            msg += ' ' * (len(arrow_msg) + e.offset) + '^'
+            print(msg)
+            return
+        except Exception as e:
+            msg = stackprinter.format(e)
+            m = re.search(r'^SyntaxError:', msg, flags=re.MULTILINE)
+            if m:
+                msg = msg[m.start(0):]
+            msg = 'There is a problem with your code:\n' + msg
+            print(msg)
+            return
+
         problems = parsing.check_reserved_words(sketch_code, sketch_ast)
         if problems:
             msg = 'There ' + ('is a problem' if len(problems) ==

@@ -24,7 +24,7 @@ import jpype
 from jpype import JException, JArray, JString  # noqa
 
 from .shape import Py5Shape, _return_py5shape  # noqa
-from .type_decorators import _ret_str  # noqa
+from .decorators import _ret_str  # noqa
 
 
 def _return_py5font(f):

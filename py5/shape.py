@@ -29,7 +29,7 @@ from jpype import JException
 from jpype.types import JBoolean, JInt, JFloat
 
 from .pmath import _get_pvector_wrapper  # noqa
-from .type_decorators import _ret_str, _convert_hex_color, _convert_hex_color2  # noqa
+from .decorators import _ret_str, _convert_hex_color, _convert_hex_color2, _context_wrapper  # noqa
 
 
 def _return_list_py5shapes(f):
@@ -119,6 +119,7 @@ class Py5Shape:
     BEZIER_VERTEX = 1
     BOX = 41
     BREAK = 4
+    CLOSE = 2
     CURVE_VERTEX = 3
     ELLIPSE = 31
     GEOMETRY = 103
@@ -903,6 +904,7 @@ class Py5Shape:
         """
         return self._instance.applyMatrix(*args)
 
+    @_context_wrapper('end_contour')
     def begin_contour(self) -> None:
         """Use the ``begin_contour()`` and ``Py5Shape.end_contour()`` methods to create
         negative shapes within a ``Py5Shape`` object such as the center of the letter
@@ -926,6 +928,9 @@ class Py5Shape:
         ``Py5Shape.translate()``, ``Py5Shape.rotate()``, and ``Py5Shape.scale()`` do not
         work within a ``begin_contour()`` & ``Py5Shape.end_contour()`` pair. It is also
         not possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
+
+        This method can be used as a context manager to ensure that
+        ``Py5Shape.end_contour()`` always gets called, as shown in the second example.
         """
         return self._instance.beginContour()
 
@@ -955,6 +960,12 @@ class Py5Shape:
 
         This method is used to start a custom shape created with the ``create_shape()``
         function. It's always and only used with ``create_shape()``.
+
+        Drawing commands to a custom shape must always conclude with a call to the
+        ``Py5Shape.end_shape()`` method. This method can be used as a context manager to
+        ensure that ``Py5Shape.end_shape()`` always gets called, as shown in the second
+        example. Use ``Py5Shape.begin_closed_shape()`` to create a context manager that
+        will pass the ``CLOSE`` parameter to ``end_shape()``, closing the shape.
         """
         pass
 
@@ -984,9 +995,16 @@ class Py5Shape:
 
         This method is used to start a custom shape created with the ``create_shape()``
         function. It's always and only used with ``create_shape()``.
+
+        Drawing commands to a custom shape must always conclude with a call to the
+        ``Py5Shape.end_shape()`` method. This method can be used as a context manager to
+        ensure that ``Py5Shape.end_shape()`` always gets called, as shown in the second
+        example. Use ``Py5Shape.begin_closed_shape()`` to create a context manager that
+        will pass the ``CLOSE`` parameter to ``end_shape()``, closing the shape.
         """
         pass
 
+    @_context_wrapper('end_shape')
     def begin_shape(self, *args):
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
@@ -1012,6 +1030,126 @@ class Py5Shape:
 
         This method is used to start a custom shape created with the ``create_shape()``
         function. It's always and only used with ``create_shape()``.
+
+        Drawing commands to a custom shape must always conclude with a call to the
+        ``Py5Shape.end_shape()`` method. This method can be used as a context manager to
+        ensure that ``Py5Shape.end_shape()`` always gets called, as shown in the second
+        example. Use ``Py5Shape.begin_closed_shape()`` to create a context manager that
+        will pass the ``CLOSE`` parameter to ``end_shape()``, closing the shape.
+        """
+        return self._instance.beginShape(*args)
+
+    @overload
+    def begin_closed_shape(self) -> None:
+        """This method is used to start a custom closed shape created with the
+        ``create_shape()`` function.
+
+        Underlying Java method: PShape.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape created with the
+        ``create_shape()`` function. It's always and only used with ``create_shape()``.
+
+        This method should only be used as a context manager, as shown in the example.
+        When used as a context manager, this will ensure that ``Py5Shape.end_shape()``
+        always gets called, just like when using ``Py5Shape.begin_shape()`` as a context
+        manager. The difference is that when exiting, the parameter ``CLOSE`` will be
+        passed to ``Py5Shape.end_shape()``, connecting the last vertex to the first.
+        This will close the shape. If this method were to be used not as a context
+        manager, it won't be able to close the shape by making the call to
+        ``Py5Shape.end_shape()``.
+        """
+        pass
+
+    @overload
+    def begin_closed_shape(self, kind: int, /) -> None:
+        """This method is used to start a custom closed shape created with the
+        ``create_shape()`` function.
+
+        Underlying Java method: PShape.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape created with the
+        ``create_shape()`` function. It's always and only used with ``create_shape()``.
+
+        This method should only be used as a context manager, as shown in the example.
+        When used as a context manager, this will ensure that ``Py5Shape.end_shape()``
+        always gets called, just like when using ``Py5Shape.begin_shape()`` as a context
+        manager. The difference is that when exiting, the parameter ``CLOSE`` will be
+        passed to ``Py5Shape.end_shape()``, connecting the last vertex to the first.
+        This will close the shape. If this method were to be used not as a context
+        manager, it won't be able to close the shape by making the call to
+        ``Py5Shape.end_shape()``.
+        """
+        pass
+
+    @_context_wrapper('end_shape', exit_attr_args=('CLOSE',))
+    def begin_closed_shape(self, *args):
+        """This method is used to start a custom closed shape created with the
+        ``create_shape()`` function.
+
+        Underlying Java method: PShape.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape created with the
+        ``create_shape()`` function. It's always and only used with ``create_shape()``.
+
+        This method should only be used as a context manager, as shown in the example.
+        When used as a context manager, this will ensure that ``Py5Shape.end_shape()``
+        always gets called, just like when using ``Py5Shape.begin_shape()`` as a context
+        manager. The difference is that when exiting, the parameter ``CLOSE`` will be
+        passed to ``Py5Shape.end_shape()``, connecting the last vertex to the first.
+        This will close the shape. If this method were to be used not as a context
+        manager, it won't be able to close the shape by making the call to
+        ``Py5Shape.end_shape()``.
         """
         return self._instance.beginShape(*args)
 

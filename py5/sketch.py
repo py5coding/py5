@@ -20,6 +20,7 @@
 import time
 import os
 import sys
+from io import BytesIO
 from pathlib import Path
 import functools
 from typing import overload, Any, Callable, Union, Dict, List  # noqa
@@ -40,7 +41,7 @@ from .surface import Py5Surface, _return_py5surface  # noqa
 from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
 from .font import Py5Font, _return_py5font, _load_py5font, _return_list_str  # noqa
 from .graphics import Py5Graphics, _return_py5graphics  # noqa
-from .type_decorators import _text_fix_str, _convert_hex_color  # noqa
+from .decorators import _text_fix_str, _convert_hex_color, _context_wrapper  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
 from . import image_conversion
 from .image_conversion import NumpyImageArray, _convertable
@@ -99,18 +100,21 @@ class Sketch(
     and the third will be run in an animation thread, once per frame. The following
     event functions are also supported:
 
+        * ``exiting``
         * ``key_pressed``
-        * ``key_typed``
         * ``key_released``
+        * ``key_typed``
         * ``mouse_clicked``
         * ``mouse_dragged``
-        * ``mouse_moved'``
         * ``mouse_entered``
         * ``mouse_exited``
+        * ``mouse_moved``
         * ``mouse_pressed``
         * ``mouse_released``
         * ``mouse_wheel``
-        * ``exiting``
+        * ``movie_event``
+        * ``post_draw``
+        * ``pre_draw``
 
     When coding in class mode, all of the above functions should be class methods.
     When coding in module mode or imported mode, the above functions should be
@@ -616,7 +620,8 @@ class Sketch(
 
     def save_frame(self,
                    filename: Union[str,
-                                   Path],
+                                   Path,
+                                   BytesIO],
                    *,
                    format: str = None,
                    drop_alpha: bool = True,
@@ -630,7 +635,7 @@ class Sketch(
         drop_alpha: bool = True
             remove the alpha channel when saving the image
 
-        filename: Union[str, Path]
+        filename: Union[str, Path, BytesIO]
             output filename
 
         format: str = None
@@ -662,9 +667,10 @@ class Sketch(
         symbols in the ``filename`` parameter with the frame number. This is useful when
         saving an image sequence for a running animation. The first frame number will be
         1."""
+        if not isinstance(filename, BytesIO):
+            filename = self._insert_frame(str(filename))
         self.save(
-            self._insert_frame(
-                str(filename)),
+            filename,
             format=format,
             drop_alpha=drop_alpha,
             use_thread=use_thread,
@@ -2902,6 +2908,7 @@ class Sketch(
         """
         return self._instance.background(*args)
 
+    @_context_wrapper('end_camera')
     def begin_camera(self) -> None:
         """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
         customization of the camera space.
@@ -2927,9 +2934,13 @@ class Sketch(
         the camera. ``begin_camera()`` should always be used with a following
         ``end_camera()`` and pairs of ``begin_camera()`` and ``end_camera()`` cannot be
         nested.
+
+        This method can be used as a context manager to ensure that ``end_camera()``
+        always gets called, as shown in the last example.
         """
         return self._instance.beginCamera()
 
+    @_context_wrapper('end_contour')
     def begin_contour(self) -> None:
         """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
         shapes within shapes such as the center of the letter 'O'.
@@ -2951,6 +2962,9 @@ class Sketch(
         and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
         not work within a ``begin_contour()`` & ``end_contour()`` pair. It is also not
         possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
+
+        This method can be used as a context manager to ensure that ``end_contour()``
+        always gets called, as shown in the second example.
         """
         return self._instance.beginContour()
 
@@ -2999,7 +3013,11 @@ class Sketch(
 
         If you want a background to show up in your files, use ``rect(0, 0, width,
         height)`` after setting the ``fill()`` to the background color. Otherwise the
-        background will not be rendered to the file because the background is not shape.
+        background will not be rendered to the file because the background is not a
+        shape.
+
+        This method can be used as a context manager to ensure that ``end_raw()`` always
+        gets called, as shown in the last example.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
@@ -3051,13 +3069,18 @@ class Sketch(
 
         If you want a background to show up in your files, use ``rect(0, 0, width,
         height)`` after setting the ``fill()`` to the background color. Otherwise the
-        background will not be rendered to the file because the background is not shape.
+        background will not be rendered to the file because the background is not a
+        shape.
+
+        This method can be used as a context manager to ensure that ``end_raw()`` always
+        gets called, as shown in the last example.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
         """
         pass
 
+    @_context_wrapper('end_raw')
     @_return_py5graphics
     def begin_raw(self, *args):
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
@@ -3103,7 +3126,11 @@ class Sketch(
 
         If you want a background to show up in your files, use ``rect(0, 0, width,
         height)`` after setting the ``fill()`` to the background color. Otherwise the
-        background will not be rendered to the file because the background is not shape.
+        background will not be rendered to the file because the background is not a
+        shape.
+
+        This method can be used as a context manager to ensure that ``end_raw()`` always
+        gets called, as shown in the last example.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
@@ -3152,6 +3179,9 @@ class Sketch(
         recording to.
 
         ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
+
+        This method can be used as a context manager to ensure that ``end_record()``
+        always gets called, as shown in the last example.
         """
         pass
 
@@ -3197,9 +3227,13 @@ class Sketch(
         recording to.
 
         ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
+
+        This method can be used as a context manager to ensure that ``end_record()``
+        always gets called, as shown in the last example.
         """
         pass
 
+    @_context_wrapper('end_record')
     @_return_py5graphics
     def begin_record(self, *args):
         """Opens a new file and all subsequent drawing functions are echoed to this file as
@@ -3242,6 +3276,9 @@ class Sketch(
         recording to.
 
         ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
+
+        This method can be used as a context manager to ensure that ``end_record()``
+        always gets called, as shown in the last example.
         """
         return self._instance.beginRecord(*args)
 
@@ -3291,6 +3328,11 @@ class Sketch(
         as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
         changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
         renderer.
+
+        This method can be used as a context manager to ensure that ``end_shape()``
+        always gets called, as shown in the last example. Use ``begin_closed_shape()``
+        to create a context manager that will pass the ``CLOSE`` parameter to
+        ``end_shape()``, closing the shape.
         """
         pass
 
@@ -3340,9 +3382,15 @@ class Sketch(
         as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
         changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
         renderer.
+
+        This method can be used as a context manager to ensure that ``end_shape()``
+        always gets called, as shown in the last example. Use ``begin_closed_shape()``
+        to create a context manager that will pass the ``CLOSE`` parameter to
+        ``end_shape()``, closing the shape.
         """
         pass
 
+    @_context_wrapper('end_shape')
     def begin_shape(self, *args):
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
@@ -3388,6 +3436,113 @@ class Sketch(
         as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
         changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
         renderer.
+
+        This method can be used as a context manager to ensure that ``end_shape()``
+        always gets called, as shown in the last example. Use ``begin_closed_shape()``
+        to create a context manager that will pass the ``CLOSE`` parameter to
+        ``end_shape()``, closing the shape.
+        """
+        return self._instance.beginShape(*args)
+
+    @overload
+    def begin_closed_shape(self) -> None:
+        """This method is used to start a custom closed shape.
+
+        Underlying Java method: PApplet.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape. This method should only be
+        used as a context manager, as shown in the examples. When used as a context
+        manager, this will ensure that ``end_shape()`` always gets called, just like
+        when using ``begin_shape()`` as a context manager. The difference is that when
+        exiting, the parameter ``CLOSE`` will be passed to ``end_shape()``, connecting
+        the last vertex to the first. This will close the shape. If this method were to
+        be used not as a context manager, it won't be able to close the shape by making
+        the call to ``end_shape()``.
+        """
+        pass
+
+    @overload
+    def begin_closed_shape(self, kind: int, /) -> None:
+        """This method is used to start a custom closed shape.
+
+        Underlying Java method: PApplet.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape. This method should only be
+        used as a context manager, as shown in the examples. When used as a context
+        manager, this will ensure that ``end_shape()`` always gets called, just like
+        when using ``begin_shape()`` as a context manager. The difference is that when
+        exiting, the parameter ``CLOSE`` will be passed to ``end_shape()``, connecting
+        the last vertex to the first. This will close the shape. If this method were to
+        be used not as a context manager, it won't be able to close the shape by making
+        the call to ``end_shape()``.
+        """
+        pass
+
+    @_context_wrapper('end_shape', exit_attr_args=('CLOSE',))
+    def begin_closed_shape(self, *args):
+        """This method is used to start a custom closed shape.
+
+        Underlying Java method: PApplet.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape. This method should only be
+        used as a context manager, as shown in the examples. When used as a context
+        manager, this will ensure that ``end_shape()`` always gets called, just like
+        when using ``begin_shape()`` as a context manager. The difference is that when
+        exiting, the parameter ``CLOSE`` will be passed to ``end_shape()``, connecting
+        the last vertex to the first. This will close the shape. If this method were to
+        be used not as a context manager, it won't be able to close the shape by making
+        the call to ``end_shape()``.
         """
         return self._instance.beginShape(*args)
 
@@ -9497,10 +9652,10 @@ class Sketch(
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -9565,10 +9720,10 @@ class Sketch(
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -9633,10 +9788,10 @@ class Sketch(
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -9700,10 +9855,10 @@ class Sketch(
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -11403,8 +11558,8 @@ class Sketch(
         ``text_font()``, ``text_mode()``, ``text_size()``, and ``text_leading()``.
 
         The ``push()`` and ``pop()`` functions can be used in place of
-        ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and ``pop_styles()``.
-        The difference is that ``push()`` and ``pop()`` control both the transformations
+        ``push_matrix()``, ``pop_matrix()``, ``push_style()``, and ``pop_style()``. The
+        difference is that ``push()`` and ``pop()`` control both the transformations
         (rotate, scale, translate) and the drawing styles at the same time.
         """
         return self._instance.pop()
@@ -11482,6 +11637,7 @@ class Sketch(
         """
         return self._instance.printProjection()
 
+    @_context_wrapper('pop')
     def push(self) -> None:
         """The ``push()`` function saves the current drawing style settings and
         transformations, while ``pop()`` restores these settings.
@@ -11503,15 +11659,16 @@ class Sketch(
         ``translate()``, ``scale()``, ``fill()``, ``stroke()``, ``tint()``,
         ``stroke_weight()``, ``stroke_cap()``, ``stroke_join()``, ``image_mode()``,
         ``rect_mode()``, ``ellipse_mode()``, ``color_mode()``, ``text_align()``,
-        ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``.
+        ``text_font()``, ``text_mode()``, ``text_size()``, and ``text_leading()``.
 
         The ``push()`` and ``pop()`` functions can be used in place of
-        ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and ``pop_styles()``.
-        The difference is that ``push()`` and ``pop()`` control both the transformations
+        ``push_matrix()``, ``pop_matrix()``, ``push_style()``, and ``pop_style()``. The
+        difference is that ``push()`` and ``pop()`` control both the transformations
         (rotate, scale, translate) and the drawing styles at the same time.
         """
         return self._instance.push()
 
+    @_context_wrapper('pop_matrix')
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
@@ -11530,6 +11687,7 @@ class Sketch(
         """
         return self._instance.pushMatrix()
 
+    @_context_wrapper('pop_style')
     def push_style(self) -> None:
         """The ``push_style()`` function saves the current style settings and
         ``pop_style()`` restores the prior settings.

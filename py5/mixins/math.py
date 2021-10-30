@@ -32,7 +32,7 @@ class MathMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._NOISE_MODE = self.SIMPLEX_NOISE
-        self._NOISE_SEED = np.random.randint(1024)
+        self._NOISE_SEED = 0
         self._NOISE_OCTAVES = 4
         self._NOISE_PERSISTENCE = 0.5
         self._NOISE_LACUNARITY = 2.0

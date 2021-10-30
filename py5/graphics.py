@@ -33,7 +33,7 @@ from .font import Py5Font  # noqa
 from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
 from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
 from .image import Py5Image, _return_py5image  # noqa
-from .type_decorators import _text_fix_str, _convert_hex_color  # noqa
+from .decorators import _text_fix_str, _convert_hex_color, _context_wrapper  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
 
 
@@ -77,6 +77,24 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def __init__(self, pgraphics):
         self._instance = pgraphics
         super().__init__(instance=pgraphics)
+
+    def _activate_context_manager(self, exit_function, exit_args):
+        self._context_manager_exit_function = exit_function
+        self._context_manager_exit_args = exit_args
+
+    def __enter__(self):
+        if not (
+            hasattr(
+                self,
+                '_context_manager_exit_function') and hasattr(
+                self,
+                '_context_manager_exit_args')):
+            raise RuntimeError(
+                'Cannot use this Py5Graphics object as a context manager')
+        return self
+
+    def __exit__(self, *exc):
+        self._context_manager_exit_function(*self._context_manager_exit_args)
 
     def points(self, coordinates):
         _Py5GraphicsHelper.points(self._instance, coordinates)
@@ -1884,6 +1902,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.background(*args)
 
+    @_context_wrapper('end_camera')
     def begin_camera(self) -> None:
         """The ``begin_camera()`` and ``Py5Graphics.end_camera()`` functions enable
         advanced customization of the camera space.
@@ -1912,11 +1931,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ``Py5Graphics.end_camera()`` and pairs of ``begin_camera()`` and
         ``Py5Graphics.end_camera()`` cannot be nested.
 
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_camera()`` always gets called, as shown in the example.
+
         This method is the same as ``begin_camera()`` but linked to a ``Py5Graphics``
         object. To see example code for how it can be used, see ``begin_camera()``.
         """
         return self._instance.beginCamera()
 
+    @_context_wrapper('end_contour')
     def begin_contour(self) -> None:
         """Use the ``begin_contour()`` and ``Py5Graphics.end_contour()`` methods to create
         negative shapes within shapes such as the center of the letter 'O'.
@@ -1941,11 +1964,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ``Py5Graphics.end_contour()`` pair. It is also not possible to use other shapes,
         such as ``Py5Graphics.ellipse()`` or ``Py5Graphics.rect()`` within.
 
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_contour()`` always gets called, as shown in the example.
+
         This method is the same as ``begin_contour()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``begin_contour()``.
+        object.
         """
         return self._instance.beginContour()
 
+    @_context_wrapper('end_draw')
     def begin_draw(self) -> None:
         """Sets the default properties for a ``Py5Graphics`` object.
 
@@ -1955,10 +1982,16 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         -----
 
         Sets the default properties for a ``Py5Graphics`` object. It should be called
-        before anything is drawn into the object.
+        before anything is drawn into the object. After the drawing commands have
+        concluded, call ``Py5Graphics.end_draw()`` to finalize the ``Py5Graphics``
+        object.
+
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_draw()`` always gets called, as shown in the second example.
         """
         return self._instance.beginDraw()
 
+    @_context_wrapper('end_raw')
     def begin_raw(self, raw_graphics: Py5Graphics, /) -> None:
         """To create vectors from 3D data, use the ``begin_raw()`` and
         ``Py5Graphics.end_raw()`` commands.
@@ -1991,7 +2024,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         If you want a background to show up in your files, use ``rect(0, 0, width,
         height)`` after setting the ``Py5Graphics.fill()`` to the background color.
         Otherwise the background will not be rendered to the file because the background
-        is not shape.
+        is not a shape.
+
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_raw()`` always gets called, as shown in the example.
 
         Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
         drawn to 2D file formats.
@@ -2051,8 +2087,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         changed while inside a ``begin_shape()`` & ``Py5Graphics.end_shape()`` block
         with any renderer.
 
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_shape()`` always gets called, as shown in the example. Use
+        ``Py5Graphics.begin_closed_shape()`` to create a context manager that will pass
+        the ``CLOSE`` parameter to ``end_shape()``, closing the shape.
+
         This method is the same as ``begin_shape()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``begin_shape()``.
+        object. To see more example code for how it can be used, see ``begin_shape()``.
         """
         pass
 
@@ -2106,11 +2147,17 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         changed while inside a ``begin_shape()`` & ``Py5Graphics.end_shape()`` block
         with any renderer.
 
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_shape()`` always gets called, as shown in the example. Use
+        ``Py5Graphics.begin_closed_shape()`` to create a context manager that will pass
+        the ``CLOSE`` parameter to ``end_shape()``, closing the shape.
+
         This method is the same as ``begin_shape()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``begin_shape()``.
+        object. To see more example code for how it can be used, see ``begin_shape()``.
         """
         pass
 
+    @_context_wrapper('end_shape')
     def begin_shape(self, *args):
         """Using the ``begin_shape()`` and ``Py5Graphics.end_shape()`` functions allow
         creating more complex forms.
@@ -2160,8 +2207,127 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         changed while inside a ``begin_shape()`` & ``Py5Graphics.end_shape()`` block
         with any renderer.
 
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.end_shape()`` always gets called, as shown in the example. Use
+        ``Py5Graphics.begin_closed_shape()`` to create a context manager that will pass
+        the ``CLOSE`` parameter to ``end_shape()``, closing the shape.
+
         This method is the same as ``begin_shape()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``begin_shape()``.
+        object. To see more example code for how it can be used, see ``begin_shape()``.
+        """
+        return self._instance.beginShape(*args)
+
+    @overload
+    def begin_closed_shape(self) -> None:
+        """This method is used to start a custom closed shape.
+
+        Underlying Java method: PGraphics.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape. This method should only be
+        used as a context manager, as shown in the example. When used as a context
+        manager, this will ensure that ``Py5Graphics.end_shape()`` always gets called,
+        just like when using ``Py5Graphics.begin_shape()`` as a context manager. The
+        difference is that when exiting, the parameter ``CLOSE`` will be passed to
+        ``Py5Graphics.end_shape()``, connecting the last vertex to the first. This will
+        close the shape. If this method were to be used not as a context manager, it
+        won't be able to close the shape by making the call to
+        ``Py5Graphics.end_shape()``.
+
+        This method is the same as ``begin_closed_shape()`` but linked to a
+        ``Py5Graphics`` object.
+        """
+        pass
+
+    @overload
+    def begin_closed_shape(self, kind: int, /) -> None:
+        """This method is used to start a custom closed shape.
+
+        Underlying Java method: PGraphics.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape. This method should only be
+        used as a context manager, as shown in the example. When used as a context
+        manager, this will ensure that ``Py5Graphics.end_shape()`` always gets called,
+        just like when using ``Py5Graphics.begin_shape()`` as a context manager. The
+        difference is that when exiting, the parameter ``CLOSE`` will be passed to
+        ``Py5Graphics.end_shape()``, connecting the last vertex to the first. This will
+        close the shape. If this method were to be used not as a context manager, it
+        won't be able to close the shape by making the call to
+        ``Py5Graphics.end_shape()``.
+
+        This method is the same as ``begin_closed_shape()`` but linked to a
+        ``Py5Graphics`` object.
+        """
+        pass
+
+    @_context_wrapper('end_shape', exit_attr_args=('CLOSE',))
+    def begin_closed_shape(self, *args):
+        """This method is used to start a custom closed shape.
+
+        Underlying Java method: PGraphics.beginShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * begin_closed_shape() -> None
+         * begin_closed_shape(kind: int, /) -> None
+
+        Parameters
+        ----------
+
+        kind: int
+            Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+        Notes
+        -----
+
+        This method is used to start a custom closed shape. This method should only be
+        used as a context manager, as shown in the example. When used as a context
+        manager, this will ensure that ``Py5Graphics.end_shape()`` always gets called,
+        just like when using ``Py5Graphics.begin_shape()`` as a context manager. The
+        difference is that when exiting, the parameter ``CLOSE`` will be passed to
+        ``Py5Graphics.end_shape()``, connecting the last vertex to the first. This will
+        close the shape. If this method were to be used not as a context manager, it
+        won't be able to close the shape by making the call to
+        ``Py5Graphics.end_shape()``.
+
+        This method is the same as ``begin_closed_shape()`` but linked to a
+        ``Py5Graphics`` object.
         """
         return self._instance.beginShape(*args)
 
@@ -7358,10 +7524,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -7429,10 +7595,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -7500,10 +7666,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -7569,10 +7735,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             x-coordinate of the upper left corner of image subset
 
         u2: int
-            y-coordinate of the upper left corner of image subset
+            x-coordinate of the lower right corner of image subset
 
         v1: int
-            x-coordinate of the lower right corner of image subset
+            y-coordinate of the upper left corner of image subset
 
         v2: int
             y-coordinate of the lower right corner of image subset
@@ -9265,10 +9431,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ``Py5Graphics.text_size()``, and ``Py5Graphics.text_leading()``.
 
         The ``Py5Graphics.push()`` and ``pop()`` functions can be used in place of
-        ``Py5Graphics.push_matrix()``, ``Py5Graphics.pop_matrix()``, ``push_styles()``,
-        and ``pop_styles()``. The difference is that ``Py5Graphics.push()`` and
-        ``pop()`` control both the transformations (rotate, scale, translate) and the
-        drawing styles at the same time.
+        ``Py5Graphics.push_matrix()``, ``Py5Graphics.pop_matrix()``,
+        ``Py5Graphics.push_style()``, and ``Py5Graphics.pop_style()``. The difference is
+        that ``Py5Graphics.push()`` and ``pop()`` control both the transformations
+        (rotate, scale, translate) and the drawing styles at the same time.
 
         This method is the same as ``pop()`` but linked to a ``Py5Graphics`` object. To
         see example code for how it can be used, see ``pop()``.
@@ -9364,6 +9530,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.printProjection()
 
+    @_context_wrapper('pop')
     def push(self) -> None:
         """The ``push()`` function saves the current drawing style settings and
         transformations, while ``Py5Graphics.pop()`` restores these settings.
@@ -9389,19 +9556,23 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ``Py5Graphics.rect_mode()``, ``Py5Graphics.ellipse_mode()``,
         ``Py5Graphics.color_mode()``, ``Py5Graphics.text_align()``,
         ``Py5Graphics.text_font()``, ``Py5Graphics.text_mode()``,
-        ``Py5Graphics.text_size()``, ``Py5Graphics.text_leading()``.
+        ``Py5Graphics.text_size()``, and ``Py5Graphics.text_leading()``.
 
         The ``push()`` and ``Py5Graphics.pop()`` functions can be used in place of
-        ``Py5Graphics.push_matrix()``, ``Py5Graphics.pop_matrix()``, ``push_styles()``,
-        and ``pop_styles()``. The difference is that ``push()`` and
-        ``Py5Graphics.pop()`` control both the transformations (rotate, scale,
-        translate) and the drawing styles at the same time.
+        ``Py5Graphics.push_matrix()``, ``Py5Graphics.pop_matrix()``,
+        ``Py5Graphics.push_style()``, and ``Py5Graphics.pop_style()``. The difference is
+        that ``push()`` and ``Py5Graphics.pop()`` control both the transformations
+        (rotate, scale, translate) and the drawing styles at the same time.
+
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.pop()`` always gets called, as shown in the example.
 
         This method is the same as ``push()`` but linked to a ``Py5Graphics`` object. To
         see example code for how it can be used, see ``push()``.
         """
         return self._instance.push()
 
+    @_context_wrapper('pop_matrix')
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
@@ -9418,11 +9589,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         used in conjuction with the other transformation functions and may be embedded
         to control the scope of the transformations.
 
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.pop_matrix()`` always gets called, as shown in the example.
+
         This method is the same as ``push_matrix()`` but linked to a ``Py5Graphics``
         object. To see example code for how it can be used, see ``push_matrix()``.
         """
         return self._instance.pushMatrix()
 
+    @_context_wrapper('pop_style')
     def push_style(self) -> None:
         """The ``push_style()`` function saves the current style settings and
         ``Py5Graphics.pop_style()`` restores the prior settings.
@@ -9451,6 +9626,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ``Py5Graphics.text_leading()``, ``Py5Graphics.emissive()``,
         ``Py5Graphics.specular()``, ``Py5Graphics.shininess()``, and
         ``Py5Graphics.ambient()``.
+
+        This method can be used as a context manager to ensure that
+        ``Py5Graphics.pop_style()`` always gets called, as shown in the example.
 
         This method is the same as ``push_style()`` but linked to a ``Py5Graphics``
         object. To see example code for how it can be used, see ``push_style()``.

@@ -23,6 +23,7 @@ py5 is a version of Processing for Python 3.8+. It makes the Processing Java lib
 """
 import sys
 from pathlib import Path
+from io import BytesIO
 import inspect
 from typing import overload, Any, Callable, Union, Dict, List, Tuple  # noqa
 from nptyping import NDArray, Float, Int  # noqa
@@ -30,6 +31,7 @@ from nptyping import NDArray, Float, Int  # noqa
 import numpy as np  # noqa
 from PIL import Image  # noqa
 from jpype import JClass  # noqa
+import jpype.imports  # noqa
 from jpype.types import JArray, JString, JFloat, JInt, JChar  # noqa
 
 import py5_tools
@@ -80,7 +82,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.5a2'
+__version__ = '0.6.0-alpha.2'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -1819,6 +1821,9 @@ def begin_camera() -> None:
     the camera. ``begin_camera()`` should always be used with a following
     ``end_camera()`` and pairs of ``begin_camera()`` and ``end_camera()`` cannot be
     nested.
+
+    This method can be used as a context manager to ensure that ``end_camera()``
+    always gets called, as shown in the last example.
     """
     return _py5sketch.begin_camera()
 
@@ -1844,6 +1849,9 @@ def begin_contour() -> None:
     and transformations such as ``translate()``, ``rotate()``, and ``scale()`` do
     not work within a ``begin_contour()`` & ``end_contour()`` pair. It is also not
     possible to use other shapes, such as ``ellipse()`` or ``rect()`` within.
+
+    This method can be used as a context manager to ensure that ``end_contour()``
+    always gets called, as shown in the second example.
     """
     return _py5sketch.begin_contour()
 
@@ -1893,7 +1901,11 @@ def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
 
     If you want a background to show up in your files, use ``rect(0, 0, width,
     height)`` after setting the ``fill()`` to the background color. Otherwise the
-    background will not be rendered to the file because the background is not shape.
+    background will not be rendered to the file because the background is not a
+    shape.
+
+    This method can be used as a context manager to ensure that ``end_raw()`` always
+    gets called, as shown in the last example.
 
     Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
     drawn to 2D file formats.
@@ -1946,7 +1958,11 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
 
     If you want a background to show up in your files, use ``rect(0, 0, width,
     height)`` after setting the ``fill()`` to the background color. Otherwise the
-    background will not be rendered to the file because the background is not shape.
+    background will not be rendered to the file because the background is not a
+    shape.
+
+    This method can be used as a context manager to ensure that ``end_raw()`` always
+    gets called, as shown in the last example.
 
     Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
     drawn to 2D file formats.
@@ -1998,7 +2014,11 @@ def begin_raw(*args):
 
     If you want a background to show up in your files, use ``rect(0, 0, width,
     height)`` after setting the ``fill()`` to the background color. Otherwise the
-    background will not be rendered to the file because the background is not shape.
+    background will not be rendered to the file because the background is not a
+    shape.
+
+    This method can be used as a context manager to ensure that ``end_raw()`` always
+    gets called, as shown in the last example.
 
     Using ``hint(ENABLE_DEPTH_SORT)`` can improve the appearance of 3D geometry
     drawn to 2D file formats.
@@ -2048,6 +2068,9 @@ def begin_record(renderer: str, filename: str, /) -> Py5Graphics:
     recording to.
 
     ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
+
+    This method can be used as a context manager to ensure that ``end_record()``
+    always gets called, as shown in the last example.
     """
     pass
 
@@ -2094,6 +2117,9 @@ def begin_record(recorder: Py5Graphics, /) -> None:
     recording to.
 
     ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
+
+    This method can be used as a context manager to ensure that ``end_record()``
+    always gets called, as shown in the last example.
     """
     pass
 
@@ -2139,6 +2165,9 @@ def begin_record(*args):
     recording to.
 
     ``begin_record()`` works only with the ``PDF`` and ``SVG`` renderers.
+
+    This method can be used as a context manager to ensure that ``end_record()``
+    always gets called, as shown in the last example.
     """
     return _py5sketch.begin_record(*args)
 
@@ -2189,6 +2218,11 @@ def begin_shape() -> None:
     as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
     changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
     renderer.
+
+    This method can be used as a context manager to ensure that ``end_shape()``
+    always gets called, as shown in the last example. Use ``begin_closed_shape()``
+    to create a context manager that will pass the ``CLOSE`` parameter to
+    ``end_shape()``, closing the shape.
     """
     pass
 
@@ -2239,6 +2273,11 @@ def begin_shape(kind: int, /) -> None:
     as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
     changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
     renderer.
+
+    This method can be used as a context manager to ensure that ``end_shape()``
+    always gets called, as shown in the last example. Use ``begin_closed_shape()``
+    to create a context manager that will pass the ``CLOSE`` parameter to
+    ``end_shape()``, closing the shape.
     """
     pass
 
@@ -2288,8 +2327,117 @@ def begin_shape(*args):
     as ``stroke_weight()``, ``stroke_cap()``, and ``stroke_join()`` cannot be
     changed while inside a ``begin_shape()`` & ``end_shape()`` block with any
     renderer.
+
+    This method can be used as a context manager to ensure that ``end_shape()``
+    always gets called, as shown in the last example. Use ``begin_closed_shape()``
+    to create a context manager that will pass the ``CLOSE`` parameter to
+    ``end_shape()``, closing the shape.
     """
     return _py5sketch.begin_shape(*args)
+
+
+@overload
+def begin_closed_shape() -> None:
+    """This method is used to start a custom closed shape.
+
+    Underlying Java method: PApplet.beginShape
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * begin_closed_shape() -> None
+     * begin_closed_shape(kind: int, /) -> None
+
+    Parameters
+    ----------
+
+    kind: int
+        Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+    Notes
+    -----
+
+    This method is used to start a custom closed shape. This method should only be
+    used as a context manager, as shown in the examples. When used as a context
+    manager, this will ensure that ``end_shape()`` always gets called, just like
+    when using ``begin_shape()`` as a context manager. The difference is that when
+    exiting, the parameter ``CLOSE`` will be passed to ``end_shape()``, connecting
+    the last vertex to the first. This will close the shape. If this method were to
+    be used not as a context manager, it won't be able to close the shape by making
+    the call to ``end_shape()``.
+    """
+    pass
+
+
+@overload
+def begin_closed_shape(kind: int, /) -> None:
+    """This method is used to start a custom closed shape.
+
+    Underlying Java method: PApplet.beginShape
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * begin_closed_shape() -> None
+     * begin_closed_shape(kind: int, /) -> None
+
+    Parameters
+    ----------
+
+    kind: int
+        Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+    Notes
+    -----
+
+    This method is used to start a custom closed shape. This method should only be
+    used as a context manager, as shown in the examples. When used as a context
+    manager, this will ensure that ``end_shape()`` always gets called, just like
+    when using ``begin_shape()`` as a context manager. The difference is that when
+    exiting, the parameter ``CLOSE`` will be passed to ``end_shape()``, connecting
+    the last vertex to the first. This will close the shape. If this method were to
+    be used not as a context manager, it won't be able to close the shape by making
+    the call to ``end_shape()``.
+    """
+    pass
+
+
+def begin_closed_shape(*args):
+    """This method is used to start a custom closed shape.
+
+    Underlying Java method: PApplet.beginShape
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * begin_closed_shape() -> None
+     * begin_closed_shape(kind: int, /) -> None
+
+    Parameters
+    ----------
+
+    kind: int
+        Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+
+    Notes
+    -----
+
+    This method is used to start a custom closed shape. This method should only be
+    used as a context manager, as shown in the examples. When used as a context
+    manager, this will ensure that ``end_shape()`` always gets called, just like
+    when using ``begin_shape()`` as a context manager. The difference is that when
+    exiting, the parameter ``CLOSE`` will be passed to ``end_shape()``, connecting
+    the last vertex to the first. This will close the shape. If this method were to
+    be used not as a context manager, it won't be able to close the shape by making
+    the call to ``end_shape()``.
+    """
+    return _py5sketch.begin_closed_shape(*args)
 
 
 @overload
@@ -8483,10 +8631,10 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
         x-coordinate of the upper left corner of image subset
 
     u2: int
-        y-coordinate of the upper left corner of image subset
+        x-coordinate of the lower right corner of image subset
 
     v1: int
-        x-coordinate of the lower right corner of image subset
+        y-coordinate of the upper left corner of image subset
 
     v2: int
         y-coordinate of the lower right corner of image subset
@@ -8551,10 +8699,10 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
         x-coordinate of the upper left corner of image subset
 
     u2: int
-        y-coordinate of the upper left corner of image subset
+        x-coordinate of the lower right corner of image subset
 
     v1: int
-        x-coordinate of the lower right corner of image subset
+        y-coordinate of the upper left corner of image subset
 
     v2: int
         y-coordinate of the lower right corner of image subset
@@ -8620,10 +8768,10 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
         x-coordinate of the upper left corner of image subset
 
     u2: int
-        y-coordinate of the upper left corner of image subset
+        x-coordinate of the lower right corner of image subset
 
     v1: int
-        x-coordinate of the lower right corner of image subset
+        y-coordinate of the upper left corner of image subset
 
     v2: int
         y-coordinate of the lower right corner of image subset
@@ -8687,10 +8835,10 @@ def image(*args):
         x-coordinate of the upper left corner of image subset
 
     u2: int
-        y-coordinate of the upper left corner of image subset
+        x-coordinate of the lower right corner of image subset
 
     v1: int
-        x-coordinate of the lower right corner of image subset
+        y-coordinate of the upper left corner of image subset
 
     v2: int
         y-coordinate of the lower right corner of image subset
@@ -10430,8 +10578,8 @@ def pop() -> None:
     ``text_font()``, ``text_mode()``, ``text_size()``, and ``text_leading()``.
 
     The ``push()`` and ``pop()`` functions can be used in place of
-    ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and ``pop_styles()``.
-    The difference is that ``push()`` and ``pop()`` control both the transformations
+    ``push_matrix()``, ``pop_matrix()``, ``push_style()``, and ``pop_style()``. The
+    difference is that ``push()`` and ``pop()`` control both the transformations
     (rotate, scale, translate) and the drawing styles at the same time.
     """
     return _py5sketch.pop()
@@ -10536,11 +10684,11 @@ def push() -> None:
     ``translate()``, ``scale()``, ``fill()``, ``stroke()``, ``tint()``,
     ``stroke_weight()``, ``stroke_cap()``, ``stroke_join()``, ``image_mode()``,
     ``rect_mode()``, ``ellipse_mode()``, ``color_mode()``, ``text_align()``,
-    ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``.
+    ``text_font()``, ``text_mode()``, ``text_size()``, and ``text_leading()``.
 
     The ``push()`` and ``pop()`` functions can be used in place of
-    ``push_matrix()``, ``pop_matrix()``, ``push_styles()``, and ``pop_styles()``.
-    The difference is that ``push()`` and ``pop()`` control both the transformations
+    ``push_matrix()``, ``pop_matrix()``, ``push_style()``, and ``pop_style()``. The
+    difference is that ``push()`` and ``pop()`` control both the transformations
     (rotate, scale, translate) and the drawing styles at the same time.
     """
     return _py5sketch.push()
@@ -16961,365 +17109,6 @@ def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
     """
     return Sketch.parse_json(serialized_json, **kwargs)
 
-##############################################################################
-# module functions from print_tools.py
-##############################################################################
-
-
-def set_println_stream(println_stream: Any) -> None:
-    """Customize where the output of ``println()`` goes.
-
-    Parameters
-    ----------
-
-    println_stream: Any
-        println stream object to be used by println method
-
-    Notes
-    -----
-
-    Customize where the output of ``println()`` goes.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. The
-    ``println()`` method was created to provide users with print functionality in a
-    Sketch without having to cope with output moving from one cell to the next. Use
-    ``set_println_stream`` to change how the output is handled. The
-    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
-    shown in the example. The example demonstrates how to configure py5 to output
-    text to an IPython Widget.
-    """
-    return _py5sketch.set_println_stream(println_stream)
-
-
-def println(
-    *args,
-    sep: str = ' ',
-    end: str = '\n',
-        stderr: bool = False) -> None:
-    """Print text or other values to the screen.
-
-    Parameters
-    ----------
-
-    args
-        values to be printed
-
-    end: str = '\\n'
-        string appended after the last value, defaults to newline character
-
-    sep: str = ' '
-        string inserted between values, defaults to a space
-
-    stderr: bool = False
-        use stderr instead of stdout
-
-    Notes
-    -----
-
-    Print text or other values to the screen. For a Sketch running outside of a
-    Jupyter Notebook, this method will behave the same as the Python's builtin
-    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
-    text in the output of the cell that made the ``run_sketch()`` call.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. This
-    method was created to provide users with print functionality in a Sketch without
-    having to cope with output moving from one cell to the next.
-
-    Use ``set_println_stream()`` to customize the behavior of ``println()``.
-    """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> Py5Promise:
-    """Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
-
-    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
-    when the ``result`` property contains the value function ``f`` returned. Before
-    then, the ``result`` property will be ``None``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_repeating_thread(f: Callable, name: str = None, *,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: Tuple = None, kwargs: Dict = None) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
-
-    Parameters
-    ----------
-
-    args: Tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
-
-    Notes
-    -----
-
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
-
-    Use the ``time_delay`` parameter to set the time in seconds between one call to
-    function ``f`` and the next call. Set this parameter to ``0`` if you want each
-    call to happen immediately after the previous call finishes. If the function
-    ``f`` takes longer than expected to finish, py5 will wait for it to finish
-    before making the next call. There will not be overlapping calls to function
-    ``f``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with ``list_threads()``.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The ``wait`` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
-    ``False``. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use ``launch_repeating_thread()``
-    instead.
-
-    Use ``has_thread()`` to determine if a thread of a given name exists and
-    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
-    to stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The ``wait`` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
-    If you would rather the Sketch waited for threads to exit, create an ``exiting``
-    method and make a call to ``stop_all_threads(wait=True)``.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
-
 
 SIMPLEX_NOISE = 1
 PERLIN_NOISE = 2
@@ -19277,7 +19066,8 @@ def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
 
 
 def save(filename: Union[str,
-                         Path],
+                         Path,
+                         BytesIO],
          *,
          format: str = None,
          drop_alpha: bool = True,
@@ -19291,7 +19081,7 @@ def save(filename: Union[str,
     drop_alpha: bool = True
         remove the alpha channel when saving the image
 
-    filename: Union[str, Path]
+    filename: Union[str, Path, BytesIO]
         output filename
 
     format: str = None
@@ -19325,6 +19115,365 @@ def save(filename: Union[str,
         drop_alpha=drop_alpha,
         use_thread=use_thread,
         **params)
+
+##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of ``println()`` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of ``println()`` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    ``println()`` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    ``set_println_stream`` to change how the output is handled. The
+    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
+    shown in the example. The example demonstrates how to configure py5 to output
+    text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(
+    *args,
+    sep: str = ' ',
+    end: str = '\n',
+        stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = '\\n'
+        string appended after the last value, defaults to newline character
+
+    sep: str = ' '
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
+    text in the output of the cell that made the ``run_sketch()`` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use ``set_println_stream()`` to customize the behavior of ``println()``.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: Tuple = None,
+        kwargs: Dict = None) -> Py5Promise:
+    """Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
+    when the ``result`` property contains the value function ``f`` returned. Before
+    then, the ``result`` property will be ``None``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_repeating_thread(f: Callable, name: str = None, *,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: Tuple = None, kwargs: Dict = None) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: Tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: Dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the ``time_delay`` parameter to set the time in seconds between one call to
+    function ``f`` and the next call. Set this parameter to ``0`` if you want each
+    call to happen immediately after the previous call finishes. If the function
+    ``f`` takes longer than expected to finish, py5 will wait for it to finish
+    before making the next call. There will not be overlapping calls to function
+    ``f``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with ``list_threads()``.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The ``wait`` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
+    ``False``. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use ``launch_repeating_thread()``
+    instead.
+
+    Use ``has_thread()`` to determine if a thread of a given name exists and
+    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
+    to stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The ``wait`` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
+    If you would rather the Sketch waited for threads to exit, create an ``exiting``
+    method and make a call to ``stop_all_threads(wait=True)``.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
 
 ##############################################################################
 # module functions from sketch.py
@@ -19529,7 +19678,8 @@ def print_line_profiler_stats() -> None:
 
 
 def save_frame(filename: Union[str,
-                               Path],
+                               Path,
+                               BytesIO],
                *,
                format: str = None,
                drop_alpha: bool = True,
@@ -19543,7 +19693,7 @@ def save_frame(filename: Union[str,
     drop_alpha: bool = True
         remove the alpha channel when saving the image
 
-    filename: Union[str, Path]
+    filename: Union[str, Path, BytesIO]
         output filename
 
     format: str = None
@@ -19834,7 +19984,7 @@ def run_sketch(block: bool = None, *,
     if _py5sketch.is_dead:
         _py5sketch = Sketch()
 
-    _prepare_dynamic_variables(caller_locals)
+    _prepare_dynamic_variables(caller_locals, caller_globals)
 
     _py5sketch._run_sketch(functions, block, py5_options, sketch_args)
 
@@ -19876,7 +20026,8 @@ def reset_py5() -> bool:
         _py5sketch = Sketch()
         if _PY5_USE_IMPORTED_MODE:
             caller_locals = inspect.stack()[1].frame.f_locals
-            _prepare_dynamic_variables(caller_locals)
+            caller_globals = inspect.stack()[1].frame.f_globals
+            _prepare_dynamic_variables(caller_locals, caller_globals)
         return True
     else:
         return False
@@ -19948,7 +20099,7 @@ if _PY5_USE_IMPORTED_MODE:
     __all__.extend(py5_tools.reference.PY5_DYNAMIC_VARIABLES)
 
 
-def _prepare_dynamic_variables(caller_locals):
+def _prepare_dynamic_variables(caller_locals, caller_globals):
     """prepare the dynamic variables for sketch execution.
 
     Before running the sketch, delete the module fields like `mouse_x` that need
@@ -19960,8 +20111,8 @@ def _prepare_dynamic_variables(caller_locals):
     """
     for dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES + \
             py5_tools.reference.PY5_PYTHON_DYNAMIC_VARIABLES:
-        if dvar in globals():
-            globals().pop(dvar)
+        if dvar in caller_globals:
+            caller_globals.pop(dvar)
         if _PY5_USE_IMPORTED_MODE:
             if dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES:
                 caller_locals[dvar] = getattr(_py5sketch, '_get_' + dvar)
@@ -19969,4 +20120,4 @@ def _prepare_dynamic_variables(caller_locals):
                 caller_locals[dvar] = getattr(_py5sketch, dvar)
 
 
-_prepare_dynamic_variables(locals())
+_prepare_dynamic_variables(locals(), globals())

@@ -28,6 +28,9 @@ COMMENT_LINE = re.compile(r'^\s*#.*' + chr(36), flags=re.MULTILINE)
 DOCSTRING = re.compile(r'^\s*"""[^"]*"""', flags=re.MULTILINE | re.DOTALL)
 MODULE_MODE_METHOD_LINE = re.compile(r'^\s*py5\.(\w+)\([^\)]*\)')
 IMPORTED_MODE_METHOD_LINE = re.compile(r'^\s*(\w+)\([^\)]*\)')
+GLOBAL_STATEMENT_LINE = re.compile(
+    r'^\s*global\s+.*' + chr(36),
+    flags=re.MULTILINE)
 
 
 def _get_method_line_regex(mode):
@@ -57,6 +60,8 @@ def find_cutoff(code, mode):
     for i, line in enumerate(code.split('\n')):
         if line == 'def setup():':
             continue
+        if line.strip() and GLOBAL_STATEMENT_LINE.match(line):
+            continue
         if line.strip() and not ((m := method_line.match(line)) and m.groups()[0] in [
                 'size', 'full_screen', 'smooth', 'no_smooth', 'pixel_density']):
             cutoff = i
@@ -65,6 +70,25 @@ def find_cutoff(code, mode):
         cutoff = i + 1
 
     return cutoff
+
+
+def find_leading_global_statements_cutoff(code):
+    code = _remove_comments(code)
+    found_global_statement = False
+
+    # find the cutoff point
+    for i, line in enumerate(code.split('\n')):
+        if line == 'def setup():':
+            continue
+        if line.strip() and GLOBAL_STATEMENT_LINE.match(line):
+            found_global_statement = True
+        if line.strip() and not GLOBAL_STATEMENT_LINE.match(line):
+            cutoff = i
+            break
+    else:
+        cutoff = i + 1
+
+    return cutoff if found_global_statement else 0
 
 
 def check_for_special_functions(code, mode):
@@ -107,15 +131,17 @@ def transform(functions, sketch_globals, sketch_locals, println, *, mode):
 
     try:
         setup = functions['setup']
-        cutoff = find_cutoff(inspect.getsource(setup).strip(), mode)
+        code = inspect.getsource(setup).strip()
+        global_cutoff = find_leading_global_statements_cutoff(code) or 1
+        cutoff = find_cutoff(code, mode)
 
         # build the fake code
         lines, lineno = inspect.getsourcelines(setup)
         filename = inspect.getfile(setup)
-        fake_settings_code = (
-            lineno - 1) * '\n' + "def _py5_faux_settings():\n" + ''.join(lines[1:cutoff])
-        fake_setup_code = (lineno - 1) * '\n' + "def _py5_faux_setup():\n" + \
-            (cutoff - 1) * '\n' + ''.join(lines[cutoff:])
+        fake_settings_code = (lineno - 1) * '\n' + "def _py5_faux_settings():\n" + (
+            global_cutoff - 1) * '\n' + ''.join(lines[global_cutoff:cutoff])
+        fake_setup_code = (lineno - 1) * '\n' + "def _py5_faux_setup():\n" + (
+            cutoff - global_cutoff) * '\n' + ''.join([*lines[1:global_cutoff], *lines[cutoff:]])
 
         # if the fake settings code is empty, there's no need to change
         # anything

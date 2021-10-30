@@ -35,13 +35,15 @@ from ..magics.util import CellMagicHelpFormatter, filename_check, variable_name_
 
 
 PY5BOT_CODE_STARTUP = """
-import py5_tools
-py5_tools.set_imported_mode(True)
-from py5 import *
-
 import functools
 import ast as _PY5BOT_ast
 
+from IPython.display import SVG as _PY5BOT_SVG
+
+import py5_tools
+py5_tools.set_imported_mode(True)
+from py5 import *
+from py5 import _prepare_dynamic_variables as _PY5BOT_PREPARE_DYNAMIC_VARIABLES
 import py5_tools.parsing as _PY5BOT_parsing
 
 
@@ -51,13 +53,18 @@ def _PY5BOT_altered_size(*args):
     if len(args) == 2:
         args = *args, HIDDEN
     elif len(args) >= 3 and isinstance(renderer := args[2], str):
-        renderers = [HIDDEN, JAVA2D] if sys.platform == 'darwin' else [HIDDEN, JAVA2D, P2D, P3D]
-        if renderer not in renderers:
-            renderer_name = {SVG: 'SVG', PDF: 'PDF', DXF: 'DXF', P2D: 'P2D', P3D: 'P3D'}.get(renderer, renderer)
-            print(f'Sorry, py5bot does not support the {renderer_name} renderer' + (' on OSX.' if sys.platform == 'darwin' else '.'), file=sys.stderr)
-            args = *args[:2], HIDDEN, *args[3:]
-        if sys.platform == 'darwin':
-            args = *args[:2], HIDDEN, *args[3:]
+        renderer_name = {SVG: 'SVG', PDF: 'PDF', DXF: 'DXF', P2D: 'P2D', P3D: 'P3D', HIDDEN: 'HIDDEN', JAVA2D: 'JAVA2D'}.get(renderer, renderer)
+        if renderer in [SVG, PDF]:
+            if not (len(args) >= 4 and isinstance(args[3], str)):
+                print(f'If you want to use the {renderer_name} renderer, the 4th parameter to size() must be a filename to save the {renderer_name} to.')
+                args = *args[:2], HIDDEN, *args[3:]
+        else:
+            renderers = [HIDDEN, JAVA2D] if sys.platform == 'darwin' else [HIDDEN, JAVA2D, P2D, P3D]
+            if renderer not in renderers:
+                print(f'Sorry, py5bot does not support the {renderer_name} renderer' + (' on OSX.' if sys.platform == 'darwin' else '.'), file=sys.stderr)
+                args = *args[:2], HIDDEN, *args[3:]
+            if renderer == JAVA2D:
+                args = *args[:2], HIDDEN, *args[3:]
     size(*args)
 
 
@@ -67,10 +74,13 @@ del functools
 
 PY5BOT_CODE = """
 _PY5BOT_OUTPUT_ = None
+reset_py5()
+_PY5_NS_ = locals().copy()
+_PY5_NS_['size'] = _PY5BOT_altered_size
+_PY5BOT_PREPARE_DYNAMIC_VARIABLES(_PY5_NS_, _PY5_NS_)
+
 
 def _py5bot_settings():
-    exec("size = _PY5BOT_altered_size")
-
     with open('{0}', 'r') as f:
         exec(
             compile(
@@ -79,7 +89,8 @@ def _py5bot_settings():
                 ),
                 filename='{0}',
                 mode='exec'
-            )
+            ),
+            _PY5_NS_
         )
 
 
@@ -94,12 +105,17 @@ def _py5bot_setup():
                 ),
                 filename='{1}',
                 mode='exec'
-            )
+            ),
+            _PY5_NS_
         )
 
-    from PIL import Image
-    load_np_pixels()
-    _PY5BOT_OUTPUT_ = Image.fromarray(np_pixels()[:, :, 1:])
+    sketch_renderer = get_current_sketch()._instance.sketchRenderer()
+    if sketch_renderer == SVG:
+        _PY5BOT_OUTPUT_ = _PY5BOT_SVG()
+    elif sketch_renderer != PDF:
+        from PIL import Image
+        load_np_pixels()
+        _PY5BOT_OUTPUT_ = Image.fromarray(np_pixels()[:, :, 1:])
 
     exit_sketch()
 
@@ -107,6 +123,15 @@ def _py5bot_setup():
 run_sketch(sketch_functions=dict(settings=_py5bot_settings, setup=_py5bot_setup), block=True)
 if is_dead_from_error:
     exit_sketch()
+
+if isinstance(_PY5BOT_OUTPUT_, _PY5BOT_SVG):
+    try:
+        with open(str(get_current_sketch()._instance.sketchOutputPath()), 'r') as f:
+            _PY5BOT_OUTPUT_.data = f.read()
+    except:
+        pass
+
+del _PY5_NS_, _py5bot_settings, _py5bot_setup
 
 _PY5BOT_OUTPUT_
 """
@@ -116,6 +141,12 @@ def check_for_problems(code, filename):
     # does the code parse? if not, return an error message
     try:
         sketch_ast = ast.parse(code, filename=filename, mode='exec')
+    except IndentationError as e:
+        msg = f'There is an indentation problem with your code on line {e.lineno}:\n'
+        arrow_msg = f'--> {e.lineno}    '
+        msg += f'{arrow_msg}{e.text}'
+        msg += ' ' * (len(arrow_msg) + e.offset) + '^'
+        return False, msg
     except Exception as e:
         msg = stackprinter.format(e)
         m = re.search(r'^SyntaxError:', msg, flags=re.MULTILINE)
@@ -132,9 +163,12 @@ def check_for_problems(code, filename):
         msg += '=' * len(msg) + '\n' + '\n'.join(problems)
         return False, msg
 
+    global_cutoff = split_setup.find_leading_global_statements_cutoff(code)
     cutoff = split_setup.find_cutoff(code, 'imported')
-    py5bot_settings = '\n'.join(code.splitlines()[:cutoff])
-    py5bot_setup = '\n'.join(code.splitlines()[cutoff:])
+    lines = code.splitlines()
+    py5bot_globals = '\n'.join(lines[:global_cutoff])
+    py5bot_settings = '\n'.join(lines[global_cutoff:cutoff])
+    py5bot_setup = '\n'.join(lines[cutoff:])
 
     # check for calls to size, etc, that were not at the beginning of the code
     problems = split_setup.check_for_special_functions(
@@ -154,7 +188,7 @@ def check_for_problems(code, filename):
         msg += ' must be moved to the beginning of your code, before any other code.'
         return False, msg
 
-    return True, (py5bot_settings, py5bot_setup)
+    return True, (py5bot_globals, py5bot_settings, py5bot_setup)
 
 
 class Py5BotManager:
@@ -169,12 +203,23 @@ class Py5BotManager:
             self.settings_filename.as_posix(),
             self.setup_filename.as_posix())
 
-    def write_code(self, settings_code, setup_code, orig_line_count):
+    def write_code(
+            self,
+            global_code,
+            settings_code,
+            setup_code,
+            orig_line_count):
         with open(self.settings_filename, 'w') as f:
+            f.write('\n' * len(global_code.splitlines()))
             f.write(settings_code)
 
         with open(self.setup_filename, 'w') as f:
-            f.write('\n' * (orig_line_count - len(setup_code.splitlines())))
+            f.write(global_code)
+            blank_line_count = orig_line_count - \
+                len(setup_code.splitlines()) - len(global_code.splitlines())
+            if global_code and global_code[-1] != '\n':
+                blank_line_count += 1
+            f.write('\n' * blank_line_count)
             f.write(setup_code)
 
 
@@ -214,19 +259,22 @@ class Py5BotMagics(Magics):
         kernel is hosted on an OSX computer.
 
         Code used in this cell can reference functions and variables defined in other
-        cells. By default, variables and functions created in this cell will be local to
-        only this cell because to do otherwise would be unsafe. If you understand the
-        risks, you can use the ``global`` keyword to add a single function or variable
-        to the notebook namespace."""
+        cells because a copy of the user namespace is provided during execution.
+        Variables and functions created in this cell will be local to only this cell
+        because to do otherwise would be unsafe. Mutable objects in the user namespace,
+        however, can be altered and those changes will persist elsewhere in the
+        notebook. Be aware that using py5 objects in a different notebook cell or
+        reusing them in another Sketch can result in nasty errors and bizzare
+        consequences."""
         args = parse_argstring(self.py5bot, line)
 
         success, result = check_for_problems(cell, "<py5bot>")
         if success:
-            py5bot_settings, py5bot_setup = result
+            py5bot_globals, py5bot_settings, py5bot_setup = result
             if split_setup.count_noncomment_lines(py5bot_settings) == 0:
                 py5bot_settings = 'size(100, 100, HIDDEN)'
             self._py5bot_mgr.write_code(
-                py5bot_settings, py5bot_setup, len(
+                py5bot_globals, py5bot_settings, py5bot_setup, len(
                     cell.splitlines()))
 
             ns = self.shell.user_ns
@@ -246,7 +294,8 @@ class Py5BotMagics(Magics):
                         f'Invalid variable name {args.variable}',
                         file=sys.stderr)
 
-            display(png)
+            if png is not None:
+                display(png)
             del ns['_PY5BOT_OUTPUT_']
         else:
             print(result, file=sys.stderr)

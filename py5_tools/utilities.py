@@ -17,6 +17,7 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+import os
 from pathlib import Path
 
 
@@ -35,116 +36,110 @@ class Py5Utilities {
 }
 """
 
-DOT_PROJECT = """<?xml version="1.0" encoding="UTF-8"?>
-<projectDescription>
-	<name>py5utilities</name>
-	<comment></comment>
-	<projects>
-	</projects>
-	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-	</buildSpec>
-	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-	</natures>
-	<filteredResources>
-		<filter>
-			<id>1599075320853</id>
-			<name></name>
-			<type>30</type>
-			<matcher>
-				<id>org.eclipse.core.resources.regexFilterMatcher</id>
-				<arguments>node_modules|.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
-</projectDescription>
-"""
+POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 
-DOT_CLASSPATH_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="{path}/core.jar"/>
-	<classpathentry kind="lib" path="{path}/jogl-all.jar"/>
-	<classpathentry kind="lib" path="{path}/py5.jar"/>
-	<classpathentry kind="output" path="build"/>
-</classpath>
-"""
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-BUILD_XML_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
-<project name="py5 jar" default="clean">
+  <groupId>py5utils</groupId>
+  <artifactId>py5utils</artifactId>
+  <version>0.1</version>
 
-    <description>
-        compile and build the py5 utilities jar.
-    </description>
+  <name>py5utils</name>
+  <url>https://py5.ixora.io/</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <jarlocation>{classpath}</jarlocation>
+  </properties>
 
-    <property name="project.src" location="src"/>
-    <property name="project.bin" location="bin"/>
-    <property name="project.dist" location="{jars}"/>
+  <dependencies>
+    <dependency>
+      <groupId>py5</groupId>
+      <artifactId>py5-processing4</artifactId>
+      <version>0.6.0-alpha.2</version>
+      <scope>system</scope>
+      <systemPath>${{jarlocation}}/core.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>py5</groupId>
+      <artifactId>py5-jogl</artifactId>
+      <version>0.6.0-alpha.2</version>
+      <scope>system</scope>
+      <systemPath>${{jarlocation}}/jogl-all.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>py5</groupId>
+      <artifactId>py5</artifactId>
+      <version>0.6.0-alpha.2</version>
+      <scope>system</scope>
+      <systemPath>${{jarlocation}}/py5.jar</systemPath>
+    </dependency>
+  </dependencies>
 
-    <target name="project.run">
-        <antcall target="compile"></antcall>
-        <antcall target="dist"></antcall>
-    </target>
-
-    <target name="compile" description="compile the source">
-        <mkdir dir="{bin}"/>
-        <javac source="11" target="11" debug="true" includeantruntime="false" srcdir="{src}" destdir="{bin}">
-            <classpath>
-                <fileset dir="{path}">
-                        <include name="**/*.jar"/>
-                </fileset>
-            </classpath>
-            <compilerarg value="-Xlint"/>
-        </javac>
-    </target>
-
-    <target name="dist" description="make the jar">
-        <mkdir dir="{dist}"/>
-        <jar destfile="{dist}/py5utilities.jar" basedir="{bin}"/>
-    </target>
-
-    <target name="clean" depends="project.run">
-        <delete dir="{bin}"/>
-    </target>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>py5utils</groupId>
+              <artifactId>py5utils</artifactId>
+              <version>0.1</version>
+              <type>jar</type>
+              <overWrite>true</overWrite>
+              <outputDirectory>${{project.basedir}}/../jars</outputDirectory>
+              <destFileName>py5utils.jar</destFileName>
+            </artifactItem>
+          </artifactItems>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
 """
 
 
-def generate_utilities_framework(output_dir=None, jars_dir=None):
-    output_path = Path(output_dir or '')
-    ant_build_path = Path(jars_dir or 'jars')
+def generate_utilities_framework(output_dir=None):
+    java_dir = Path(output_dir or '.') / 'java'
+    jars_dir = Path(output_dir or '.') / 'jars'
 
-    import py5
-    py5_classpath = Path(py5.__file__).parent / 'jars'
+    import py5_tools
+    py5_classpath = (
+        Path(
+            py5_tools.__file__).parent.parent /
+        'py5/jars').as_posix()
 
-    template_params = {
-        x: f'{chr(36)}{{project.{x}}}' for x in [
-            'bin', 'dist', 'src']}
-    template_params['path'] = py5_classpath.as_posix()
-    template_params['jars'] = ant_build_path.absolute(
-    ).as_posix() if output_dir else ant_build_path.as_posix()
+    if 'CONDA_PREFIX' in os.environ and py5_classpath.startswith(
+            os.environ['CONDA_PREFIX']):
+        py5_classpath = py5_classpath.replace(
+            os.environ['CONDA_PREFIX'], '${env.CONDA_PREFIX}')
 
-    output_path.mkdir(parents=True, exist_ok=True)
+    java_dir.mkdir(parents=True, exist_ok=True)
+    jars_dir.mkdir(exist_ok=True)
 
-    with open(output_path / 'build.xml', 'w') as f:
-        f.write(BUILD_XML_TEMPLATE.format(**template_params))
+    with open(java_dir / 'pom.xml', 'w') as f:
+        f.write(POM_TEMPLATE.format(classpath=py5_classpath))
 
-    with open(output_path / '.classpath', 'w') as f:
-        f.write(DOT_CLASSPATH_TEMPLATE.format(**template_params))
-
-    with open(output_path / '.project', 'w') as f:
-        f.write(DOT_PROJECT)
-
-    src_dir = output_path / Path('src/py5/utils')
-    src_dir.mkdir(parents=True, exist_ok=True)
-    with open(src_dir / 'Py5Utilities.java', 'w') as f:
+    utils_filename = java_dir / \
+        Path('src/main/java/py5/utils/Py5Utilities.java')
+    utils_filename.parent.mkdir(parents=True, exist_ok=True)
+    with open(utils_filename, 'w') as f:
         f.write(PY5_UTILITIES_CLASS)
 
 

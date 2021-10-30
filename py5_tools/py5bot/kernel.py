@@ -63,11 +63,11 @@ class Py5BotShell(ZMQInteractiveShell):
 
         success, result = py5bot.check_for_problems(raw_cell, "<py5bot>")
         if success:
-            py5bot_settings, py5bot_setup = result
+            py5bot_globals, py5bot_settings, py5bot_setup = result
             if split_setup.count_noncomment_lines(py5bot_settings) == 0:
                 py5bot_settings = 'size(100, 100, HIDDEN)'
             self._py5bot_mgr.write_code(
-                py5bot_settings, py5bot_setup, len(
+                py5bot_globals, py5bot_settings, py5bot_setup, len(
                     raw_cell.splitlines()))
 
             return super(
@@ -98,7 +98,7 @@ class Py5BotKernel(Py5Kernel):
     shell_class = Type(Py5BotShell)
 
     implementation = 'py5bot'
-    implementation_version = '0.5a2'
+    implementation_version = '0.6.0-alpha.2'
 
 
 class Py5BotApp(IPKernelApp):

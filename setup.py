@@ -23,13 +23,14 @@ from setuptools import setup
 with open('README.rst') as f:
     README = f.read()
 
-VERSION = '0.5a2'
+VERSION = '0.6.0-alpha.2'
 
 INSTALL_REQUIRES = [
+    'autopep8>=1.5',
     'ipykernel>=5.3',
     'ipython>=7.22',
     'ipywidgets>=7.6',
-    'jpype1>=1.2',
+    'jpype1>=1.3',
     'line_profiler>=2.1.2',
     'noise>=1.2',
     'nptyping>=1.4',
@@ -72,6 +73,9 @@ setup(
             'run_sketch = py5_tools.tools.run_sketch:main',
             'py5cmd = py5_tools.tools.py5cmd:main',
             'py5utils = py5_tools.tools.py5utils:main',
+            'py5translate-module2imported = py5_tools.tools.py5translate_module2imported:main',
+            'py5translate-imported2module = py5_tools.tools.py5translate_imported2module:main',
+            'py5translate-processingpy2imported = py5_tools.tools.py5translate_processingpy2imported:main',
         ],
     },
     classifiers=[

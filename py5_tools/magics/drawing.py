@@ -77,7 +77,6 @@ def _py5_setup():
                 filename='{4}',
                 mode='exec'
             ),
-            globals(),
             _py5_user_ns
         )
 
@@ -101,7 +100,6 @@ def _py5_setup():
                 filename='{4}',
                 mode='exec'
             ),
-            globals(),
             _py5_user_ns
         )
 
@@ -126,7 +124,6 @@ def _py5_setup():
                 filename='{4}',
                 mode='exec'
             ),
-            globals(),
             _py5_user_ns
         )
 
@@ -162,9 +159,16 @@ def _run_sketch(renderer, code, width, height, user_ns, safe_exec):
             file=sys.stderr)
         return None
 
-    # does the code parse? if not, return an error message
+    # does the code parse? if not, display an error message
     try:
         sketch_ast = ast.parse(code, filename='<py5magic>', mode='exec')
+    except IndentationError as e:
+        msg = f'There is an indentation problem with your code on line {e.lineno}:\n'
+        arrow_msg = f'--> {e.lineno}    '
+        msg += f'{arrow_msg}{e.text}'
+        msg += ' ' * (len(arrow_msg) + e.offset) + '^'
+        print(msg)
+        return None
     except Exception as e:
         msg = stackprinter.format(e)
         m = re.search(r'^SyntaxError:', msg, flags=re.MULTILINE)
@@ -196,7 +200,11 @@ def _run_sketch(renderer, code, width, height, user_ns, safe_exec):
         with open(temp_py, 'w') as f:
             f.write(code)
 
-        user_ns['_py5_user_ns'] = {} if safe_exec else user_ns
+        py5.reset_py5()
+        if imported.get_imported_mode():
+            py5._prepare_dynamic_variables(user_ns, user_ns)
+
+        user_ns['_py5_user_ns'] = user_ns.copy() if safe_exec else user_ns
         exec(
             code_framework.format(
                 width,
@@ -226,7 +234,7 @@ class DrawingMagics(Magics):
     @argument('height', type=int, help='height of PDF output')
     @argument('filename', type=str, help='filename for PDF output')
     @argument('--unsafe', dest='unsafe', action='store_true',
-              help='allow new variables to enter the global namespace')
+              help='allow new variables to enter the user namespace')
     @kwds(formatter_class=CellMagicHelpFormatter)
     @cell_magic
     def py5drawpdf(self, line, cell):
@@ -243,13 +251,18 @@ class DrawingMagics(Magics):
         ``np_pixels[]`` arrays. Use ``%%py5draw`` instead.
 
         Code used in this cell can reference functions and variables defined in other
-        cells. By default, variables and functions created in this cell will be local to
-        only this cell because to do otherwise would be unsafe. If you understand the
-        risks, you can use the ``global`` keyword to add a single function or variable
-        to the notebook namespace or the ``--unsafe`` argument to add everything to the
-        notebook namespace. Either option may be very useful to you, but be aware that
-        using py5 objects in a different notebook cell or reusing them in another Sketch
-        can result in nasty errors and bizzare consequences."""
+        cells because a copy of the user namespace is provided during execution. By
+        default, variables and functions created in this cell will be local to only this
+        cell because to do otherwise would be unsafe. Mutable objects in the user
+        namespace, however, can be altered and those changes will persist elsewhere in
+        the notebook.
+
+        If you understand the risks, you can use the ``--unsafe`` argument so that
+        variables and functions created in this cell are stored in the user namespace
+        instead of a copy, making them available in other notebook cells. This may be
+        very useful to you, but be aware that using py5 objects in a different notebook
+        cell or reusing them in another Sketch can result in nasty errors and bizzare
+        consequences."""
         args = parse_argstring(self.py5drawpdf, line)
 
         pdf = _run_sketch('PDF', cell, args.width, args.height,
@@ -266,7 +279,7 @@ class DrawingMagics(Magics):
     @argument('-f', '--filename', type=str, dest='filename',
               help='save SVG drawing to file')
     @argument('--unsafe', dest='unsafe', action='store_true',
-              help='allow new variables to enter the global namespace')
+              help='allow new variables to enter the user namespace')
     @kwds(formatter_class=CellMagicHelpFormatter)
     @cell_magic
     def py5drawsvg(self, line, cell):
@@ -283,13 +296,18 @@ class DrawingMagics(Magics):
         or ``np_pixels[]`` arrays. Use ``%%py5draw`` instead.
 
         Code used in this cell can reference functions and variables defined in other
-        cells. By default, variables and functions created in this cell will be local to
-        only this cell because to do otherwise would be unsafe. If you understand the
-        risks, you can use the ``global`` keyword to add a single function or variable
-        to the notebook namespace or the ``--unsafe`` argument to add everything to the
-        notebook namespace. Either option may be very useful to you, but be aware that
-        using py5 objects in a different notebook cell or reusing them in another Sketch
-        can result in nasty errors and bizzare consequences."""
+        cells because a copy of the user namespace is provided during execution. By
+        default, variables and functions created in this cell will be local to only this
+        cell because to do otherwise would be unsafe. Mutable objects in the user
+        namespace, however, can be altered and those changes will persist elsewhere in
+        the notebook.
+
+        If you understand the risks, you can use the ``--unsafe`` argument so that
+        variables and functions created in this cell are stored in the user namespace
+        instead of a copy, making them available in other notebook cells. This may be
+        very useful to you, but be aware that using py5 objects in a different notebook
+        cell or reusing them in another Sketch can result in nasty errors and bizzare
+        consequences."""
         args = parse_argstring(self.py5drawsvg, line)
 
         svg = _run_sketch('SVG', cell, args.width, args.height,
@@ -310,7 +328,7 @@ class DrawingMagics(Magics):
     @argument('-r', '--renderer', type=str, dest='renderer',
               default='HIDDEN', help='processing renderer to use for Sketch')
     @argument('--unsafe', dest='unsafe', action='store_true',
-              help='allow new variables to enter the global namespace')
+              help='allow new variables to enter the user namespace')
     @kwds(formatter_class=CellMagicHelpFormatter)
     @cell_magic
     def py5draw(self, line, cell):
@@ -333,13 +351,18 @@ class DrawingMagics(Magics):
         or ``render_frame()`` with the ``use_py5graphics`` parameter.
 
         Code used in this cell can reference functions and variables defined in other
-        cells. By default, variables and functions created in this cell will be local to
-        only this cell because to do otherwise would be unsafe. If you understand the
-        risks, you can use the ``global`` keyword to add a single function or variable
-        to the notebook namespace or the ``--unsafe`` argument to add everything to the
-        notebook namespace. Either option may be very useful to you, but be aware that
-        using py5 objects in a different notebook cell or reusing them in another Sketch
-        can result in nasty errors and bizzare consequences."""
+        cells because a copy of the user namespace is provided during execution. By
+        default, variables and functions created in this cell will be local to only this
+        cell because to do otherwise would be unsafe. Mutable objects in the user
+        namespace, however, can be altered and those changes will persist elsewhere in
+        the notebook.
+
+        If you understand the risks, you can use the ``--unsafe`` argument so that
+        variables and functions created in this cell are stored in the user namespace
+        instead of a copy, making them available in other notebook cells. This may be
+        very useful to you, but be aware that using py5 objects in a different notebook
+        cell or reusing them in another Sketch can result in nasty errors and bizzare
+        consequences."""
         args = parse_argstring(self.py5draw, line)
 
         if sys.platform == 'darwin':
@@ -391,7 +414,7 @@ class DXFDrawingMagic(Magics):
     @argument('height', type=int, help='height of DXF output')
     @argument('filename', type=str, help='filename for DXF output')
     @argument('--unsafe', dest='unsafe', action='store_true',
-              help='allow new variables to enter the global namespace')
+              help='allow new variables to enter the user namespace')
     @kwds(formatter_class=CellMagicHelpFormatter)
     @cell_magic
     def py5drawdxf(self, line, cell):
@@ -410,13 +433,18 @@ class DXFDrawingMagic(Magics):
         This magic is not available on OSX.
 
         Code used in this cell can reference functions and variables defined in other
-        cells. By default, variables and functions created in this cell will be local to
-        only this cell because to do otherwise would be unsafe. If you understand the
-        risks, you can use the ``global`` keyword to add a single function or variable
-        to the notebook namespace or the ``--unsafe`` argument to add everything to the
-        notebook namespace. Either option may be very useful to you, but be aware that
-        using py5 objects in a different notebook cell or reusing them in another Sketch
-        can result in nasty errors and bizzare consequences."""
+        cells because a copy of the user namespace is provided during execution. By
+        default, variables and functions created in this cell will be local to only this
+        cell because to do otherwise would be unsafe. Mutable objects in the user
+        namespace, however, can be altered and those changes will persist elsewhere in
+        the notebook.
+
+        If you understand the risks, you can use the ``--unsafe`` argument so that
+        variables and functions created in this cell are stored in the user namespace
+        instead of a copy, making them available in other notebook cells. This may be
+        very useful to you, but be aware that using py5 objects in a different notebook
+        cell or reusing them in another Sketch can result in nasty errors and bizzare
+        consequences."""
         args = parse_argstring(self.py5drawdxf, line)
 
         dxf = _run_sketch('DXF', cell, args.width, args.height,

@@ -19,13 +19,14 @@
 # *****************************************************************************
 import threading
 from pathlib import Path
+from io import BytesIO
 from typing import overload, List, Union  # noqa
 
 import numpy as np
 from PIL import Image
 import jpype
 
-from ..type_decorators import _hex_converter
+from ..decorators import _hex_converter
 
 
 _Sketch = jpype.JClass('py5.core.Sketch')
@@ -242,7 +243,8 @@ class PixelMixin:
 
     def save(self,
              filename: Union[str,
-                             Path],
+                             Path,
+                             BytesIO],
              *,
              format: str = None,
              drop_alpha: bool = True,
@@ -256,7 +258,7 @@ class PixelMixin:
         drop_alpha: bool = True
             remove the alpha channel when saving the image
 
-        filename: Union[str, Path]
+        filename: Union[str, Path, BytesIO]
             output filename
 
         format: str = None
@@ -285,7 +287,8 @@ class PixelMixin:
         written to the file."""
         sketch_instance = self._instance if isinstance(
             self._instance, _Sketch) else self._instance.parent
-        filename = Path(str(sketch_instance.savePath(str(filename))))
+        if not isinstance(filename, BytesIO):
+            filename = Path(str(sketch_instance.savePath(str(filename))))
         self.load_np_pixels()
         arr = self.np_pixels[:, :, 1:] if drop_alpha else np.roll(
             self.np_pixels, -1, axis=2)
@@ -456,7 +459,8 @@ class PixelPy5GraphicsMixin(PixelMixin):
 
     def save(self,
              filename: Union[str,
-                             Path],
+                             Path,
+                             BytesIO],
              *,
              format: str = None,
              drop_alpha: bool = True,
@@ -470,7 +474,7 @@ class PixelPy5GraphicsMixin(PixelMixin):
         drop_alpha: bool = True
             remove the alpha channel when saving the image
 
-        filename: Union[str, Path]
+        filename: Union[str, Path, BytesIO]
             output filename
 
         format: str = None
@@ -622,7 +626,8 @@ class PixelPy5ImageMixin(PixelMixin):
 
     def save(self,
              filename: Union[str,
-                             Path],
+                             Path,
+                             BytesIO],
              *,
              format: str = None,
              drop_alpha: bool = True,
@@ -636,7 +641,7 @@ class PixelPy5ImageMixin(PixelMixin):
         drop_alpha: bool = True
             remove the alpha channel when saving the image
 
-        filename: Union[str, Path]
+        filename: Union[str, Path, BytesIO]
             output filename
 
         format: str = None

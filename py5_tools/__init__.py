@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -27,4 +27,4 @@ from .hooks import *  # noqa
 from . import translators  # noqa
 
 
-__version__ = '0.6.0-alpha.2'
+__version__ = '0.7.0a0'

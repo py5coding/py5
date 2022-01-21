@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -36,7 +36,7 @@ class PixelArray:
     """The ``pixels[]`` array contains the values for all the pixels in the display
     window.
 
-    Underlying Java field: PApplet.pixels
+    Underlying Processing field: PApplet.pixels
 
     Notes
     -----
@@ -73,6 +73,8 @@ class PixelArray:
 
         if (newval := _hex_converter(val)) is not None:
             val = newval
+
+        self._instance.pixels[index] = val
 
     def __len__(self):
         if self._instance.pixels is None:
@@ -189,7 +191,42 @@ class PixelMixin:
         To set the entire contents of ``np_pixels[]`` to the contents of another
         properly sized numpy array, consider using ``set_np_pixels()``."""
         return self._np_pixels
-    np_pixels: np.ndarray = property(fget=_get_np_pixels)
+    np_pixels: np.ndarray = property(
+        fget=_get_np_pixels,
+        doc="""The ``np_pixels[]`` array contains the values for all the pixels in the display
+        window.
+
+        Notes
+        -----
+
+        The ``np_pixels[]`` array contains the values for all the pixels in the display
+        window. Unlike the one dimensional array ``pixels[]``, the ``np_pixels[]`` array
+        organizes the color data in a 3 dimensional numpy array. The size of the array's
+        dimensions are defined by the size of the display window. The first dimension is
+        the height, the second is the width, and the third represents the color
+        channels. The color channels are ordered alpha, red, green, blue (ARGB). Every
+        value in ``np_pixels[]`` is an integer between 0 and 255.
+
+        This numpy array is very similar to the image arrays used by other popular
+        Python image libraries, but note that some of them like opencv will by default
+        order the color channels as RGBA.
+
+        When the pixel density is set to higher than 1 with the ``pixel_density()``
+        function, the size of ``np_pixels[]``'s height and width dimensions will change.
+        See the reference for ``pixel_width`` or ``pixel_height`` for more information.
+        Nothing about ``np_pixels[]`` will change as a result of calls to
+        ``color_mode()``.
+
+        Much like the ``pixels[]`` array, there are load and update methods that must be
+        called before and after making changes to the data in ``np_pixels[]``. Before
+        accessing ``np_pixels[]``, the data must be loaded with the ``load_np_pixels()``
+        method. If this is not done, ``np_pixels`` will be equal to ``None`` and your
+        code will likely result in Python exceptions. After ``np_pixels[]`` has been
+        modified, the ``update_np_pixels()`` method must be called to update the content
+        of the display window.
+
+        To set the entire contents of ``np_pixels[]`` to the contents of another
+        properly sized numpy array, consider using ``set_np_pixels()``.""")
 
     def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
         """Set the entire contents of ``np_pixels[]`` to the contents of another properly
@@ -412,7 +449,50 @@ class PixelPy5GraphicsMixin(PixelMixin):
         This field is the same as ``np_pixels[]`` but linked to a ``Py5Graphics``
         object."""
         return super()._get_np_pixels()
-    np_pixels: np.ndarray = property(fget=_get_np_pixels)
+    np_pixels: np.ndarray = property(
+        fget=_get_np_pixels,
+        doc="""The ``np_pixels[]`` array contains the values for all the pixels in the
+        Py5Graphics drawing surface.
+
+        Notes
+        -----
+
+        The ``np_pixels[]`` array contains the values for all the pixels in the
+        Py5Graphics drawing surface. Unlike the one dimensional array
+        ``Py5Graphics.pixels[]``, the ``np_pixels[]`` array organizes the color data in
+        a 3 dimensional numpy array. The size of the array's dimensions are defined by
+        the size of the Py5Graphics drawing surface. The first dimension is the height,
+        the second is the width, and the third represents the color channels. The color
+        channels are ordered alpha, red, green, blue (ARGB). Every value in
+        ``np_pixels[]`` is an integer between 0 and 255.
+
+        This numpy array is very similar to the image arrays used by other popular
+        Python image libraries, but note that some of them like opencv will by default
+        order the color channels as RGBA.
+
+        When the pixel density is set to higher than 1 with the
+        ``Py5Graphics.pixel_density`` function, the size of ``np_pixels[]``'s height and
+        width dimensions will change. See the reference for ``Py5Graphics.pixel_width``
+        or ``Py5Graphics.pixel_height`` for more information. Nothing about
+        ``np_pixels[]`` will change as a result of calls to
+        ``Py5Graphics.color_mode()``.
+
+        Much like the ``Py5Graphics.pixels[]`` array, there are load and update methods
+        that must be called before and after making changes to the data in
+        ``np_pixels[]``. Before accessing ``np_pixels[]``, the data must be loaded with
+        the ``Py5Graphics.load_np_pixels()`` method. If this is not done, ``np_pixels``
+        will be equal to ``None`` and your code will likely result in Python exceptions.
+        After ``np_pixels[]`` has been modified, the ``Py5Graphics.update_np_pixels()``
+        method must be called to update the content of the Py5Graphics drawing surface.
+
+        Working with ``Py5Graphics.np_pixels[]`` can only be done between calls to
+        ``Py5Graphics.begin_draw()`` and ``Py5Graphics.end_draw()``.
+
+        To set the entire contents of ``np_pixels[]`` to the contents of another
+        properly sized numpy array, consider using ``Py5Graphics.set_np_pixels()``.
+
+        This field is the same as ``np_pixels[]`` but linked to a ``Py5Graphics``
+        object.""")
 
     def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
         """Set the entire contents of ``Py5Graphics.np_pixels[]`` to the contents of
@@ -584,7 +664,35 @@ class PixelPy5ImageMixin(PixelMixin):
         To set the entire contents of ``np_pixels[]`` to the contents of another equally
         sized numpy array, consider using ``Py5Image.set_np_pixels()``."""
         return super()._get_np_pixels()
-    np_pixels: np.ndarray = property(fget=_get_np_pixels)
+    np_pixels: np.ndarray = property(
+        fget=_get_np_pixels,
+        doc="""The ``np_pixels[]`` array contains the values for all the pixels in the image.
+
+        Notes
+        -----
+
+        The ``np_pixels[]`` array contains the values for all the pixels in the image.
+        Unlike the one dimensional array ``Py5Image.pixels[]``, the ``np_pixels[]``
+        array organizes the color data in a 3 dimensional numpy array. The size of the
+        array's dimensions are defined by the size of the image. The first dimension is
+        the height, the second is the width, and the third represents the color
+        channels. The color channels are ordered alpha, red, green, blue (ARGB). Every
+        value in ``np_pixels[]`` is an integer between 0 and 255.
+
+        This numpy array is very similar to the image arrays used by other popular
+        Python image libraries, but note that some of them like opencv will by default
+        order the color channels as RGBA.
+
+        Much like the ``Py5Image.pixels[]`` array, there are load and update methods
+        that must be called before and after making changes to the data in
+        ``np_pixels[]``. Before accessing ``np_pixels[]``, the data must be loaded with
+        the ``Py5Image.load_np_pixels()`` method. If this is not done, ``np_pixels``
+        will be equal to ``None`` and your code will likely result in Python exceptions.
+        After ``np_pixels[]`` has been modified, the ``Py5Image.update_np_pixels()``
+        method must be called to update the content of the display window.
+
+        To set the entire contents of ``np_pixels[]`` to the contents of another equally
+        sized numpy array, consider using ``Py5Image.set_np_pixels()``.""")
 
     def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
         """Set the entire contents of ``Py5Image.np_pixels[]`` to the contents of another

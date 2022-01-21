@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,8 @@ import numpy as np  # noqa
 from .base import Py5Base
 from .image import Py5Image  # noqa
 from jpype.types import JException, JArray, JBoolean, JInt, JFloat  # noqa
-from .pmath import _numpy_to_pvector, _numpy_to_pmatrix2d, _numpy_to_pmatrix3d  # noqa
+from .pmath import _py5vector_to_pvector, _numpy_to_pvector, _numpy_to_pmatrix2d, _numpy_to_pmatrix3d  # noqa
+from .vector import Py5Vector
 
 
 def _return_py5shader(f):
@@ -61,6 +62,8 @@ def _py5shader_set_wrapper(f):
                 args = _numpy_to_pmatrix2d(array), *args[1:]
             elif array.shape == (4, 4):
                 args = _numpy_to_pmatrix3d(array), *args[1:]
+        elif isinstance(args[0], Py5Vector):
+            args = _py5vector_to_pvector(args[0]), *args[1:]
         else:
             def fix_type(arg):
                 if isinstance(arg, bool):
@@ -80,7 +83,7 @@ class Py5Shader(Py5Base):
     """This class encapsulates a GLSL shader program, including a vertex and a fragment
     shader.
 
-    Underlying Java class: PShader.PShader
+    Underlying Processing class: PShader.PShader
 
     Notes
     -----
@@ -100,7 +103,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -117,6 +120,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -161,7 +165,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -212,7 +219,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -229,6 +236,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -273,7 +281,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -324,7 +335,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -341,6 +352,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -385,7 +397,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -436,7 +451,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -453,6 +468,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -497,7 +513,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -548,7 +567,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -565,6 +584,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -609,7 +629,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -661,7 +684,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -678,6 +701,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -722,7 +746,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -773,7 +800,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -790,6 +817,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -834,7 +862,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -885,7 +916,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -902,6 +933,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -946,7 +978,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -997,7 +1032,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1014,6 +1049,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1058,7 +1094,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1110,7 +1149,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1127,6 +1166,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1171,7 +1211,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1222,7 +1265,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1239,6 +1282,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1283,7 +1327,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1335,7 +1382,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1352,6 +1399,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1396,7 +1444,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1447,7 +1498,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1464,6 +1515,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1508,7 +1560,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1559,7 +1614,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1576,6 +1631,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1620,7 +1676,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1671,7 +1730,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1688,6 +1747,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1732,7 +1792,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1783,7 +1846,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1800,6 +1863,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1844,7 +1908,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1895,7 +1962,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -1912,6 +1979,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1956,7 +2024,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2008,7 +2079,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -2025,6 +2096,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2069,7 +2141,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2120,7 +2195,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -2137,6 +2212,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2181,7 +2257,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2232,7 +2311,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -2249,6 +2328,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2293,7 +2373,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2344,7 +2427,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -2361,6 +2444,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2405,7 +2489,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2457,7 +2544,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -2474,6 +2561,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2518,7 +2606,126 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
+
+        w: bool
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: float
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        w: int
+            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+
+        x: bool
+            first component of the variable to modify
+
+        x: float
+            first component of the variable to modify
+
+        x: int
+            first component of the variable to modify
+
+        y: bool
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: float
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        y: int
+            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+
+        z: bool
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: float
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        z: int
+            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+
+        Notes
+        -----
+
+        Sets the uniform variables inside the shader to modify the effect while the
+        program is running.
+        """
+        pass
+
+    @overload
+    def set(self, name: str, vec: Py5Vector, /) -> None:
+        """Sets the uniform variables inside the shader to modify the effect while the
+        program is running.
+
+        Underlying Processing method: PShader.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
+         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
+         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, tex: Py5Image, /) -> None
+         * set(name: str, vec: JArray(JBoolean), /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
+         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
+         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, x: bool, /) -> None
+         * set(name: str, x: bool, y: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, /) -> None
+         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
+         * set(name: str, x: float, /) -> None
+         * set(name: str, x: float, y: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, /) -> None
+         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
+         * set(name: str, x: int, /) -> None
+         * set(name: str, x: int, y: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, /) -> None
+         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
+
+        Parameters
+        ----------
+
+        boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
+
+        mat: NDArray[(2, 3), Float]
+            numpy array of values
+
+        mat: NDArray[(4, 4), Float]
+            numpy array of values
+
+        name: str
+            the name of the uniform variable to modify
+
+        ncoords: int
+            number of coordinates per element, max 4
+
+        tex: Py5Image
+            sets the sampler uniform variable to read from this image texture
+
+        use3x3: bool
+            enforces the numpy array is 3 x 3
+
+        vec: JArray(JBoolean)
+            modifies all the components of an array/vector uniform variable
+
+        vec: NDArray[(Any,), Float]
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: NDArray[(Any,), Int]
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2569,7 +2776,7 @@ class Py5Shader(Py5Base):
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
-        Underlying Java method: PShader.set
+        Underlying Processing method: PShader.set
 
         Methods
         -------
@@ -2586,6 +2793,7 @@ class Py5Shader(Py5Base):
          * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], /) -> None
          * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
+         * set(name: str, vec: Py5Vector, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2630,7 +2838,10 @@ class Py5Shader(Py5Base):
             numpy array of values to modify all the components of an array/vector uniform variable
 
         vec: NDArray[(Any,), Int]
-            modifies all the components of an array/vector uniform variable
+            numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: Py5Vector
+            vector of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)

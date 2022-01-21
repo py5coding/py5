@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -34,7 +34,7 @@ def _return_py5surface(f):
 class Py5Surface:
     """The Py5Surface object is the actual window py5 draws animations to.
 
-    Underlying Java class: PSurface.PSurface
+    Underlying Processing class: PSurface.PSurface
 
     Notes
     -----
@@ -51,7 +51,7 @@ class Py5Surface:
     def get_native(self) -> Any:
         """Get the Sketch's Java native window object.
 
-        Underlying Java method: PSurface.getNative
+        Underlying Processing method: PSurface.getNative
 
         Notes
         -----
@@ -70,7 +70,7 @@ class Py5Surface:
     def is_stopped(self) -> bool:
         """Determine if the surface is currently running an animation.
 
-        Underlying Java method: PSurface.isStopped
+        Underlying Processing method: PSurface.isStopped
 
         Notes
         -----
@@ -90,7 +90,7 @@ class Py5Surface:
     def pause_thread(self) -> None:
         """Pause a running Sketch.
 
-        Underlying Java method: PSurface.pauseThread
+        Underlying Processing method: PSurface.pauseThread
 
         Notes
         -----
@@ -108,7 +108,7 @@ class Py5Surface:
     def resume_thread(self) -> None:
         """Resume a paused Sketch.
 
-        Underlying Java method: PSurface.resumeThread
+        Underlying Processing method: PSurface.resumeThread
 
         Notes
         -----
@@ -123,7 +123,7 @@ class Py5Surface:
     def set_always_on_top(self, always: bool, /) -> None:
         """Set the Sketch window to always be on top of other windows.
 
-        Underlying Java method: PSurface.setAlwaysOnTop
+        Underlying Processing method: PSurface.setAlwaysOnTop
 
         Parameters
         ----------
@@ -143,7 +143,7 @@ class Py5Surface:
     def set_icon(self, icon: Py5Image, /) -> None:
         """Set the Sketch window icon.
 
-        Underlying Java method: PSurface.setIcon
+        Underlying Processing method: PSurface.setIcon
 
         Parameters
         ----------
@@ -166,7 +166,7 @@ class Py5Surface:
     def set_location(self, x: int, y: int, /) -> None:
         """Set the Sketch's window location.
 
-        Underlying Java method: PSurface.setLocation
+        Underlying Processing method: PSurface.setLocation
 
         Parameters
         ----------
@@ -189,7 +189,7 @@ class Py5Surface:
     def set_resizable(self, resizable: bool, /) -> None:
         """Set the Sketch window as resizable by the user.
 
-        Underlying Java method: PSurface.setResizable
+        Underlying Processing method: PSurface.setResizable
 
         Parameters
         ----------
@@ -212,7 +212,7 @@ class Py5Surface:
     def set_size(self, width: int, height: int, /) -> None:
         """Set a new width and height for the Sketch window.
 
-        Underlying Java method: PSurface.setSize
+        Underlying Processing method: PSurface.setSize
 
         Parameters
         ----------
@@ -237,7 +237,7 @@ class Py5Surface:
     def set_title(self, title: str, /) -> None:
         """Set the Sketch window's title.
 
-        Underlying Java method: PSurface.setTitle
+        Underlying Processing method: PSurface.setTitle
 
         Parameters
         ----------
@@ -256,7 +256,7 @@ class Py5Surface:
     def set_visible(self, visible: bool, /) -> None:
         """Set the Sketch window's visiblity.
 
-        Underlying Java method: PSurface.setVisible
+        Underlying Processing method: PSurface.setVisible
 
         Parameters
         ----------
@@ -275,7 +275,7 @@ class Py5Surface:
     def stop_thread(self) -> bool:
         """Stop the animation thread.
 
-        Underlying Java method: PSurface.stopThread
+        Underlying Processing method: PSurface.stopThread
 
         Notes
         -----

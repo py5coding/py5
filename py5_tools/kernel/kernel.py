@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,7 @@ from ipykernel.kernelapp import IPKernelApp
 
 from traitlets import Type, Instance, Unicode, List
 
-from ..parsing import TransformDynamicVariablesToCalls, ReservedWordsValidation
+from ..parsing import TransformDynamicVariablesToCalls, Py5CodeValidation
 
 
 _PY5_HELP_LINKS = [
@@ -58,7 +58,7 @@ _KERNEL_STARTUP = (_MACOSX_PRE_STARTUP if sys.platform ==
 class Py5Shell(ZMQInteractiveShell):
 
     ast_transformers = List(
-        [TransformDynamicVariablesToCalls(), ReservedWordsValidation()]).tag(config=True)
+        [TransformDynamicVariablesToCalls(), Py5CodeValidation()]).tag(config=True)
 
     banner2 = Unicode("Activating py5 imported mode").tag(config=True)
 
@@ -75,7 +75,7 @@ class Py5Kernel(IPythonKernel):
                        *_PY5_HELP_LINKS]).tag(config=True)
 
     implementation = 'py5'
-    implementation_version = '0.6.0-alpha.2'
+    implementation_version = '0.7.0a0'
 
 
 class Py5App(IPKernelApp):

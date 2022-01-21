@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -53,7 +53,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     """Main graphics and rendering context, as well as the base ``API`` implementation
     for processing "core".
 
-    Underlying Java class: PGraphics.PGraphics
+    Underlying Processing class: PGraphics.PGraphics
 
     Notes
     -----
@@ -291,7 +291,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def _get_height(self) -> int:
         """System variable that stores the height of the Py5Graphics drawing surface.
 
-        Underlying Java field: PGraphics.height
+        Underlying Processing field: PGraphics.height
 
         Notes
         -----
@@ -305,12 +305,27 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         see example code for how it can be used, see ``height``.
         """
         return self._instance.height
-    height: int = property(fget=_get_height)
+    height: int = property(
+        fget=_get_height,
+        doc="""System variable that stores the height of the Py5Graphics drawing surface.
+
+        Underlying Processing field: PGraphics.height
+
+        Notes
+        -----
+
+        System variable that stores the height of the Py5Graphics drawing surface. This
+        value is set when creating the ``Py5Graphics`` object with the
+        ``create_graphics()`` method. For example, ``create_graphics(320, 240)`` sets
+        the ``height`` variable to the value 240.
+
+        This field is the same as ``height`` but linked to a ``Py5Graphics`` object. To
+        see example code for how it can be used, see ``height``.""")
 
     def _get_pixel_density(self) -> int:
         """Get the pixel density of the Py5Graphics drawing surface.
 
-        Underlying Java field: PGraphics.pixelDensity
+        Underlying Processing field: PGraphics.pixelDensity
 
         Notes
         -----
@@ -326,12 +341,29 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         information.
         """
         return self._instance.pixelDensity
-    pixel_density: int = property(fget=_get_pixel_density)
+    pixel_density: int = property(
+        fget=_get_pixel_density,
+        doc="""Get the pixel density of the Py5Graphics drawing surface.
+
+        Underlying Processing field: PGraphics.pixelDensity
+
+        Notes
+        -----
+
+        Get the pixel density of the Py5Graphics drawing surface. By default this is 1
+        but it can be changed by calling ``pixel_density()`` in ``settings()``.
+
+        When the pixel density has been set to more than 1, it changes all of the pixel
+        operations including the way ``Py5Graphics.get()``, ``Py5Graphics.blend()``,
+        ``Py5Graphics.copy()``, ``Py5Graphics.update_pixels()``, and
+        ``Py5Graphics.update_np_pixels()`` all work. See the reference for
+        ``Py5Graphics.pixel_width`` and ``Py5Graphics.pixel_height`` for more
+        information.""")
 
     def _get_pixel_height(self) -> int:
         """Height of the Py5Graphics drawing surface in pixels.
 
-        Underlying Java field: PGraphics.pixelHeight
+        Underlying Processing field: PGraphics.pixelHeight
 
         Notes
         -----
@@ -353,12 +385,35 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         object. To see example code for how it can be used, see ``pixel_height``.
         """
         return self._instance.pixelHeight
-    pixel_height: int = property(fget=_get_pixel_height)
+    pixel_height: int = property(
+        fget=_get_pixel_height,
+        doc="""Height of the Py5Graphics drawing surface in pixels.
+
+        Underlying Processing field: PGraphics.pixelHeight
+
+        Notes
+        -----
+
+        Height of the Py5Graphics drawing surface in pixels. When ``pixel_density(2)``
+        was used in ``settings()`` to make use of a high resolution display (called a
+        Retina display on OSX or high-dpi on Windows and Linux), the width and height of
+        the Py5Graphics drawing surface does not change, but the number of pixels is
+        doubled. As a result, all operations that use pixels (like
+        ``Py5Graphics.load_pixels()``, ``Py5Graphics.get()``, etc.) happen in this
+        doubled space. As a convenience, the variables ``Py5Graphics.pixel_width`` and
+        ``pixel_height`` hold the actual width and height of the drawing surface in
+        pixels. This is useful for any Py5Graphics objects that use the
+        ``Py5Graphics.pixels[]`` or ``Py5Graphics.np_pixels[]`` arrays, for instance,
+        because the number of elements in each array will be
+        ``pixel_width*pixel_height``, not ``width*height``.
+
+        This field is the same as ``pixel_height`` but linked to a ``Py5Graphics``
+        object. To see example code for how it can be used, see ``pixel_height``.""")
 
     def _get_pixel_width(self) -> int:
         """Width of the Py5Graphics drawing surface in pixels.
 
-        Underlying Java field: PGraphics.pixelWidth
+        Underlying Processing field: PGraphics.pixelWidth
 
         Notes
         -----
@@ -380,12 +435,35 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         object. To see example code for how it can be used, see ``pixel_width``.
         """
         return self._instance.pixelWidth
-    pixel_width: int = property(fget=_get_pixel_width)
+    pixel_width: int = property(
+        fget=_get_pixel_width,
+        doc="""Width of the Py5Graphics drawing surface in pixels.
+
+        Underlying Processing field: PGraphics.pixelWidth
+
+        Notes
+        -----
+
+        Width of the Py5Graphics drawing surface in pixels. When ``pixel_density(2)``
+        was used in ``settings()`` to make use of a high resolution display (called a
+        Retina display on OSX or high-dpi on Windows and Linux), the width and height of
+        the Py5Graphics drawing surface does not change, but the number of pixels is
+        doubled. As a result, all operations that use pixels (like
+        ``Py5Graphics.load_pixels()``, ``Py5Graphics.get()``, etc.) happen in this
+        doubled space. As a convenience, the variables ``pixel_width`` and
+        ``Py5Graphics.pixel_height`` hold the actual width and height of the drawing
+        surface in pixels. This is useful for any Py5Graphics objects that use the
+        ``Py5Graphics.pixels[]`` or ``Py5Graphics.np_pixels[]`` arrays, for instance,
+        because the number of elements in each array will be
+        ``pixel_width*pixel_height``, not ``width*height``.
+
+        This field is the same as ``pixel_width`` but linked to a ``Py5Graphics``
+        object. To see example code for how it can be used, see ``pixel_width``.""")
 
     def _get_width(self) -> int:
         """System variable that stores the width of the Py5Graphics drawing surface.
 
-        Underlying Java field: PGraphics.width
+        Underlying Processing field: PGraphics.width
 
         Notes
         -----
@@ -399,14 +477,29 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         see example code for how it can be used, see ``width``.
         """
         return self._instance.width
-    width: int = property(fget=_get_width)
+    width: int = property(
+        fget=_get_width,
+        doc="""System variable that stores the width of the Py5Graphics drawing surface.
+
+        Underlying Processing field: PGraphics.width
+
+        Notes
+        -----
+
+        System variable that stores the width of the Py5Graphics drawing surface. This
+        value is set when creating the ``Py5Graphics`` object with the
+        ``create_graphics()`` method. For example, ``create_graphics(320, 240)`` sets
+        the ``width`` variable to the value 320.
+
+        This field is the same as ``width`` but linked to a ``Py5Graphics`` object. To
+        see example code for how it can be used, see ``width``.""")
 
     @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
         """Extracts the alpha value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
 
-        Underlying Java method: PGraphics.alpha
+        Underlying Processing method: PGraphics.alpha
 
         Parameters
         ----------
@@ -436,7 +529,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ambient(self, gray: float, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PGraphics.ambient
+        Underlying Processing method: PGraphics.ambient
 
         Methods
         -------
@@ -485,7 +578,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ambient(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PGraphics.ambient
+        Underlying Processing method: PGraphics.ambient
 
         Methods
         -------
@@ -534,7 +627,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ambient(self, rgb: int, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PGraphics.ambient
+        Underlying Processing method: PGraphics.ambient
 
         Methods
         -------
@@ -583,7 +676,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ambient(self, *args):
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PGraphics.ambient
+        Underlying Processing method: PGraphics.ambient
 
         Methods
         -------
@@ -632,7 +725,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ambient_light(self, v1: float, v2: float, v3: float, /) -> None:
         """Adds an ambient light.
 
-        Underlying Java method: PGraphics.ambientLight
+        Underlying Processing method: PGraphics.ambientLight
 
         Methods
         -------
@@ -682,7 +775,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                       x: float, y: float, z: float, /) -> None:
         """Adds an ambient light.
 
-        Underlying Java method: PGraphics.ambientLight
+        Underlying Processing method: PGraphics.ambientLight
 
         Methods
         -------
@@ -730,7 +823,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ambient_light(self, *args):
         """Adds an ambient light.
 
-        Underlying Java method: PGraphics.ambientLight
+        Underlying Processing method: PGraphics.ambientLight
 
         Methods
         -------
@@ -780,7 +873,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                      n10: float, n11: float, n12: float, /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PGraphics.applyMatrix
+        Underlying Processing method: PGraphics.applyMatrix
 
         Methods
         -------
@@ -884,7 +977,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PGraphics.applyMatrix
+        Underlying Processing method: PGraphics.applyMatrix
 
         Methods
         -------
@@ -970,7 +1063,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PGraphics.applyMatrix
+        Underlying Processing method: PGraphics.applyMatrix
 
         Methods
         -------
@@ -1056,7 +1149,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PGraphics.applyMatrix
+        Underlying Processing method: PGraphics.applyMatrix
 
         Methods
         -------
@@ -1141,7 +1234,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def apply_matrix(self, *args):
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PGraphics.applyMatrix
+        Underlying Processing method: PGraphics.applyMatrix
 
         Methods
         -------
@@ -1228,7 +1321,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             start: float, stop: float, /) -> None:
         """Draws an arc to the screen.
 
-        Underlying Java method: PGraphics.arc
+        Underlying Processing method: PGraphics.arc
 
         Methods
         -------
@@ -1292,7 +1385,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             start: float, stop: float, mode: int, /) -> None:
         """Draws an arc to the screen.
 
-        Underlying Java method: PGraphics.arc
+        Underlying Processing method: PGraphics.arc
 
         Methods
         -------
@@ -1354,7 +1447,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def arc(self, *args):
         """Draws an arc to the screen.
 
-        Underlying Java method: PGraphics.arc
+        Underlying Processing method: PGraphics.arc
 
         Methods
         -------
@@ -1418,7 +1511,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1479,7 +1572,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1540,7 +1633,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1602,7 +1695,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1663,7 +1756,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1724,7 +1817,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1785,7 +1878,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1846,7 +1939,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``background()`` function sets the color used for the background of the
         ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.background
+        Underlying Processing method: PGraphics.background
 
         Methods
         -------
@@ -1907,7 +2000,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``begin_camera()`` and ``Py5Graphics.end_camera()`` functions enable
         advanced customization of the camera space.
 
-        Underlying Java method: PGraphics.beginCamera
+        Underlying Processing method: PGraphics.beginCamera
 
         Notes
         -----
@@ -1944,7 +2037,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Use the ``begin_contour()`` and ``Py5Graphics.end_contour()`` methods to create
         negative shapes within shapes such as the center of the letter 'O'.
 
-        Underlying Java method: PGraphics.beginContour
+        Underlying Processing method: PGraphics.beginContour
 
         Notes
         -----
@@ -1976,7 +2069,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def begin_draw(self) -> None:
         """Sets the default properties for a ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.beginDraw
+        Underlying Processing method: PGraphics.beginDraw
 
         Notes
         -----
@@ -1996,7 +2089,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """To create vectors from 3D data, use the ``begin_raw()`` and
         ``Py5Graphics.end_raw()`` commands.
 
-        Underlying Java method: PGraphics.beginRaw
+        Underlying Processing method: PGraphics.beginRaw
 
         Parameters
         ----------
@@ -2042,7 +2135,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Using the ``begin_shape()`` and ``Py5Graphics.end_shape()`` functions allow
         creating more complex forms.
 
-        Underlying Java method: PGraphics.beginShape
+        Underlying Processing method: PGraphics.beginShape
 
         Methods
         -------
@@ -2102,7 +2195,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Using the ``begin_shape()`` and ``Py5Graphics.end_shape()`` functions allow
         creating more complex forms.
 
-        Underlying Java method: PGraphics.beginShape
+        Underlying Processing method: PGraphics.beginShape
 
         Methods
         -------
@@ -2162,7 +2255,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Using the ``begin_shape()`` and ``Py5Graphics.end_shape()`` functions allow
         creating more complex forms.
 
-        Underlying Java method: PGraphics.beginShape
+        Underlying Processing method: PGraphics.beginShape
 
         Methods
         -------
@@ -2221,7 +2314,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def begin_closed_shape(self) -> None:
         """This method is used to start a custom closed shape.
 
-        Underlying Java method: PGraphics.beginShape
+        Underlying Processing method: PGraphics.beginShape
 
         Methods
         -------
@@ -2259,7 +2352,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def begin_closed_shape(self, kind: int, /) -> None:
         """This method is used to start a custom closed shape.
 
-        Underlying Java method: PGraphics.beginShape
+        Underlying Processing method: PGraphics.beginShape
 
         Methods
         -------
@@ -2297,7 +2390,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def begin_closed_shape(self, *args):
         """This method is used to start a custom closed shape.
 
-        Underlying Java method: PGraphics.beginShape
+        Underlying Processing method: PGraphics.beginShape
 
         Methods
         -------
@@ -2336,7 +2429,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                x3: float, y3: float, x4: float, y4: float, /) -> None:
         """Draws a Bezier curve on the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.bezier
+        Underlying Processing method: PGraphics.bezier
 
         Methods
         -------
@@ -2405,7 +2498,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Draws a Bezier curve on the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.bezier
+        Underlying Processing method: PGraphics.bezier
 
         Methods
         -------
@@ -2472,7 +2565,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def bezier(self, *args):
         """Draws a Bezier curve on the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.bezier
+        Underlying Processing method: PGraphics.bezier
 
         Methods
         -------
@@ -2539,7 +2632,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def bezier_detail(self, detail: int, /) -> None:
         """Sets the resolution at which Beziers display.
 
-        Underlying Java method: PGraphics.bezierDetail
+        Underlying Processing method: PGraphics.bezierDetail
 
         Parameters
         ----------
@@ -2563,7 +2656,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                      d: float, t: float, /) -> float:
         """Evaluates the Bezier at point t for points a, b, c, d.
 
-        Underlying Java method: PGraphics.bezierPoint
+        Underlying Processing method: PGraphics.bezierPoint
 
         Parameters
         ----------
@@ -2600,7 +2693,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                        d: float, t: float, /) -> float:
         """Calculates the tangent of a point on a Bezier curve.
 
-        Underlying Java method: PGraphics.bezierTangent
+        Underlying Processing method: PGraphics.bezierTangent
 
         Parameters
         ----------
@@ -2636,7 +2729,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                       y3: float, x4: float, y4: float, /) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
-        Underlying Java method: PGraphics.bezierVertex
+        Underlying Processing method: PGraphics.bezierVertex
 
         Methods
         -------
@@ -2699,7 +2792,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                       y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
-        Underlying Java method: PGraphics.bezierVertex
+        Underlying Processing method: PGraphics.bezierVertex
 
         Methods
         -------
@@ -2760,7 +2853,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def bezier_vertex(self, *args):
         """Specifies vertex coordinates for Bezier curves.
 
-        Underlying Java method: PGraphics.bezierVertex
+        Underlying Processing method: PGraphics.bezierVertex
 
         Methods
         -------
@@ -2824,7 +2917,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
-        Underlying Java method: PGraphics.blend
+        Underlying Processing method: PGraphics.blend
 
         Methods
         -------
@@ -2912,7 +3005,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
-        Underlying Java method: PGraphics.blend
+        Underlying Processing method: PGraphics.blend
 
         Methods
         -------
@@ -2998,7 +3091,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
-        Underlying Java method: PGraphics.blend
+        Underlying Processing method: PGraphics.blend
 
         Methods
         -------
@@ -3084,7 +3177,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Blends the pixels in the Py5Graphics drawing surface according to a defined
         mode.
 
-        Underlying Java method: PGraphics.blendMode
+        Underlying Processing method: PGraphics.blendMode
 
         Parameters
         ----------
@@ -3131,7 +3224,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Extracts the blue value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
 
-        Underlying Java method: PGraphics.blue
+        Underlying Processing method: PGraphics.blue
 
         Parameters
         ----------
@@ -3161,7 +3254,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def box(self, size: float, /) -> None:
         """A box is an extruded rectangle.
 
-        Underlying Java method: PGraphics.box
+        Underlying Processing method: PGraphics.box
 
         Methods
         -------
@@ -3201,7 +3294,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def box(self, w: float, h: float, d: float, /) -> None:
         """A box is an extruded rectangle.
 
-        Underlying Java method: PGraphics.box
+        Underlying Processing method: PGraphics.box
 
         Methods
         -------
@@ -3240,7 +3333,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def box(self, *args):
         """A box is an extruded rectangle.
 
-        Underlying Java method: PGraphics.box
+        Underlying Processing method: PGraphics.box
 
         Methods
         -------
@@ -3280,7 +3373,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def brightness(self, rgb: int, /) -> float:
         """Extracts the brightness value from a color.
 
-        Underlying Java method: PGraphics.brightness
+        Underlying Processing method: PGraphics.brightness
 
         Parameters
         ----------
@@ -3303,7 +3396,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
-        Underlying Java method: PGraphics.camera
+        Underlying Processing method: PGraphics.camera
 
         Methods
         -------
@@ -3377,7 +3470,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
-        Underlying Java method: PGraphics.camera
+        Underlying Processing method: PGraphics.camera
 
         Methods
         -------
@@ -3439,7 +3532,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
-        Underlying Java method: PGraphics.camera
+        Underlying Processing method: PGraphics.camera
 
         Methods
         -------
@@ -3500,7 +3593,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def circle(self, x: float, y: float, extent: float, /) -> None:
         """Draws a circle to the screen.
 
-        Underlying Java method: PGraphics.circle
+        Underlying Processing method: PGraphics.circle
 
         Parameters
         ----------
@@ -3529,7 +3622,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def clear(self) -> None:
         """Clears the pixels within a buffer.
 
-        Underlying Java method: PGraphics.clear
+        Underlying Processing method: PGraphics.clear
 
         Notes
         -----
@@ -3544,7 +3637,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def clip(self, a: float, b: float, c: float, d: float, /) -> None:
         """Limits the rendering to the boundaries of a rectangle defined by the parameters.
 
-        Underlying Java method: PGraphics.clip
+        Underlying Processing method: PGraphics.clip
 
         Parameters
         ----------
@@ -3578,7 +3671,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -3661,7 +3754,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -3744,7 +3837,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -3827,7 +3920,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -3910,7 +4003,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -3993,7 +4086,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -4076,7 +4169,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -4159,7 +4252,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -4242,7 +4335,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -4325,7 +4418,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PGraphics.color
+        Underlying Processing method: PGraphics.color
 
         Methods
         -------
@@ -4407,7 +4500,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def color_mode(self, mode: int, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PGraphics.colorMode
+        Underlying Processing method: PGraphics.colorMode
 
         Methods
         -------
@@ -4469,7 +4562,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def color_mode(self, mode: int, max: float, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PGraphics.colorMode
+        Underlying Processing method: PGraphics.colorMode
 
         Methods
         -------
@@ -4532,7 +4625,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                    max2: float, max3: float, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PGraphics.colorMode
+        Underlying Processing method: PGraphics.colorMode
 
         Methods
         -------
@@ -4595,7 +4688,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                    max3: float, max_a: float, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PGraphics.colorMode
+        Underlying Processing method: PGraphics.colorMode
 
         Methods
         -------
@@ -4656,7 +4749,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def color_mode(self, *args):
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PGraphics.colorMode
+        Underlying Processing method: PGraphics.colorMode
 
         Methods
         -------
@@ -4720,7 +4813,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         canvas and copies a region of pixels from an image used as the ``src_img``
         parameter into the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.copy
+        Underlying Processing method: PGraphics.copy
 
         Methods
         -------
@@ -4750,7 +4843,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -4785,7 +4878,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         canvas and copies a region of pixels from an image used as the ``src_img``
         parameter into the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.copy
+        Underlying Processing method: PGraphics.copy
 
         Methods
         -------
@@ -4815,7 +4908,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -4850,7 +4943,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         canvas and copies a region of pixels from an image used as the ``src_img``
         parameter into the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.copy
+        Underlying Processing method: PGraphics.copy
 
         Methods
         -------
@@ -4880,7 +4973,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -4914,7 +5007,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         canvas and copies a region of pixels from an image used as the ``src_img``
         parameter into the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.copy
+        Underlying Processing method: PGraphics.copy
 
         Methods
         -------
@@ -4944,7 +5037,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -4976,7 +5069,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def create_shape(self) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PGraphics.createShape
+        Underlying Processing method: PGraphics.createShape
 
         Methods
         -------
@@ -5036,7 +5129,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def create_shape(self, type: int, /) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PGraphics.createShape
+        Underlying Processing method: PGraphics.createShape
 
         Methods
         -------
@@ -5096,7 +5189,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def create_shape(self, kind: int, /, *p: float) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PGraphics.createShape
+        Underlying Processing method: PGraphics.createShape
 
         Methods
         -------
@@ -5156,7 +5249,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def create_shape(self, *args):
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PGraphics.createShape
+        Underlying Processing method: PGraphics.createShape
 
         Methods
         -------
@@ -5217,7 +5310,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               x3: float, y3: float, x4: float, y4: float, /) -> None:
         """Draws a curved line on the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.curve
+        Underlying Processing method: PGraphics.curve
 
         Methods
         -------
@@ -5289,7 +5382,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Draws a curved line on the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.curve
+        Underlying Processing method: PGraphics.curve
 
         Methods
         -------
@@ -5359,7 +5452,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def curve(self, *args):
         """Draws a curved line on the ``Py5Graphics`` object.
 
-        Underlying Java method: PGraphics.curve
+        Underlying Processing method: PGraphics.curve
 
         Methods
         -------
@@ -5429,7 +5522,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def curve_detail(self, detail: int, /) -> None:
         """Sets the resolution at which curves display.
 
-        Underlying Java method: PGraphics.curveDetail
+        Underlying Processing method: PGraphics.curveDetail
 
         Parameters
         ----------
@@ -5453,7 +5546,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                     d: float, t: float, /) -> float:
         """Evaluates the curve at point ``t`` for points ``a``, ``b``, ``c``, ``d``.
 
-        Underlying Java method: PGraphics.curvePoint
+        Underlying Processing method: PGraphics.curvePoint
 
         Parameters
         ----------
@@ -5492,7 +5585,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                       d: float, t: float, /) -> float:
         """Calculates the tangent of a point on a curve.
 
-        Underlying Java method: PGraphics.curveTangent
+        Underlying Processing method: PGraphics.curveTangent
 
         Parameters
         ----------
@@ -5527,7 +5620,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Modifies the quality of forms created with ``Py5Graphics.curve()`` and
         ``Py5Graphics.curve_vertex()``.
 
-        Underlying Java method: PGraphics.curveTightness
+        Underlying Processing method: PGraphics.curveTightness
 
         Parameters
         ----------
@@ -5555,7 +5648,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def curve_vertex(self, x: float, y: float, /) -> None:
         """Specifies vertex coordinates for curves.
 
-        Underlying Java method: PGraphics.curveVertex
+        Underlying Processing method: PGraphics.curveVertex
 
         Methods
         -------
@@ -5599,7 +5692,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def curve_vertex(self, x: float, y: float, z: float, /) -> None:
         """Specifies vertex coordinates for curves.
 
-        Underlying Java method: PGraphics.curveVertex
+        Underlying Processing method: PGraphics.curveVertex
 
         Methods
         -------
@@ -5642,7 +5735,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def curve_vertex(self, *args):
         """Specifies vertex coordinates for curves.
 
-        Underlying Java method: PGraphics.curveVertex
+        Underlying Processing method: PGraphics.curveVertex
 
         Methods
         -------
@@ -5686,7 +5779,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                           nx: float, ny: float, nz: float, /) -> None:
         """Adds a directional light.
 
-        Underlying Java method: PGraphics.directionalLight
+        Underlying Processing method: PGraphics.directionalLight
 
         Parameters
         ----------
@@ -5732,7 +5825,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ellipse(self, a: float, b: float, c: float, d: float, /) -> None:
         """Draws an ellipse (oval) to the screen.
 
-        Underlying Java method: PGraphics.ellipse
+        Underlying Processing method: PGraphics.ellipse
 
         Parameters
         ----------
@@ -5766,7 +5859,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Modifies the location from which ellipses are drawn by changing the way in which
         parameters given to ``Py5Graphics.ellipse()`` are intepreted.
 
-        Underlying Java method: PGraphics.ellipseMode
+        Underlying Processing method: PGraphics.ellipseMode
 
         Parameters
         ----------
@@ -5810,7 +5903,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PGraphics.emissive
+        Underlying Processing method: PGraphics.emissive
 
         Methods
         -------
@@ -5857,7 +5950,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PGraphics.emissive
+        Underlying Processing method: PGraphics.emissive
 
         Methods
         -------
@@ -5904,7 +5997,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PGraphics.emissive
+        Underlying Processing method: PGraphics.emissive
 
         Methods
         -------
@@ -5951,7 +6044,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PGraphics.emissive
+        Underlying Processing method: PGraphics.emissive
 
         Methods
         -------
@@ -5997,7 +6090,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``Py5Graphics.begin_camera()`` and ``end_camera()`` methods enable advanced
         customization of the camera space.
 
-        Underlying Java method: PGraphics.endCamera
+        Underlying Processing method: PGraphics.endCamera
 
         Notes
         -----
@@ -6015,7 +6108,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Use the ``Py5Graphics.begin_contour()`` and ``end_contour()`` methods to create
         negative shapes within shapes such as the center of the letter 'O'.
 
-        Underlying Java method: PGraphics.endContour
+        Underlying Processing method: PGraphics.endContour
 
         Notes
         -----
@@ -6044,7 +6137,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Finalizes the rendering of a ``Py5Graphics`` object so that it can be shown on
         screen.
 
-        Underlying Java method: PGraphics.endDraw
+        Underlying Processing method: PGraphics.endDraw
 
         Notes
         -----
@@ -6057,7 +6150,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def end_raw(self) -> None:
         """Complement to ``Py5Graphics.begin_raw()``; they must always be used together.
 
-        Underlying Java method: PGraphics.endRaw
+        Underlying Processing method: PGraphics.endRaw
 
         Notes
         -----
@@ -6075,7 +6168,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``end_shape()`` function is the companion to ``Py5Graphics.begin_shape()``
         and may only be called after ``Py5Graphics.begin_shape()``.
 
-        Underlying Java method: PGraphics.endShape
+        Underlying Processing method: PGraphics.endShape
 
         Methods
         -------
@@ -6111,7 +6204,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``end_shape()`` function is the companion to ``Py5Graphics.begin_shape()``
         and may only be called after ``Py5Graphics.begin_shape()``.
 
-        Underlying Java method: PGraphics.endShape
+        Underlying Processing method: PGraphics.endShape
 
         Methods
         -------
@@ -6146,7 +6239,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``end_shape()`` function is the companion to ``Py5Graphics.begin_shape()``
         and may only be called after ``Py5Graphics.begin_shape()``.
 
-        Underlying Java method: PGraphics.endShape
+        Underlying Processing method: PGraphics.endShape
 
         Methods
         -------
@@ -6181,7 +6274,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, gray: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6250,7 +6343,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6319,7 +6412,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6388,7 +6481,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6457,7 +6550,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, rgb: int, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6526,7 +6619,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6595,7 +6688,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def fill(self, *args):
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PGraphics.fill
+        Underlying Processing method: PGraphics.fill
 
         Methods
         -------
@@ -6665,7 +6758,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Filters the Py5Graphics drawing surface using a preset filter or with a custom
         shader.
 
-        Underlying Java method: PGraphics.filter
+        Underlying Processing method: PGraphics.filter
 
         Methods
         -------
@@ -6723,7 +6816,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Filters the Py5Graphics drawing surface using a preset filter or with a custom
         shader.
 
-        Underlying Java method: PGraphics.filter
+        Underlying Processing method: PGraphics.filter
 
         Methods
         -------
@@ -6781,7 +6874,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Filters the Py5Graphics drawing surface using a preset filter or with a custom
         shader.
 
-        Underlying Java method: PGraphics.filter
+        Underlying Processing method: PGraphics.filter
 
         Methods
         -------
@@ -6838,7 +6931,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Filters the Py5Graphics drawing surface using a preset filter or with a custom
         shader.
 
-        Underlying Java method: PGraphics.filter
+        Underlying Processing method: PGraphics.filter
 
         Methods
         -------
@@ -6895,7 +6988,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                 top: float, near: float, far: float, /) -> None:
         """Sets a perspective matrix as defined by the parameters.
 
-        Underlying Java method: PGraphics.frustum
+        Underlying Processing method: PGraphics.frustum
 
         Parameters
         ----------
@@ -6951,7 +7044,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Reads the color of any pixel or grabs a section of an ``Py5Graphics`` object
         canvas.
 
-        Underlying Java method: PGraphics.get
+        Underlying Processing method: PGraphics.get
 
         Methods
         -------
@@ -7015,7 +7108,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Reads the color of any pixel or grabs a section of an ``Py5Graphics`` object
         canvas.
 
-        Underlying Java method: PGraphics.get
+        Underlying Processing method: PGraphics.get
 
         Methods
         -------
@@ -7079,7 +7172,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Reads the color of any pixel or grabs a section of an ``Py5Graphics`` object
         canvas.
 
-        Underlying Java method: PGraphics.get
+        Underlying Processing method: PGraphics.get
 
         Methods
         -------
@@ -7143,7 +7236,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Reads the color of any pixel or grabs a section of an ``Py5Graphics`` object
         canvas.
 
-        Underlying Java method: PGraphics.get
+        Underlying Processing method: PGraphics.get
 
         Methods
         -------
@@ -7206,7 +7299,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def get_matrix(self) -> NDArray[(Any, Any), Float]:
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PGraphics.getMatrix
+        Underlying Processing method: PGraphics.getMatrix
 
         Methods
         -------
@@ -7242,7 +7335,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             2, 3), Float], /) -> NDArray[(2, 3), Float]:
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PGraphics.getMatrix
+        Underlying Processing method: PGraphics.getMatrix
 
         Methods
         -------
@@ -7278,7 +7371,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             4, 4), Float], /) -> NDArray[(4, 4), Float]:
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PGraphics.getMatrix
+        Underlying Processing method: PGraphics.getMatrix
 
         Methods
         -------
@@ -7313,7 +7406,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def get_matrix(self, *args):
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PGraphics.getMatrix
+        Underlying Processing method: PGraphics.getMatrix
 
         Methods
         -------
@@ -7349,7 +7442,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Extracts the green value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
 
-        Underlying Java method: PGraphics.green
+        Underlying Processing method: PGraphics.green
 
         Parameters
         ----------
@@ -7379,7 +7472,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """This function is used to enable or disable special features that control how
         graphics are drawn.
 
-        Underlying Java method: PGraphics.hint
+        Underlying Processing method: PGraphics.hint
 
         Parameters
         ----------
@@ -7469,7 +7562,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def hue(self, rgb: int, /) -> float:
         """Extracts the hue value from a color.
 
-        Underlying Java method: PGraphics.hue
+        Underlying Processing method: PGraphics.hue
 
         Parameters
         ----------
@@ -7491,7 +7584,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def image(self, img: Py5Image, a: float, b: float, /) -> None:
         """The ``image()`` function draws an image to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.image
+        Underlying Processing method: PGraphics.image
 
         Methods
         -------
@@ -7562,7 +7655,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               c: float, d: float, /) -> None:
         """The ``image()`` function draws an image to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.image
+        Underlying Processing method: PGraphics.image
 
         Methods
         -------
@@ -7633,7 +7726,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               d: float, u1: int, v1: int, u2: int, v2: int, /) -> None:
         """The ``image()`` function draws an image to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.image
+        Underlying Processing method: PGraphics.image
 
         Methods
         -------
@@ -7702,7 +7795,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def image(self, *args):
         """The ``image()`` function draws an image to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.image
+        Underlying Processing method: PGraphics.image
 
         Methods
         -------
@@ -7772,7 +7865,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Modifies the location from which images are drawn by changing the way in which
         parameters given to ``Py5Graphics.image()`` are intepreted.
 
-        Underlying Java method: PGraphics.imageMode
+        Underlying Processing method: PGraphics.imageMode
 
         Parameters
         ----------
@@ -7811,7 +7904,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def lerp_color(self, c1: int, c2: int, amt: float, /) -> int:
         """Calculates a color between two colors at a specific increment.
 
-        Underlying Java method: PGraphics.lerpColor
+        Underlying Processing method: PGraphics.lerpColor
 
         Methods
         -------
@@ -7857,7 +7950,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def lerp_color(self, c1: int, c2: int, amt: float, mode: int, /) -> int:
         """Calculates a color between two colors at a specific increment.
 
-        Underlying Java method: PGraphics.lerpColor
+        Underlying Processing method: PGraphics.lerpColor
 
         Methods
         -------
@@ -7903,7 +7996,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
 
-        Underlying Java method: PGraphics.lerpColor
+        Underlying Processing method: PGraphics.lerpColor
 
         Methods
         -------
@@ -7949,7 +8042,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                       quadratic: float, /) -> None:
         """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
-        Underlying Java method: PGraphics.lightFalloff
+        Underlying Processing method: PGraphics.lightFalloff
 
         Parameters
         ----------
@@ -7987,7 +8080,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def light_specular(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the specular color for lights.
 
-        Underlying Java method: PGraphics.lightSpecular
+        Underlying Processing method: PGraphics.lightSpecular
 
         Parameters
         ----------
@@ -8020,7 +8113,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def lights(self) -> None:
         """Sets the default ambient light, directional light, falloff, and specular values.
 
-        Underlying Java method: PGraphics.lights
+        Underlying Processing method: PGraphics.lights
 
         Notes
         -----
@@ -8040,7 +8133,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Draws a line (a direct path between two points) to the Py5Graphics drawing
         surface.
 
-        Underlying Java method: PGraphics.line
+        Underlying Processing method: PGraphics.line
 
         Methods
         -------
@@ -8094,7 +8187,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Draws a line (a direct path between two points) to the Py5Graphics drawing
         surface.
 
-        Underlying Java method: PGraphics.line
+        Underlying Processing method: PGraphics.line
 
         Methods
         -------
@@ -8146,7 +8239,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Draws a line (a direct path between two points) to the Py5Graphics drawing
         surface.
 
-        Underlying Java method: PGraphics.line
+        Underlying Processing method: PGraphics.line
 
         Methods
         -------
@@ -8198,7 +8291,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Loads the pixel data of the current Py5Graphics drawing surface into the
         ``Py5Graphics.pixels[]`` array.
 
-        Underlying Java method: PGraphics.loadPixels
+        Underlying Processing method: PGraphics.loadPixels
 
         Notes
         -----
@@ -8218,7 +8311,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def load_shader(self, frag_filename: str, /) -> Py5Shader:
         """Loads a shader into a ``Py5Shader`` object.
 
-        Underlying Java method: PGraphics.loadShader
+        Underlying Processing method: PGraphics.loadShader
 
         Methods
         -------
@@ -8240,7 +8333,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        Loads a shader into a ``Py5Shader`` object. The shader file must be located in
         the Sketch's "data" directory to load correctly. Shaders are compatible with the
         ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -8264,7 +8357,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                     vert_filename: str, /) -> Py5Shader:
         """Loads a shader into a ``Py5Shader`` object.
 
-        Underlying Java method: PGraphics.loadShader
+        Underlying Processing method: PGraphics.loadShader
 
         Methods
         -------
@@ -8286,7 +8379,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        Loads a shader into a ``Py5Shader`` object. The shader file must be located in
         the Sketch's "data" directory to load correctly. Shaders are compatible with the
         ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -8309,7 +8402,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def load_shader(self, *args):
         """Loads a shader into a ``Py5Shader`` object.
 
-        Underlying Java method: PGraphics.loadShader
+        Underlying Processing method: PGraphics.loadShader
 
         Methods
         -------
@@ -8331,7 +8424,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        Loads a shader into a ``Py5Shader`` object. The shader file must be located in
         the Sketch's "data" directory to load correctly. Shaders are compatible with the
         ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -8354,7 +8447,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def load_shape(self, filename: str, /) -> Py5Shape:
         """Loads geometry into a variable of type ``Py5Shape``.
 
-        Underlying Java method: PGraphics.loadShape
+        Underlying Processing method: PGraphics.loadShape
 
         Methods
         -------
@@ -8401,7 +8494,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def load_shape(self, filename: str, options: str, /) -> Py5Shape:
         """Loads geometry into a variable of type ``Py5Shape``.
 
-        Underlying Java method: PGraphics.loadShape
+        Underlying Processing method: PGraphics.loadShape
 
         Methods
         -------
@@ -8448,7 +8541,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def load_shape(self, *args):
         """Loads geometry into a variable of type ``Py5Shape``.
 
-        Underlying Java method: PGraphics.loadShape
+        Underlying Processing method: PGraphics.loadShape
 
         Methods
         -------
@@ -8496,7 +8589,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Masks part of the Py5Graphics drawing surface from displaying by loading an
         image and using it as an alpha channel.
 
-        Underlying Java method: PGraphics.mask
+        Underlying Processing method: PGraphics.mask
 
         Methods
         -------
@@ -8536,7 +8629,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Masks part of the Py5Graphics drawing surface from displaying by loading an
         image and using it as an alpha channel.
 
-        Underlying Java method: PGraphics.mask
+        Underlying Processing method: PGraphics.mask
 
         Methods
         -------
@@ -8575,7 +8668,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Masks part of the Py5Graphics drawing surface from displaying by loading an
         image and using it as an alpha channel.
 
-        Underlying Java method: PGraphics.mask
+        Underlying Processing method: PGraphics.mask
 
         Methods
         -------
@@ -8613,7 +8706,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def model_x(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
-        Underlying Java method: PGraphics.modelX
+        Underlying Processing method: PGraphics.modelX
 
         Parameters
         ----------
@@ -8651,7 +8744,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def model_y(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
-        Underlying Java method: PGraphics.modelY
+        Underlying Processing method: PGraphics.modelY
 
         Parameters
         ----------
@@ -8689,7 +8782,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def model_z(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
-        Underlying Java method: PGraphics.modelZ
+        Underlying Processing method: PGraphics.modelZ
 
         Parameters
         ----------
@@ -8727,7 +8820,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def no_clip(self) -> None:
         """Disables the clipping previously started by the ``Py5Graphics.clip()`` function.
 
-        Underlying Java method: PGraphics.noClip
+        Underlying Processing method: PGraphics.noClip
 
         Notes
         -----
@@ -8742,7 +8835,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def no_fill(self) -> None:
         """Disables filling geometry.
 
-        Underlying Java method: PGraphics.noFill
+        Underlying Processing method: PGraphics.noFill
 
         Notes
         -----
@@ -8758,7 +8851,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def no_lights(self) -> None:
         """Disable all lighting.
 
-        Underlying Java method: PGraphics.noLights
+        Underlying Processing method: PGraphics.noLights
 
         Notes
         -----
@@ -8777,7 +8870,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.
 
-        Underlying Java method: PGraphics.noSmooth
+        Underlying Processing method: PGraphics.noSmooth
 
         Notes
         -----
@@ -8797,7 +8890,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def no_stroke(self) -> None:
         """Disables drawing the stroke (outline).
 
-        Underlying Java method: PGraphics.noStroke
+        Underlying Processing method: PGraphics.noStroke
 
         Notes
         -----
@@ -8814,7 +8907,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Removes the current fill value for displaying images and reverts to displaying
         images with their original hues.
 
-        Underlying Java method: PGraphics.noTint
+        Underlying Processing method: PGraphics.noTint
 
         Notes
         -----
@@ -8830,7 +8923,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def normal(self, nx: float, ny: float, nz: float, /) -> None:
         """Sets the current normal vector.
 
-        Underlying Java method: PGraphics.normal
+        Underlying Processing method: PGraphics.normal
 
         Parameters
         ----------
@@ -8863,7 +8956,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ortho(self) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PGraphics.ortho
+        Underlying Processing method: PGraphics.ortho
 
         Methods
         -------
@@ -8916,7 +9009,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               bottom: float, top: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PGraphics.ortho
+        Underlying Processing method: PGraphics.ortho
 
         Methods
         -------
@@ -8969,7 +9062,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               top: float, near: float, far: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PGraphics.ortho
+        Underlying Processing method: PGraphics.ortho
 
         Methods
         -------
@@ -9020,7 +9113,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def ortho(self, *args):
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PGraphics.ortho
+        Underlying Processing method: PGraphics.ortho
 
         Methods
         -------
@@ -9073,7 +9166,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
-        Underlying Java method: PGraphics.perspective
+        Underlying Processing method: PGraphics.perspective
 
         Methods
         -------
@@ -9122,7 +9215,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
-        Underlying Java method: PGraphics.perspective
+        Underlying Processing method: PGraphics.perspective
 
         Methods
         -------
@@ -9169,7 +9262,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
-        Underlying Java method: PGraphics.perspective
+        Underlying Processing method: PGraphics.perspective
 
         Methods
         -------
@@ -9216,7 +9309,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def point(self, x: float, y: float, /) -> None:
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
-        Underlying Java method: PGraphics.point
+        Underlying Processing method: PGraphics.point
 
         Methods
         -------
@@ -9267,7 +9360,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def point(self, x: float, y: float, z: float, /) -> None:
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
-        Underlying Java method: PGraphics.point
+        Underlying Processing method: PGraphics.point
 
         Methods
         -------
@@ -9317,7 +9410,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def point(self, *args):
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
-        Underlying Java method: PGraphics.point
+        Underlying Processing method: PGraphics.point
 
         Methods
         -------
@@ -9368,7 +9461,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                     x: float, y: float, z: float, /) -> None:
         """Adds a point light.
 
-        Underlying Java method: PGraphics.pointLight
+        Underlying Processing method: PGraphics.pointLight
 
         Parameters
         ----------
@@ -9407,7 +9500,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``pop()`` function restores the previous drawing style settings and
         transformations after ``Py5Graphics.push()`` has changed them.
 
-        Underlying Java method: PGraphics.pop
+        Underlying Processing method: PGraphics.pop
 
         Notes
         -----
@@ -9444,7 +9537,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def pop_matrix(self) -> None:
         """Pops the current transformation matrix off the matrix stack.
 
-        Underlying Java method: PGraphics.popMatrix
+        Underlying Processing method: PGraphics.popMatrix
 
         Notes
         -----
@@ -9467,7 +9560,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ``pop_style()`` restores the prior settings; these functions are always used
         together.
 
-        Underlying Java method: PGraphics.popStyle
+        Underlying Processing method: PGraphics.popStyle
 
         Notes
         -----
@@ -9487,7 +9580,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def print_camera(self) -> None:
         """Prints the current camera matrix to standard output.
 
-        Underlying Java method: PGraphics.printCamera
+        Underlying Processing method: PGraphics.printCamera
 
         Notes
         -----
@@ -9502,7 +9595,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def print_matrix(self) -> None:
         """Prints the current matrix to standard output.
 
-        Underlying Java method: PGraphics.printMatrix
+        Underlying Processing method: PGraphics.printMatrix
 
         Notes
         -----
@@ -9517,7 +9610,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def print_projection(self) -> None:
         """Prints the current projection matrix to standard output.
 
-        Underlying Java method: PGraphics.printProjection
+        Underlying Processing method: PGraphics.printProjection
 
         Notes
         -----
@@ -9535,7 +9628,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``push()`` function saves the current drawing style settings and
         transformations, while ``Py5Graphics.pop()`` restores these settings.
 
-        Underlying Java method: PGraphics.push
+        Underlying Processing method: PGraphics.push
 
         Notes
         -----
@@ -9576,7 +9669,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
-        Underlying Java method: PGraphics.pushMatrix
+        Underlying Processing method: PGraphics.pushMatrix
 
         Notes
         -----
@@ -9602,7 +9695,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """The ``push_style()`` function saves the current style settings and
         ``Py5Graphics.pop_style()`` restores the prior settings.
 
-        Underlying Java method: PGraphics.pushStyle
+        Underlying Processing method: PGraphics.pushStyle
 
         Notes
         -----
@@ -9639,7 +9732,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
              x3: float, y3: float, x4: float, y4: float, /) -> None:
         """A quad is a quadrilateral, a four sided polygon.
 
-        Underlying Java method: PGraphics.quad
+        Underlying Processing method: PGraphics.quad
 
         Parameters
         ----------
@@ -9686,7 +9779,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                          x3: float, y3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
-        Underlying Java method: PGraphics.quadraticVertex
+        Underlying Processing method: PGraphics.quadraticVertex
 
         Methods
         -------
@@ -9741,7 +9834,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                          x3: float, y3: float, z3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
-        Underlying Java method: PGraphics.quadraticVertex
+        Underlying Processing method: PGraphics.quadraticVertex
 
         Methods
         -------
@@ -9794,7 +9887,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def quadratic_vertex(self, *args):
         """Specifies vertex coordinates for quadratic Bezier curves.
 
-        Underlying Java method: PGraphics.quadraticVertex
+        Underlying Processing method: PGraphics.quadraticVertex
 
         Methods
         -------
@@ -9848,7 +9941,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rect(self, a: float, b: float, c: float, d: float, /) -> None:
         """Draws a rectangle to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.rect
+        Underlying Processing method: PGraphics.rect
 
         Methods
         -------
@@ -9916,7 +10009,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
              d: float, r: float, /) -> None:
         """Draws a rectangle to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.rect
+        Underlying Processing method: PGraphics.rect
 
         Methods
         -------
@@ -9984,7 +10077,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
              tl: float, tr: float, br: float, bl: float, /) -> None:
         """Draws a rectangle to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.rect
+        Underlying Processing method: PGraphics.rect
 
         Methods
         -------
@@ -10050,7 +10143,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rect(self, *args):
         """Draws a rectangle to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.rect
+        Underlying Processing method: PGraphics.rect
 
         Methods
         -------
@@ -10117,7 +10210,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Modifies the location from which rectangles are drawn by changing the way in
         which parameters given to ``Py5Graphics.rect()`` are intepreted.
 
-        Underlying Java method: PGraphics.rectMode
+        Underlying Processing method: PGraphics.rectMode
 
         Parameters
         ----------
@@ -10160,7 +10253,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Extracts the red value from a color, scaled to match current
         ``Py5Graphics.color_mode()``.
 
-        Underlying Java method: PGraphics.red
+        Underlying Processing method: PGraphics.red
 
         Parameters
         ----------
@@ -10189,7 +10282,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def reset_matrix(self) -> None:
         """Replaces the current matrix with the identity matrix.
 
-        Underlying Java method: PGraphics.resetMatrix
+        Underlying Processing method: PGraphics.resetMatrix
 
         Notes
         -----
@@ -10206,7 +10299,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def reset_shader(self) -> None:
         """Restores the default shaders.
 
-        Underlying Java method: PGraphics.resetShader
+        Underlying Processing method: PGraphics.resetShader
 
         Methods
         -------
@@ -10237,7 +10330,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def reset_shader(self, kind: int, /) -> None:
         """Restores the default shaders.
 
-        Underlying Java method: PGraphics.resetShader
+        Underlying Processing method: PGraphics.resetShader
 
         Methods
         -------
@@ -10267,7 +10360,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def reset_shader(self, *args):
         """Restores the default shaders.
 
-        Underlying Java method: PGraphics.resetShader
+        Underlying Processing method: PGraphics.resetShader
 
         Methods
         -------
@@ -10298,7 +10391,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rotate(self, angle: float, /) -> None:
         """Rotates the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PGraphics.rotate
+        Underlying Processing method: PGraphics.rotate
 
         Methods
         -------
@@ -10351,7 +10444,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rotate(self, angle: float, x: float, y: float, z: float, /) -> None:
         """Rotates the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PGraphics.rotate
+        Underlying Processing method: PGraphics.rotate
 
         Methods
         -------
@@ -10403,7 +10496,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rotate(self, *args):
         """Rotates the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PGraphics.rotate
+        Underlying Processing method: PGraphics.rotate
 
         Methods
         -------
@@ -10455,7 +10548,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rotate_x(self, angle: float, /) -> None:
         """Rotates around the x-axis the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PGraphics.rotateX
+        Underlying Processing method: PGraphics.rotateX
 
         Parameters
         ----------
@@ -10486,7 +10579,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rotate_y(self, angle: float, /) -> None:
         """Rotates around the y-axis the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PGraphics.rotateY
+        Underlying Processing method: PGraphics.rotateY
 
         Parameters
         ----------
@@ -10517,7 +10610,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def rotate_z(self, angle: float, /) -> None:
         """Rotates around the z-axis the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PGraphics.rotateZ
+        Underlying Processing method: PGraphics.rotateZ
 
         Parameters
         ----------
@@ -10549,7 +10642,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def saturation(self, rgb: int, /) -> float:
         """Extracts the saturation value from a color.
 
-        Underlying Java method: PGraphics.saturation
+        Underlying Processing method: PGraphics.saturation
 
         Parameters
         ----------
@@ -10572,7 +10665,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PGraphics.scale
+        Underlying Processing method: PGraphics.scale
 
         Methods
         -------
@@ -10622,7 +10715,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PGraphics.scale
+        Underlying Processing method: PGraphics.scale
 
         Methods
         -------
@@ -10672,7 +10765,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PGraphics.scale
+        Underlying Processing method: PGraphics.scale
 
         Methods
         -------
@@ -10721,7 +10814,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PGraphics.scale
+        Underlying Processing method: PGraphics.scale
 
         Methods
         -------
@@ -10771,7 +10864,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenX
+        Underlying Processing method: PGraphics.screenX
 
         Methods
         -------
@@ -10809,7 +10902,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenX
+        Underlying Processing method: PGraphics.screenX
 
         Methods
         -------
@@ -10846,7 +10939,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenX
+        Underlying Processing method: PGraphics.screenX
 
         Methods
         -------
@@ -10884,7 +10977,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenY
+        Underlying Processing method: PGraphics.screenY
 
         Methods
         -------
@@ -10922,7 +11015,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenY
+        Underlying Processing method: PGraphics.screenY
 
         Methods
         -------
@@ -10959,7 +11052,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenY
+        Underlying Processing method: PGraphics.screenY
 
         Methods
         -------
@@ -10996,7 +11089,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Takes a three-dimensional X, Y, Z position and returns the Z value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PGraphics.screenZ
+        Underlying Processing method: PGraphics.screenZ
 
         Parameters
         ----------
@@ -11025,7 +11118,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def set_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """Set the current matrix to the one specified through the parameter ``source``.
 
-        Underlying Java method: PGraphics.setMatrix
+        Underlying Processing method: PGraphics.setMatrix
 
         Methods
         -------
@@ -11062,7 +11155,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def set_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """Set the current matrix to the one specified through the parameter ``source``.
 
-        Underlying Java method: PGraphics.setMatrix
+        Underlying Processing method: PGraphics.setMatrix
 
         Methods
         -------
@@ -11098,7 +11191,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def set_matrix(self, *args):
         """Set the current matrix to the one specified through the parameter ``source``.
 
-        Underlying Java method: PGraphics.setMatrix
+        Underlying Processing method: PGraphics.setMatrix
 
         Methods
         -------
@@ -11135,7 +11228,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shader(self, shader: Py5Shader, /) -> None:
         """Applies the shader specified by the parameters.
 
-        Underlying Java method: PGraphics.shader
+        Underlying Processing method: PGraphics.shader
 
         Methods
         -------
@@ -11169,7 +11262,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shader(self, shader: Py5Shader, kind: int, /) -> None:
         """Applies the shader specified by the parameters.
 
-        Underlying Java method: PGraphics.shader
+        Underlying Processing method: PGraphics.shader
 
         Methods
         -------
@@ -11202,7 +11295,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shader(self, *args):
         """Applies the shader specified by the parameters.
 
-        Underlying Java method: PGraphics.shader
+        Underlying Processing method: PGraphics.shader
 
         Methods
         -------
@@ -11236,7 +11329,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shape(self, shape: Py5Shape, /) -> None:
         """Draws shapes to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.shape
+        Underlying Processing method: PGraphics.shape
 
         Methods
         -------
@@ -11291,7 +11384,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shape(self, shape: Py5Shape, x: float, y: float, /) -> None:
         """Draws shapes to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.shape
+        Underlying Processing method: PGraphics.shape
 
         Methods
         -------
@@ -11347,7 +11440,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
               b: float, c: float, d: float, /) -> None:
         """Draws shapes to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.shape
+        Underlying Processing method: PGraphics.shape
 
         Methods
         -------
@@ -11401,7 +11494,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shape(self, *args):
         """Draws shapes to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.shape
+        Underlying Processing method: PGraphics.shape
 
         Methods
         -------
@@ -11455,7 +11548,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shape_mode(self, mode: int, /) -> None:
         """Modifies the location from which shapes draw.
 
-        Underlying Java method: PGraphics.shapeMode
+        Underlying Processing method: PGraphics.shapeMode
 
         Parameters
         ----------
@@ -11486,7 +11579,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Shears a shape around the x-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PGraphics.shearX
+        Underlying Processing method: PGraphics.shearX
 
         Parameters
         ----------
@@ -11519,7 +11612,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Shears a shape around the y-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PGraphics.shearY
+        Underlying Processing method: PGraphics.shearY
 
         Parameters
         ----------
@@ -11551,7 +11644,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def shininess(self, shine: float, /) -> None:
         """Sets the amount of gloss in the surface of shapes.
 
-        Underlying Java method: PGraphics.shininess
+        Underlying Processing method: PGraphics.shininess
 
         Parameters
         ----------
@@ -11575,7 +11668,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def smooth(self) -> None:
         """Draws all geometry with smooth (anti-aliased) edges.
 
-        Underlying Java method: PGraphics.smooth
+        Underlying Processing method: PGraphics.smooth
 
         Methods
         -------
@@ -11621,7 +11714,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def smooth(self, quality: int, /) -> None:
         """Draws all geometry with smooth (anti-aliased) edges.
 
-        Underlying Java method: PGraphics.smooth
+        Underlying Processing method: PGraphics.smooth
 
         Methods
         -------
@@ -11666,7 +11759,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def smooth(self, *args):
         """Draws all geometry with smooth (anti-aliased) edges.
 
-        Underlying Java method: PGraphics.smooth
+        Underlying Processing method: PGraphics.smooth
 
         Methods
         -------
@@ -11713,7 +11806,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the
         Py5Graphics drawing surface, which sets the color of highlights.
 
-        Underlying Java method: PGraphics.specular
+        Underlying Processing method: PGraphics.specular
 
         Methods
         -------
@@ -11762,7 +11855,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the
         Py5Graphics drawing surface, which sets the color of highlights.
 
-        Underlying Java method: PGraphics.specular
+        Underlying Processing method: PGraphics.specular
 
         Methods
         -------
@@ -11811,7 +11904,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the
         Py5Graphics drawing surface, which sets the color of highlights.
 
-        Underlying Java method: PGraphics.specular
+        Underlying Processing method: PGraphics.specular
 
         Methods
         -------
@@ -11860,7 +11953,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the specular color of the materials used for shapes drawn to the
         Py5Graphics drawing surface, which sets the color of highlights.
 
-        Underlying Java method: PGraphics.specular
+        Underlying Processing method: PGraphics.specular
 
         Methods
         -------
@@ -11907,7 +12000,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def sphere(self, r: float, /) -> None:
         """A sphere is a hollow ball made from tessellated triangles.
 
-        Underlying Java method: PGraphics.sphere
+        Underlying Processing method: PGraphics.sphere
 
         Parameters
         ----------
@@ -11930,7 +12023,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
-        Underlying Java method: PGraphics.sphereDetail
+        Underlying Processing method: PGraphics.sphereDetail
 
         Methods
         -------
@@ -11977,7 +12070,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
-        Underlying Java method: PGraphics.sphereDetail
+        Underlying Processing method: PGraphics.sphereDetail
 
         Methods
         -------
@@ -12023,7 +12116,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
-        Underlying Java method: PGraphics.sphereDetail
+        Underlying Processing method: PGraphics.sphereDetail
 
         Methods
         -------
@@ -12081,7 +12174,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             /) -> None:
         """Adds a spot light.
 
-        Underlying Java method: PGraphics.spotLight
+        Underlying Processing method: PGraphics.spotLight
 
         Parameters
         ----------
@@ -12138,7 +12231,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def square(self, x: float, y: float, extent: float, /) -> None:
         """Draws a square to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.square
+        Underlying Processing method: PGraphics.square
 
         Parameters
         ----------
@@ -12170,7 +12263,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, gray: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12240,7 +12333,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12310,7 +12403,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12380,7 +12473,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12450,7 +12543,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, rgb: int, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12520,7 +12613,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12590,7 +12683,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke(self, *args):
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PGraphics.stroke
+        Underlying Processing method: PGraphics.stroke
 
         Methods
         -------
@@ -12659,7 +12752,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke_cap(self, cap: int, /) -> None:
         """Sets the style for rendering line endings.
 
-        Underlying Java method: PGraphics.strokeCap
+        Underlying Processing method: PGraphics.strokeCap
 
         Parameters
         ----------
@@ -12685,7 +12778,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def stroke_join(self, join: int, /) -> None:
         """Sets the style of the joints which connect line segments.
 
-        Underlying Java method: PGraphics.strokeJoin
+        Underlying Processing method: PGraphics.strokeJoin
 
         Parameters
         ----------
@@ -12709,7 +12802,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the width of the stroke used for lines, points, and the border around
         shapes.
 
-        Underlying Java method: PGraphics.strokeWeight
+        Underlying Processing method: PGraphics.strokeWeight
 
         Parameters
         ----------
@@ -12738,7 +12831,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, c: chr, x: float, y: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -12832,7 +12925,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, c: chr, x: float, y: float, z: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -12927,7 +13020,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
              stop: int, x: float, y: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13022,7 +13115,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
              stop: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13116,7 +13209,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, num: float, x: float, y: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13210,7 +13303,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, num: float, x: float, y: float, z: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13304,7 +13397,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, num: int, x: float, y: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13398,7 +13491,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, num: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13492,7 +13585,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, str: str, x: float, y: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13586,7 +13679,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, str: str, x: float, y: float, z: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13681,7 +13774,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
              x2: float, y2: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13775,7 +13868,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text(self, *args):
         """Draws text to the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.text
+        Underlying Processing method: PGraphics.text
 
         Methods
         -------
@@ -13869,7 +13962,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_align(self, align_x: int, /) -> None:
         """Sets the current alignment for drawing text.
 
-        Underlying Java method: PGraphics.textAlign
+        Underlying Processing method: PGraphics.textAlign
 
         Methods
         -------
@@ -13924,7 +14017,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_align(self, align_x: int, align_y: int, /) -> None:
         """Sets the current alignment for drawing text.
 
-        Underlying Java method: PGraphics.textAlign
+        Underlying Processing method: PGraphics.textAlign
 
         Methods
         -------
@@ -13978,7 +14071,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_align(self, *args):
         """Sets the current alignment for drawing text.
 
-        Underlying Java method: PGraphics.textAlign
+        Underlying Processing method: PGraphics.textAlign
 
         Methods
         -------
@@ -14032,7 +14125,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_ascent(self) -> float:
         """Returns ascent of the current font at its current size.
 
-        Underlying Java method: PGraphics.textAscent
+        Underlying Processing method: PGraphics.textAscent
 
         Notes
         -----
@@ -14048,7 +14141,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_descent(self) -> float:
         """Returns descent of the current font at its current size.
 
-        Underlying Java method: PGraphics.textDescent
+        Underlying Processing method: PGraphics.textDescent
 
         Notes
         -----
@@ -14066,7 +14159,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the current font that will be drawn with the ``Py5Graphics.text()``
         function.
 
-        Underlying Java method: PGraphics.textFont
+        Underlying Processing method: PGraphics.textFont
 
         Methods
         -------
@@ -14111,7 +14204,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the current font that will be drawn with the ``Py5Graphics.text()``
         function.
 
-        Underlying Java method: PGraphics.textFont
+        Underlying Processing method: PGraphics.textFont
 
         Methods
         -------
@@ -14155,7 +14248,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the current font that will be drawn with the ``Py5Graphics.text()``
         function.
 
-        Underlying Java method: PGraphics.textFont
+        Underlying Processing method: PGraphics.textFont
 
         Methods
         -------
@@ -14198,7 +14291,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_leading(self, leading: float, /) -> None:
         """Sets the spacing between lines of text in units of pixels.
 
-        Underlying Java method: PGraphics.textLeading
+        Underlying Processing method: PGraphics.textLeading
 
         Parameters
         ----------
@@ -14225,7 +14318,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Sets the way text draws to the Py5Graphics drawing surface, either as texture
         maps or as vector geometry.
 
-        Underlying Java method: PGraphics.textMode
+        Underlying Processing method: PGraphics.textMode
 
         Parameters
         ----------
@@ -14259,7 +14352,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_size(self, size: float, /) -> None:
         """Sets the current font size.
 
-        Underlying Java method: PGraphics.textSize
+        Underlying Processing method: PGraphics.textSize
 
         Parameters
         ----------
@@ -14282,7 +14375,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_width(self, c: chr, /) -> float:
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PGraphics.textWidth
+        Underlying Processing method: PGraphics.textWidth
 
         Methods
         -------
@@ -14326,7 +14419,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                    start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PGraphics.textWidth
+        Underlying Processing method: PGraphics.textWidth
 
         Methods
         -------
@@ -14369,7 +14462,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_width(self, str: str, /) -> float:
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PGraphics.textWidth
+        Underlying Processing method: PGraphics.textWidth
 
         Methods
         -------
@@ -14412,7 +14505,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def text_width(self, *args):
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PGraphics.textWidth
+        Underlying Processing method: PGraphics.textWidth
 
         Methods
         -------
@@ -14454,7 +14547,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def texture(self, image: Py5Image, /) -> None:
         """Sets a texture to be applied to vertex points.
 
-        Underlying Java method: PGraphics.texture
+        Underlying Processing method: PGraphics.texture
 
         Parameters
         ----------
@@ -14482,7 +14575,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def texture_mode(self, mode: int, /) -> None:
         """Sets the coordinate space for texture mapping.
 
-        Underlying Java method: PGraphics.textureMode
+        Underlying Processing method: PGraphics.textureMode
 
         Parameters
         ----------
@@ -14510,7 +14603,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def texture_wrap(self, wrap: int, /) -> None:
         """Defines if textures repeat or draw once within a texture map.
 
-        Underlying Java method: PGraphics.textureWrap
+        Underlying Processing method: PGraphics.textureWrap
 
         Parameters
         ----------
@@ -14534,7 +14627,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, gray: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -14605,7 +14698,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, gray: float, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -14676,7 +14769,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -14747,7 +14840,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -14818,7 +14911,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, rgb: int, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -14889,7 +14982,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, rgb: int, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -14960,7 +15053,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def tint(self, *args):
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PGraphics.tint
+        Underlying Processing method: PGraphics.tint
 
         Methods
         -------
@@ -15031,7 +15124,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def translate(self, x: float, y: float, /) -> None:
         """Specifies an amount to displace objects within the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.translate
+        Underlying Processing method: PGraphics.translate
 
         Methods
         -------
@@ -15077,7 +15170,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def translate(self, x: float, y: float, z: float, /) -> None:
         """Specifies an amount to displace objects within the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.translate
+        Underlying Processing method: PGraphics.translate
 
         Methods
         -------
@@ -15122,7 +15215,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def translate(self, *args):
         """Specifies an amount to displace objects within the Py5Graphics drawing surface.
 
-        Underlying Java method: PGraphics.translate
+        Underlying Processing method: PGraphics.translate
 
         Methods
         -------
@@ -15168,7 +15261,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                  y2: float, x3: float, y3: float, /) -> None:
         """A triangle is a plane created by connecting three points.
 
-        Underlying Java method: PGraphics.triangle
+        Underlying Processing method: PGraphics.triangle
 
         Parameters
         ----------
@@ -15208,7 +15301,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Updates the Py5Graphics drawing surface with the data in the
         ``Py5Graphics.pixels[]`` array.
 
-        Underlying Java method: PGraphics.updatePixels
+        Underlying Processing method: PGraphics.updatePixels
 
         Methods
         -------
@@ -15255,7 +15348,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Updates the Py5Graphics drawing surface with the data in the
         ``Py5Graphics.pixels[]`` array.
 
-        Underlying Java method: PGraphics.updatePixels
+        Underlying Processing method: PGraphics.updatePixels
 
         Methods
         -------
@@ -15301,7 +15394,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """Updates the Py5Graphics drawing surface with the data in the
         ``Py5Graphics.pixels[]`` array.
 
-        Underlying Java method: PGraphics.updatePixels
+        Underlying Processing method: PGraphics.updatePixels
 
         Methods
         -------
@@ -15347,7 +15440,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def vertex(self, x: float, y: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PGraphics.vertex
+        Underlying Processing method: PGraphics.vertex
 
         Methods
         -------
@@ -15407,7 +15500,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def vertex(self, x: float, y: float, z: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PGraphics.vertex
+        Underlying Processing method: PGraphics.vertex
 
         Methods
         -------
@@ -15467,7 +15560,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def vertex(self, x: float, y: float, u: float, v: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PGraphics.vertex
+        Underlying Processing method: PGraphics.vertex
 
         Methods
         -------
@@ -15528,7 +15621,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
                u: float, v: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PGraphics.vertex
+        Underlying Processing method: PGraphics.vertex
 
         Methods
         -------
@@ -15588,7 +15681,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def vertex(self, v: NDArray[(Any,), Float], /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PGraphics.vertex
+        Underlying Processing method: PGraphics.vertex
 
         Methods
         -------
@@ -15647,7 +15740,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def vertex(self, *args):
         """Add a new vertex to a shape.
 
-        Underlying Java method: PGraphics.vertex
+        Underlying Processing method: PGraphics.vertex
 
         Methods
         -------

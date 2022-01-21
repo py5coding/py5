@@ -45,9 +45,9 @@ If you have Java 11 installed on your computer, you can install py5 using pip:
 There are currently four basic ways to use py5. They are:
 
 - **module mode**, as shown above
-- **class mode**: create a Python class inherited from ``py5.Sketch``, and support multiple Sketches running at the same time.
+- **class mode**: create a Python class inherited from ``py5.Sketch``. This mode supports multiple Sketches running at the same time.
 - **imported mode**: simplified code that omits the ``py5.`` prefix. This mode is supported by the py5 Jupyter notebook kernel and the ``run_sketch`` command line utility.
-- **static mode**: functionless code to create static images. This mode is supported by the py5bot Jupyter notebook kernel and the ``%%py5bot`` IPython magic.
+- **static mode**: functionless code to create static images. This mode is supported by the py5bot Jupyter notebook kernel, the ``%%py5bot`` IPython magic, and the ``run_sketch`` command line utility.
 
 The py5 library is created by the meta-programming project py5generator_. Therefore, the py5 code should not be changed manually. Any issues, etc, should be directed to the py5generator_ repository.
 

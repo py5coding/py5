@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -67,7 +67,7 @@ class TransformDynamicVariablesToCalls(ast.NodeTransformer):
             return node
 
 
-class ReservedWordsValidation(ast.NodeTransformer):
+class Py5CodeValidation(ast.NodeTransformer):
 
     def __init__(self, code=None, report_immediately=True):
         super().__init__()
@@ -90,15 +90,30 @@ class ReservedWordsValidation(ast.NodeTransformer):
         self.generic_visit(node)
         return node
 
-    def _format_problem_message(self, node: ast.Name):
+    def visit_Import(self, node: ast.Import):
+        for alias in node.names:
+            if alias.name == 'py5':
+                problem = self._format_problem_message(node)
+                if self._report_immediately:
+                    raise Py5InputRejected(problem)
+                self._problems.append(problem)
+
+        self.generic_visit(node)
+        return node
+
+    def _format_problem_message(self, node):
         out = []
 
-        if isinstance(node.ctx, ast.Del):
+        if isinstance(node, ast.Name):
+            if isinstance(node.ctx, ast.Del):
+                out.append(
+                    f'Deleting py5 reserved word "{node.id}" on line {node.lineno} is discouraged and may causes errors in your sketch.')
+            elif isinstance(node.ctx, ast.Store):
+                out.append(
+                    f'Assignment to py5 reserved word "{node.id}" on line {node.lineno} is discouraged and may causes errors in your sketch.')
+        elif isinstance(node, ast.Import):
             out.append(
-                f'Deleting py5 reserved word "{node.id}" on line {node.lineno} is discouraged and may causes errors in your sketch.')
-        elif isinstance(node.ctx, ast.Store):
-            out.append(
-                f'Assignment to py5 reserved word "{node.id}" on line {node.lineno} is discouraged and may causes errors in your sketch.')
+                f'"import py5" found on line {node.lineno}. Do not import the py5 library, as this has already been done for you. Your code should be written without any "py5." prefixes.')
 
         if self._code:
             lines = self._code.splitlines()
@@ -109,7 +124,7 @@ class ReservedWordsValidation(ast.NodeTransformer):
 
 
 def check_reserved_words(code, code_ast):
-    validator = ReservedWordsValidation(code, report_immediately=False)
+    validator = Py5CodeValidation(code, report_immediately=False)
     validator.visit(code_ast)
     return validator._problems
 

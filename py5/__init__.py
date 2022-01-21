@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -72,6 +72,7 @@ from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Sha
 from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
 from .create_font_tool import create_font_file  # noqa
 from .image_conversion import register_image_conversion, NumpyImageArray  # noqa
+from .vector import Py5Vector, Py5Vector2D, Py5Vector3D, Py5Vector4D  # noqa
 from py5_tools import split_setup as _split_setup
 from . import reference
 from . import java_conversion  # noqa
@@ -82,7 +83,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.6.0-alpha.2'
+__version__ = '0.7.0a0'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -303,7 +304,7 @@ width: int = None
 def alpha(rgb: int, /) -> float:
     """Extracts the alpha value from a color, scaled to match current ``color_mode()``.
 
-    Underlying Java method: PApplet.alpha
+    Underlying Processing method: PApplet.alpha
 
     Parameters
     ----------
@@ -330,7 +331,7 @@ def alpha(rgb: int, /) -> float:
 def ambient(gray: float, /) -> None:
     """Sets the ambient reflectance for shapes drawn to the screen.
 
-    Underlying Java method: PApplet.ambient
+    Underlying Processing method: PApplet.ambient
 
     Methods
     -------
@@ -376,7 +377,7 @@ def ambient(gray: float, /) -> None:
 def ambient(v1: float, v2: float, v3: float, /) -> None:
     """Sets the ambient reflectance for shapes drawn to the screen.
 
-    Underlying Java method: PApplet.ambient
+    Underlying Processing method: PApplet.ambient
 
     Methods
     -------
@@ -422,7 +423,7 @@ def ambient(v1: float, v2: float, v3: float, /) -> None:
 def ambient(rgb: int, /) -> None:
     """Sets the ambient reflectance for shapes drawn to the screen.
 
-    Underlying Java method: PApplet.ambient
+    Underlying Processing method: PApplet.ambient
 
     Methods
     -------
@@ -467,7 +468,7 @@ def ambient(rgb: int, /) -> None:
 def ambient(*args):
     """Sets the ambient reflectance for shapes drawn to the screen.
 
-    Underlying Java method: PApplet.ambient
+    Underlying Processing method: PApplet.ambient
 
     Methods
     -------
@@ -513,7 +514,7 @@ def ambient(*args):
 def ambient_light(v1: float, v2: float, v3: float, /) -> None:
     """Adds an ambient light.
 
-    Underlying Java method: PApplet.ambientLight
+    Underlying Processing method: PApplet.ambientLight
 
     Methods
     -------
@@ -564,7 +565,7 @@ def ambient_light(v1: float, v2: float, v3: float,
                   x: float, y: float, z: float, /) -> None:
     """Adds an ambient light.
 
-    Underlying Java method: PApplet.ambientLight
+    Underlying Processing method: PApplet.ambientLight
 
     Methods
     -------
@@ -613,7 +614,7 @@ def ambient_light(v1: float, v2: float, v3: float,
 def ambient_light(*args):
     """Adds an ambient light.
 
-    Underlying Java method: PApplet.ambientLight
+    Underlying Processing method: PApplet.ambientLight
 
     Methods
     -------
@@ -664,7 +665,7 @@ def apply_matrix(n00: float, n01: float, n02: float,
                  n10: float, n11: float, n12: float, /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
-    Underlying Java method: PApplet.applyMatrix
+    Underlying Processing method: PApplet.applyMatrix
 
     Methods
     -------
@@ -765,7 +766,7 @@ def apply_matrix(
         /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
-    Underlying Java method: PApplet.applyMatrix
+    Underlying Processing method: PApplet.applyMatrix
 
     Methods
     -------
@@ -849,7 +850,7 @@ def apply_matrix(
 def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
-    Underlying Java method: PApplet.applyMatrix
+    Underlying Processing method: PApplet.applyMatrix
 
     Methods
     -------
@@ -933,7 +934,7 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
 def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
-    Underlying Java method: PApplet.applyMatrix
+    Underlying Processing method: PApplet.applyMatrix
 
     Methods
     -------
@@ -1016,7 +1017,7 @@ def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
 def apply_matrix(*args):
     """Multiplies the current matrix by the one specified through the parameters.
 
-    Underlying Java method: PApplet.applyMatrix
+    Underlying Processing method: PApplet.applyMatrix
 
     Methods
     -------
@@ -1101,7 +1102,7 @@ def arc(a: float, b: float, c: float, d: float,
         start: float, stop: float, /) -> None:
     """Draws an arc to the screen.
 
-    Underlying Java method: PApplet.arc
+    Underlying Processing method: PApplet.arc
 
     Methods
     -------
@@ -1162,7 +1163,7 @@ def arc(a: float, b: float, c: float, d: float,
         start: float, stop: float, mode: int, /) -> None:
     """Draws an arc to the screen.
 
-    Underlying Java method: PApplet.arc
+    Underlying Processing method: PApplet.arc
 
     Methods
     -------
@@ -1221,7 +1222,7 @@ def arc(a: float, b: float, c: float, d: float,
 def arc(*args):
     """Draws an arc to the screen.
 
-    Underlying Java method: PApplet.arc
+    Underlying Processing method: PApplet.arc
 
     Methods
     -------
@@ -1282,7 +1283,7 @@ def background(gray: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1347,7 +1348,7 @@ def background(gray: float, alpha: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1412,7 +1413,7 @@ def background(v1: float, v2: float, v3: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1477,7 +1478,7 @@ def background(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1542,7 +1543,7 @@ def background(rgb: int, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1607,7 +1608,7 @@ def background(rgb: int, alpha: float, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1672,7 +1673,7 @@ def background(image: Py5Image, /) -> None:
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1736,7 +1737,7 @@ def background(*args):
     """The ``background()`` function sets the color used for the background of the py5
     window.
 
-    Underlying Java method: PApplet.background
+    Underlying Processing method: PApplet.background
 
     Methods
     -------
@@ -1800,7 +1801,7 @@ def begin_camera() -> None:
     """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
     customization of the camera space.
 
-    Underlying Java method: PApplet.beginCamera
+    Underlying Processing method: PApplet.beginCamera
 
     Notes
     -----
@@ -1832,7 +1833,7 @@ def begin_contour() -> None:
     """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
     shapes within shapes such as the center of the letter 'O'.
 
-    Underlying Java method: PApplet.beginContour
+    Underlying Processing method: PApplet.beginContour
 
     Notes
     -----
@@ -1861,7 +1862,7 @@ def begin_raw(renderer: str, filename: str, /) -> Py5Graphics:
     """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
-    Underlying Java method: PApplet.beginRaw
+    Underlying Processing method: PApplet.beginRaw
 
     Methods
     -------
@@ -1918,7 +1919,7 @@ def begin_raw(raw_graphics: Py5Graphics, /) -> None:
     """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
-    Underlying Java method: PApplet.beginRaw
+    Underlying Processing method: PApplet.beginRaw
 
     Methods
     -------
@@ -1974,7 +1975,7 @@ def begin_raw(*args):
     """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
     commands.
 
-    Underlying Java method: PApplet.beginRaw
+    Underlying Processing method: PApplet.beginRaw
 
     Methods
     -------
@@ -2031,7 +2032,7 @@ def begin_record(renderer: str, filename: str, /) -> Py5Graphics:
     """Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window.
 
-    Underlying Java method: PApplet.beginRecord
+    Underlying Processing method: PApplet.beginRecord
 
     Methods
     -------
@@ -2080,7 +2081,7 @@ def begin_record(recorder: Py5Graphics, /) -> None:
     """Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window.
 
-    Underlying Java method: PApplet.beginRecord
+    Underlying Processing method: PApplet.beginRecord
 
     Methods
     -------
@@ -2128,7 +2129,7 @@ def begin_record(*args):
     """Opens a new file and all subsequent drawing functions are echoed to this file as
     well as the display window.
 
-    Underlying Java method: PApplet.beginRecord
+    Underlying Processing method: PApplet.beginRecord
 
     Methods
     -------
@@ -2177,7 +2178,7 @@ def begin_shape() -> None:
     """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
-    Underlying Java method: PApplet.beginShape
+    Underlying Processing method: PApplet.beginShape
 
     Methods
     -------
@@ -2232,7 +2233,7 @@ def begin_shape(kind: int, /) -> None:
     """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
-    Underlying Java method: PApplet.beginShape
+    Underlying Processing method: PApplet.beginShape
 
     Methods
     -------
@@ -2286,7 +2287,7 @@ def begin_shape(*args):
     """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
     complex forms.
 
-    Underlying Java method: PApplet.beginShape
+    Underlying Processing method: PApplet.beginShape
 
     Methods
     -------
@@ -2340,7 +2341,7 @@ def begin_shape(*args):
 def begin_closed_shape() -> None:
     """This method is used to start a custom closed shape.
 
-    Underlying Java method: PApplet.beginShape
+    Underlying Processing method: PApplet.beginShape
 
     Methods
     -------
@@ -2375,7 +2376,7 @@ def begin_closed_shape() -> None:
 def begin_closed_shape(kind: int, /) -> None:
     """This method is used to start a custom closed shape.
 
-    Underlying Java method: PApplet.beginShape
+    Underlying Processing method: PApplet.beginShape
 
     Methods
     -------
@@ -2409,7 +2410,7 @@ def begin_closed_shape(kind: int, /) -> None:
 def begin_closed_shape(*args):
     """This method is used to start a custom closed shape.
 
-    Underlying Java method: PApplet.beginShape
+    Underlying Processing method: PApplet.beginShape
 
     Methods
     -------
@@ -2445,7 +2446,7 @@ def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
            y3: float, x4: float, y4: float, /) -> None:
     """Draws a Bezier curve on the screen.
 
-    Underlying Java method: PApplet.bezier
+    Underlying Processing method: PApplet.bezier
 
     Methods
     -------
@@ -2512,7 +2513,7 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
            x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
     """Draws a Bezier curve on the screen.
 
-    Underlying Java method: PApplet.bezier
+    Underlying Processing method: PApplet.bezier
 
     Methods
     -------
@@ -2577,7 +2578,7 @@ def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
 def bezier(*args):
     """Draws a Bezier curve on the screen.
 
-    Underlying Java method: PApplet.bezier
+    Underlying Processing method: PApplet.bezier
 
     Methods
     -------
@@ -2642,7 +2643,7 @@ def bezier(*args):
 def bezier_detail(detail: int, /) -> None:
     """Sets the resolution at which Beziers display.
 
-    Underlying Java method: PApplet.bezierDetail
+    Underlying Processing method: PApplet.bezierDetail
 
     Parameters
     ----------
@@ -2663,7 +2664,7 @@ def bezier_detail(detail: int, /) -> None:
 def bezier_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     """Evaluates the Bezier at point t for points a, b, c, d.
 
-    Underlying Java method: PApplet.bezierPoint
+    Underlying Processing method: PApplet.bezierPoint
 
     Parameters
     ----------
@@ -2698,7 +2699,7 @@ def bezier_tangent(a: float, b: float, c: float,
                    d: float, t: float, /) -> float:
     """Calculates the tangent of a point on a Bezier curve.
 
-    Underlying Java method: PApplet.bezierTangent
+    Underlying Processing method: PApplet.bezierTangent
 
     Parameters
     ----------
@@ -2732,7 +2733,7 @@ def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
                   x4: float, y4: float, /) -> None:
     """Specifies vertex coordinates for Bezier curves.
 
-    Underlying Java method: PApplet.bezierVertex
+    Underlying Processing method: PApplet.bezierVertex
 
     Methods
     -------
@@ -2792,7 +2793,7 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
                   y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
     """Specifies vertex coordinates for Bezier curves.
 
-    Underlying Java method: PApplet.bezierVertex
+    Underlying Processing method: PApplet.bezierVertex
 
     Methods
     -------
@@ -2850,7 +2851,7 @@ def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
 def bezier_vertex(*args):
     """Specifies vertex coordinates for Bezier curves.
 
-    Underlying Java method: PApplet.bezierVertex
+    Underlying Processing method: PApplet.bezierVertex
 
     Methods
     -------
@@ -2908,7 +2909,7 @@ def bezier_vertex(*args):
 def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """Create a collection of bezier vertices.
 
-    Underlying Java method: PApplet.bezierVertices
+    Underlying Processing method: PApplet.bezierVertices
 
     Parameters
     ----------
@@ -2939,7 +2940,7 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
-    Underlying Java method: PApplet.blend
+    Underlying Processing method: PApplet.blend
 
     Methods
     -------
@@ -3024,7 +3025,7 @@ def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
-    Underlying Java method: PApplet.blend
+    Underlying Processing method: PApplet.blend
 
     Methods
     -------
@@ -3107,7 +3108,7 @@ def blend(*args):
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
-    Underlying Java method: PApplet.blend
+    Underlying Processing method: PApplet.blend
 
     Methods
     -------
@@ -3189,7 +3190,7 @@ def blend(*args):
 def blend_mode(mode: int, /) -> None:
     """Blends the pixels in the display window according to a defined mode.
 
-    Underlying Java method: PApplet.blendMode
+    Underlying Processing method: PApplet.blendMode
 
     Parameters
     ----------
@@ -3232,7 +3233,7 @@ def blend_mode(mode: int, /) -> None:
 def blue(rgb: int, /) -> float:
     """Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
-    Underlying Java method: PApplet.blue
+    Underlying Processing method: PApplet.blue
 
     Parameters
     ----------
@@ -3259,7 +3260,7 @@ def blue(rgb: int, /) -> float:
 def box(size: float, /) -> None:
     """A box is an extruded rectangle.
 
-    Underlying Java method: PApplet.box
+    Underlying Processing method: PApplet.box
 
     Methods
     -------
@@ -3297,7 +3298,7 @@ def box(size: float, /) -> None:
 def box(w: float, h: float, d: float, /) -> None:
     """A box is an extruded rectangle.
 
-    Underlying Java method: PApplet.box
+    Underlying Processing method: PApplet.box
 
     Methods
     -------
@@ -3334,7 +3335,7 @@ def box(w: float, h: float, d: float, /) -> None:
 def box(*args):
     """A box is an extruded rectangle.
 
-    Underlying Java method: PApplet.box
+    Underlying Processing method: PApplet.box
 
     Methods
     -------
@@ -3371,7 +3372,7 @@ def box(*args):
 def brightness(rgb: int, /) -> float:
     """Extracts the brightness value from a color.
 
-    Underlying Java method: PApplet.brightness
+    Underlying Processing method: PApplet.brightness
 
     Parameters
     ----------
@@ -3392,7 +3393,7 @@ def camera() -> None:
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
 
-    Underlying Java method: PApplet.camera
+    Underlying Processing method: PApplet.camera
 
     Methods
     -------
@@ -3454,7 +3455,7 @@ def camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: 
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
 
-    Underlying Java method: PApplet.camera
+    Underlying Processing method: PApplet.camera
 
     Methods
     -------
@@ -3514,7 +3515,7 @@ def camera(*args):
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
 
-    Underlying Java method: PApplet.camera
+    Underlying Processing method: PApplet.camera
 
     Methods
     -------
@@ -3573,7 +3574,7 @@ def camera(*args):
 def circle(x: float, y: float, extent: float, /) -> None:
     """Draws a circle to the screen.
 
-    Underlying Java method: PApplet.circle
+    Underlying Processing method: PApplet.circle
 
     Parameters
     ----------
@@ -3600,7 +3601,7 @@ def circle(x: float, y: float, extent: float, /) -> None:
 def clip(a: float, b: float, c: float, d: float, /) -> None:
     """Limits the rendering to the boundaries of a rectangle defined by the parameters.
 
-    Underlying Java method: PApplet.clip
+    Underlying Processing method: PApplet.clip
 
     Parameters
     ----------
@@ -3632,7 +3633,7 @@ def color(fgray: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -3711,7 +3712,7 @@ def color(fgray: float, falpha: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -3790,7 +3791,7 @@ def color(v1: float, v2: float, v3: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -3869,7 +3870,7 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -3948,7 +3949,7 @@ def color(gray: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -4027,7 +4028,7 @@ def color(gray: int, alpha: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -4106,7 +4107,7 @@ def color(v1: int, v2: int, v3: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -4185,7 +4186,7 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -4263,7 +4264,7 @@ def color(*args):
     """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
     integer).
 
-    Underlying Java method: PApplet.color
+    Underlying Processing method: PApplet.color
 
     Methods
     -------
@@ -4341,7 +4342,7 @@ def color(*args):
 def color_mode(mode: int, /) -> None:
     """Changes the way py5 interprets color data.
 
-    Underlying Java method: PApplet.colorMode
+    Underlying Processing method: PApplet.colorMode
 
     Methods
     -------
@@ -4401,7 +4402,7 @@ def color_mode(mode: int, /) -> None:
 def color_mode(mode: int, max: float, /) -> None:
     """Changes the way py5 interprets color data.
 
-    Underlying Java method: PApplet.colorMode
+    Underlying Processing method: PApplet.colorMode
 
     Methods
     -------
@@ -4461,7 +4462,7 @@ def color_mode(mode: int, max: float, /) -> None:
 def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
     """Changes the way py5 interprets color data.
 
-    Underlying Java method: PApplet.colorMode
+    Underlying Processing method: PApplet.colorMode
 
     Methods
     -------
@@ -4522,7 +4523,7 @@ def color_mode(mode: int, max1: float, max2: float,
                max3: float, max_a: float, /) -> None:
     """Changes the way py5 interprets color data.
 
-    Underlying Java method: PApplet.colorMode
+    Underlying Processing method: PApplet.colorMode
 
     Methods
     -------
@@ -4581,7 +4582,7 @@ def color_mode(mode: int, max1: float, max2: float,
 def color_mode(*args):
     """Changes the way py5 interprets color data.
 
-    Underlying Java method: PApplet.colorMode
+    Underlying Processing method: PApplet.colorMode
 
     Methods
     -------
@@ -4643,7 +4644,7 @@ def copy() -> Py5Image:
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
 
-    Underlying Java method: PApplet.copy
+    Underlying Processing method: PApplet.copy
 
     Methods
     -------
@@ -4673,7 +4674,7 @@ def copy() -> Py5Image:
         source image height
 
     src: Py5Image
-        an image variable referring to the source image
+        a source image to copy pixels from
 
     sw: int
         source image width
@@ -4706,7 +4707,7 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
 
-    Underlying Java method: PApplet.copy
+    Underlying Processing method: PApplet.copy
 
     Methods
     -------
@@ -4736,7 +4737,7 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
         source image height
 
     src: Py5Image
-        an image variable referring to the source image
+        a source image to copy pixels from
 
     sw: int
         source image width
@@ -4769,7 +4770,7 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
 
-    Underlying Java method: PApplet.copy
+    Underlying Processing method: PApplet.copy
 
     Methods
     -------
@@ -4799,7 +4800,7 @@ def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
         source image height
 
     src: Py5Image
-        an image variable referring to the source image
+        a source image to copy pixels from
 
     sw: int
         source image width
@@ -4830,7 +4831,7 @@ def copy(*args):
     window and copies a region of pixels from an image used as the ``src_img``
     parameter into the display window.
 
-    Underlying Java method: PApplet.copy
+    Underlying Processing method: PApplet.copy
 
     Methods
     -------
@@ -4860,7 +4861,7 @@ def copy(*args):
         source image height
 
     src: Py5Image
-        an image variable referring to the source image
+        a source image to copy pixels from
 
     sw: int
         source image width
@@ -4892,7 +4893,7 @@ def create_font(name: str, size: float, /) -> Py5Font:
     inside the Sketch's "data" folder or a font that's installed elsewhere on the
     computer.
 
-    Underlying Java method: PApplet.createFont
+    Underlying Processing method: PApplet.createFont
 
     Methods
     -------
@@ -4955,7 +4956,7 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
     inside the Sketch's "data" folder or a font that's installed elsewhere on the
     computer.
 
-    Underlying Java method: PApplet.createFont
+    Underlying Processing method: PApplet.createFont
 
     Methods
     -------
@@ -5019,7 +5020,7 @@ def create_font(name: str, size: float, smooth: bool,
     inside the Sketch's "data" folder or a font that's installed elsewhere on the
     computer.
 
-    Underlying Java method: PApplet.createFont
+    Underlying Processing method: PApplet.createFont
 
     Methods
     -------
@@ -5081,7 +5082,7 @@ def create_font(*args):
     inside the Sketch's "data" folder or a font that's installed elsewhere on the
     computer.
 
-    Underlying Java method: PApplet.createFont
+    Underlying Processing method: PApplet.createFont
 
     Methods
     -------
@@ -5142,7 +5143,7 @@ def create_font(*args):
 def create_graphics(w: int, h: int, /) -> Py5Graphics:
     """Creates and returns a new ``Py5Graphics`` object.
 
-    Underlying Java method: PApplet.createGraphics
+    Underlying Processing method: PApplet.createGraphics
 
     Methods
     -------
@@ -5213,7 +5214,7 @@ def create_graphics(w: int, h: int, /) -> Py5Graphics:
 def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
     """Creates and returns a new ``Py5Graphics`` object.
 
-    Underlying Java method: PApplet.createGraphics
+    Underlying Processing method: PApplet.createGraphics
 
     Methods
     -------
@@ -5285,7 +5286,7 @@ def create_graphics(w: int, h: int, renderer: str,
                     path: str, /) -> Py5Graphics:
     """Creates and returns a new ``Py5Graphics`` object.
 
-    Underlying Java method: PApplet.createGraphics
+    Underlying Processing method: PApplet.createGraphics
 
     Methods
     -------
@@ -5355,7 +5356,7 @@ def create_graphics(w: int, h: int, renderer: str,
 def create_graphics(*args):
     """Creates and returns a new ``Py5Graphics`` object.
 
-    Underlying Java method: PApplet.createGraphics
+    Underlying Processing method: PApplet.createGraphics
 
     Methods
     -------
@@ -5425,7 +5426,7 @@ def create_graphics(*args):
 def create_image(w: int, h: int, format: int, /) -> Py5Image:
     """Creates a new Py5Image (the datatype for storing images).
 
-    Underlying Java method: PApplet.createImage
+    Underlying Processing method: PApplet.createImage
 
     Parameters
     ----------
@@ -5460,7 +5461,7 @@ def create_image(w: int, h: int, format: int, /) -> Py5Image:
 def create_shape() -> Py5Shape:
     """The ``create_shape()`` function is used to define a new shape.
 
-    Underlying Java method: PApplet.createShape
+    Underlying Processing method: PApplet.createShape
 
     Methods
     -------
@@ -5518,7 +5519,7 @@ def create_shape() -> Py5Shape:
 def create_shape(type: int, /) -> Py5Shape:
     """The ``create_shape()`` function is used to define a new shape.
 
-    Underlying Java method: PApplet.createShape
+    Underlying Processing method: PApplet.createShape
 
     Methods
     -------
@@ -5576,7 +5577,7 @@ def create_shape(type: int, /) -> Py5Shape:
 def create_shape(kind: int, /, *p: float) -> Py5Shape:
     """The ``create_shape()`` function is used to define a new shape.
 
-    Underlying Java method: PApplet.createShape
+    Underlying Processing method: PApplet.createShape
 
     Methods
     -------
@@ -5633,7 +5634,7 @@ def create_shape(kind: int, /, *p: float) -> Py5Shape:
 def create_shape(*args):
     """The ``create_shape()`` function is used to define a new shape.
 
-    Underlying Java method: PApplet.createShape
+    Underlying Processing method: PApplet.createShape
 
     Methods
     -------
@@ -5692,7 +5693,7 @@ def cursor() -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
-    Underlying Java method: PApplet.cursor
+    Underlying Processing method: PApplet.cursor
 
     Methods
     -------
@@ -5742,7 +5743,7 @@ def cursor(kind: int, /) -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
-    Underlying Java method: PApplet.cursor
+    Underlying Processing method: PApplet.cursor
 
     Methods
     -------
@@ -5792,7 +5793,7 @@ def cursor(img: Py5Image, /) -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
-    Underlying Java method: PApplet.cursor
+    Underlying Processing method: PApplet.cursor
 
     Methods
     -------
@@ -5842,7 +5843,7 @@ def cursor(img: Py5Image, x: int, y: int, /) -> None:
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
-    Underlying Java method: PApplet.cursor
+    Underlying Processing method: PApplet.cursor
 
     Methods
     -------
@@ -5891,7 +5892,7 @@ def cursor(*args):
     """Sets the cursor to a predefined symbol or an image, or makes it visible if
     already hidden.
 
-    Underlying Java method: PApplet.cursor
+    Underlying Processing method: PApplet.cursor
 
     Methods
     -------
@@ -5941,7 +5942,7 @@ def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
           y3: float, x4: float, y4: float, /) -> None:
     """Draws a curved line on the screen.
 
-    Underlying Java method: PApplet.curve
+    Underlying Processing method: PApplet.curve
 
     Methods
     -------
@@ -6010,7 +6011,7 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
           x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
     """Draws a curved line on the screen.
 
-    Underlying Java method: PApplet.curve
+    Underlying Processing method: PApplet.curve
 
     Methods
     -------
@@ -6077,7 +6078,7 @@ def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
 def curve(*args):
     """Draws a curved line on the screen.
 
-    Underlying Java method: PApplet.curve
+    Underlying Processing method: PApplet.curve
 
     Methods
     -------
@@ -6144,7 +6145,7 @@ def curve(*args):
 def curve_detail(detail: int, /) -> None:
     """Sets the resolution at which curves display.
 
-    Underlying Java method: PApplet.curveDetail
+    Underlying Processing method: PApplet.curveDetail
 
     Parameters
     ----------
@@ -6165,7 +6166,7 @@ def curve_detail(detail: int, /) -> None:
 def curve_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     """Evaluates the curve at point ``t`` for points ``a``, ``b``, ``c``, ``d``.
 
-    Underlying Java method: PApplet.curvePoint
+    Underlying Processing method: PApplet.curvePoint
 
     Parameters
     ----------
@@ -6202,7 +6203,7 @@ def curve_tangent(a: float, b: float, c: float,
                   d: float, t: float, /) -> float:
     """Calculates the tangent of a point on a curve.
 
-    Underlying Java method: PApplet.curveTangent
+    Underlying Processing method: PApplet.curveTangent
 
     Parameters
     ----------
@@ -6234,7 +6235,7 @@ def curve_tangent(a: float, b: float, c: float,
 def curve_tightness(tightness: float, /) -> None:
     """Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
 
-    Underlying Java method: PApplet.curveTightness
+    Underlying Processing method: PApplet.curveTightness
 
     Parameters
     ----------
@@ -6260,7 +6261,7 @@ def curve_tightness(tightness: float, /) -> None:
 def curve_vertex(x: float, y: float, /) -> None:
     """Specifies vertex coordinates for curves.
 
-    Underlying Java method: PApplet.curveVertex
+    Underlying Processing method: PApplet.curveVertex
 
     Methods
     -------
@@ -6302,7 +6303,7 @@ def curve_vertex(x: float, y: float, /) -> None:
 def curve_vertex(x: float, y: float, z: float, /) -> None:
     """Specifies vertex coordinates for curves.
 
-    Underlying Java method: PApplet.curveVertex
+    Underlying Processing method: PApplet.curveVertex
 
     Methods
     -------
@@ -6343,7 +6344,7 @@ def curve_vertex(x: float, y: float, z: float, /) -> None:
 def curve_vertex(*args):
     """Specifies vertex coordinates for curves.
 
-    Underlying Java method: PApplet.curveVertex
+    Underlying Processing method: PApplet.curveVertex
 
     Methods
     -------
@@ -6384,7 +6385,7 @@ def curve_vertex(*args):
 def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """Create a collection of curve vertices.
 
-    Underlying Java method: PApplet.curveVertices
+    Underlying Processing method: PApplet.curveVertices
 
     Parameters
     ----------
@@ -6410,7 +6411,7 @@ def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def day() -> int:
     """Py5 communicates with the clock on your computer.
 
-    Underlying Java method: PApplet.day
+    Underlying Processing method: PApplet.day
 
     Notes
     -----
@@ -6425,7 +6426,7 @@ def directional_light(v1: float, v2: float, v3: float,
                       nx: float, ny: float, nz: float, /) -> None:
     """Adds a directional light.
 
-    Underlying Java method: PApplet.directionalLight
+    Underlying Processing method: PApplet.directionalLight
 
     Parameters
     ----------
@@ -6471,7 +6472,7 @@ def display_density() -> int:
     (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
     not.
 
-    Underlying Java method: PApplet.displayDensity
+    Underlying Processing method: PApplet.displayDensity
 
     Methods
     -------
@@ -6504,7 +6505,7 @@ def display_density(display: int, /) -> int:
     (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
     not.
 
-    Underlying Java method: PApplet.displayDensity
+    Underlying Processing method: PApplet.displayDensity
 
     Methods
     -------
@@ -6536,7 +6537,7 @@ def display_density(*args):
     (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
     not.
 
-    Underlying Java method: PApplet.displayDensity
+    Underlying Processing method: PApplet.displayDensity
 
     Methods
     -------
@@ -6566,7 +6567,7 @@ def display_density(*args):
 def ellipse(a: float, b: float, c: float, d: float, /) -> None:
     """Draws an ellipse (oval) to the screen.
 
-    Underlying Java method: PApplet.ellipse
+    Underlying Processing method: PApplet.ellipse
 
     Parameters
     ----------
@@ -6598,7 +6599,7 @@ def ellipse_mode(mode: int, /) -> None:
     """Modifies the location from which ellipses are drawn by changing the way in which
     parameters given to ``ellipse()`` are intepreted.
 
-    Underlying Java method: PApplet.ellipseMode
+    Underlying Processing method: PApplet.ellipseMode
 
     Parameters
     ----------
@@ -6639,7 +6640,7 @@ def emissive(gray: float, /) -> None:
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
 
-    Underlying Java method: PApplet.emissive
+    Underlying Processing method: PApplet.emissive
 
     Methods
     -------
@@ -6683,7 +6684,7 @@ def emissive(v1: float, v2: float, v3: float, /) -> None:
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
 
-    Underlying Java method: PApplet.emissive
+    Underlying Processing method: PApplet.emissive
 
     Methods
     -------
@@ -6727,7 +6728,7 @@ def emissive(rgb: int, /) -> None:
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
 
-    Underlying Java method: PApplet.emissive
+    Underlying Processing method: PApplet.emissive
 
     Methods
     -------
@@ -6770,7 +6771,7 @@ def emissive(*args):
     """Sets the emissive color of the material used for drawing shapes drawn to the
     screen.
 
-    Underlying Java method: PApplet.emissive
+    Underlying Processing method: PApplet.emissive
 
     Methods
     -------
@@ -6813,7 +6814,7 @@ def end_camera() -> None:
     """The ``begin_camera()`` and ``end_camera()`` methods enable advanced
     customization of the camera space.
 
-    Underlying Java method: PApplet.endCamera
+    Underlying Processing method: PApplet.endCamera
 
     Notes
     -----
@@ -6829,7 +6830,7 @@ def end_contour() -> None:
     """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
     shapes within shapes such as the center of the letter 'O'.
 
-    Underlying Java method: PApplet.endContour
+    Underlying Processing method: PApplet.endContour
 
     Notes
     -----
@@ -6853,7 +6854,7 @@ def end_contour() -> None:
 def end_raw() -> None:
     """Complement to ``begin_raw()``; they must always be used together.
 
-    Underlying Java method: PApplet.endRaw
+    Underlying Processing method: PApplet.endRaw
 
     Notes
     -----
@@ -6867,7 +6868,7 @@ def end_raw() -> None:
 def end_record() -> None:
     """Stops the recording process started by ``begin_record()`` and closes the file.
 
-    Underlying Java method: PApplet.endRecord
+    Underlying Processing method: PApplet.endRecord
 
     Notes
     -----
@@ -6882,7 +6883,7 @@ def end_shape() -> None:
     """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
     be called after ``begin_shape()``.
 
-    Underlying Java method: PApplet.endShape
+    Underlying Processing method: PApplet.endShape
 
     Methods
     -------
@@ -6915,7 +6916,7 @@ def end_shape(mode: int, /) -> None:
     """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
     be called after ``begin_shape()``.
 
-    Underlying Java method: PApplet.endShape
+    Underlying Processing method: PApplet.endShape
 
     Methods
     -------
@@ -6947,7 +6948,7 @@ def end_shape(*args):
     """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
     be called after ``begin_shape()``.
 
-    Underlying Java method: PApplet.endShape
+    Underlying Processing method: PApplet.endShape
 
     Methods
     -------
@@ -6978,7 +6979,7 @@ def end_shape(*args):
 def exit_sketch() -> None:
     """Quits/stops/exits the program.
 
-    Underlying Java method: PApplet.exit
+    Underlying Processing method: PApplet.exit
 
     Notes
     -----
@@ -7002,7 +7003,7 @@ def exit_sketch() -> None:
 def fill(gray: float, /) -> None:
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7069,7 +7070,7 @@ def fill(gray: float, /) -> None:
 def fill(gray: float, alpha: float, /) -> None:
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7136,7 +7137,7 @@ def fill(gray: float, alpha: float, /) -> None:
 def fill(v1: float, v2: float, v3: float, /) -> None:
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7203,7 +7204,7 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
 def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7270,7 +7271,7 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 def fill(rgb: int, /) -> None:
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7337,7 +7338,7 @@ def fill(rgb: int, /) -> None:
 def fill(rgb: int, alpha: float, /) -> None:
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7403,7 +7404,7 @@ def fill(rgb: int, alpha: float, /) -> None:
 def fill(*args):
     """Sets the color used to fill shapes.
 
-    Underlying Java method: PApplet.fill
+    Underlying Processing method: PApplet.fill
 
     Methods
     -------
@@ -7470,7 +7471,7 @@ def fill(*args):
 def apply_filter(kind: int, /) -> None:
     """Filters the display window using a preset filter or with a custom shader.
 
-    Underlying Java method: PApplet.filter
+    Underlying Processing method: PApplet.filter
 
     Methods
     -------
@@ -7525,7 +7526,7 @@ def apply_filter(kind: int, /) -> None:
 def apply_filter(kind: int, param: float, /) -> None:
     """Filters the display window using a preset filter or with a custom shader.
 
-    Underlying Java method: PApplet.filter
+    Underlying Processing method: PApplet.filter
 
     Methods
     -------
@@ -7580,7 +7581,7 @@ def apply_filter(kind: int, param: float, /) -> None:
 def apply_filter(shader: Py5Shader, /) -> None:
     """Filters the display window using a preset filter or with a custom shader.
 
-    Underlying Java method: PApplet.filter
+    Underlying Processing method: PApplet.filter
 
     Methods
     -------
@@ -7634,7 +7635,7 @@ def apply_filter(shader: Py5Shader, /) -> None:
 def apply_filter(*args):
     """Filters the display window using a preset filter or with a custom shader.
 
-    Underlying Java method: PApplet.filter
+    Underlying Processing method: PApplet.filter
 
     Methods
     -------
@@ -7688,7 +7689,7 @@ def apply_filter(*args):
 def frame_rate(fps: float, /) -> None:
     """Specifies the number of frames to be displayed every second.
 
-    Underlying Java method: PApplet.frameRate
+    Underlying Processing method: PApplet.frameRate
 
     Parameters
     ----------
@@ -7712,7 +7713,7 @@ def frustum(left: float, right: float, bottom: float,
             top: float, near: float, far: float, /) -> None:
     """Sets a perspective matrix as defined by the parameters.
 
-    Underlying Java method: PApplet.frustum
+    Underlying Processing method: PApplet.frustum
 
     Parameters
     ----------
@@ -7765,7 +7766,7 @@ def frustum(left: float, right: float, bottom: float,
 def full_screen() -> None:
     """Open a Sketch using the full size of the computer's display.
 
-    Underlying Java method: PApplet.fullScreen
+    Underlying Processing method: PApplet.fullScreen
 
     Methods
     -------
@@ -7820,7 +7821,7 @@ def full_screen() -> None:
 def full_screen(display: int, /) -> None:
     """Open a Sketch using the full size of the computer's display.
 
-    Underlying Java method: PApplet.fullScreen
+    Underlying Processing method: PApplet.fullScreen
 
     Methods
     -------
@@ -7875,7 +7876,7 @@ def full_screen(display: int, /) -> None:
 def full_screen(renderer: str, /) -> None:
     """Open a Sketch using the full size of the computer's display.
 
-    Underlying Java method: PApplet.fullScreen
+    Underlying Processing method: PApplet.fullScreen
 
     Methods
     -------
@@ -7930,7 +7931,7 @@ def full_screen(renderer: str, /) -> None:
 def full_screen(renderer: str, display: int, /) -> None:
     """Open a Sketch using the full size of the computer's display.
 
-    Underlying Java method: PApplet.fullScreen
+    Underlying Processing method: PApplet.fullScreen
 
     Methods
     -------
@@ -7984,7 +7985,7 @@ def full_screen(renderer: str, display: int, /) -> None:
 def full_screen(*args):
     """Open a Sketch using the full size of the computer's display.
 
-    Underlying Java method: PApplet.fullScreen
+    Underlying Processing method: PApplet.fullScreen
 
     Methods
     -------
@@ -8039,7 +8040,7 @@ def full_screen(*args):
 def get() -> Py5Image:
     """Reads the color of any pixel or grabs a section of the drawing surface.
 
-    Underlying Java method: PApplet.get
+    Underlying Processing method: PApplet.get
 
     Methods
     -------
@@ -8098,7 +8099,7 @@ def get() -> Py5Image:
 def get(x: int, y: int, /) -> int:
     """Reads the color of any pixel or grabs a section of the drawing surface.
 
-    Underlying Java method: PApplet.get
+    Underlying Processing method: PApplet.get
 
     Methods
     -------
@@ -8157,7 +8158,7 @@ def get(x: int, y: int, /) -> int:
 def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
     """Reads the color of any pixel or grabs a section of the drawing surface.
 
-    Underlying Java method: PApplet.get
+    Underlying Processing method: PApplet.get
 
     Methods
     -------
@@ -8215,7 +8216,7 @@ def get(x: int, y: int, w: int, h: int, /) -> Py5Image:
 def get(*args):
     """Reads the color of any pixel or grabs a section of the drawing surface.
 
-    Underlying Java method: PApplet.get
+    Underlying Processing method: PApplet.get
 
     Methods
     -------
@@ -8273,7 +8274,7 @@ def get(*args):
 def get_frame_rate() -> float:
     """Get the running Sketch's current frame rate.
 
-    Underlying Java method: PApplet.getFrameRate
+    Underlying Processing method: PApplet.getFrameRate
 
     Notes
     -----
@@ -8293,7 +8294,7 @@ def get_frame_rate() -> float:
 def get_graphics() -> Py5Graphics:
     """Get the ``Py5Graphics`` object used by the Sketch.
 
-    Underlying Java method: PApplet.getGraphics
+    Underlying Processing method: PApplet.getGraphics
 
     Notes
     -----
@@ -8310,7 +8311,7 @@ def get_graphics() -> Py5Graphics:
 def get_matrix() -> NDArray[(Any, Any), Float]:
     """Get the current matrix as a numpy array.
 
-    Underlying Java method: PApplet.getMatrix
+    Underlying Processing method: PApplet.getMatrix
 
     Methods
     -------
@@ -8343,7 +8344,7 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
 def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
     """Get the current matrix as a numpy array.
 
-    Underlying Java method: PApplet.getMatrix
+    Underlying Processing method: PApplet.getMatrix
 
     Methods
     -------
@@ -8376,7 +8377,7 @@ def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
 def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
     """Get the current matrix as a numpy array.
 
-    Underlying Java method: PApplet.getMatrix
+    Underlying Processing method: PApplet.getMatrix
 
     Methods
     -------
@@ -8408,7 +8409,7 @@ def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
 def get_matrix(*args):
     """Get the current matrix as a numpy array.
 
-    Underlying Java method: PApplet.getMatrix
+    Underlying Processing method: PApplet.getMatrix
 
     Methods
     -------
@@ -8440,7 +8441,7 @@ def get_matrix(*args):
 def get_surface() -> Py5Surface:
     """Get the Py5Surface object used for the Sketch.
 
-    Underlying Java method: PApplet.getSurface
+    Underlying Processing method: PApplet.getSurface
 
     Notes
     -----
@@ -8453,7 +8454,7 @@ def get_surface() -> Py5Surface:
 def green(rgb: int, /) -> float:
     """Extracts the green value from a color, scaled to match current ``color_mode()``.
 
-    Underlying Java method: PApplet.green
+    Underlying Processing method: PApplet.green
 
     Parameters
     ----------
@@ -8480,7 +8481,7 @@ def hint(which: int, /) -> None:
     """This function is used to enable or disable special features that control how
     graphics are drawn.
 
-    Underlying Java method: PApplet.hint
+    Underlying Processing method: PApplet.hint
 
     Parameters
     ----------
@@ -8564,7 +8565,7 @@ def hint(which: int, /) -> None:
 def hour() -> int:
     """Py5 communicates with the clock on your computer.
 
-    Underlying Java method: PApplet.hour
+    Underlying Processing method: PApplet.hour
 
     Notes
     -----
@@ -8578,7 +8579,7 @@ def hour() -> int:
 def hue(rgb: int, /) -> float:
     """Extracts the hue value from a color.
 
-    Underlying Java method: PApplet.hue
+    Underlying Processing method: PApplet.hue
 
     Parameters
     ----------
@@ -8598,7 +8599,7 @@ def hue(rgb: int, /) -> float:
 def image(img: Py5Image, a: float, b: float, /) -> None:
     """The ``image()`` function draws an image to the display window.
 
-    Underlying Java method: PApplet.image
+    Underlying Processing method: PApplet.image
 
     Methods
     -------
@@ -8666,7 +8667,7 @@ def image(img: Py5Image, a: float, b: float, /) -> None:
 def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
     """The ``image()`` function draws an image to the display window.
 
-    Underlying Java method: PApplet.image
+    Underlying Processing method: PApplet.image
 
     Methods
     -------
@@ -8735,7 +8736,7 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
           u1: int, v1: int, u2: int, v2: int, /) -> None:
     """The ``image()`` function draws an image to the display window.
 
-    Underlying Java method: PApplet.image
+    Underlying Processing method: PApplet.image
 
     Methods
     -------
@@ -8802,7 +8803,7 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float,
 def image(*args):
     """The ``image()`` function draws an image to the display window.
 
-    Underlying Java method: PApplet.image
+    Underlying Processing method: PApplet.image
 
     Methods
     -------
@@ -8870,7 +8871,7 @@ def image_mode(mode: int, /) -> None:
     """Modifies the location from which images are drawn by changing the way in which
     parameters given to ``image()`` are intepreted.
 
-    Underlying Java method: PApplet.imageMode
+    Underlying Processing method: PApplet.imageMode
 
     Parameters
     ----------
@@ -8907,7 +8908,7 @@ def image_mode(mode: int, /) -> None:
 def lerp_color(c1: int, c2: int, amt: float, /) -> int:
     """Calculates a color between two colors at a specific increment.
 
-    Underlying Java method: PApplet.lerpColor
+    Underlying Processing method: PApplet.lerpColor
 
     Methods
     -------
@@ -8951,7 +8952,7 @@ def lerp_color(c1: int, c2: int, amt: float, /) -> int:
 def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
     """Calculates a color between two colors at a specific increment.
 
-    Underlying Java method: PApplet.lerpColor
+    Underlying Processing method: PApplet.lerpColor
 
     Methods
     -------
@@ -8994,7 +8995,7 @@ def lerp_color(c1: int, c2: int, amt: float, mode: int, /) -> int:
 def lerp_color(*args):
     """Calculates a color between two colors at a specific increment.
 
-    Underlying Java method: PApplet.lerpColor
+    Underlying Processing method: PApplet.lerpColor
 
     Methods
     -------
@@ -9037,7 +9038,7 @@ def lerp_color(*args):
 def light_falloff(constant: float, linear: float, quadratic: float, /) -> None:
     """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
-    Underlying Java method: PApplet.lightFalloff
+    Underlying Processing method: PApplet.lightFalloff
 
     Parameters
     ----------
@@ -9073,7 +9074,7 @@ def light_falloff(constant: float, linear: float, quadratic: float, /) -> None:
 def light_specular(v1: float, v2: float, v3: float, /) -> None:
     """Sets the specular color for lights.
 
-    Underlying Java method: PApplet.lightSpecular
+    Underlying Processing method: PApplet.lightSpecular
 
     Parameters
     ----------
@@ -9103,7 +9104,7 @@ def light_specular(v1: float, v2: float, v3: float, /) -> None:
 def lights() -> None:
     """Sets the default ambient light, directional light, falloff, and specular values.
 
-    Underlying Java method: PApplet.lights
+    Underlying Processing method: PApplet.lights
 
     Notes
     -----
@@ -9122,7 +9123,7 @@ def lights() -> None:
 def line(x1: float, y1: float, x2: float, y2: float, /) -> None:
     """Draws a line (a direct path between two points) to the screen.
 
-    Underlying Java method: PApplet.line
+    Underlying Processing method: PApplet.line
 
     Methods
     -------
@@ -9173,7 +9174,7 @@ def line(x1: float, y1: float, z1: float, x2: float,
          y2: float, z2: float, /) -> None:
     """Draws a line (a direct path between two points) to the screen.
 
-    Underlying Java method: PApplet.line
+    Underlying Processing method: PApplet.line
 
     Methods
     -------
@@ -9222,7 +9223,7 @@ def line(x1: float, y1: float, z1: float, x2: float,
 def line(*args):
     """Draws a line (a direct path between two points) to the screen.
 
-    Underlying Java method: PApplet.line
+    Underlying Processing method: PApplet.line
 
     Methods
     -------
@@ -9271,7 +9272,7 @@ def line(*args):
 def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """Draw a collection of lines to the screen.
 
-    Underlying Java method: PApplet.lines
+    Underlying Processing method: PApplet.lines
 
     Parameters
     ----------
@@ -9297,7 +9298,7 @@ def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def load_font(filename: str, /) -> Py5Font:
     """Loads a .vlw formatted font into a ``Py5Font`` object.
 
-    Underlying Java method: PApplet.loadFont
+    Underlying Processing method: PApplet.loadFont
 
     Parameters
     ----------
@@ -9345,7 +9346,7 @@ def load_font(filename: str, /) -> Py5Font:
 def load_pixels() -> None:
     """Loads the pixel data of the current display window into the ``pixels[]`` array.
 
-    Underlying Java method: PApplet.loadPixels
+    Underlying Processing method: PApplet.loadPixels
 
     Notes
     -----
@@ -9362,7 +9363,7 @@ def load_pixels() -> None:
 def load_shader(frag_filename: str, /) -> Py5Shader:
     """Loads a shader into a ``Py5Shader`` object.
 
-    Underlying Java method: PApplet.loadShader
+    Underlying Processing method: PApplet.loadShader
 
     Methods
     -------
@@ -9384,7 +9385,7 @@ def load_shader(frag_filename: str, /) -> Py5Shader:
     Notes
     -----
 
-    Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+    Loads a shader into a ``Py5Shader`` object. The shader file must be located in
     the Sketch's "data" directory to load correctly. Shaders are compatible with the
     ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -9405,7 +9406,7 @@ def load_shader(frag_filename: str, /) -> Py5Shader:
 def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
     """Loads a shader into a ``Py5Shader`` object.
 
-    Underlying Java method: PApplet.loadShader
+    Underlying Processing method: PApplet.loadShader
 
     Methods
     -------
@@ -9427,7 +9428,7 @@ def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
     Notes
     -----
 
-    Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+    Loads a shader into a ``Py5Shader`` object. The shader file must be located in
     the Sketch's "data" directory to load correctly. Shaders are compatible with the
     ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -9447,7 +9448,7 @@ def load_shader(frag_filename: str, vert_filename: str, /) -> Py5Shader:
 def load_shader(*args):
     """Loads a shader into a ``Py5Shader`` object.
 
-    Underlying Java method: PApplet.loadShader
+    Underlying Processing method: PApplet.loadShader
 
     Methods
     -------
@@ -9469,7 +9470,7 @@ def load_shader(*args):
     Notes
     -----
 
-    Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+    Loads a shader into a ``Py5Shader`` object. The shader file must be located in
     the Sketch's "data" directory to load correctly. Shaders are compatible with the
     ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -9490,7 +9491,7 @@ def load_shader(*args):
 def load_shape(filename: str, /) -> Py5Shape:
     """Loads geometry into a variable of type ``Py5Shape``.
 
-    Underlying Java method: PApplet.loadShape
+    Underlying Processing method: PApplet.loadShape
 
     Methods
     -------
@@ -9535,7 +9536,7 @@ def load_shape(filename: str, /) -> Py5Shape:
 def load_shape(filename: str, options: str, /) -> Py5Shape:
     """Loads geometry into a variable of type ``Py5Shape``.
 
-    Underlying Java method: PApplet.loadShape
+    Underlying Processing method: PApplet.loadShape
 
     Methods
     -------
@@ -9579,7 +9580,7 @@ def load_shape(filename: str, options: str, /) -> Py5Shape:
 def load_shape(*args):
     """Loads geometry into a variable of type ``Py5Shape``.
 
-    Underlying Java method: PApplet.loadShape
+    Underlying Processing method: PApplet.loadShape
 
     Methods
     -------
@@ -9624,7 +9625,7 @@ def loop() -> None:
     """By default, py5 loops through ``draw()`` continuously, executing the code within
     it.
 
-    Underlying Java method: PApplet.loop
+    Underlying Processing method: PApplet.loop
 
     Notes
     -----
@@ -9640,7 +9641,7 @@ def millis() -> int:
     """Returns the number of milliseconds (thousandths of a second) since starting the
     program.
 
-    Underlying Java method: PApplet.millis
+    Underlying Processing method: PApplet.millis
 
     Notes
     -----
@@ -9655,7 +9656,7 @@ def millis() -> int:
 def minute() -> int:
     """Py5 communicates with the clock on your computer.
 
-    Underlying Java method: PApplet.minute
+    Underlying Processing method: PApplet.minute
 
     Notes
     -----
@@ -9669,7 +9670,7 @@ def minute() -> int:
 def model_x(x: float, y: float, z: float, /) -> float:
     """Returns the three-dimensional X, Y, Z position in model space.
 
-    Underlying Java method: PApplet.modelX
+    Underlying Processing method: PApplet.modelX
 
     Parameters
     ----------
@@ -9704,7 +9705,7 @@ def model_x(x: float, y: float, z: float, /) -> float:
 def model_y(x: float, y: float, z: float, /) -> float:
     """Returns the three-dimensional X, Y, Z position in model space.
 
-    Underlying Java method: PApplet.modelY
+    Underlying Processing method: PApplet.modelY
 
     Parameters
     ----------
@@ -9739,7 +9740,7 @@ def model_y(x: float, y: float, z: float, /) -> float:
 def model_z(x: float, y: float, z: float, /) -> float:
     """Returns the three-dimensional X, Y, Z position in model space.
 
-    Underlying Java method: PApplet.modelZ
+    Underlying Processing method: PApplet.modelZ
 
     Parameters
     ----------
@@ -9774,7 +9775,7 @@ def model_z(x: float, y: float, z: float, /) -> float:
 def month() -> int:
     """Py5 communicates with the clock on your computer.
 
-    Underlying Java method: PApplet.month
+    Underlying Processing method: PApplet.month
 
     Notes
     -----
@@ -9788,7 +9789,7 @@ def month() -> int:
 def no_clip() -> None:
     """Disables the clipping previously started by the ``clip()`` function.
 
-    Underlying Java method: PApplet.noClip
+    Underlying Processing method: PApplet.noClip
 
     Notes
     -----
@@ -9801,7 +9802,7 @@ def no_clip() -> None:
 def no_cursor() -> None:
     """Hides the cursor from view.
 
-    Underlying Java method: PApplet.noCursor
+    Underlying Processing method: PApplet.noCursor
 
     Notes
     -----
@@ -9815,7 +9816,7 @@ def no_cursor() -> None:
 def no_fill() -> None:
     """Disables filling geometry.
 
-    Underlying Java method: PApplet.noFill
+    Underlying Processing method: PApplet.noFill
 
     Notes
     -----
@@ -9829,7 +9830,7 @@ def no_fill() -> None:
 def no_lights() -> None:
     """Disable all lighting.
 
-    Underlying Java method: PApplet.noLights
+    Underlying Processing method: PApplet.noLights
 
     Notes
     -----
@@ -9845,7 +9846,7 @@ def no_lights() -> None:
 def no_loop() -> None:
     """Stops py5 from continuously executing the code within ``draw()``.
 
-    Underlying Java method: PApplet.noLoop
+    Underlying Processing method: PApplet.noLoop
 
     Notes
     -----
@@ -9872,7 +9873,7 @@ def no_smooth() -> None:
     """Draws all geometry and fonts with jagged (aliased) edges and images with hard
     edges between the pixels when enlarged rather than interpolating pixels.
 
-    Underlying Java method: PApplet.noSmooth
+    Underlying Processing method: PApplet.noSmooth
 
     Notes
     -----
@@ -9904,7 +9905,7 @@ def no_smooth() -> None:
 def no_stroke() -> None:
     """Disables drawing the stroke (outline).
 
-    Underlying Java method: PApplet.noStroke
+    Underlying Processing method: PApplet.noStroke
 
     Notes
     -----
@@ -9919,7 +9920,7 @@ def no_tint() -> None:
     """Removes the current fill value for displaying images and reverts to displaying
     images with their original hues.
 
-    Underlying Java method: PApplet.noTint
+    Underlying Processing method: PApplet.noTint
 
     Notes
     -----
@@ -9930,10 +9931,171 @@ def no_tint() -> None:
     return _py5sketch.no_tint()
 
 
+@overload
+def noise_detail(lod: int, /) -> None:
+    """Adjusts the character and level of detail of Processing's noise algorithm,
+    produced by the ``noise()`` function.
+
+    Underlying Processing method: PApplet.noiseDetail
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise_detail(lod: int, /) -> None
+     * noise_detail(lod: int, falloff: float, /) -> None
+
+    Parameters
+    ----------
+
+    falloff: float
+        falloff factor for each octave
+
+    lod: int
+        number of octaves to be used by the noise
+
+    Notes
+    -----
+
+    Adjusts the character and level of detail of Processing's noise algorithm,
+    produced by the ``noise()`` function. Similar to harmonics in physics,
+    Processing noise is computed over several octaves. Lower octaves contribute more
+    to the output signal and as such define the overall intensity of the noise,
+    whereas higher octaves create finer-grained details in the noise sequence.
+
+    By default, noise is computed over 4 octaves with each octave contributing
+    exactly half than its predecessor, starting at 50% strength for the first
+    octave. This falloff amount can be changed by adding an additional function
+    parameter. For example, a ``falloff`` factor of 0.75 means each octave will now
+    have 75% impact (25% less) of the previous lower octave. While any number
+    between 0.0 and 1.0 is valid, note that values greater than 0.5 may result in
+    noise() returning values greater than 1.0 or less than 0.0.
+
+    By changing these parameters, the signal created by the ``noise()`` function can
+    be adapted to fit very specific needs and characteristics.
+    """
+    pass
+
+
+@overload
+def noise_detail(lod: int, falloff: float, /) -> None:
+    """Adjusts the character and level of detail of Processing's noise algorithm,
+    produced by the ``noise()`` function.
+
+    Underlying Processing method: PApplet.noiseDetail
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise_detail(lod: int, /) -> None
+     * noise_detail(lod: int, falloff: float, /) -> None
+
+    Parameters
+    ----------
+
+    falloff: float
+        falloff factor for each octave
+
+    lod: int
+        number of octaves to be used by the noise
+
+    Notes
+    -----
+
+    Adjusts the character and level of detail of Processing's noise algorithm,
+    produced by the ``noise()`` function. Similar to harmonics in physics,
+    Processing noise is computed over several octaves. Lower octaves contribute more
+    to the output signal and as such define the overall intensity of the noise,
+    whereas higher octaves create finer-grained details in the noise sequence.
+
+    By default, noise is computed over 4 octaves with each octave contributing
+    exactly half than its predecessor, starting at 50% strength for the first
+    octave. This falloff amount can be changed by adding an additional function
+    parameter. For example, a ``falloff`` factor of 0.75 means each octave will now
+    have 75% impact (25% less) of the previous lower octave. While any number
+    between 0.0 and 1.0 is valid, note that values greater than 0.5 may result in
+    noise() returning values greater than 1.0 or less than 0.0.
+
+    By changing these parameters, the signal created by the ``noise()`` function can
+    be adapted to fit very specific needs and characteristics.
+    """
+    pass
+
+
+def noise_detail(*args):
+    """Adjusts the character and level of detail of Processing's noise algorithm,
+    produced by the ``noise()`` function.
+
+    Underlying Processing method: PApplet.noiseDetail
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise_detail(lod: int, /) -> None
+     * noise_detail(lod: int, falloff: float, /) -> None
+
+    Parameters
+    ----------
+
+    falloff: float
+        falloff factor for each octave
+
+    lod: int
+        number of octaves to be used by the noise
+
+    Notes
+    -----
+
+    Adjusts the character and level of detail of Processing's noise algorithm,
+    produced by the ``noise()`` function. Similar to harmonics in physics,
+    Processing noise is computed over several octaves. Lower octaves contribute more
+    to the output signal and as such define the overall intensity of the noise,
+    whereas higher octaves create finer-grained details in the noise sequence.
+
+    By default, noise is computed over 4 octaves with each octave contributing
+    exactly half than its predecessor, starting at 50% strength for the first
+    octave. This falloff amount can be changed by adding an additional function
+    parameter. For example, a ``falloff`` factor of 0.75 means each octave will now
+    have 75% impact (25% less) of the previous lower octave. While any number
+    between 0.0 and 1.0 is valid, note that values greater than 0.5 may result in
+    noise() returning values greater than 1.0 or less than 0.0.
+
+    By changing these parameters, the signal created by the ``noise()`` function can
+    be adapted to fit very specific needs and characteristics.
+    """
+    return _py5sketch.noise_detail(*args)
+
+
+def noise_seed(seed: int, /) -> None:
+    """Sets the seed value for ``noise()``.
+
+    Underlying Processing method: PApplet.noiseSeed
+
+    Parameters
+    ----------
+
+    seed: int
+        seed value
+
+    Notes
+    -----
+
+    Sets the seed value for ``noise()``. By default, ``noise()`` produces different
+    results each time the program is run. Set the seed parameter to a constant to
+    return the same pseudo-random numbers each time the Sketch is run.
+    """
+    return _py5sketch.noise_seed(seed)
+
+
 def normal(nx: float, ny: float, nz: float, /) -> None:
     """Sets the current normal vector.
 
-    Underlying Java method: PApplet.normal
+    Underlying Processing method: PApplet.normal
 
     Parameters
     ----------
@@ -9964,7 +10126,7 @@ def normal(nx: float, ny: float, nz: float, /) -> None:
 def ortho() -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
 
-    Underlying Java method: PApplet.ortho
+    Underlying Processing method: PApplet.ortho
 
     Methods
     -------
@@ -10014,7 +10176,7 @@ def ortho() -> None:
 def ortho(left: float, right: float, bottom: float, top: float, /) -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
 
-    Underlying Java method: PApplet.ortho
+    Underlying Processing method: PApplet.ortho
 
     Methods
     -------
@@ -10065,7 +10227,7 @@ def ortho(left: float, right: float, bottom: float,
           top: float, near: float, far: float, /) -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
 
-    Underlying Java method: PApplet.ortho
+    Underlying Processing method: PApplet.ortho
 
     Methods
     -------
@@ -10114,7 +10276,7 @@ def ortho(left: float, right: float, bottom: float,
 def ortho(*args):
     """Sets an orthographic projection and defines a parallel clipping volume.
 
-    Underlying Java method: PApplet.ortho
+    Underlying Processing method: PApplet.ortho
 
     Methods
     -------
@@ -10160,12 +10322,31 @@ def ortho(*args):
     return _py5sketch.ortho(*args)
 
 
+def os_noise_seed(seed: int, /) -> None:
+    """Sets the seed value for ``os_noise()``.
+
+    Parameters
+    ----------
+
+    seed: int
+        seed value
+
+    Notes
+    -----
+
+    Sets the seed value for ``os_noise()``. By default, ``os_noise()`` produces
+    different results each time the program is run. Set the seed parameter to a
+    constant to return the same pseudo-random numbers each time the Sketch is run.
+    """
+    return _py5sketch.os_noise_seed(seed)
+
+
 @overload
 def perspective() -> None:
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
 
-    Underlying Java method: PApplet.perspective
+    Underlying Processing method: PApplet.perspective
 
     Methods
     -------
@@ -10212,7 +10393,7 @@ def perspective(fovy: float, aspect: float,
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
 
-    Underlying Java method: PApplet.perspective
+    Underlying Processing method: PApplet.perspective
 
     Methods
     -------
@@ -10257,7 +10438,7 @@ def perspective(*args):
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
 
-    Underlying Java method: PApplet.perspective
+    Underlying Processing method: PApplet.perspective
 
     Methods
     -------
@@ -10303,7 +10484,7 @@ def pixel_density(density: int, /) -> None:
     high resolutions screens like Apple Retina displays and Windows High-DPI
     displays.
 
-    Underlying Java method: PApplet.pixelDensity
+    Underlying Processing method: PApplet.pixelDensity
 
     Parameters
     ----------
@@ -10347,7 +10528,7 @@ def pixel_density(density: int, /) -> None:
 def point(x: float, y: float, /) -> None:
     """Draws a point, a coordinate in space at the dimension of one pixel.
 
-    Underlying Java method: PApplet.point
+    Underlying Processing method: PApplet.point
 
     Methods
     -------
@@ -10396,7 +10577,7 @@ def point(x: float, y: float, /) -> None:
 def point(x: float, y: float, z: float, /) -> None:
     """Draws a point, a coordinate in space at the dimension of one pixel.
 
-    Underlying Java method: PApplet.point
+    Underlying Processing method: PApplet.point
 
     Methods
     -------
@@ -10444,7 +10625,7 @@ def point(x: float, y: float, z: float, /) -> None:
 def point(*args):
     """Draws a point, a coordinate in space at the dimension of one pixel.
 
-    Underlying Java method: PApplet.point
+    Underlying Processing method: PApplet.point
 
     Methods
     -------
@@ -10493,7 +10674,7 @@ def point_light(v1: float, v2: float, v3: float,
                 x: float, y: float, z: float, /) -> None:
     """Adds a point light.
 
-    Underlying Java method: PApplet.pointLight
+    Underlying Processing method: PApplet.pointLight
 
     Parameters
     ----------
@@ -10533,7 +10714,7 @@ def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """Draw a collection of points, each a coordinate in space at the dimension of one
     pixel.
 
-    Underlying Java method: PApplet.points
+    Underlying Processing method: PApplet.points
 
     Parameters
     ----------
@@ -10559,7 +10740,7 @@ def pop() -> None:
     """The ``pop()`` function restores the previous drawing style settings and
     transformations after ``push()`` has changed them.
 
-    Underlying Java method: PApplet.pop
+    Underlying Processing method: PApplet.pop
 
     Notes
     -----
@@ -10588,7 +10769,7 @@ def pop() -> None:
 def pop_matrix() -> None:
     """Pops the current transformation matrix off the matrix stack.
 
-    Underlying Java method: PApplet.popMatrix
+    Underlying Processing method: PApplet.popMatrix
 
     Notes
     -----
@@ -10608,7 +10789,7 @@ def pop_style() -> None:
     ``pop_style()`` restores the prior settings; these functions are always used
     together.
 
-    Underlying Java method: PApplet.popStyle
+    Underlying Processing method: PApplet.popStyle
 
     Notes
     -----
@@ -10627,7 +10808,7 @@ def pop_style() -> None:
 def print_camera() -> None:
     """Prints the current camera matrix to standard output.
 
-    Underlying Java method: PApplet.printCamera
+    Underlying Processing method: PApplet.printCamera
 
     Notes
     -----
@@ -10640,7 +10821,7 @@ def print_camera() -> None:
 def print_matrix() -> None:
     """Prints the current matrix to standard output.
 
-    Underlying Java method: PApplet.printMatrix
+    Underlying Processing method: PApplet.printMatrix
 
     Notes
     -----
@@ -10653,7 +10834,7 @@ def print_matrix() -> None:
 def print_projection() -> None:
     """Prints the current projection matrix to standard output.
 
-    Underlying Java method: PApplet.printProjection
+    Underlying Processing method: PApplet.printProjection
 
     Notes
     -----
@@ -10667,7 +10848,7 @@ def push() -> None:
     """The ``push()`` function saves the current drawing style settings and
     transformations, while ``pop()`` restores these settings.
 
-    Underlying Java method: PApplet.push
+    Underlying Processing method: PApplet.push
 
     Notes
     -----
@@ -10697,7 +10878,7 @@ def push() -> None:
 def push_matrix() -> None:
     """Pushes the current transformation matrix onto the matrix stack.
 
-    Underlying Java method: PApplet.pushMatrix
+    Underlying Processing method: PApplet.pushMatrix
 
     Notes
     -----
@@ -10717,7 +10898,7 @@ def push_style() -> None:
     """The ``push_style()`` function saves the current style settings and
     ``pop_style()`` restores the prior settings.
 
-    Underlying Java method: PApplet.pushStyle
+    Underlying Processing method: PApplet.pushStyle
 
     Notes
     -----
@@ -10744,7 +10925,7 @@ def quad(x1: float, y1: float, x2: float, y2: float, x3: float,
          y3: float, x4: float, y4: float, /) -> None:
     """A quad is a quadrilateral, a four sided polygon.
 
-    Underlying Java method: PApplet.quad
+    Underlying Processing method: PApplet.quad
 
     Parameters
     ----------
@@ -10788,7 +10969,7 @@ def quad(x1: float, y1: float, x2: float, y2: float, x3: float,
 def quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None:
     """Specifies vertex coordinates for quadratic Bezier curves.
 
-    Underlying Java method: PApplet.quadraticVertex
+    Underlying Processing method: PApplet.quadraticVertex
 
     Methods
     -------
@@ -10839,7 +11020,7 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
                      x3: float, y3: float, z3: float, /) -> None:
     """Specifies vertex coordinates for quadratic Bezier curves.
 
-    Underlying Java method: PApplet.quadraticVertex
+    Underlying Processing method: PApplet.quadraticVertex
 
     Methods
     -------
@@ -10888,7 +11069,7 @@ def quadratic_vertex(cx: float, cy: float, cz: float,
 def quadratic_vertex(*args):
     """Specifies vertex coordinates for quadratic Bezier curves.
 
-    Underlying Java method: PApplet.quadraticVertex
+    Underlying Processing method: PApplet.quadraticVertex
 
     Methods
     -------
@@ -10937,7 +11118,7 @@ def quadratic_vertex(*args):
 def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """Create a collection of quadratic vertices.
 
-    Underlying Java method: PApplet.quadraticVertices
+    Underlying Processing method: PApplet.quadraticVertices
 
     Parameters
     ----------
@@ -10965,7 +11146,7 @@ def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def rect(a: float, b: float, c: float, d: float, /) -> None:
     """Draws a rectangle to the screen.
 
-    Underlying Java method: PApplet.rect
+    Underlying Processing method: PApplet.rect
 
     Methods
     -------
@@ -11030,7 +11211,7 @@ def rect(a: float, b: float, c: float, d: float, /) -> None:
 def rect(a: float, b: float, c: float, d: float, r: float, /) -> None:
     """Draws a rectangle to the screen.
 
-    Underlying Java method: PApplet.rect
+    Underlying Processing method: PApplet.rect
 
     Methods
     -------
@@ -11096,7 +11277,7 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
          tr: float, br: float, bl: float, /) -> None:
     """Draws a rectangle to the screen.
 
-    Underlying Java method: PApplet.rect
+    Underlying Processing method: PApplet.rect
 
     Methods
     -------
@@ -11160,7 +11341,7 @@ def rect(a: float, b: float, c: float, d: float, tl: float,
 def rect(*args):
     """Draws a rectangle to the screen.
 
-    Underlying Java method: PApplet.rect
+    Underlying Processing method: PApplet.rect
 
     Methods
     -------
@@ -11225,7 +11406,7 @@ def rect_mode(mode: int, /) -> None:
     """Modifies the location from which rectangles are drawn by changing the way in
     which parameters given to ``rect()`` are intepreted.
 
-    Underlying Java method: PApplet.rectMode
+    Underlying Processing method: PApplet.rectMode
 
     Parameters
     ----------
@@ -11264,7 +11445,7 @@ def rect_mode(mode: int, /) -> None:
 def red(rgb: int, /) -> float:
     """Extracts the red value from a color, scaled to match current ``color_mode()``.
 
-    Underlying Java method: PApplet.red
+    Underlying Processing method: PApplet.red
 
     Parameters
     ----------
@@ -11290,7 +11471,7 @@ def red(rgb: int, /) -> float:
 def redraw() -> None:
     """Executes the code within ``draw()`` one time.
 
-    Underlying Java method: PApplet.redraw
+    Underlying Processing method: PApplet.redraw
 
     Notes
     -----
@@ -11312,7 +11493,7 @@ def redraw() -> None:
 def reset_matrix() -> None:
     """Replaces the current matrix with the identity matrix.
 
-    Underlying Java method: PApplet.resetMatrix
+    Underlying Processing method: PApplet.resetMatrix
 
     Notes
     -----
@@ -11327,7 +11508,7 @@ def reset_matrix() -> None:
 def reset_shader() -> None:
     """Restores the default shaders.
 
-    Underlying Java method: PApplet.resetShader
+    Underlying Processing method: PApplet.resetShader
 
     Methods
     -------
@@ -11356,7 +11537,7 @@ def reset_shader() -> None:
 def reset_shader(kind: int, /) -> None:
     """Restores the default shaders.
 
-    Underlying Java method: PApplet.resetShader
+    Underlying Processing method: PApplet.resetShader
 
     Methods
     -------
@@ -11384,7 +11565,7 @@ def reset_shader(kind: int, /) -> None:
 def reset_shader(*args):
     """Restores the default shaders.
 
-    Underlying Java method: PApplet.resetShader
+    Underlying Processing method: PApplet.resetShader
 
     Methods
     -------
@@ -11413,7 +11594,7 @@ def reset_shader(*args):
 def rotate(angle: float, /) -> None:
     """Rotates the amount specified by the ``angle`` parameter.
 
-    Underlying Java method: PApplet.rotate
+    Underlying Processing method: PApplet.rotate
 
     Methods
     -------
@@ -11464,7 +11645,7 @@ def rotate(angle: float, /) -> None:
 def rotate(angle: float, x: float, y: float, z: float, /) -> None:
     """Rotates the amount specified by the ``angle`` parameter.
 
-    Underlying Java method: PApplet.rotate
+    Underlying Processing method: PApplet.rotate
 
     Methods
     -------
@@ -11514,7 +11695,7 @@ def rotate(angle: float, x: float, y: float, z: float, /) -> None:
 def rotate(*args):
     """Rotates the amount specified by the ``angle`` parameter.
 
-    Underlying Java method: PApplet.rotate
+    Underlying Processing method: PApplet.rotate
 
     Methods
     -------
@@ -11564,7 +11745,7 @@ def rotate(*args):
 def rotate_x(angle: float, /) -> None:
     """Rotates around the x-axis the amount specified by the ``angle`` parameter.
 
-    Underlying Java method: PApplet.rotateX
+    Underlying Processing method: PApplet.rotateX
 
     Parameters
     ----------
@@ -11593,7 +11774,7 @@ def rotate_x(angle: float, /) -> None:
 def rotate_y(angle: float, /) -> None:
     """Rotates around the y-axis the amount specified by the ``angle`` parameter.
 
-    Underlying Java method: PApplet.rotateY
+    Underlying Processing method: PApplet.rotateY
 
     Parameters
     ----------
@@ -11622,7 +11803,7 @@ def rotate_y(angle: float, /) -> None:
 def rotate_z(angle: float, /) -> None:
     """Rotates around the z-axis the amount specified by the ``angle`` parameter.
 
-    Underlying Java method: PApplet.rotateZ
+    Underlying Processing method: PApplet.rotateZ
 
     Parameters
     ----------
@@ -11651,7 +11832,7 @@ def rotate_z(angle: float, /) -> None:
 def saturation(rgb: int, /) -> float:
     """Extracts the saturation value from a color.
 
-    Underlying Java method: PApplet.saturation
+    Underlying Processing method: PApplet.saturation
 
     Parameters
     ----------
@@ -11672,7 +11853,7 @@ def scale(s: float, /) -> None:
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
 
-    Underlying Java method: PApplet.scale
+    Underlying Processing method: PApplet.scale
 
     Methods
     -------
@@ -11722,7 +11903,7 @@ def scale(x: float, y: float, /) -> None:
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
 
-    Underlying Java method: PApplet.scale
+    Underlying Processing method: PApplet.scale
 
     Methods
     -------
@@ -11772,7 +11953,7 @@ def scale(x: float, y: float, z: float, /) -> None:
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
 
-    Underlying Java method: PApplet.scale
+    Underlying Processing method: PApplet.scale
 
     Methods
     -------
@@ -11821,7 +12002,7 @@ def scale(*args):
     """Increases or decreases the size of a shape by expanding and contracting
     vertices.
 
-    Underlying Java method: PApplet.scale
+    Underlying Processing method: PApplet.scale
 
     Methods
     -------
@@ -11871,7 +12052,7 @@ def screen_x(x: float, y: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenX
+    Underlying Processing method: PApplet.screenX
 
     Methods
     -------
@@ -11907,7 +12088,7 @@ def screen_x(x: float, y: float, z: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenX
+    Underlying Processing method: PApplet.screenX
 
     Methods
     -------
@@ -11942,7 +12123,7 @@ def screen_x(*args):
     """Takes a three-dimensional X, Y, Z position and returns the X value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenX
+    Underlying Processing method: PApplet.screenX
 
     Methods
     -------
@@ -11978,7 +12159,7 @@ def screen_y(x: float, y: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenY
+    Underlying Processing method: PApplet.screenY
 
     Methods
     -------
@@ -12014,7 +12195,7 @@ def screen_y(x: float, y: float, z: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenY
+    Underlying Processing method: PApplet.screenY
 
     Methods
     -------
@@ -12049,7 +12230,7 @@ def screen_y(*args):
     """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenY
+    Underlying Processing method: PApplet.screenY
 
     Methods
     -------
@@ -12084,7 +12265,7 @@ def screen_z(x: float, y: float, z: float, /) -> float:
     """Takes a three-dimensional X, Y, Z position and returns the Z value for where it
     will appear on a (two-dimensional) screen.
 
-    Underlying Java method: PApplet.screenZ
+    Underlying Processing method: PApplet.screenZ
 
     Parameters
     ----------
@@ -12110,7 +12291,7 @@ def screen_z(x: float, y: float, z: float, /) -> float:
 def second() -> int:
     """Py5 communicates with the clock on your computer.
 
-    Underlying Java method: PApplet.second
+    Underlying Processing method: PApplet.second
 
     Notes
     -----
@@ -12125,7 +12306,7 @@ def second() -> int:
 def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
     """Set the current matrix to the one specified through the parameter ``source``.
 
-    Underlying Java method: PApplet.setMatrix
+    Underlying Processing method: PApplet.setMatrix
 
     Methods
     -------
@@ -12159,7 +12340,7 @@ def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
 def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
     """Set the current matrix to the one specified through the parameter ``source``.
 
-    Underlying Java method: PApplet.setMatrix
+    Underlying Processing method: PApplet.setMatrix
 
     Methods
     -------
@@ -12192,7 +12373,7 @@ def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
 def set_matrix(*args):
     """Set the current matrix to the one specified through the parameter ``source``.
 
-    Underlying Java method: PApplet.setMatrix
+    Underlying Processing method: PApplet.setMatrix
 
     Methods
     -------
@@ -12226,7 +12407,7 @@ def set_matrix(*args):
 def shader(shader: Py5Shader, /) -> None:
     """Applies the shader specified by the parameters.
 
-    Underlying Java method: PApplet.shader
+    Underlying Processing method: PApplet.shader
 
     Methods
     -------
@@ -12258,7 +12439,7 @@ def shader(shader: Py5Shader, /) -> None:
 def shader(shader: Py5Shader, kind: int, /) -> None:
     """Applies the shader specified by the parameters.
 
-    Underlying Java method: PApplet.shader
+    Underlying Processing method: PApplet.shader
 
     Methods
     -------
@@ -12289,7 +12470,7 @@ def shader(shader: Py5Shader, kind: int, /) -> None:
 def shader(*args):
     """Applies the shader specified by the parameters.
 
-    Underlying Java method: PApplet.shader
+    Underlying Processing method: PApplet.shader
 
     Methods
     -------
@@ -12321,7 +12502,7 @@ def shader(*args):
 def shape(shape: Py5Shape, /) -> None:
     """Draws shapes to the display window.
 
-    Underlying Java method: PApplet.shape
+    Underlying Processing method: PApplet.shape
 
     Methods
     -------
@@ -12374,7 +12555,7 @@ def shape(shape: Py5Shape, /) -> None:
 def shape(shape: Py5Shape, x: float, y: float, /) -> None:
     """Draws shapes to the display window.
 
-    Underlying Java method: PApplet.shape
+    Underlying Processing method: PApplet.shape
 
     Methods
     -------
@@ -12427,7 +12608,7 @@ def shape(shape: Py5Shape, x: float, y: float, /) -> None:
 def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
     """Draws shapes to the display window.
 
-    Underlying Java method: PApplet.shape
+    Underlying Processing method: PApplet.shape
 
     Methods
     -------
@@ -12479,7 +12660,7 @@ def shape(shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
 def shape(*args):
     """Draws shapes to the display window.
 
-    Underlying Java method: PApplet.shape
+    Underlying Processing method: PApplet.shape
 
     Methods
     -------
@@ -12531,7 +12712,7 @@ def shape(*args):
 def shape_mode(mode: int, /) -> None:
     """Modifies the location from which shapes draw.
 
-    Underlying Java method: PApplet.shapeMode
+    Underlying Processing method: PApplet.shapeMode
 
     Parameters
     ----------
@@ -12560,7 +12741,7 @@ def shear_x(angle: float, /) -> None:
     """Shears a shape around the x-axis the amount specified by the ``angle``
     parameter.
 
-    Underlying Java method: PApplet.shearX
+    Underlying Processing method: PApplet.shearX
 
     Parameters
     ----------
@@ -12592,7 +12773,7 @@ def shear_y(angle: float, /) -> None:
     """Shears a shape around the y-axis the amount specified by the ``angle``
     parameter.
 
-    Underlying Java method: PApplet.shearY
+    Underlying Processing method: PApplet.shearY
 
     Parameters
     ----------
@@ -12623,7 +12804,7 @@ def shear_y(angle: float, /) -> None:
 def shininess(shine: float, /) -> None:
     """Sets the amount of gloss in the surface of shapes.
 
-    Underlying Java method: PApplet.shininess
+    Underlying Processing method: PApplet.shininess
 
     Parameters
     ----------
@@ -12645,7 +12826,7 @@ def shininess(shine: float, /) -> None:
 def size(width: int, height: int, /) -> None:
     """Defines the dimension of the display window width and height in units of pixels.
 
-    Underlying Java method: PApplet.size
+    Underlying Processing method: PApplet.size
 
     Methods
     -------
@@ -12737,7 +12918,7 @@ def size(width: int, height: int, /) -> None:
 def size(width: int, height: int, renderer: str, /) -> None:
     """Defines the dimension of the display window width and height in units of pixels.
 
-    Underlying Java method: PApplet.size
+    Underlying Processing method: PApplet.size
 
     Methods
     -------
@@ -12829,7 +13010,7 @@ def size(width: int, height: int, renderer: str, /) -> None:
 def size(width: int, height: int, renderer: str, path: str, /) -> None:
     """Defines the dimension of the display window width and height in units of pixels.
 
-    Underlying Java method: PApplet.size
+    Underlying Processing method: PApplet.size
 
     Methods
     -------
@@ -12920,7 +13101,7 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
 def size(*args):
     """Defines the dimension of the display window width and height in units of pixels.
 
-    Underlying Java method: PApplet.size
+    Underlying Processing method: PApplet.size
 
     Methods
     -------
@@ -13012,7 +13193,7 @@ def size(*args):
 def smooth() -> None:
     """Draws all geometry with smooth (anti-aliased) edges.
 
-    Underlying Java method: PApplet.smooth
+    Underlying Processing method: PApplet.smooth
 
     Methods
     -------
@@ -13069,7 +13250,7 @@ def smooth() -> None:
 def smooth(level: int, /) -> None:
     """Draws all geometry with smooth (anti-aliased) edges.
 
-    Underlying Java method: PApplet.smooth
+    Underlying Processing method: PApplet.smooth
 
     Methods
     -------
@@ -13125,7 +13306,7 @@ def smooth(level: int, /) -> None:
 def smooth(*args):
     """Draws all geometry with smooth (anti-aliased) edges.
 
-    Underlying Java method: PApplet.smooth
+    Underlying Processing method: PApplet.smooth
 
     Methods
     -------
@@ -13183,7 +13364,7 @@ def specular(gray: float, /) -> None:
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
-    Underlying Java method: PApplet.specular
+    Underlying Processing method: PApplet.specular
 
     Methods
     -------
@@ -13229,7 +13410,7 @@ def specular(v1: float, v2: float, v3: float, /) -> None:
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
-    Underlying Java method: PApplet.specular
+    Underlying Processing method: PApplet.specular
 
     Methods
     -------
@@ -13275,7 +13456,7 @@ def specular(rgb: int, /) -> None:
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
-    Underlying Java method: PApplet.specular
+    Underlying Processing method: PApplet.specular
 
     Methods
     -------
@@ -13320,7 +13501,7 @@ def specular(*args):
     """Sets the specular color of the materials used for shapes drawn to the screen,
     which sets the color of highlights.
 
-    Underlying Java method: PApplet.specular
+    Underlying Processing method: PApplet.specular
 
     Methods
     -------
@@ -13364,7 +13545,7 @@ def specular(*args):
 def sphere(r: float, /) -> None:
     """A sphere is a hollow ball made from tessellated triangles.
 
-    Underlying Java method: PApplet.sphere
+    Underlying Processing method: PApplet.sphere
 
     Parameters
     ----------
@@ -13385,7 +13566,7 @@ def sphere_detail(res: int, /) -> None:
     """Controls the detail used to render a sphere by adjusting the number of vertices
     of the sphere mesh.
 
-    Underlying Java method: PApplet.sphereDetail
+    Underlying Processing method: PApplet.sphereDetail
 
     Methods
     -------
@@ -13430,7 +13611,7 @@ def sphere_detail(ures: int, vres: int, /) -> None:
     """Controls the detail used to render a sphere by adjusting the number of vertices
     of the sphere mesh.
 
-    Underlying Java method: PApplet.sphereDetail
+    Underlying Processing method: PApplet.sphereDetail
 
     Methods
     -------
@@ -13474,7 +13655,7 @@ def sphere_detail(*args):
     """Controls the detail used to render a sphere by adjusting the number of vertices
     of the sphere mesh.
 
-    Underlying Java method: PApplet.sphereDetail
+    Underlying Processing method: PApplet.sphereDetail
 
     Methods
     -------
@@ -13518,7 +13699,7 @@ def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
                nx: float, ny: float, nz: float, angle: float, concentration: float, /) -> None:
     """Adds a spot light.
 
-    Underlying Java method: PApplet.spotLight
+    Underlying Processing method: PApplet.spotLight
 
     Parameters
     ----------
@@ -13576,7 +13757,7 @@ def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
 def square(x: float, y: float, extent: float, /) -> None:
     """Draws a square to the screen.
 
-    Underlying Java method: PApplet.square
+    Underlying Processing method: PApplet.square
 
     Parameters
     ----------
@@ -13606,7 +13787,7 @@ def square(x: float, y: float, extent: float, /) -> None:
 def stroke(gray: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -13674,7 +13855,7 @@ def stroke(gray: float, /) -> None:
 def stroke(gray: float, alpha: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -13742,7 +13923,7 @@ def stroke(gray: float, alpha: float, /) -> None:
 def stroke(v1: float, v2: float, v3: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -13810,7 +13991,7 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
 def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -13878,7 +14059,7 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 def stroke(rgb: int, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -13946,7 +14127,7 @@ def stroke(rgb: int, /) -> None:
 def stroke(rgb: int, alpha: float, /) -> None:
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -14013,7 +14194,7 @@ def stroke(rgb: int, alpha: float, /) -> None:
 def stroke(*args):
     """Sets the color used to draw lines and borders around shapes.
 
-    Underlying Java method: PApplet.stroke
+    Underlying Processing method: PApplet.stroke
 
     Methods
     -------
@@ -14080,7 +14261,7 @@ def stroke(*args):
 def stroke_cap(cap: int, /) -> None:
     """Sets the style for rendering line endings.
 
-    Underlying Java method: PApplet.strokeCap
+    Underlying Processing method: PApplet.strokeCap
 
     Parameters
     ----------
@@ -14104,7 +14285,7 @@ def stroke_cap(cap: int, /) -> None:
 def stroke_join(join: int, /) -> None:
     """Sets the style of the joints which connect line segments.
 
-    Underlying Java method: PApplet.strokeJoin
+    Underlying Processing method: PApplet.strokeJoin
 
     Parameters
     ----------
@@ -14126,7 +14307,7 @@ def stroke_weight(weight: float, /) -> None:
     """Sets the width of the stroke used for lines, points, and the border around
     shapes.
 
-    Underlying Java method: PApplet.strokeWeight
+    Underlying Processing method: PApplet.strokeWeight
 
     Parameters
     ----------
@@ -14152,7 +14333,7 @@ def stroke_weight(weight: float, /) -> None:
 def text(c: chr, x: float, y: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14243,7 +14424,7 @@ def text(c: chr, x: float, y: float, /) -> None:
 def text(c: chr, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14335,7 +14516,7 @@ def text(chars: List[chr], start: int, stop: int,
          x: float, y: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14427,7 +14608,7 @@ def text(chars: List[chr], start: int, stop: int,
          x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14518,7 +14699,7 @@ def text(chars: List[chr], start: int, stop: int,
 def text(num: float, x: float, y: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14609,7 +14790,7 @@ def text(num: float, x: float, y: float, /) -> None:
 def text(num: float, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14700,7 +14881,7 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
 def text(num: int, x: float, y: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14791,7 +14972,7 @@ def text(num: int, x: float, y: float, /) -> None:
 def text(num: int, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14882,7 +15063,7 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
 def text(str: str, x: float, y: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -14973,7 +15154,7 @@ def text(str: str, x: float, y: float, /) -> None:
 def text(str: str, x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -15064,7 +15245,7 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
 def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -15154,7 +15335,7 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
 def text(*args):
     """Draws text to the screen.
 
-    Underlying Java method: PApplet.text
+    Underlying Processing method: PApplet.text
 
     Methods
     -------
@@ -15245,7 +15426,7 @@ def text(*args):
 def text_align(align_x: int, /) -> None:
     """Sets the current alignment for drawing text.
 
-    Underlying Java method: PApplet.textAlign
+    Underlying Processing method: PApplet.textAlign
 
     Methods
     -------
@@ -15297,7 +15478,7 @@ def text_align(align_x: int, /) -> None:
 def text_align(align_x: int, align_y: int, /) -> None:
     """Sets the current alignment for drawing text.
 
-    Underlying Java method: PApplet.textAlign
+    Underlying Processing method: PApplet.textAlign
 
     Methods
     -------
@@ -15348,7 +15529,7 @@ def text_align(align_x: int, align_y: int, /) -> None:
 def text_align(*args):
     """Sets the current alignment for drawing text.
 
-    Underlying Java method: PApplet.textAlign
+    Underlying Processing method: PApplet.textAlign
 
     Methods
     -------
@@ -15399,7 +15580,7 @@ def text_align(*args):
 def text_ascent() -> float:
     """Returns ascent of the current font at its current size.
 
-    Underlying Java method: PApplet.textAscent
+    Underlying Processing method: PApplet.textAscent
 
     Notes
     -----
@@ -15413,7 +15594,7 @@ def text_ascent() -> float:
 def text_descent() -> float:
     """Returns descent of the current font at its current size.
 
-    Underlying Java method: PApplet.textDescent
+    Underlying Processing method: PApplet.textDescent
 
     Notes
     -----
@@ -15428,7 +15609,7 @@ def text_descent() -> float:
 def text_font(which: Py5Font, /) -> None:
     """Sets the current font that will be drawn with the ``text()`` function.
 
-    Underlying Java method: PApplet.textFont
+    Underlying Processing method: PApplet.textFont
 
     Methods
     -------
@@ -15470,7 +15651,7 @@ def text_font(which: Py5Font, /) -> None:
 def text_font(which: Py5Font, size: float, /) -> None:
     """Sets the current font that will be drawn with the ``text()`` function.
 
-    Underlying Java method: PApplet.textFont
+    Underlying Processing method: PApplet.textFont
 
     Methods
     -------
@@ -15511,7 +15692,7 @@ def text_font(which: Py5Font, size: float, /) -> None:
 def text_font(*args):
     """Sets the current font that will be drawn with the ``text()`` function.
 
-    Underlying Java method: PApplet.textFont
+    Underlying Processing method: PApplet.textFont
 
     Methods
     -------
@@ -15552,7 +15733,7 @@ def text_font(*args):
 def text_leading(leading: float, /) -> None:
     """Sets the spacing between lines of text in units of pixels.
 
-    Underlying Java method: PApplet.textLeading
+    Underlying Processing method: PApplet.textLeading
 
     Parameters
     ----------
@@ -15576,7 +15757,7 @@ def text_mode(mode: int, /) -> None:
     """Sets the way text draws to the screen, either as texture maps or as vector
     geometry.
 
-    Underlying Java method: PApplet.textMode
+    Underlying Processing method: PApplet.textMode
 
     Parameters
     ----------
@@ -15608,7 +15789,7 @@ def text_mode(mode: int, /) -> None:
 def text_size(size: float, /) -> None:
     """Sets the current font size.
 
-    Underlying Java method: PApplet.textSize
+    Underlying Processing method: PApplet.textSize
 
     Parameters
     ----------
@@ -15629,7 +15810,7 @@ def text_size(size: float, /) -> None:
 def text_width(c: chr, /) -> float:
     """Calculates and returns the width of any character or text string.
 
-    Underlying Java method: PApplet.textWidth
+    Underlying Processing method: PApplet.textWidth
 
     Methods
     -------
@@ -15670,7 +15851,7 @@ def text_width(c: chr, /) -> float:
 def text_width(chars: List[chr], start: int, length: int, /) -> float:
     """Calculates and returns the width of any character or text string.
 
-    Underlying Java method: PApplet.textWidth
+    Underlying Processing method: PApplet.textWidth
 
     Methods
     -------
@@ -15711,7 +15892,7 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
 def text_width(str: str, /) -> float:
     """Calculates and returns the width of any character or text string.
 
-    Underlying Java method: PApplet.textWidth
+    Underlying Processing method: PApplet.textWidth
 
     Methods
     -------
@@ -15751,7 +15932,7 @@ def text_width(str: str, /) -> float:
 def text_width(*args):
     """Calculates and returns the width of any character or text string.
 
-    Underlying Java method: PApplet.textWidth
+    Underlying Processing method: PApplet.textWidth
 
     Methods
     -------
@@ -15791,7 +15972,7 @@ def text_width(*args):
 def texture(image: Py5Image, /) -> None:
     """Sets a texture to be applied to vertex points.
 
-    Underlying Java method: PApplet.texture
+    Underlying Processing method: PApplet.texture
 
     Parameters
     ----------
@@ -15815,7 +15996,7 @@ def texture(image: Py5Image, /) -> None:
 def texture_mode(mode: int, /) -> None:
     """Sets the coordinate space for texture mapping.
 
-    Underlying Java method: PApplet.textureMode
+    Underlying Processing method: PApplet.textureMode
 
     Parameters
     ----------
@@ -15841,7 +16022,7 @@ def texture_mode(mode: int, /) -> None:
 def texture_wrap(wrap: int, /) -> None:
     """Defines if textures repeat or draw once within a texture map.
 
-    Underlying Java method: PApplet.textureWrap
+    Underlying Processing method: PApplet.textureWrap
 
     Parameters
     ----------
@@ -15863,7 +16044,7 @@ def texture_wrap(wrap: int, /) -> None:
 def tint(gray: float, /) -> None:
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -15932,7 +16113,7 @@ def tint(gray: float, /) -> None:
 def tint(gray: float, alpha: float, /) -> None:
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -16001,7 +16182,7 @@ def tint(gray: float, alpha: float, /) -> None:
 def tint(v1: float, v2: float, v3: float, /) -> None:
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -16070,7 +16251,7 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
 def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -16139,7 +16320,7 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
 def tint(rgb: int, /) -> None:
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -16208,7 +16389,7 @@ def tint(rgb: int, /) -> None:
 def tint(rgb: int, alpha: float, /) -> None:
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -16276,7 +16457,7 @@ def tint(rgb: int, alpha: float, /) -> None:
 def tint(*args):
     """Sets the fill value for displaying images.
 
-    Underlying Java method: PApplet.tint
+    Underlying Processing method: PApplet.tint
 
     Methods
     -------
@@ -16345,7 +16526,7 @@ def tint(*args):
 def translate(x: float, y: float, /) -> None:
     """Specifies an amount to displace objects within the display window.
 
-    Underlying Java method: PApplet.translate
+    Underlying Processing method: PApplet.translate
 
     Methods
     -------
@@ -16390,7 +16571,7 @@ def translate(x: float, y: float, /) -> None:
 def translate(x: float, y: float, z: float, /) -> None:
     """Specifies an amount to displace objects within the display window.
 
-    Underlying Java method: PApplet.translate
+    Underlying Processing method: PApplet.translate
 
     Methods
     -------
@@ -16434,7 +16615,7 @@ def translate(x: float, y: float, z: float, /) -> None:
 def translate(*args):
     """Specifies an amount to displace objects within the display window.
 
-    Underlying Java method: PApplet.translate
+    Underlying Processing method: PApplet.translate
 
     Methods
     -------
@@ -16479,7 +16660,7 @@ def triangle(x1: float, y1: float, x2: float, y2: float,
              x3: float, y3: float, /) -> None:
     """A triangle is a plane created by connecting three points.
 
-    Underlying Java method: PApplet.triangle
+    Underlying Processing method: PApplet.triangle
 
     Parameters
     ----------
@@ -16516,7 +16697,7 @@ def triangle(x1: float, y1: float, x2: float, y2: float,
 def update_pixels() -> None:
     """Updates the display window with the data in the ``pixels[]`` array.
 
-    Underlying Java method: PApplet.updatePixels
+    Underlying Processing method: PApplet.updatePixels
 
     Methods
     -------
@@ -16556,7 +16737,7 @@ def update_pixels() -> None:
 def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
     """Updates the display window with the data in the ``pixels[]`` array.
 
-    Underlying Java method: PApplet.updatePixels
+    Underlying Processing method: PApplet.updatePixels
 
     Methods
     -------
@@ -16595,7 +16776,7 @@ def update_pixels(x1: int, y1: int, x2: int, y2: int, /) -> None:
 def update_pixels(*args):
     """Updates the display window with the data in the ``pixels[]`` array.
 
-    Underlying Java method: PApplet.updatePixels
+    Underlying Processing method: PApplet.updatePixels
 
     Methods
     -------
@@ -16635,7 +16816,7 @@ def update_pixels(*args):
 def vertex(x: float, y: float, /) -> None:
     """Add a new vertex to a shape.
 
-    Underlying Java method: PApplet.vertex
+    Underlying Processing method: PApplet.vertex
 
     Methods
     -------
@@ -16694,7 +16875,7 @@ def vertex(x: float, y: float, /) -> None:
 def vertex(x: float, y: float, z: float, /) -> None:
     """Add a new vertex to a shape.
 
-    Underlying Java method: PApplet.vertex
+    Underlying Processing method: PApplet.vertex
 
     Methods
     -------
@@ -16753,7 +16934,7 @@ def vertex(x: float, y: float, z: float, /) -> None:
 def vertex(x: float, y: float, u: float, v: float, /) -> None:
     """Add a new vertex to a shape.
 
-    Underlying Java method: PApplet.vertex
+    Underlying Processing method: PApplet.vertex
 
     Methods
     -------
@@ -16812,7 +16993,7 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
 def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
     """Add a new vertex to a shape.
 
-    Underlying Java method: PApplet.vertex
+    Underlying Processing method: PApplet.vertex
 
     Methods
     -------
@@ -16871,7 +17052,7 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
 def vertex(v: NDArray[(Any,), Float], /) -> None:
     """Add a new vertex to a shape.
 
-    Underlying Java method: PApplet.vertex
+    Underlying Processing method: PApplet.vertex
 
     Methods
     -------
@@ -16929,7 +17110,7 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
 def vertex(*args):
     """Add a new vertex to a shape.
 
-    Underlying Java method: PApplet.vertex
+    Underlying Processing method: PApplet.vertex
 
     Methods
     -------
@@ -16987,7 +17168,7 @@ def vertex(*args):
 def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     """Create a collection of vertices.
 
-    Underlying Java method: PApplet.vertices
+    Underlying Processing method: PApplet.vertices
 
     Parameters
     ----------
@@ -17011,7 +17192,7 @@ def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
 def year() -> int:
     """Py5 communicates with the clock on your computer.
 
-    Underlying Java method: PApplet.year
+    Underlying Processing method: PApplet.year
 
     Notes
     -----
@@ -17108,2013 +17289,6 @@ def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
     and the ``kwargs`` parameter is passed along to that method.
     """
     return Sketch.parse_json(serialized_json, **kwargs)
-
-
-SIMPLEX_NOISE = 1
-PERLIN_NOISE = 2
-##############################################################################
-# module functions from math.py
-##############################################################################
-
-
-def sin(angle: float) -> float:
-    """Calculates the sine of an angle.
-
-    Parameters
-    ----------
-
-    angle: float
-        angle in radians
-
-    Notes
-    -----
-
-    Calculates the sine of an angle. This function expects the values of the angle
-    parameter to be provided in radians (values from ``0`` to ``TWO_PI``). Values
-    are returned in the range -1 to 1.
-
-    This function makes a call to the numpy ``sin()`` function.
-    """
-    return Sketch.sin(angle)
-
-
-def cos(angle: float) -> float:
-    """Calculates the cosine of an angle.
-
-    Parameters
-    ----------
-
-    angle: float
-        angle in radians
-
-    Notes
-    -----
-
-    Calculates the cosine of an angle. This function expects the values of the angle
-    parameter to be provided in radians (values from ``0`` to ``TWO_PI``). Values
-    are returned in the range -1 to 1.
-
-    This function makes a call to the numpy ``cos()`` function.
-    """
-    return Sketch.cos(angle)
-
-
-def tan(angle: float) -> float:
-    """Calculates the ratio of the sine and cosine of an angle.
-
-    Parameters
-    ----------
-
-    angle: float
-        angle in radians
-
-    Notes
-    -----
-
-    Calculates the ratio of the sine and cosine of an angle. This function expects
-    the values of the angle parameter to be provided in radians (values from ``0``
-    to ``TWO_PI``). Values are returned in the range infinity to -infinity.
-
-    This function makes a call to the numpy ``tan()`` function.
-    """
-    return Sketch.tan(angle)
-
-
-def asin(value: float) -> float:
-    """The inverse of ``sin()``, returns the arc sine of a value.
-
-    Parameters
-    ----------
-
-    value: float
-        value in the range of -1 to 1 whose arc sine is to be returned
-
-    Notes
-    -----
-
-    The inverse of ``sin()``, returns the arc sine of a value. This function expects
-    the values in the range of -1 to 1 and values are returned in the range
-    ``-HALF_PI`` to ``HALF_PI``.
-
-    This function makes a call to the numpy ``asin()`` function.
-    """
-    return Sketch.asin(value)
-
-
-def acos(value: float) -> float:
-    """The inverse of ``cos()``, returns the arc cosine of a value.
-
-    Parameters
-    ----------
-
-    value: float
-        value in the range of -1 to 1 whose arc cosine is to be returned
-
-    Notes
-    -----
-
-    The inverse of ``cos()``, returns the arc cosine of a value. This function
-    expects the values in the range of -1 to 1 and values are returned in the range
-    ``0`` to ``PI``.
-
-    This function makes a call to the numpy ``acos()`` function.
-    """
-    return Sketch.acos(value)
-
-
-def atan(value: float) -> float:
-    """The inverse of ``tan()``, returns the arc tangent of a value.
-
-    Parameters
-    ----------
-
-    value: float
-        value whose arc tangent is to be returned
-
-    Notes
-    -----
-
-    The inverse of ``tan()``, returns the arc tangent of a value. This function
-    expects the values in the range of -Infinity to Infinity and values are returned
-    in the range ``-HALF_PI`` to ``HALF_PI``.
-
-    This function makes a call to the numpy ``atan()`` function.
-    """
-    return Sketch.atan(value)
-
-
-def atan2(y: float, x: float) -> float:
-    """Calculates the angle (in radians) from a specified point to the coordinate
-    origin as measured from the positive x-axis.
-
-    Parameters
-    ----------
-
-    x: float
-        x-coordinate of the point
-
-    y: float
-        y-coordinate of the point
-
-    Notes
-    -----
-
-    Calculates the angle (in radians) from a specified point to the coordinate
-    origin as measured from the positive x-axis. Values are returned as a float in
-    the range from ``PI`` to ``-PI``. The ``atan2()`` function is most often used
-    for orienting geometry to the position of the cursor. Note: The y-coordinate of
-    the point is the first parameter, and the x-coordinate is the second parameter,
-    due the the structure of calculating the tangent.
-
-    This function makes a call to the numpy ``atan2()`` function.
-    """
-    return Sketch.atan2(y, x)
-
-
-def degrees(radians: float) -> float:
-    """Converts a radian measurement to its corresponding value in degrees.
-
-    Parameters
-    ----------
-
-    radians: float
-        radian value to convert to degrees
-
-    Notes
-    -----
-
-    Converts a radian measurement to its corresponding value in degrees. Radians and
-    degrees are two ways of measuring the same thing. There are 360 degrees in a
-    circle and ``2*PI`` radians in a circle. For example, ``90° = PI/2 =
-    1.5707964``. All trigonometric functions in py5 require their parameters to be
-    specified in radians.
-
-    This function makes a call to the numpy ``degrees()`` function.
-    """
-    return Sketch.degrees(radians)
-
-
-def radians(degrees: float) -> float:
-    """Converts a degree measurement to its corresponding value in radians.
-
-    Parameters
-    ----------
-
-    degrees: float
-        degree value to convert to radians
-
-    Notes
-    -----
-
-    Converts a degree measurement to its corresponding value in radians. Radians and
-    degrees are two ways of measuring the same thing. There are 360 degrees in a
-    circle and ``2*PI`` radians in a circle. For example, ``90° = PI/2 =
-    1.5707964``. All trigonometric functions in py5 require their parameters to be
-    specified in radians.
-
-    This function makes a call to the numpy ``radians()`` function.
-    """
-    return Sketch.radians(degrees)
-
-
-def constrain(amt: float, low: float, high: float) -> float:
-    """Constrains a value to not exceed a maximum and minimum value.
-
-    Parameters
-    ----------
-
-    amt: float
-        the value to constrain
-
-    high: float
-        minimum limit
-
-    low: float
-        maximum limit
-
-    Notes
-    -----
-
-    Constrains a value to not exceed a maximum and minimum value.
-    """
-    return Sketch.constrain(amt, low, high)
-
-
-def remap(
-        value: float,
-        start1: float,
-        stop1: float,
-        start2: float,
-        stop2: float) -> float:
-    """Re-maps a number from one range to another.
-
-    Parameters
-    ----------
-
-    start1: float
-        lower bound of the value's current range
-
-    start2: float
-        upper bound of the value's current range
-
-    stop1: float
-        lower bound of the value's target range
-
-    stop2: float
-        upper bound of the value's target range
-
-    value: float
-        the incoming value to be converted
-
-    Notes
-    -----
-
-    Re-maps a number from one range to another.
-
-    In the first example, the number 0.5 is converted from a value in the range of 0
-    to 1 into a value that ranges from the left edge of the window (0) to the right
-    edge (``width``).
-
-    As shown in the second example, numbers outside of the range are not clamped to
-    the minimum and maximum parameters values, because out-of-range values are often
-    intentional and useful. If that isn't what you want, try pairing this function
-    with ``constrain()``.
-
-    In Processing this functionality is provided by ``map()`` but was renamed in py5
-    because of a name conflict with a builtin Python function.
-    """
-    return Sketch.remap(value, start1, stop1, start2, stop2)
-
-
-@overload
-def dist(x1: float, y1: float, x2: float, y2: float) -> float:
-    """Calculates the distance between two points.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * dist(x1: float, y1: float, x2: float, y2: float) -> float
-     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> float
-
-    Parameters
-    ----------
-
-    x1: float
-        x-coordinate of the first point
-
-    x2: float
-        x-coordinate of the second point
-
-    y1: float
-        y-coordinate of the first point
-
-    y2: float
-        y-coordinate of the second point
-
-    z1: float
-        z-coordinate of the first point
-
-    z2: float
-        z-coordinate of the second point
-
-    Notes
-    -----
-
-    Calculates the distance between two points.
-    """
-    pass
-
-
-@overload
-def dist(
-        x1: float,
-        y1: float,
-        z1: float,
-        x2: float,
-        y2: float,
-        z2: float) -> float:
-    """Calculates the distance between two points.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * dist(x1: float, y1: float, x2: float, y2: float) -> float
-     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> float
-
-    Parameters
-    ----------
-
-    x1: float
-        x-coordinate of the first point
-
-    x2: float
-        x-coordinate of the second point
-
-    y1: float
-        y-coordinate of the first point
-
-    y2: float
-        y-coordinate of the second point
-
-    z1: float
-        z-coordinate of the first point
-
-    z2: float
-        z-coordinate of the second point
-
-    Notes
-    -----
-
-    Calculates the distance between two points.
-    """
-    pass
-
-
-def dist(*args: float) -> float:
-    """Calculates the distance between two points.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * dist(x1: float, y1: float, x2: float, y2: float) -> float
-     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> float
-
-    Parameters
-    ----------
-
-    x1: float
-        x-coordinate of the first point
-
-    x2: float
-        x-coordinate of the second point
-
-    y1: float
-        y-coordinate of the first point
-
-    y2: float
-        y-coordinate of the second point
-
-    z1: float
-        z-coordinate of the first point
-
-    z2: float
-        z-coordinate of the second point
-
-    Notes
-    -----
-
-    Calculates the distance between two points.
-    """
-    return Sketch.dist(*args)
-
-
-def lerp(start: float, stop: float, amt: float) -> float:
-    """Calculates a number between two numbers at a specific increment.
-
-    Parameters
-    ----------
-
-    amt: float
-        float between 0.0 and 1.0
-
-    start: float
-        first value
-
-    stop: float
-        second value
-
-    Notes
-    -----
-
-    Calculates a number between two numbers at a specific increment. The ``amt``
-    parameter is the amount to interpolate between the two values where 0.0 equal to
-    the first point, 0.1 is very near the first point, 0.5 is half-way in between,
-    etc. The lerp function is convenient for creating motion along a straight path
-    and for drawing dotted lines.
-    """
-    return Sketch.lerp(start, stop, amt)
-
-
-@overload
-def mag(a: float, b: float) -> float:
-    """Calculates the magnitude (or length) of a vector.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * mag(a: float, b: float) -> float
-     * mag(a: float, b: float, c: float) -> float
-
-    Parameters
-    ----------
-
-    a: float
-        first value
-
-    b: float
-        second value
-
-    c: float
-        third value
-
-    Notes
-    -----
-
-    Calculates the magnitude (or length) of a vector. A vector is a direction in
-    space commonly used in computer graphics and linear algebra. Because it has no
-    "start" position, the magnitude of a vector can be thought of as the distance
-    from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
-    a shortcut for writing ``dist(0, 0, x, y)``.
-    """
-    pass
-
-
-@overload
-def mag(a: float, b: float, c: float) -> float:
-    """Calculates the magnitude (or length) of a vector.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * mag(a: float, b: float) -> float
-     * mag(a: float, b: float, c: float) -> float
-
-    Parameters
-    ----------
-
-    a: float
-        first value
-
-    b: float
-        second value
-
-    c: float
-        third value
-
-    Notes
-    -----
-
-    Calculates the magnitude (or length) of a vector. A vector is a direction in
-    space commonly used in computer graphics and linear algebra. Because it has no
-    "start" position, the magnitude of a vector can be thought of as the distance
-    from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
-    a shortcut for writing ``dist(0, 0, x, y)``.
-    """
-    pass
-
-
-def mag(*args: float) -> float:
-    """Calculates the magnitude (or length) of a vector.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * mag(a: float, b: float) -> float
-     * mag(a: float, b: float, c: float) -> float
-
-    Parameters
-    ----------
-
-    a: float
-        first value
-
-    b: float
-        second value
-
-    c: float
-        third value
-
-    Notes
-    -----
-
-    Calculates the magnitude (or length) of a vector. A vector is a direction in
-    space commonly used in computer graphics and linear algebra. Because it has no
-    "start" position, the magnitude of a vector can be thought of as the distance
-    from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
-    a shortcut for writing ``dist(0, 0, x, y)``.
-    """
-    return Sketch.mag(*args)
-
-
-def norm(value: float, start: float, stop: float) -> float:
-    """Normalizes a number from another range into a value between 0 and 1.
-
-    Parameters
-    ----------
-
-    start: float
-        lower bound of the value's current range
-
-    stop: float
-        upper bound of the value's current range
-
-    value: float
-        the incoming value to be converted
-
-    Notes
-    -----
-
-    Normalizes a number from another range into a value between 0 and 1. Identical
-    to ``remap(value, low, high, 0, 1)``.
-
-    Numbers outside of the range are not clamped to 0 and 1, because out-of-range
-    values are often intentional and useful. (See the second example.) If that isn't
-    what you want, try pairing this function with ``constrain()``.
-    """
-    return Sketch.norm(value, start, stop)
-
-
-def sq(value: float) -> float:
-    """Squares a number (multiplies a number by itself).
-
-    Parameters
-    ----------
-
-    value: float
-        number to square
-
-    Notes
-    -----
-
-    Squares a number (multiplies a number by itself). The result is always a
-    positive number, as multiplying two negative numbers always yields a positive
-    result. For example, ``-1 * -1 = 1``.
-    """
-    return Sketch.sq(value)
-
-
-def sqrt(value: float) -> Union[float, complex]:
-    """Calculates the square root of a number.
-
-    Parameters
-    ----------
-
-    value: float
-        value to calculate the square root of
-
-    Notes
-    -----
-
-    Calculates the square root of a number. The square root of a positive number is
-    always positive, even though there may be a valid negative root. The square root
-    of a negative number is a complex number. In either case, the square root ``s``
-    of number ``a`` is such that ``s*s = a``. It is the opposite of squaring.
-
-    Python supports complex numbers, but such values cannot be passed to py5 drawing
-    functions. When using the ``sqrt()`` function, you should check if the result is
-    complex before using the value. You can also extract the real and imaginary
-    components of the complex value with ``.real`` and ``.imag``. See the second
-    example to learn how to do both of these things.
-    """
-    return Sketch.sqrt(value)
-
-
-def floor(value: float) -> int:
-    """Calculates the closest int value that is less than or equal to the value of the
-    parameter.
-
-    Parameters
-    ----------
-
-    value: float
-        number to round down
-
-    Notes
-    -----
-
-    Calculates the closest int value that is less than or equal to the value of the
-    parameter.
-
-    This function makes a call to the numpy ``floor()`` function.
-    """
-    return Sketch.floor(value)
-
-
-def ceil(value: float) -> int:
-    """Calculates the closest int value that is greater than or equal to the value of
-    the parameter.
-
-    Parameters
-    ----------
-
-    value: float
-        number to round up
-
-    Notes
-    -----
-
-    Calculates the closest int value that is greater than or equal to the value of
-    the parameter.
-
-    This function makes a call to the numpy ``ceil()`` function.
-    """
-    return Sketch.ceil(value)
-
-
-def exp(value: float) -> float:
-    """Returns Euler's number e (2.71828...) raised to the power of the ``n``
-    parameter.
-
-    Parameters
-    ----------
-
-    value: float
-        exponent to raise
-
-    Notes
-    -----
-
-    Returns Euler's number e (2.71828...) raised to the power of the ``n``
-    parameter. This function is the compliment to ``log()``.
-
-    This function makes a call to the numpy ``exp()`` function.
-    """
-    return Sketch.exp(value)
-
-
-def log(value: float) -> float:
-    """Calculates the natural logarithm (the base-e logarithm) of a number.
-
-    Parameters
-    ----------
-
-    value: float
-        number greater than 0.0
-
-    Notes
-    -----
-
-    Calculates the natural logarithm (the base-e logarithm) of a number. This
-    function expects the ``n`` parameter to be a value greater than 0.0. This
-    function is the compliment to ``exp()``.
-
-    This function makes a call to the numpy ``log()`` function. If the ``n``
-    parameter is less than or equal to 0.0, you will see a ``RuntimeWarning`` and
-    the returned result will be numpy's Not-a-Number value, ``np.nan``.
-    """
-    return Sketch.log(value)
-
-
-def random_seed(seed: int) -> None:
-    """Sets the seed value for py5's random functions.
-
-    Parameters
-    ----------
-
-    seed: int
-        seed value
-
-    Notes
-    -----
-
-    Sets the seed value for py5's random functions. This includes ``random()``,
-    ``random_int()``, ``random_choice()``, and ``random_gaussian()``. By default,
-    all of these functions would produce different results each time a program is
-    run. Set the seed parameter to a constant value to return the same pseudo-random
-    numbers each time the software is run.
-    """
-    return _py5sketch.random_seed(seed)
-
-
-@overload
-def random() -> float:
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random() -> float
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return a float between zero
-    and one.
-
-    If only one parameter is passed to the function, it will return a float between
-    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
-    values between 0 and 5 (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function, or alternatively,
-    consider using ``random_int()``.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    pass
-
-
-@overload
-def random(high: float) -> float:
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random() -> float
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return a float between zero
-    and one.
-
-    If only one parameter is passed to the function, it will return a float between
-    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
-    values between 0 and 5 (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function, or alternatively,
-    consider using ``random_int()``.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    pass
-
-
-@overload
-def random(low: float, high: float) -> float:
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random() -> float
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return a float between zero
-    and one.
-
-    If only one parameter is passed to the function, it will return a float between
-    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
-    values between 0 and 5 (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function, or alternatively,
-    consider using ``random_int()``.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    pass
-
-
-def random(*args: float) -> float:
-    """Generates random numbers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random() -> float
-     * random(high: float) -> float
-     * random(low: float, high: float) -> float
-
-    Parameters
-    ----------
-
-    high: float
-        upper limit
-
-    low: float
-        lower limit
-
-    Notes
-    -----
-
-    Generates random numbers. Each time the ``random()`` function is called, it
-    returns an unexpected value within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return a float between zero
-    and one.
-
-    If only one parameter is passed to the function, it will return a float between
-    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
-    values between 0 and 5 (starting at zero, and up to, but not including, 5).
-
-    If two parameters are specified, the function will return a float with a value
-    between the two values. For example, ``random(-5, 10.2)`` returns values
-    starting at -5 and up to (but not including) 10.2. To convert a floating-point
-    random number to an integer, use the ``int()`` function, or alternatively,
-    consider using ``random_int()``.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    return _py5sketch.random(*args)
-
-
-@overload
-def random_int() -> int:
-    """Generates random integers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_int() -> int
-     * random_int(high: int) -> int
-     * random_int(low: int, high: int) -> int
-
-    Parameters
-    ----------
-
-    high: int
-        upper limit
-
-    low: int
-        lower limit
-
-    Notes
-    -----
-
-    Generates random integers. Each time the ``random_int()`` function is called, it
-    returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return either 0 or 1.
-    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-    evaluates to ``True``. This is equivalent to a coin toss.
-
-    If only one parameter is passed to the function, it will return an integer
-    between zero and the value of the ``high`` parameter, inclusive. For example,
-    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
-
-    If two parameters are specified, the function will return an integer with a
-    value between the two values, inclusive. For example, ``random(2, 5)`` returns
-    one of 2, 3, 4, or 5.
-
-    If you want to pick a random object from a list, recall that Python uses zero-
-    indexing, so the first index value is 0 and the final index value is one less
-    than the list length. Therefore, to pick a random index to use in the list
-    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-    will (occasionally) result in an index out of range error. Alternatively, you
-    can also use ``random_choice()`` to pick a random object from a list.
-
-    This function makes calls to numpy to generate the random integers.
-    """
-    pass
-
-
-@overload
-def random_int(high: int) -> int:
-    """Generates random integers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_int() -> int
-     * random_int(high: int) -> int
-     * random_int(low: int, high: int) -> int
-
-    Parameters
-    ----------
-
-    high: int
-        upper limit
-
-    low: int
-        lower limit
-
-    Notes
-    -----
-
-    Generates random integers. Each time the ``random_int()`` function is called, it
-    returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return either 0 or 1.
-    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-    evaluates to ``True``. This is equivalent to a coin toss.
-
-    If only one parameter is passed to the function, it will return an integer
-    between zero and the value of the ``high`` parameter, inclusive. For example,
-    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
-
-    If two parameters are specified, the function will return an integer with a
-    value between the two values, inclusive. For example, ``random(2, 5)`` returns
-    one of 2, 3, 4, or 5.
-
-    If you want to pick a random object from a list, recall that Python uses zero-
-    indexing, so the first index value is 0 and the final index value is one less
-    than the list length. Therefore, to pick a random index to use in the list
-    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-    will (occasionally) result in an index out of range error. Alternatively, you
-    can also use ``random_choice()`` to pick a random object from a list.
-
-    This function makes calls to numpy to generate the random integers.
-    """
-    pass
-
-
-@overload
-def random_int(low: int, high: int) -> int:
-    """Generates random integers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_int() -> int
-     * random_int(high: int) -> int
-     * random_int(low: int, high: int) -> int
-
-    Parameters
-    ----------
-
-    high: int
-        upper limit
-
-    low: int
-        lower limit
-
-    Notes
-    -----
-
-    Generates random integers. Each time the ``random_int()`` function is called, it
-    returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return either 0 or 1.
-    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-    evaluates to ``True``. This is equivalent to a coin toss.
-
-    If only one parameter is passed to the function, it will return an integer
-    between zero and the value of the ``high`` parameter, inclusive. For example,
-    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
-
-    If two parameters are specified, the function will return an integer with a
-    value between the two values, inclusive. For example, ``random(2, 5)`` returns
-    one of 2, 3, 4, or 5.
-
-    If you want to pick a random object from a list, recall that Python uses zero-
-    indexing, so the first index value is 0 and the final index value is one less
-    than the list length. Therefore, to pick a random index to use in the list
-    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-    will (occasionally) result in an index out of range error. Alternatively, you
-    can also use ``random_choice()`` to pick a random object from a list.
-
-    This function makes calls to numpy to generate the random integers.
-    """
-    pass
-
-
-def random_int(*args: int) -> int:
-    """Generates random integers.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_int() -> int
-     * random_int(high: int) -> int
-     * random_int(low: int, high: int) -> int
-
-    Parameters
-    ----------
-
-    high: int
-        upper limit
-
-    low: int
-        lower limit
-
-    Notes
-    -----
-
-    Generates random integers. Each time the ``random_int()`` function is called, it
-    returns an unexpected integer within the specified range. This function's
-    randomness can be influenced by ``random_seed()``.
-
-    If no parameters are passed to the function, it will return either 0 or 1.
-    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-    evaluates to ``True``. This is equivalent to a coin toss.
-
-    If only one parameter is passed to the function, it will return an integer
-    between zero and the value of the ``high`` parameter, inclusive. For example,
-    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
-
-    If two parameters are specified, the function will return an integer with a
-    value between the two values, inclusive. For example, ``random(2, 5)`` returns
-    one of 2, 3, 4, or 5.
-
-    If you want to pick a random object from a list, recall that Python uses zero-
-    indexing, so the first index value is 0 and the final index value is one less
-    than the list length. Therefore, to pick a random index to use in the list
-    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-    will (occasionally) result in an index out of range error. Alternatively, you
-    can also use ``random_choice()`` to pick a random object from a list.
-
-    This function makes calls to numpy to generate the random integers.
-    """
-    return _py5sketch.random_int(*args)
-
-
-def random_choice(objects: List[Any]) -> Any:
-    """Select a random item from a list.
-
-    Parameters
-    ----------
-
-    objects: List[Any]
-        list of objects to choose from
-
-    Notes
-    -----
-
-    Select a random item from a list. The list items can be of any type. This
-    function's randomness can be influenced by ``random_seed()``.
-
-    This function makes calls to numpy to select the random items.
-    """
-    return _py5sketch.random_choice(objects)
-
-
-@overload
-def random_gaussian() -> float:
-    """Generates random gaussian values.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_gaussian() -> float
-     * random_gaussian(loc: float) -> float
-     * random_gaussian(loc: float, scale: float) -> float
-
-    Parameters
-    ----------
-
-    loc: float
-        average of randomly selected numbers
-
-    scale: float
-        standard deviation of randomly selected numbers
-
-    Notes
-    -----
-
-    Generates random gaussian values. Each time the ``random_gaussian()`` function
-    is called, it returns an unexpected float with a probability distribution set by
-    the parameters.  This function's randomness can be influenced by
-    ``random_seed()``.
-
-    If no parameters are passed to the function, returned values will have an
-    average of 0 and a standard deviation of 1. Although there is theoretically no
-    minimum or maximum value that this function might return, in practice returned
-    values will be within plus or minus one standard deviation of the mean 68% of
-    the time and within two standard devations 95% of the time. Values farther and
-    farther from the mean become increasingly less likely.
-
-    If only one parameter is passed to the function, that parameter will be used as
-    the average instead of 0. If two parameters are called, those values will be
-    used as the average and standard deviation.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    pass
-
-
-@overload
-def random_gaussian(loc: float) -> float:
-    """Generates random gaussian values.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_gaussian() -> float
-     * random_gaussian(loc: float) -> float
-     * random_gaussian(loc: float, scale: float) -> float
-
-    Parameters
-    ----------
-
-    loc: float
-        average of randomly selected numbers
-
-    scale: float
-        standard deviation of randomly selected numbers
-
-    Notes
-    -----
-
-    Generates random gaussian values. Each time the ``random_gaussian()`` function
-    is called, it returns an unexpected float with a probability distribution set by
-    the parameters.  This function's randomness can be influenced by
-    ``random_seed()``.
-
-    If no parameters are passed to the function, returned values will have an
-    average of 0 and a standard deviation of 1. Although there is theoretically no
-    minimum or maximum value that this function might return, in practice returned
-    values will be within plus or minus one standard deviation of the mean 68% of
-    the time and within two standard devations 95% of the time. Values farther and
-    farther from the mean become increasingly less likely.
-
-    If only one parameter is passed to the function, that parameter will be used as
-    the average instead of 0. If two parameters are called, those values will be
-    used as the average and standard deviation.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    pass
-
-
-@overload
-def random_gaussian(loc: float, scale: float) -> float:
-    """Generates random gaussian values.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_gaussian() -> float
-     * random_gaussian(loc: float) -> float
-     * random_gaussian(loc: float, scale: float) -> float
-
-    Parameters
-    ----------
-
-    loc: float
-        average of randomly selected numbers
-
-    scale: float
-        standard deviation of randomly selected numbers
-
-    Notes
-    -----
-
-    Generates random gaussian values. Each time the ``random_gaussian()`` function
-    is called, it returns an unexpected float with a probability distribution set by
-    the parameters.  This function's randomness can be influenced by
-    ``random_seed()``.
-
-    If no parameters are passed to the function, returned values will have an
-    average of 0 and a standard deviation of 1. Although there is theoretically no
-    minimum or maximum value that this function might return, in practice returned
-    values will be within plus or minus one standard deviation of the mean 68% of
-    the time and within two standard devations 95% of the time. Values farther and
-    farther from the mean become increasingly less likely.
-
-    If only one parameter is passed to the function, that parameter will be used as
-    the average instead of 0. If two parameters are called, those values will be
-    used as the average and standard deviation.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    pass
-
-
-def random_gaussian(*args: float) -> float:
-    """Generates random gaussian values.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * random_gaussian() -> float
-     * random_gaussian(loc: float) -> float
-     * random_gaussian(loc: float, scale: float) -> float
-
-    Parameters
-    ----------
-
-    loc: float
-        average of randomly selected numbers
-
-    scale: float
-        standard deviation of randomly selected numbers
-
-    Notes
-    -----
-
-    Generates random gaussian values. Each time the ``random_gaussian()`` function
-    is called, it returns an unexpected float with a probability distribution set by
-    the parameters.  This function's randomness can be influenced by
-    ``random_seed()``.
-
-    If no parameters are passed to the function, returned values will have an
-    average of 0 and a standard deviation of 1. Although there is theoretically no
-    minimum or maximum value that this function might return, in practice returned
-    values will be within plus or minus one standard deviation of the mean 68% of
-    the time and within two standard devations 95% of the time. Values farther and
-    farther from the mean become increasingly less likely.
-
-    If only one parameter is passed to the function, that parameter will be used as
-    the average instead of 0. If two parameters are called, those values will be
-    used as the average and standard deviation.
-
-    This function makes calls to numpy to generate the random values.
-    """
-    return _py5sketch.random_gaussian(*args)
-
-
-@overload
-def noise(x: float, **kwargs) -> float:
-    """Generate pseudo-random noise values for specific coodinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float, **kwargs) -> float
-     * noise(x: float, y: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
-
-    Parameters
-    ----------
-
-    kwargs
-        keyword arguments to override existing noise detail or noise seed settings
-
-    w: float
-        w-coordinate in noise space
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Generate pseudo-random noise values for specific coodinates. Noise functions are
-    random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the ``random()`` function. Several well-known noise
-    algorithms were developed by Ken Perlin and have been used in graphical
-    applications to generate procedural textures, shapes, terrains, and other
-    seemingly organic forms.
-
-    In contrast to the ``random()`` function, noise is defined in an n-dimensional
-    space, in which each coordinate corresponds to a fixed pseudo-random value
-    (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-    Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-    algorithm. The noise value can be animated by moving through the noise space, as
-    demonstrated in the examples. Any dimension can also be interpreted as time. An
-    easy way to animate the noise value is to pass the ``noise()`` function the
-    ``frame_count`` divided by a scaling factor, as is done in a few of the
-    examples.
-
-    The generated noise values for both Perlin Noise and Simplex Noise will be
-    between -1 and 1. This contrasts with Processing's noise function, which
-    typically returns values between 0 and 1.
-
-    Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-    generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-    generated in only 1 dimension, but as a convenience, py5 will add a second
-    dimension for you (with a value of 0) if only one dimension is used.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, both noise algorithms are computed over several octaves which are added
-    together for the final result.
-
-    The nature of the noise values returned can be adjusted with ``noise_mode()``,
-    ``noise_seed()``, and ``noise_detail()``.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the distance between successive
-    coordinates is important (such as when using ``noise()`` within a loop). As a
-    general rule, the smaller the difference between coordinates, the smoother the
-    resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-    but this will differ depending on the use case and the noise settings.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-
-    Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-    automatically vectorize the operations and use broadcasting when needed.
-    """
-    pass
-
-
-@overload
-def noise(x: float, y: float, **kwargs) -> float:
-    """Generate pseudo-random noise values for specific coodinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float, **kwargs) -> float
-     * noise(x: float, y: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
-
-    Parameters
-    ----------
-
-    kwargs
-        keyword arguments to override existing noise detail or noise seed settings
-
-    w: float
-        w-coordinate in noise space
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Generate pseudo-random noise values for specific coodinates. Noise functions are
-    random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the ``random()`` function. Several well-known noise
-    algorithms were developed by Ken Perlin and have been used in graphical
-    applications to generate procedural textures, shapes, terrains, and other
-    seemingly organic forms.
-
-    In contrast to the ``random()`` function, noise is defined in an n-dimensional
-    space, in which each coordinate corresponds to a fixed pseudo-random value
-    (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-    Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-    algorithm. The noise value can be animated by moving through the noise space, as
-    demonstrated in the examples. Any dimension can also be interpreted as time. An
-    easy way to animate the noise value is to pass the ``noise()`` function the
-    ``frame_count`` divided by a scaling factor, as is done in a few of the
-    examples.
-
-    The generated noise values for both Perlin Noise and Simplex Noise will be
-    between -1 and 1. This contrasts with Processing's noise function, which
-    typically returns values between 0 and 1.
-
-    Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-    generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-    generated in only 1 dimension, but as a convenience, py5 will add a second
-    dimension for you (with a value of 0) if only one dimension is used.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, both noise algorithms are computed over several octaves which are added
-    together for the final result.
-
-    The nature of the noise values returned can be adjusted with ``noise_mode()``,
-    ``noise_seed()``, and ``noise_detail()``.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the distance between successive
-    coordinates is important (such as when using ``noise()`` within a loop). As a
-    general rule, the smaller the difference between coordinates, the smoother the
-    resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-    but this will differ depending on the use case and the noise settings.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-
-    Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-    automatically vectorize the operations and use broadcasting when needed.
-    """
-    pass
-
-
-@overload
-def noise(x: float, y: float, z: float, **kwargs) -> float:
-    """Generate pseudo-random noise values for specific coodinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float, **kwargs) -> float
-     * noise(x: float, y: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
-
-    Parameters
-    ----------
-
-    kwargs
-        keyword arguments to override existing noise detail or noise seed settings
-
-    w: float
-        w-coordinate in noise space
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Generate pseudo-random noise values for specific coodinates. Noise functions are
-    random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the ``random()`` function. Several well-known noise
-    algorithms were developed by Ken Perlin and have been used in graphical
-    applications to generate procedural textures, shapes, terrains, and other
-    seemingly organic forms.
-
-    In contrast to the ``random()`` function, noise is defined in an n-dimensional
-    space, in which each coordinate corresponds to a fixed pseudo-random value
-    (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-    Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-    algorithm. The noise value can be animated by moving through the noise space, as
-    demonstrated in the examples. Any dimension can also be interpreted as time. An
-    easy way to animate the noise value is to pass the ``noise()`` function the
-    ``frame_count`` divided by a scaling factor, as is done in a few of the
-    examples.
-
-    The generated noise values for both Perlin Noise and Simplex Noise will be
-    between -1 and 1. This contrasts with Processing's noise function, which
-    typically returns values between 0 and 1.
-
-    Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-    generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-    generated in only 1 dimension, but as a convenience, py5 will add a second
-    dimension for you (with a value of 0) if only one dimension is used.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, both noise algorithms are computed over several octaves which are added
-    together for the final result.
-
-    The nature of the noise values returned can be adjusted with ``noise_mode()``,
-    ``noise_seed()``, and ``noise_detail()``.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the distance between successive
-    coordinates is important (such as when using ``noise()`` within a loop). As a
-    general rule, the smaller the difference between coordinates, the smoother the
-    resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-    but this will differ depending on the use case and the noise settings.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-
-    Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-    automatically vectorize the operations and use broadcasting when needed.
-    """
-    pass
-
-
-@overload
-def noise(x: float, y: float, z: float, w: float, **kwargs) -> float:
-    """Generate pseudo-random noise values for specific coodinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float, **kwargs) -> float
-     * noise(x: float, y: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
-
-    Parameters
-    ----------
-
-    kwargs
-        keyword arguments to override existing noise detail or noise seed settings
-
-    w: float
-        w-coordinate in noise space
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Generate pseudo-random noise values for specific coodinates. Noise functions are
-    random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the ``random()`` function. Several well-known noise
-    algorithms were developed by Ken Perlin and have been used in graphical
-    applications to generate procedural textures, shapes, terrains, and other
-    seemingly organic forms.
-
-    In contrast to the ``random()`` function, noise is defined in an n-dimensional
-    space, in which each coordinate corresponds to a fixed pseudo-random value
-    (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-    Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-    algorithm. The noise value can be animated by moving through the noise space, as
-    demonstrated in the examples. Any dimension can also be interpreted as time. An
-    easy way to animate the noise value is to pass the ``noise()`` function the
-    ``frame_count`` divided by a scaling factor, as is done in a few of the
-    examples.
-
-    The generated noise values for both Perlin Noise and Simplex Noise will be
-    between -1 and 1. This contrasts with Processing's noise function, which
-    typically returns values between 0 and 1.
-
-    Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-    generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-    generated in only 1 dimension, but as a convenience, py5 will add a second
-    dimension for you (with a value of 0) if only one dimension is used.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, both noise algorithms are computed over several octaves which are added
-    together for the final result.
-
-    The nature of the noise values returned can be adjusted with ``noise_mode()``,
-    ``noise_seed()``, and ``noise_detail()``.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the distance between successive
-    coordinates is important (such as when using ``noise()`` within a loop). As a
-    general rule, the smaller the difference between coordinates, the smoother the
-    resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-    but this will differ depending on the use case and the noise settings.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-
-    Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-    automatically vectorize the operations and use broadcasting when needed.
-    """
-    pass
-
-
-def noise(*args, **kwargs) -> float:
-    """Generate pseudo-random noise values for specific coodinates.
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * noise(x: float, **kwargs) -> float
-     * noise(x: float, y: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, **kwargs) -> float
-     * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
-
-    Parameters
-    ----------
-
-    kwargs
-        keyword arguments to override existing noise detail or noise seed settings
-
-    w: float
-        w-coordinate in noise space
-
-    x: float
-        x-coordinate in noise space
-
-    y: float
-        y-coordinate in noise space
-
-    z: float
-        z-coordinate in noise space
-
-    Notes
-    -----
-
-    Generate pseudo-random noise values for specific coodinates. Noise functions are
-    random sequence generators that produce a more natural, harmonic succession of
-    numbers compared to the ``random()`` function. Several well-known noise
-    algorithms were developed by Ken Perlin and have been used in graphical
-    applications to generate procedural textures, shapes, terrains, and other
-    seemingly organic forms.
-
-    In contrast to the ``random()`` function, noise is defined in an n-dimensional
-    space, in which each coordinate corresponds to a fixed pseudo-random value
-    (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-    Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-    algorithm. The noise value can be animated by moving through the noise space, as
-    demonstrated in the examples. Any dimension can also be interpreted as time. An
-    easy way to animate the noise value is to pass the ``noise()`` function the
-    ``frame_count`` divided by a scaling factor, as is done in a few of the
-    examples.
-
-    The generated noise values for both Perlin Noise and Simplex Noise will be
-    between -1 and 1. This contrasts with Processing's noise function, which
-    typically returns values between 0 and 1.
-
-    Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-    generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-    generated in only 1 dimension, but as a convenience, py5 will add a second
-    dimension for you (with a value of 0) if only one dimension is used.
-
-    The actual noise structure is similar to that of an audio signal, in respect to
-    the function's use of frequencies. Similar to the concept of harmonics in
-    physics, both noise algorithms are computed over several octaves which are added
-    together for the final result.
-
-    The nature of the noise values returned can be adjusted with ``noise_mode()``,
-    ``noise_seed()``, and ``noise_detail()``.
-
-    Another way to adjust the character of the resulting sequence is the scale of
-    the input coordinates. As the function works within an infinite space, the value
-    of the coordinates doesn't matter as such; only the distance between successive
-    coordinates is important (such as when using ``noise()`` within a loop). As a
-    general rule, the smaller the difference between coordinates, the smoother the
-    resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-    but this will differ depending on the use case and the noise settings.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-
-    Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-    automatically vectorize the operations and use broadcasting when needed.
-    """
-    return _py5sketch.noise(*args, **kwargs)
-
-
-def noise_mode(mode: int) -> None:
-    """Sets the kind of noise that the ``noise()`` function will generate.
-
-    Parameters
-    ----------
-
-    mode: int
-        kind of noise to generate, either PERLIN_NOISE or SIMPLEX_NOISE
-
-    Notes
-    -----
-
-    Sets the kind of noise that the ``noise()`` function will generate. This can be
-    either Perlin Noise or Simplex Noise. By default, py5 will generate noise using
-    the Simplex Noise algorithm.
-
-    Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-    generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-    generated in only 1 dimension, but as a convenience, py5 will add a second
-    dimension for you (with a value of 0) if only one dimension is used.
-
-    The specific Perlin Noise implementation provided by py5 is the "Improved Perlin
-    Noise" algorithm as described in Ken Perlin's 2002 SIGGRAPH paper. This uses the
-    fifth degree polynomial ``f(t)=6t^5-15t^4+10t^3`` as the blending function. This
-    is different from the "Classic Perlin Noise" algorithm, described in Ken
-    Perlin's 1985 SIGGRAPH paper, which uses the third degree polynomial
-    ``f(t)=3t^2-2t^3`` instead. The Simplex Noise algorithm, also developed by Ken
-    Perlin, is different from Perlin Noise, and uses a completely different approach
-    for generating noise values. Processing's noise algorithm is a valid and useful
-    noise algorithm but is not identical to any of the algorithms mentioned here, so
-    py5's noise values will not match Processing's no matter what inputs or settings
-    are used.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-    """
-    return _py5sketch.noise_mode(mode)
-
-
-def noise_detail(octaves: float = None, persistence: float = None,
-                 lacunarity: float = None) -> None:
-    """Adjusts the character and level of detail produced by the ``noise()`` function.
-
-    Parameters
-    ----------
-
-    lacunarity: float = None
-        change in noise frequency from one octave to the next
-
-    octaves: float = None
-        number of noise octaves
-
-    persistence: float = None
-        change in noise amplitude from one octave to the next
-
-    Notes
-    -----
-
-    Adjusts the character and level of detail produced by the ``noise()`` function.
-    Similar to harmonics in physics, noise is computed over several octaves. Lower
-    octaves contribute more to the output signal and as such define the overall
-    intensity of the noise, whereas higher octaves create finer-grained details in
-    the noise sequence.
-
-    By default, noise is computed over 4 octaves. Each octave has half the amplitude
-    and twice the frequency of its predecessor. The decrease in amplitude can be
-    adjusted with the ``persistence`` parameter. The increase in frequency can be
-    adjusted with the ``lacunarity`` parameter.
-
-    For example, a ``persistence`` parameter of 0.75 means each octave will now have
-    75% impact (25% less) of the previous lower octave. A ``lacunarity`` parameter
-    of 4 means that each octave will have 4 times the frequency of the previous
-    lower octave, providing noise at a finer-grained scale than what the default
-    value of 2 would provide.
-
-    By changing these parameters, the signal created by the ``noise()`` function can
-    be adapted to fit very specific needs and characteristics.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-    """
-    return _py5sketch.noise_detail(
-        octaves=octaves,
-        persistence=persistence,
-        lacunarity=lacunarity)
-
-
-def noise_seed(seed: int) -> None:
-    """Sets the seed value for ``noise()``.
-
-    Parameters
-    ----------
-
-    seed: int
-        seed value
-
-    Notes
-    -----
-
-    Sets the seed value for ``noise()``. By default, ``noise()`` produces different
-    results each time the program is run. Set the seed parameter to a constant to
-    return the same pseudo-random numbers each time the Sketch is run.
-
-    Py5's noise functionality is provided by the Python noise library. The noise
-    library provides more advanced features than what is documented here. To use the
-    more advanced features, import that library directly.
-    """
-    return _py5sketch.noise_seed(seed)
-
-##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the ``np_pixels[]``
-    array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the ``np_pixels[]``
-    array. This method must always be called before reading from or writing to
-    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
-    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
-
-    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
-    ``load_np_pixels()`` must be called before reading from or writing to
-    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
-    writing to ``pixels[]``.
-
-    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
-    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
-    there is no need for a separate call to ``load_pixels()``. However, be aware
-    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
-    result in the updates to ``pixels[]`` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the ``np_pixels[]`` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the ``np_pixels[]`` array. Use in
-    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
-    array, there's no need to call ``update_np_pixels()`` — updating is only
-    necessary to apply changes.
-
-    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
-    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
-    ``update_pixels()`` must be called after modifying ``pixels[]``.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: np.ndarray = None
-
-
-def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
-    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: np.ndarray
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array. The size of ``array``'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    ``dtype`` must be ``np.uint8``.
-
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency, but recall that the
-    display window's pixels can never be transparent so any transparency in
-    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
-    ``array``'s third dimension is optional.
-
-    This method makes its own calls to ``load_np_pixels()`` and
-    ``update_np_pixels()`` so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
-    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path,
-                         BytesIO],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = False,
-         **params) -> None:
-    """Save the drawing surface to an image file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path, BytesIO]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = False
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save the drawing surface to an image file. This method uses the Python library
-    Pillow to write the image, so it can save images in any format that that library
-    supports.
-
-    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
-    defaults to ``True``. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The ``use_thread`` parameter will save the image in a separate Python thread.
-    This improves performance by returning before the image has actually been
-    written to the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
 
 ##############################################################################
 # module functions from print_tools.py
@@ -19476,6 +17650,2175 @@ def list_threads() -> None:
     return _py5sketch.list_threads()
 
 ##############################################################################
+# module functions from math.py
+##############################################################################
+
+
+def sin(angle: float) -> float:
+    """Calculates the sine of an angle.
+
+    Parameters
+    ----------
+
+    angle: float
+        angle in radians
+
+    Notes
+    -----
+
+    Calculates the sine of an angle. This function expects the values of the angle
+    parameter to be provided in radians (values from ``0`` to ``TWO_PI``). Values
+    are returned in the range -1 to 1.
+
+    This function makes a call to the numpy ``sin()`` function.
+    """
+    return Sketch.sin(angle)
+
+
+def cos(angle: float) -> float:
+    """Calculates the cosine of an angle.
+
+    Parameters
+    ----------
+
+    angle: float
+        angle in radians
+
+    Notes
+    -----
+
+    Calculates the cosine of an angle. This function expects the values of the angle
+    parameter to be provided in radians (values from ``0`` to ``TWO_PI``). Values
+    are returned in the range -1 to 1.
+
+    This function makes a call to the numpy ``cos()`` function.
+    """
+    return Sketch.cos(angle)
+
+
+def tan(angle: float) -> float:
+    """Calculates the ratio of the sine and cosine of an angle.
+
+    Parameters
+    ----------
+
+    angle: float
+        angle in radians
+
+    Notes
+    -----
+
+    Calculates the ratio of the sine and cosine of an angle. This function expects
+    the values of the angle parameter to be provided in radians (values from ``0``
+    to ``TWO_PI``). Values are returned in the range infinity to -infinity.
+
+    This function makes a call to the numpy ``tan()`` function.
+    """
+    return Sketch.tan(angle)
+
+
+def asin(value: float) -> float:
+    """The inverse of ``sin()``, returns the arc sine of a value.
+
+    Parameters
+    ----------
+
+    value: float
+        value in the range of -1 to 1 whose arc sine is to be returned
+
+    Notes
+    -----
+
+    The inverse of ``sin()``, returns the arc sine of a value. This function expects
+    the values in the range of -1 to 1 and values are returned in the range
+    ``-HALF_PI`` to ``HALF_PI``.
+
+    This function makes a call to the numpy ``asin()`` function.
+    """
+    return Sketch.asin(value)
+
+
+def acos(value: float) -> float:
+    """The inverse of ``cos()``, returns the arc cosine of a value.
+
+    Parameters
+    ----------
+
+    value: float
+        value in the range of -1 to 1 whose arc cosine is to be returned
+
+    Notes
+    -----
+
+    The inverse of ``cos()``, returns the arc cosine of a value. This function
+    expects the values in the range of -1 to 1 and values are returned in the range
+    ``0`` to ``PI``.
+
+    This function makes a call to the numpy ``acos()`` function.
+    """
+    return Sketch.acos(value)
+
+
+def atan(value: float) -> float:
+    """The inverse of ``tan()``, returns the arc tangent of a value.
+
+    Parameters
+    ----------
+
+    value: float
+        value whose arc tangent is to be returned
+
+    Notes
+    -----
+
+    The inverse of ``tan()``, returns the arc tangent of a value. This function
+    expects the values in the range of -Infinity to Infinity and values are returned
+    in the range ``-HALF_PI`` to ``HALF_PI``.
+
+    This function makes a call to the numpy ``atan()`` function.
+    """
+    return Sketch.atan(value)
+
+
+def atan2(y: float, x: float) -> float:
+    """Calculates the angle (in radians) from a specified point to the coordinate
+    origin as measured from the positive x-axis.
+
+    Parameters
+    ----------
+
+    x: float
+        x-coordinate of the point
+
+    y: float
+        y-coordinate of the point
+
+    Notes
+    -----
+
+    Calculates the angle (in radians) from a specified point to the coordinate
+    origin as measured from the positive x-axis. Values are returned as a float in
+    the range from ``PI`` to ``-PI``. The ``atan2()`` function is most often used
+    for orienting geometry to the position of the cursor. Note: The y-coordinate of
+    the point is the first parameter, and the x-coordinate is the second parameter,
+    due the the structure of calculating the tangent.
+
+    This function makes a call to the numpy ``atan2()`` function.
+    """
+    return Sketch.atan2(y, x)
+
+
+def degrees(radians: float) -> float:
+    """Converts a radian measurement to its corresponding value in degrees.
+
+    Parameters
+    ----------
+
+    radians: float
+        radian value to convert to degrees
+
+    Notes
+    -----
+
+    Converts a radian measurement to its corresponding value in degrees. Radians and
+    degrees are two ways of measuring the same thing. There are 360 degrees in a
+    circle and ``2*PI`` radians in a circle. For example, ``90° = PI/2 =
+    1.5707964``. All trigonometric functions in py5 require their parameters to be
+    specified in radians.
+
+    This function makes a call to the numpy ``degrees()`` function.
+    """
+    return Sketch.degrees(radians)
+
+
+def radians(degrees: float) -> float:
+    """Converts a degree measurement to its corresponding value in radians.
+
+    Parameters
+    ----------
+
+    degrees: float
+        degree value to convert to radians
+
+    Notes
+    -----
+
+    Converts a degree measurement to its corresponding value in radians. Radians and
+    degrees are two ways of measuring the same thing. There are 360 degrees in a
+    circle and ``2*PI`` radians in a circle. For example, ``90° = PI/2 =
+    1.5707964``. All trigonometric functions in py5 require their parameters to be
+    specified in radians.
+
+    This function makes a call to the numpy ``radians()`` function.
+    """
+    return Sketch.radians(degrees)
+
+
+def constrain(amt: float, low: float, high: float) -> float:
+    """Constrains a value to not exceed a maximum and minimum value.
+
+    Parameters
+    ----------
+
+    amt: float
+        the value to constrain
+
+    high: float
+        minimum limit
+
+    low: float
+        maximum limit
+
+    Notes
+    -----
+
+    Constrains a value to not exceed a maximum and minimum value.
+    """
+    return Sketch.constrain(amt, low, high)
+
+
+def remap(
+        value: float,
+        start1: float,
+        stop1: float,
+        start2: float,
+        stop2: float) -> float:
+    """Re-maps a number from one range to another.
+
+    Parameters
+    ----------
+
+    start1: float
+        lower bound of the value's current range
+
+    start2: float
+        lower bound of the value's target range
+
+    stop1: float
+        upper bound of the value's current range
+
+    stop2: float
+        upper bound of the value's target range
+
+    value: float
+        the incoming value to be converted
+
+    Notes
+    -----
+
+    Re-maps a number from one range to another.
+
+    In the first example, the number 0.5 is converted from a value in the range of 0
+    to 1 into a value that ranges from the left edge of the window (0) to the right
+    edge (``width``).
+
+    As shown in the second example, numbers outside of the range are not clamped to
+    the minimum and maximum parameters values, because out-of-range values are often
+    intentional and useful. If that isn't what you want, try pairing this function
+    with ``constrain()``.
+
+    In Processing this functionality is provided by ``map()`` but was renamed in py5
+    because of a name conflict with a builtin Python function.
+    """
+    return Sketch.remap(value, start1, stop1, start2, stop2)
+
+
+@overload
+def dist(x1: float, y1: float, x2: float, y2: float, /) -> float:
+    """Calculates the distance between two points.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
+     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+
+    Parameters
+    ----------
+
+    x1: float
+        x-coordinate of the first point
+
+    x2: float
+        x-coordinate of the second point
+
+    y1: float
+        y-coordinate of the first point
+
+    y2: float
+        y-coordinate of the second point
+
+    z1: float
+        z-coordinate of the first point
+
+    z2: float
+        z-coordinate of the second point
+
+    Notes
+    -----
+
+    Calculates the distance between two points.
+    """
+    pass
+
+
+@overload
+def dist(x1: float, y1: float, z1: float, x2: float,
+         y2: float, z2: float, /) -> float:
+    """Calculates the distance between two points.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
+     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+
+    Parameters
+    ----------
+
+    x1: float
+        x-coordinate of the first point
+
+    x2: float
+        x-coordinate of the second point
+
+    y1: float
+        y-coordinate of the first point
+
+    y2: float
+        y-coordinate of the second point
+
+    z1: float
+        z-coordinate of the first point
+
+    z2: float
+        z-coordinate of the second point
+
+    Notes
+    -----
+
+    Calculates the distance between two points.
+    """
+    pass
+
+
+def dist(*args: float) -> float:
+    """Calculates the distance between two points.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
+     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+
+    Parameters
+    ----------
+
+    x1: float
+        x-coordinate of the first point
+
+    x2: float
+        x-coordinate of the second point
+
+    y1: float
+        y-coordinate of the first point
+
+    y2: float
+        y-coordinate of the second point
+
+    z1: float
+        z-coordinate of the first point
+
+    z2: float
+        z-coordinate of the second point
+
+    Notes
+    -----
+
+    Calculates the distance between two points.
+    """
+    return Sketch.dist(*args)
+
+
+def lerp(start: float, stop: float, amt: float) -> float:
+    """Calculates a number between two numbers at a specific increment.
+
+    Parameters
+    ----------
+
+    amt: float
+        float between 0.0 and 1.0
+
+    start: float
+        first value
+
+    stop: float
+        second value
+
+    Notes
+    -----
+
+    Calculates a number between two numbers at a specific increment. The ``amt``
+    parameter is the amount to interpolate between the two values where 0.0 equal to
+    the first point, 0.1 is very near the first point, 0.5 is half-way in between,
+    etc. The lerp function is convenient for creating motion along a straight path
+    and for drawing dotted lines. If the ``amt`` parameter is greater than 1.0 or
+    less than 0.0, the interpolated value will be outside of the range specified by
+    the ``start`` and ``stop`` parameter values.
+    """
+    return Sketch.lerp(start, stop, amt)
+
+
+@overload
+def mag(a: float, b: float, /) -> float:
+    """Calculates the magnitude (or length) of a vector.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * mag(a: float, b: float, /) -> float
+     * mag(a: float, b: float, c: float, /) -> float
+
+    Parameters
+    ----------
+
+    a: float
+        first value
+
+    b: float
+        second value
+
+    c: float
+        third value
+
+    Notes
+    -----
+
+    Calculates the magnitude (or length) of a vector. A vector is a direction in
+    space commonly used in computer graphics and linear algebra. Because it has no
+    "start" position, the magnitude of a vector can be thought of as the distance
+    from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
+    a shortcut for writing ``dist(0, 0, x, y)``.
+    """
+    pass
+
+
+@overload
+def mag(a: float, b: float, c: float, /) -> float:
+    """Calculates the magnitude (or length) of a vector.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * mag(a: float, b: float, /) -> float
+     * mag(a: float, b: float, c: float, /) -> float
+
+    Parameters
+    ----------
+
+    a: float
+        first value
+
+    b: float
+        second value
+
+    c: float
+        third value
+
+    Notes
+    -----
+
+    Calculates the magnitude (or length) of a vector. A vector is a direction in
+    space commonly used in computer graphics and linear algebra. Because it has no
+    "start" position, the magnitude of a vector can be thought of as the distance
+    from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
+    a shortcut for writing ``dist(0, 0, x, y)``.
+    """
+    pass
+
+
+def mag(*args: float) -> float:
+    """Calculates the magnitude (or length) of a vector.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * mag(a: float, b: float, /) -> float
+     * mag(a: float, b: float, c: float, /) -> float
+
+    Parameters
+    ----------
+
+    a: float
+        first value
+
+    b: float
+        second value
+
+    c: float
+        third value
+
+    Notes
+    -----
+
+    Calculates the magnitude (or length) of a vector. A vector is a direction in
+    space commonly used in computer graphics and linear algebra. Because it has no
+    "start" position, the magnitude of a vector can be thought of as the distance
+    from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
+    a shortcut for writing ``dist(0, 0, x, y)``.
+    """
+    return Sketch.mag(*args)
+
+
+def norm(value: float, start: float, stop: float) -> float:
+    """Normalizes a number from another range into a value between 0 and 1.
+
+    Parameters
+    ----------
+
+    start: float
+        lower bound of the value's current range
+
+    stop: float
+        upper bound of the value's current range
+
+    value: float
+        the incoming value to be converted
+
+    Notes
+    -----
+
+    Normalizes a number from another range into a value between 0 and 1. Identical
+    to ``remap(value, low, high, 0, 1)``.
+
+    Numbers outside of the range are not clamped to 0 and 1, because out-of-range
+    values are often intentional and useful. (See the second example.) If that isn't
+    what you want, try pairing this function with ``constrain()``.
+    """
+    return Sketch.norm(value, start, stop)
+
+
+def sq(value: float) -> float:
+    """Squares a number (multiplies a number by itself).
+
+    Parameters
+    ----------
+
+    value: float
+        number to square
+
+    Notes
+    -----
+
+    Squares a number (multiplies a number by itself). The result is always a
+    positive number, as multiplying two negative numbers always yields a positive
+    result. For example, ``-1 * -1 = 1``.
+    """
+    return Sketch.sq(value)
+
+
+def sqrt(value: float) -> Union[float, complex]:
+    """Calculates the square root of a number.
+
+    Parameters
+    ----------
+
+    value: float
+        value to calculate the square root of
+
+    Notes
+    -----
+
+    Calculates the square root of a number. The square root of a positive number is
+    always positive, even though there may be a valid negative root. The square root
+    of a negative number is a complex number. In either case, the square root ``s``
+    of number ``a`` is such that ``s*s = a``. It is the opposite of squaring.
+
+    Python supports complex numbers, but such values cannot be passed to py5 drawing
+    functions. When using the ``sqrt()`` function, you should check if the result is
+    complex before using the value. You can also extract the real and imaginary
+    components of the complex value with ``.real`` and ``.imag``. See the second
+    example to learn how to do both of these things.
+    """
+    return Sketch.sqrt(value)
+
+
+def floor(value: float) -> int:
+    """Calculates the closest int value that is less than or equal to the value of the
+    parameter.
+
+    Parameters
+    ----------
+
+    value: float
+        number to round down
+
+    Notes
+    -----
+
+    Calculates the closest int value that is less than or equal to the value of the
+    parameter.
+
+    This function makes a call to the numpy ``floor()`` function.
+    """
+    return Sketch.floor(value)
+
+
+def ceil(value: float) -> int:
+    """Calculates the closest int value that is greater than or equal to the value of
+    the parameter.
+
+    Parameters
+    ----------
+
+    value: float
+        number to round up
+
+    Notes
+    -----
+
+    Calculates the closest int value that is greater than or equal to the value of
+    the parameter.
+
+    This function makes a call to the numpy ``ceil()`` function.
+    """
+    return Sketch.ceil(value)
+
+
+def exp(value: float) -> float:
+    """Returns Euler's number e (2.71828...) raised to the power of the ``n``
+    parameter.
+
+    Parameters
+    ----------
+
+    value: float
+        exponent to raise
+
+    Notes
+    -----
+
+    Returns Euler's number e (2.71828...) raised to the power of the ``n``
+    parameter. This function is the compliment to ``log()``.
+
+    This function makes a call to the numpy ``exp()`` function.
+    """
+    return Sketch.exp(value)
+
+
+def log(value: float) -> float:
+    """Calculates the natural logarithm (the base-e logarithm) of a number.
+
+    Parameters
+    ----------
+
+    value: float
+        number greater than 0.0
+
+    Notes
+    -----
+
+    Calculates the natural logarithm (the base-e logarithm) of a number. This
+    function expects the ``n`` parameter to be a value greater than 0.0. This
+    function is the compliment to ``exp()``.
+
+    This function makes a call to the numpy ``log()`` function. If the ``n``
+    parameter is less than or equal to 0.0, you will see a ``RuntimeWarning`` and
+    the returned result will be numpy's Not-a-Number value, ``np.nan``.
+    """
+    return Sketch.log(value)
+
+
+def random_seed(seed: int) -> None:
+    """Sets the seed value for py5's random functions.
+
+    Parameters
+    ----------
+
+    seed: int
+        seed value
+
+    Notes
+    -----
+
+    Sets the seed value for py5's random functions. This includes ``random()``,
+    ``random_int()``, ``random_choice()``, and ``random_gaussian()``. By default,
+    all of these functions would produce different results each time a program is
+    run. Set the seed parameter to a constant value to return the same pseudo-random
+    numbers each time the software is run.
+    """
+    return _py5sketch.random_seed(seed)
+
+
+@overload
+def random() -> float:
+    """Generates random numbers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random() -> float
+     * random(high: float, /) -> float
+     * random(low: float, high: float, /) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    Generates random numbers. Each time the ``random()`` function is called, it
+    returns an unexpected value within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return a float between zero
+    and one.
+
+    If only one parameter is passed to the function, it will return a float between
+    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+    values between 0 and 5 (starting at zero, and up to, but not including, 5).
+
+    If two parameters are specified, the function will return a float with a value
+    between the two values. For example, ``random(-5, 10.2)`` returns values
+    starting at -5 and up to (but not including) 10.2. To convert a floating-point
+    random number to an integer, use the ``int()`` function, or alternatively,
+    consider using ``random_int()``.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    pass
+
+
+@overload
+def random(high: float, /) -> float:
+    """Generates random numbers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random() -> float
+     * random(high: float, /) -> float
+     * random(low: float, high: float, /) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    Generates random numbers. Each time the ``random()`` function is called, it
+    returns an unexpected value within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return a float between zero
+    and one.
+
+    If only one parameter is passed to the function, it will return a float between
+    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+    values between 0 and 5 (starting at zero, and up to, but not including, 5).
+
+    If two parameters are specified, the function will return a float with a value
+    between the two values. For example, ``random(-5, 10.2)`` returns values
+    starting at -5 and up to (but not including) 10.2. To convert a floating-point
+    random number to an integer, use the ``int()`` function, or alternatively,
+    consider using ``random_int()``.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    pass
+
+
+@overload
+def random(low: float, high: float, /) -> float:
+    """Generates random numbers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random() -> float
+     * random(high: float, /) -> float
+     * random(low: float, high: float, /) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    Generates random numbers. Each time the ``random()`` function is called, it
+    returns an unexpected value within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return a float between zero
+    and one.
+
+    If only one parameter is passed to the function, it will return a float between
+    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+    values between 0 and 5 (starting at zero, and up to, but not including, 5).
+
+    If two parameters are specified, the function will return a float with a value
+    between the two values. For example, ``random(-5, 10.2)`` returns values
+    starting at -5 and up to (but not including) 10.2. To convert a floating-point
+    random number to an integer, use the ``int()`` function, or alternatively,
+    consider using ``random_int()``.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    pass
+
+
+def random(*args: float) -> float:
+    """Generates random numbers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random() -> float
+     * random(high: float, /) -> float
+     * random(low: float, high: float, /) -> float
+
+    Parameters
+    ----------
+
+    high: float
+        upper limit
+
+    low: float
+        lower limit
+
+    Notes
+    -----
+
+    Generates random numbers. Each time the ``random()`` function is called, it
+    returns an unexpected value within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return a float between zero
+    and one.
+
+    If only one parameter is passed to the function, it will return a float between
+    zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+    values between 0 and 5 (starting at zero, and up to, but not including, 5).
+
+    If two parameters are specified, the function will return a float with a value
+    between the two values. For example, ``random(-5, 10.2)`` returns values
+    starting at -5 and up to (but not including) 10.2. To convert a floating-point
+    random number to an integer, use the ``int()`` function, or alternatively,
+    consider using ``random_int()``.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    return _py5sketch.random(*args)
+
+
+@overload
+def random_int() -> int:
+    """Generates random integers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_int() -> int
+     * random_int(high: int, /) -> int
+     * random_int(low: int, high: int, /) -> int
+
+    Parameters
+    ----------
+
+    high: int
+        upper limit
+
+    low: int
+        lower limit
+
+    Notes
+    -----
+
+    Generates random integers. Each time the ``random_int()`` function is called, it
+    returns an unexpected integer within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return either 0 or 1.
+    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
+    evaluates to ``True``. This is equivalent to a coin toss.
+
+    If only one parameter is passed to the function, it will return an integer
+    between zero and the value of the ``high`` parameter, inclusive. For example,
+    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+
+    If two parameters are specified, the function will return an integer with a
+    value between the two values, inclusive. For example, ``random(2, 5)`` returns
+    one of 2, 3, 4, or 5.
+
+    If you want to pick a random object from a list, recall that Python uses zero-
+    indexing, so the first index value is 0 and the final index value is one less
+    than the list length. Therefore, to pick a random index to use in the list
+    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
+    will (occasionally) result in an index out of range error. Alternatively, you
+    can also use ``random_choice()`` to pick a random object from a list.
+
+    This function makes calls to numpy to generate the random integers.
+    """
+    pass
+
+
+@overload
+def random_int(high: int, /) -> int:
+    """Generates random integers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_int() -> int
+     * random_int(high: int, /) -> int
+     * random_int(low: int, high: int, /) -> int
+
+    Parameters
+    ----------
+
+    high: int
+        upper limit
+
+    low: int
+        lower limit
+
+    Notes
+    -----
+
+    Generates random integers. Each time the ``random_int()`` function is called, it
+    returns an unexpected integer within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return either 0 or 1.
+    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
+    evaluates to ``True``. This is equivalent to a coin toss.
+
+    If only one parameter is passed to the function, it will return an integer
+    between zero and the value of the ``high`` parameter, inclusive. For example,
+    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+
+    If two parameters are specified, the function will return an integer with a
+    value between the two values, inclusive. For example, ``random(2, 5)`` returns
+    one of 2, 3, 4, or 5.
+
+    If you want to pick a random object from a list, recall that Python uses zero-
+    indexing, so the first index value is 0 and the final index value is one less
+    than the list length. Therefore, to pick a random index to use in the list
+    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
+    will (occasionally) result in an index out of range error. Alternatively, you
+    can also use ``random_choice()`` to pick a random object from a list.
+
+    This function makes calls to numpy to generate the random integers.
+    """
+    pass
+
+
+@overload
+def random_int(low: int, high: int, /) -> int:
+    """Generates random integers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_int() -> int
+     * random_int(high: int, /) -> int
+     * random_int(low: int, high: int, /) -> int
+
+    Parameters
+    ----------
+
+    high: int
+        upper limit
+
+    low: int
+        lower limit
+
+    Notes
+    -----
+
+    Generates random integers. Each time the ``random_int()`` function is called, it
+    returns an unexpected integer within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return either 0 or 1.
+    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
+    evaluates to ``True``. This is equivalent to a coin toss.
+
+    If only one parameter is passed to the function, it will return an integer
+    between zero and the value of the ``high`` parameter, inclusive. For example,
+    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+
+    If two parameters are specified, the function will return an integer with a
+    value between the two values, inclusive. For example, ``random(2, 5)`` returns
+    one of 2, 3, 4, or 5.
+
+    If you want to pick a random object from a list, recall that Python uses zero-
+    indexing, so the first index value is 0 and the final index value is one less
+    than the list length. Therefore, to pick a random index to use in the list
+    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
+    will (occasionally) result in an index out of range error. Alternatively, you
+    can also use ``random_choice()`` to pick a random object from a list.
+
+    This function makes calls to numpy to generate the random integers.
+    """
+    pass
+
+
+def random_int(*args: int) -> int:
+    """Generates random integers.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_int() -> int
+     * random_int(high: int, /) -> int
+     * random_int(low: int, high: int, /) -> int
+
+    Parameters
+    ----------
+
+    high: int
+        upper limit
+
+    low: int
+        lower limit
+
+    Notes
+    -----
+
+    Generates random integers. Each time the ``random_int()`` function is called, it
+    returns an unexpected integer within the specified range. This function's
+    randomness can be influenced by ``random_seed()``.
+
+    If no parameters are passed to the function, it will return either 0 or 1.
+    Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
+    evaluates to ``True``. This is equivalent to a coin toss.
+
+    If only one parameter is passed to the function, it will return an integer
+    between zero and the value of the ``high`` parameter, inclusive. For example,
+    ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+
+    If two parameters are specified, the function will return an integer with a
+    value between the two values, inclusive. For example, ``random(2, 5)`` returns
+    one of 2, 3, 4, or 5.
+
+    If you want to pick a random object from a list, recall that Python uses zero-
+    indexing, so the first index value is 0 and the final index value is one less
+    than the list length. Therefore, to pick a random index to use in the list
+    ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
+    will (occasionally) result in an index out of range error. Alternatively, you
+    can also use ``random_choice()`` to pick a random object from a list.
+
+    This function makes calls to numpy to generate the random integers.
+    """
+    return _py5sketch.random_int(*args)
+
+
+def random_choice(objects: List[Any]) -> Any:
+    """Select a random item from a list.
+
+    Parameters
+    ----------
+
+    objects: List[Any]
+        list of objects to choose from
+
+    Notes
+    -----
+
+    Select a random item from a list. The list items can be of any type. This
+    function's randomness can be influenced by ``random_seed()``.
+
+    This function makes calls to numpy to select the random items.
+    """
+    return _py5sketch.random_choice(objects)
+
+
+@overload
+def random_gaussian() -> float:
+    """Generates random gaussian values.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_gaussian() -> float
+     * random_gaussian(loc: float, /) -> float
+     * random_gaussian(loc: float, scale: float, /) -> float
+
+    Parameters
+    ----------
+
+    loc: float
+        average of randomly selected numbers
+
+    scale: float
+        standard deviation of randomly selected numbers
+
+    Notes
+    -----
+
+    Generates random gaussian values. Each time the ``random_gaussian()`` function
+    is called, it returns an unexpected float with a probability distribution set by
+    the parameters.  This function's randomness can be influenced by
+    ``random_seed()``.
+
+    If no parameters are passed to the function, returned values will have an
+    average of 0 and a standard deviation of 1. Although there is theoretically no
+    minimum or maximum value that this function might return, in practice returned
+    values will be within plus or minus one standard deviation of the mean 68% of
+    the time and within two standard devations 95% of the time. Values farther and
+    farther from the mean become increasingly less likely.
+
+    If only one parameter is passed to the function, that parameter will be used as
+    the average instead of 0. If two parameters are called, those values will be
+    used as the average and standard deviation.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    pass
+
+
+@overload
+def random_gaussian(loc: float, /) -> float:
+    """Generates random gaussian values.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_gaussian() -> float
+     * random_gaussian(loc: float, /) -> float
+     * random_gaussian(loc: float, scale: float, /) -> float
+
+    Parameters
+    ----------
+
+    loc: float
+        average of randomly selected numbers
+
+    scale: float
+        standard deviation of randomly selected numbers
+
+    Notes
+    -----
+
+    Generates random gaussian values. Each time the ``random_gaussian()`` function
+    is called, it returns an unexpected float with a probability distribution set by
+    the parameters.  This function's randomness can be influenced by
+    ``random_seed()``.
+
+    If no parameters are passed to the function, returned values will have an
+    average of 0 and a standard deviation of 1. Although there is theoretically no
+    minimum or maximum value that this function might return, in practice returned
+    values will be within plus or minus one standard deviation of the mean 68% of
+    the time and within two standard devations 95% of the time. Values farther and
+    farther from the mean become increasingly less likely.
+
+    If only one parameter is passed to the function, that parameter will be used as
+    the average instead of 0. If two parameters are called, those values will be
+    used as the average and standard deviation.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    pass
+
+
+@overload
+def random_gaussian(loc: float, scale: float, /) -> float:
+    """Generates random gaussian values.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_gaussian() -> float
+     * random_gaussian(loc: float, /) -> float
+     * random_gaussian(loc: float, scale: float, /) -> float
+
+    Parameters
+    ----------
+
+    loc: float
+        average of randomly selected numbers
+
+    scale: float
+        standard deviation of randomly selected numbers
+
+    Notes
+    -----
+
+    Generates random gaussian values. Each time the ``random_gaussian()`` function
+    is called, it returns an unexpected float with a probability distribution set by
+    the parameters.  This function's randomness can be influenced by
+    ``random_seed()``.
+
+    If no parameters are passed to the function, returned values will have an
+    average of 0 and a standard deviation of 1. Although there is theoretically no
+    minimum or maximum value that this function might return, in practice returned
+    values will be within plus or minus one standard deviation of the mean 68% of
+    the time and within two standard devations 95% of the time. Values farther and
+    farther from the mean become increasingly less likely.
+
+    If only one parameter is passed to the function, that parameter will be used as
+    the average instead of 0. If two parameters are called, those values will be
+    used as the average and standard deviation.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    pass
+
+
+def random_gaussian(*args: float) -> float:
+    """Generates random gaussian values.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * random_gaussian() -> float
+     * random_gaussian(loc: float, /) -> float
+     * random_gaussian(loc: float, scale: float, /) -> float
+
+    Parameters
+    ----------
+
+    loc: float
+        average of randomly selected numbers
+
+    scale: float
+        standard deviation of randomly selected numbers
+
+    Notes
+    -----
+
+    Generates random gaussian values. Each time the ``random_gaussian()`` function
+    is called, it returns an unexpected float with a probability distribution set by
+    the parameters.  This function's randomness can be influenced by
+    ``random_seed()``.
+
+    If no parameters are passed to the function, returned values will have an
+    average of 0 and a standard deviation of 1. Although there is theoretically no
+    minimum or maximum value that this function might return, in practice returned
+    values will be within plus or minus one standard deviation of the mean 68% of
+    the time and within two standard devations 95% of the time. Values farther and
+    farther from the mean become increasingly less likely.
+
+    If only one parameter is passed to the function, that parameter will be used as
+    the average instead of 0. If two parameters are called, those values will be
+    used as the average and standard deviation.
+
+    This function makes calls to numpy to generate the random values.
+    """
+    return _py5sketch.random_gaussian(*args)
+
+
+@overload
+def noise(x: float, /) -> float:
+    """Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm.
+
+    Underlying Processing method: PApplet.noise
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x: float, /) -> float
+     * noise(x: float, y: float, /) -> float
+     * noise(x: float, y: float, z: float, /) -> float
+
+    Parameters
+    ----------
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm. Noise functions are random sequence generators that produce a
+    more natural, harmonic succession of numbers compared to the ``random()``
+    method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+    is done in a few of the examples.
+
+    The generated noise values for this method will typically be between 0 and 1,
+    and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+    ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+    (smooth version / SuperSimplex). That algorithm generates noise values between
+    -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+    these differences when modifying your code to switch from one to the other.
+    There are other differences in the character of the noise values generated by
+    both methods, so you'll need to do some experimentation to get the results you
+    want.
+
+    The actual noise structure is similar to that of an audio signal, in respect to
+    the method's use of frequencies. Similar to the concept of harmonics in physics,
+    both noise algorithms are computed over several octaves which are added together
+    for the final result.
+
+    The nature of the noise values returned can be adjusted with ``noise_seed()``
+    and ``noise_detail()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+    broadcasting when needed and calculate the values efficiently. Using numpy array
+    parameters will be much faster and efficient than calling the ``noise()`` method
+    repeatedly in a loop. See the examples to see how this can be done.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    pass
+
+
+@overload
+def noise(x: float, y: float, /) -> float:
+    """Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm.
+
+    Underlying Processing method: PApplet.noise
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x: float, /) -> float
+     * noise(x: float, y: float, /) -> float
+     * noise(x: float, y: float, z: float, /) -> float
+
+    Parameters
+    ----------
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm. Noise functions are random sequence generators that produce a
+    more natural, harmonic succession of numbers compared to the ``random()``
+    method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+    is done in a few of the examples.
+
+    The generated noise values for this method will typically be between 0 and 1,
+    and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+    ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+    (smooth version / SuperSimplex). That algorithm generates noise values between
+    -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+    these differences when modifying your code to switch from one to the other.
+    There are other differences in the character of the noise values generated by
+    both methods, so you'll need to do some experimentation to get the results you
+    want.
+
+    The actual noise structure is similar to that of an audio signal, in respect to
+    the method's use of frequencies. Similar to the concept of harmonics in physics,
+    both noise algorithms are computed over several octaves which are added together
+    for the final result.
+
+    The nature of the noise values returned can be adjusted with ``noise_seed()``
+    and ``noise_detail()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+    broadcasting when needed and calculate the values efficiently. Using numpy array
+    parameters will be much faster and efficient than calling the ``noise()`` method
+    repeatedly in a loop. See the examples to see how this can be done.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    pass
+
+
+@overload
+def noise(x: float, y: float, z: float, /) -> float:
+    """Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm.
+
+    Underlying Processing method: PApplet.noise
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x: float, /) -> float
+     * noise(x: float, y: float, /) -> float
+     * noise(x: float, y: float, z: float, /) -> float
+
+    Parameters
+    ----------
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm. Noise functions are random sequence generators that produce a
+    more natural, harmonic succession of numbers compared to the ``random()``
+    method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+    is done in a few of the examples.
+
+    The generated noise values for this method will typically be between 0 and 1,
+    and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+    ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+    (smooth version / SuperSimplex). That algorithm generates noise values between
+    -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+    these differences when modifying your code to switch from one to the other.
+    There are other differences in the character of the noise values generated by
+    both methods, so you'll need to do some experimentation to get the results you
+    want.
+
+    The actual noise structure is similar to that of an audio signal, in respect to
+    the method's use of frequencies. Similar to the concept of harmonics in physics,
+    both noise algorithms are computed over several octaves which are added together
+    for the final result.
+
+    The nature of the noise values returned can be adjusted with ``noise_seed()``
+    and ``noise_detail()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+    broadcasting when needed and calculate the values efficiently. Using numpy array
+    parameters will be much faster and efficient than calling the ``noise()`` method
+    repeatedly in a loop. See the examples to see how this can be done.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    pass
+
+
+def noise(*args) -> float:
+    """Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm.
+
+    Underlying Processing method: PApplet.noise
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * noise(x: float, /) -> float
+     * noise(x: float, y: float, /) -> float
+     * noise(x: float, y: float, z: float, /) -> float
+
+    Parameters
+    ----------
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using Processing's
+    noise algorithm. Noise functions are random sequence generators that produce a
+    more natural, harmonic succession of numbers compared to the ``random()``
+    method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+    is done in a few of the examples.
+
+    The generated noise values for this method will typically be between 0 and 1,
+    and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+    ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+    (smooth version / SuperSimplex). That algorithm generates noise values between
+    -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+    these differences when modifying your code to switch from one to the other.
+    There are other differences in the character of the noise values generated by
+    both methods, so you'll need to do some experimentation to get the results you
+    want.
+
+    The actual noise structure is similar to that of an audio signal, in respect to
+    the method's use of frequencies. Similar to the concept of harmonics in physics,
+    both noise algorithms are computed over several octaves which are added together
+    for the final result.
+
+    The nature of the noise values returned can be adjusted with ``noise_seed()``
+    and ``noise_detail()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+    broadcasting when needed and calculate the values efficiently. Using numpy array
+    parameters will be much faster and efficient than calling the ``noise()`` method
+    repeatedly in a loop. See the examples to see how this can be done.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    return _py5sketch.noise(*args)
+
+
+@overload
+def os_noise(x: float, y: float, /) -> float:
+    """Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex).
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * os_noise(x: float, y: float, /) -> float
+     * os_noise(x: float, y: float, z: float, /) -> float
+     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+
+    Parameters
+    ----------
+
+    w: float
+        w-coordinate in noise space
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
+    random sequence generators that produce a more natural, harmonic succession of
+    numbers compared to the ``random()`` method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+    as is done in a few of the examples.
+
+    The generated noise values for this method will be between -1 and 1, and can be
+    generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+    constant value as an extra parameter, as shown in a few examples. Py5 also
+    provides the ``noise()`` method, which generates noise using Processing's noise
+    algorithm. That algorithm typically generates noise values between 0 and 1, and
+    can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+    when modifying your code to switch from one to the other. There are other
+    differences in the character of the noise values generated by both methods, so
+    you'll need to do some experimentation to get the results you want.
+
+    The nature of the noise values returned can be adjusted with
+    ``os_noise_seed()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+    use broadcasting when needed and calculate the values efficiently. Using numpy
+    array parameters will be much faster and efficient than calling the
+    ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+    be done. The noise algorithm for this method is implemented in Java.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    pass
+
+
+@overload
+def os_noise(x: float, y: float, z: float, /) -> float:
+    """Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex).
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * os_noise(x: float, y: float, /) -> float
+     * os_noise(x: float, y: float, z: float, /) -> float
+     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+
+    Parameters
+    ----------
+
+    w: float
+        w-coordinate in noise space
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
+    random sequence generators that produce a more natural, harmonic succession of
+    numbers compared to the ``random()`` method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+    as is done in a few of the examples.
+
+    The generated noise values for this method will be between -1 and 1, and can be
+    generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+    constant value as an extra parameter, as shown in a few examples. Py5 also
+    provides the ``noise()`` method, which generates noise using Processing's noise
+    algorithm. That algorithm typically generates noise values between 0 and 1, and
+    can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+    when modifying your code to switch from one to the other. There are other
+    differences in the character of the noise values generated by both methods, so
+    you'll need to do some experimentation to get the results you want.
+
+    The nature of the noise values returned can be adjusted with
+    ``os_noise_seed()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+    use broadcasting when needed and calculate the values efficiently. Using numpy
+    array parameters will be much faster and efficient than calling the
+    ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+    be done. The noise algorithm for this method is implemented in Java.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    pass
+
+
+@overload
+def os_noise(x: float, y: float, z: float, w: float, /) -> float:
+    """Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex).
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * os_noise(x: float, y: float, /) -> float
+     * os_noise(x: float, y: float, z: float, /) -> float
+     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+
+    Parameters
+    ----------
+
+    w: float
+        w-coordinate in noise space
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
+    random sequence generators that produce a more natural, harmonic succession of
+    numbers compared to the ``random()`` method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+    as is done in a few of the examples.
+
+    The generated noise values for this method will be between -1 and 1, and can be
+    generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+    constant value as an extra parameter, as shown in a few examples. Py5 also
+    provides the ``noise()`` method, which generates noise using Processing's noise
+    algorithm. That algorithm typically generates noise values between 0 and 1, and
+    can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+    when modifying your code to switch from one to the other. There are other
+    differences in the character of the noise values generated by both methods, so
+    you'll need to do some experimentation to get the results you want.
+
+    The nature of the noise values returned can be adjusted with
+    ``os_noise_seed()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+    use broadcasting when needed and calculate the values efficiently. Using numpy
+    array parameters will be much faster and efficient than calling the
+    ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+    be done. The noise algorithm for this method is implemented in Java.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    pass
+
+
+def os_noise(*args) -> float:
+    """Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex).
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * os_noise(x: float, y: float, /) -> float
+     * os_noise(x: float, y: float, z: float, /) -> float
+     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+
+    Parameters
+    ----------
+
+    w: float
+        w-coordinate in noise space
+
+    x: float
+        x-coordinate in noise space
+
+    y: float
+        y-coordinate in noise space
+
+    z: float
+        z-coordinate in noise space
+
+    Notes
+    -----
+
+    Generate pseudo-random noise values for specific coodinates using the
+    OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
+    random sequence generators that produce a more natural, harmonic succession of
+    numbers compared to the ``random()`` method.
+
+    In contrast to the ``random()`` method, noise is defined in an n-dimensional
+    space, in which each coordinate corresponds to a fixed pseudo-random value
+    (fixed only for the lifespan of the program). The noise value can be animated by
+    moving through the noise space, as demonstrated in the examples. Any dimension
+    can also be interpreted as time. An easy way to animate the noise value is to
+    pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+    as is done in a few of the examples.
+
+    The generated noise values for this method will be between -1 and 1, and can be
+    generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+    constant value as an extra parameter, as shown in a few examples. Py5 also
+    provides the ``noise()`` method, which generates noise using Processing's noise
+    algorithm. That algorithm typically generates noise values between 0 and 1, and
+    can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+    when modifying your code to switch from one to the other. There are other
+    differences in the character of the noise values generated by both methods, so
+    you'll need to do some experimentation to get the results you want.
+
+    The nature of the noise values returned can be adjusted with
+    ``os_noise_seed()``.
+
+    Another way to adjust the character of the resulting sequence is the scale of
+    the input coordinates. As the method works within an infinite space, the value
+    of the coordinates doesn't matter as such; only the distance between successive
+    coordinates is important. As a general rule, the smaller the difference between
+    coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+    best for most applications, but this will differ depending on the use case and
+    the noise settings.
+
+    Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+    use broadcasting when needed and calculate the values efficiently. Using numpy
+    array parameters will be much faster and efficient than calling the
+    ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+    be done. The noise algorithm for this method is implemented in Java.
+
+    Noise generation is a rich and complex topic, and there are many noise
+    algorithms and libraries available that are worth learning about. Early versions
+    of py5 used the Python "noise" library, which can generate noise using the
+    "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+    paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+    Python library was removed from py5 because it has some bugs and hasn't had a
+    release in years. Nevertheless, it might be useful to you, and can be installed
+    separately like any other Python package. You can also try the Python library
+    "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+    algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+    Lite" to experiment with a large selection of noise algorithms with efficient
+    implementations.
+    """
+    return _py5sketch.os_noise(*args)
+
+##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the ``np_pixels[]`` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: np.ndarray = None
+
+
+def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: np.ndarray
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = 'ARGB'
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path,
+                         BytesIO],
+         *,
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = False,
+         **params) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path, BytesIO]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
 # module functions from sketch.py
 ##############################################################################
 
@@ -19484,7 +19827,7 @@ def list_threads() -> None:
 def sketch_path() -> Path:
     """The Sketch's current path.
 
-    Underlying Java method: PApplet.sketchPath
+    Underlying Processing method: PApplet.sketchPath
 
     Methods
     -------
@@ -19517,7 +19860,7 @@ def sketch_path() -> Path:
 def sketch_path(where: str, /) -> Path:
     """The Sketch's current path.
 
-    Underlying Java method: PApplet.sketchPath
+    Underlying Processing method: PApplet.sketchPath
 
     Methods
     -------
@@ -19549,7 +19892,7 @@ def sketch_path(where: str, /) -> Path:
 def sketch_path(*args) -> Path:
     """The Sketch's current path.
 
-    Underlying Java method: PApplet.sketchPath
+    Underlying Processing method: PApplet.sketchPath
 
     Methods
     -------

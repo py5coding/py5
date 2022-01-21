@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -87,7 +87,7 @@ class Sketch(
         Py5Base):
     """Core py5 class for leveraging py5's functionality.
 
-    Underlying Java class: PApplet.PApplet
+    Underlying Processing class: PApplet.PApplet
 
     Notes
     -----
@@ -326,7 +326,7 @@ class Sketch(
     def sketch_path(self) -> Path:
         """The Sketch's current path.
 
-        Underlying Java method: PApplet.sketchPath
+        Underlying Processing method: PApplet.sketchPath
 
         Methods
         -------
@@ -357,7 +357,7 @@ class Sketch(
     def sketch_path(self, where: str, /) -> Path:
         """The Sketch's current path.
 
-        Underlying Java method: PApplet.sketchPath
+        Underlying Processing method: PApplet.sketchPath
 
         Methods
         -------
@@ -387,7 +387,7 @@ class Sketch(
     def sketch_path(self, *args) -> Path:
         """The Sketch's current path.
 
-        Underlying Java method: PApplet.sketchPath
+        Underlying Processing method: PApplet.sketchPath
 
         Methods
         -------
@@ -432,7 +432,16 @@ class Sketch(
         surface = self.get_surface()
         # if there is no surface yet, the sketch can be run.
         return surface._instance is None
-    is_ready: bool = property(fget=_get_is_ready)
+    is_ready: bool = property(
+        fget=_get_is_ready,
+        doc="""Boolean value reflecting if the Sketch is in the ready state.
+
+        Notes
+        -----
+
+        Boolean value reflecting if the Sketch is in the ready state. This will be
+        ``True`` before ``run_sketch()`` is called. It will be ``False`` while the
+        Sketch is running and after it has exited.""")
 
     def _get_is_running(self) -> bool:
         """Boolean value reflecting if the Sketch is in the running state.
@@ -449,7 +458,16 @@ class Sketch(
             return False
         else:
             return not surface.is_stopped() and not hasattr(self, '_shutdown_initiated')
-    is_running: bool = property(fget=_get_is_running)
+    is_running: bool = property(
+        fget=_get_is_running,
+        doc="""Boolean value reflecting if the Sketch is in the running state.
+
+        Notes
+        -----
+
+        Boolean value reflecting if the Sketch is in the running state. This will be
+        ``False`` before ``run_sketch()`` is called and ``True`` after. It will be
+        ``False`` again after the Sketch has exited.""")
 
     def _get_is_dead(self) -> bool:
         """Boolean value reflecting if the Sketch has been run and has now stopped.
@@ -470,7 +488,21 @@ class Sketch(
             # Sketch has not been run yet
             return False
         return surface.is_stopped() or hasattr(self, '_shutdown_initiated')
-    is_dead: bool = property(fget=_get_is_dead)
+    is_dead: bool = property(
+        fget=_get_is_dead,
+        doc="""Boolean value reflecting if the Sketch has been run and has now stopped.
+
+        Notes
+        -----
+
+        Boolean value reflecting if the Sketch has been run and has now stopped. This
+        will be ``True`` after calling ``exit_sketch()`` or if the Sketch throws an
+        error and stops. This will also be ``True`` after calling ``Py5Surface``'s
+        ``Py5Surface.stop_thread()`` method. Once a Sketch reaches the "dead" state, it
+        cannot be rerun.
+
+        After an error or a call to ``Py5Surface.stop_thread()``, the Sketch window will
+        still be open. Call ``exit_sketch()`` to close the window.""")
 
     def _get_is_dead_from_error(self) -> bool:
         """Boolean value reflecting if the Sketch has been run and has now stopped because
@@ -483,7 +515,17 @@ class Sketch(
         of an error. This will be ``True`` only when ``is_dead`` is ``True`` and the
         Sketch stopped because an exception was thrown."""
         return self.is_dead and not self._instance.getSuccess()
-    is_dead_from_error: bool = property(fget=_get_is_dead_from_error)
+    is_dead_from_error: bool = property(
+        fget=_get_is_dead_from_error,
+        doc="""Boolean value reflecting if the Sketch has been run and has now stopped because
+        of an error.
+
+        Notes
+        -----
+
+        Boolean value reflecting if the Sketch has been run and has now stopped because
+        of an error. This will be ``True`` only when ``is_dead`` is ``True`` and the
+        Sketch stopped because an exception was thrown.""")
 
     def _get_is_mouse_pressed(self) -> bool:
         """The ``is_mouse_pressed`` variable stores whether or not a mouse button is
@@ -498,7 +540,19 @@ class Sketch(
         (see the related reference entry) can be used to determine which button has been
         pressed."""
         return self._instance.isMousePressed()
-    is_mouse_pressed: bool = property(fget=_get_is_mouse_pressed)
+    is_mouse_pressed: bool = property(
+        fget=_get_is_mouse_pressed,
+        doc="""The ``is_mouse_pressed`` variable stores whether or not a mouse button is
+        currently being pressed.
+
+        Notes
+        -----
+
+        The ``is_mouse_pressed`` variable stores whether or not a mouse button is
+        currently being pressed. The value is ``True`` when `any` mouse button is
+        pressed, and ``False`` if no button is pressed. The ``mouse_button`` variable
+        (see the related reference entry) can be used to determine which button has been
+        pressed.""")
 
     def _get_is_key_pressed(self) -> bool:
         """The ``is_key_pressed`` variable stores whether or not a keyboard button is
@@ -513,7 +567,19 @@ class Sketch(
         ``key_code`` variables (see the related reference entries) can be used to
         determine which button has been pressed."""
         return self._instance.isKeyPressed()
-    is_key_pressed: bool = property(fget=_get_is_key_pressed)
+    is_key_pressed: bool = property(
+        fget=_get_is_key_pressed,
+        doc="""The ``is_key_pressed`` variable stores whether or not a keyboard button is
+        currently being pressed.
+
+        Notes
+        -----
+
+        The ``is_key_pressed`` variable stores whether or not a keyboard button is
+        currently being pressed. The value is true when `any` keyboard button is
+        pressed, and false if no button is pressed. The ``key`` variable and
+        ``key_code`` variables (see the related reference entries) can be used to
+        determine which button has been pressed.""")
 
     def hot_reload_draw(self, draw: Callable) -> None:
         """Perform a hot reload of the Sketch's draw function.
@@ -1055,7 +1121,7 @@ class Sketch(
     def _get_pargs(self) -> List[str]:
         """List of strings passed to the Sketch through the call to ``run_sketch()``.
 
-        Underlying Java field: PApplet.args
+        Underlying Processing field: PApplet.args
 
         Notes
         -----
@@ -1065,12 +1131,23 @@ class Sketch(
         to make this more useful.
         """
         return self._instance.args
-    pargs: List[str] = property(fget=_get_pargs)
+    pargs: List[str] = property(
+        fget=_get_pargs,
+        doc="""List of strings passed to the Sketch through the call to ``run_sketch()``.
+
+        Underlying Processing field: PApplet.args
+
+        Notes
+        -----
+
+        List of strings passed to the Sketch through the call to ``run_sketch()``. Only
+        passing strings is allowed, but you can convert string types to something else
+        to make this more useful.""")
 
     def _get_display_height(self) -> int:
         """System variable that stores the height of the entire screen display.
 
-        Underlying Java field: PApplet.displayHeight
+        Underlying Processing field: PApplet.displayHeight
 
         Notes
         -----
@@ -1080,12 +1157,23 @@ class Sketch(
         ``full_screen()`` is usually a better choice.
         """
         return self._instance.displayHeight
-    display_height: int = property(fget=_get_display_height)
+    display_height: int = property(
+        fget=_get_display_height,
+        doc="""System variable that stores the height of the entire screen display.
+
+        Underlying Processing field: PApplet.displayHeight
+
+        Notes
+        -----
+
+        System variable that stores the height of the entire screen display. This can be
+        used to run a full-screen program on any display size, but calling
+        ``full_screen()`` is usually a better choice.""")
 
     def _get_display_width(self) -> int:
         """System variable that stores the width of the entire screen display.
 
-        Underlying Java field: PApplet.displayWidth
+        Underlying Processing field: PApplet.displayWidth
 
         Notes
         -----
@@ -1095,12 +1183,23 @@ class Sketch(
         ``full_screen()`` is usually a better choice.
         """
         return self._instance.displayWidth
-    display_width: int = property(fget=_get_display_width)
+    display_width: int = property(
+        fget=_get_display_width,
+        doc="""System variable that stores the width of the entire screen display.
+
+        Underlying Processing field: PApplet.displayWidth
+
+        Notes
+        -----
+
+        System variable that stores the width of the entire screen display. This can be
+        used to run a full-screen program on any display size, but calling
+        ``full_screen()`` is usually a better choice.""")
 
     def _get_finished(self) -> bool:
         """Boolean variable reflecting if the Sketch has stopped permanently.
 
-        Underlying Java field: PApplet.finished
+        Underlying Processing field: PApplet.finished
 
         Notes
         -----
@@ -1108,13 +1207,22 @@ class Sketch(
         Boolean variable reflecting if the Sketch has stopped permanently.
         """
         return self._instance.finished
-    finished: bool = property(fget=_get_finished)
+    finished: bool = property(
+        fget=_get_finished,
+        doc="""Boolean variable reflecting if the Sketch has stopped permanently.
+
+        Underlying Processing field: PApplet.finished
+
+        Notes
+        -----
+
+        Boolean variable reflecting if the Sketch has stopped permanently.""")
 
     def _get_focused(self) -> bool:
         """Confirms if a py5 program is "focused," meaning that it is active and will
         accept mouse or keyboard input.
 
-        Underlying Java field: PApplet.focused
+        Underlying Processing field: PApplet.focused
 
         Notes
         -----
@@ -1124,13 +1232,25 @@ class Sketch(
         ``False`` if not.
         """
         return self._instance.focused
-    focused: bool = property(fget=_get_focused)
+    focused: bool = property(
+        fget=_get_focused,
+        doc="""Confirms if a py5 program is "focused," meaning that it is active and will
+        accept mouse or keyboard input.
+
+        Underlying Processing field: PApplet.focused
+
+        Notes
+        -----
+
+        Confirms if a py5 program is "focused," meaning that it is active and will
+        accept mouse or keyboard input. This variable is ``True`` if it is focused and
+        ``False`` if not.""")
 
     def _get_frame_count(self) -> int:
         """The system variable ``frame_count`` contains the number of frames that have been
         displayed since the program started.
 
-        Underlying Java field: PApplet.frameCount
+        Underlying Processing field: PApplet.frameCount
 
         Notes
         -----
@@ -1141,12 +1261,25 @@ class Sketch(
         execution of ``draw()`` after that.
         """
         return self._instance.frameCount
-    frame_count: int = property(fget=_get_frame_count)
+    frame_count: int = property(
+        fget=_get_frame_count,
+        doc="""The system variable ``frame_count`` contains the number of frames that have been
+        displayed since the program started.
+
+        Underlying Processing field: PApplet.frameCount
+
+        Notes
+        -----
+
+        The system variable ``frame_count`` contains the number of frames that have been
+        displayed since the program started. Inside ``setup()`` the value is 0. Inside
+        the first execution of ``draw()`` it is 1, and it will increase by 1 for every
+        execution of ``draw()`` after that.""")
 
     def _get_height(self) -> int:
         """System variable that stores the height of the display window.
 
-        Underlying Java field: PApplet.height
+        Underlying Processing field: PApplet.height
 
         Notes
         -----
@@ -1157,12 +1290,24 @@ class Sketch(
         of ``height`` defaults to 100 if ``size()`` is not used in a program.
         """
         return self._instance.height
-    height: int = property(fget=_get_height)
+    height: int = property(
+        fget=_get_height,
+        doc="""System variable that stores the height of the display window.
+
+        Underlying Processing field: PApplet.height
+
+        Notes
+        -----
+
+        System variable that stores the height of the display window. This value is set
+        by the second parameter of the ``size()`` function. For example, the function
+        call ``size(320, 240)`` sets the ``height`` variable to the value 240. The value
+        of ``height`` defaults to 100 if ``size()`` is not used in a program.""")
 
     def _get_java_platform(self) -> int:
         """Version of Java currently being used by py5.
 
-        Underlying Java field: PApplet.javaPlatform
+        Underlying Processing field: PApplet.javaPlatform
 
         Notes
         -----
@@ -1173,12 +1318,24 @@ class Sketch(
         Virtual Machine.
         """
         return self._instance.javaPlatform
-    java_platform: int = property(fget=_get_java_platform)
+    java_platform: int = property(
+        fget=_get_java_platform,
+        doc="""Version of Java currently being used by py5.
+
+        Underlying Processing field: PApplet.javaPlatform
+
+        Notes
+        -----
+
+        Version of Java currently being used by py5. Internally the py5 library is using
+        the Processing Java libraries to provide functionality. Those libraries run in a
+        Java Virtual Machine. This field provides the Java platform number for that
+        Virtual Machine.""")
 
     def _get_java_version_name(self) -> str:
         """Version name of Java currently being used by py5.
 
-        Underlying Java field: PApplet.javaVersionName
+        Underlying Processing field: PApplet.javaVersionName
 
         Notes
         -----
@@ -1189,13 +1346,25 @@ class Sketch(
         that Virtual Machine.
         """
         return self._instance.javaVersionName
-    java_version_name: str = property(fget=_get_java_version_name)
+    java_version_name: str = property(
+        fget=_get_java_version_name,
+        doc="""Version name of Java currently being used by py5.
+
+        Underlying Processing field: PApplet.javaVersionName
+
+        Notes
+        -----
+
+        Version name of Java currently being used by py5. Internally the py5 library is
+        using the Processing Java libraries to provide functionality. Those libraries
+        run in a Java Virtual Machine. This field provides the Java version name for
+        that Virtual Machine.""")
 
     def _get_key(self) -> chr:
         """The system variable ``key`` always contains the value of the most recent key on
         the keyboard that was used (either pressed or released).
 
-        Underlying Java field: PApplet.key
+        Underlying Processing field: PApplet.key
 
         Notes
         -----
@@ -1216,14 +1385,37 @@ class Sketch(
         operating systems.
         """
         return self._instance.key
-    key: chr = property(fget=_get_key)
+    key: chr = property(
+        fget=_get_key,
+        doc="""The system variable ``key`` always contains the value of the most recent key on
+        the keyboard that was used (either pressed or released).
+
+        Underlying Processing field: PApplet.key
+
+        Notes
+        -----
+
+        The system variable ``key`` always contains the value of the most recent key on
+        the keyboard that was used (either pressed or released).
+
+        For non-ASCII keys, use the ``key_code`` variable. The keys included in the
+        ASCII specification (``BACKSPACE``, ``TAB``, ``ENTER``, ``RETURN``, ``ESC``, and
+        ``DELETE``) do not require checking to see if the key is coded, and you should
+        simply use the ``key`` variable instead of ``key_code``. If you're making cross-
+        platform projects, note that the ``ENTER`` key is commonly used on PCs and Unix
+        and the ``RETURN`` key is used instead on Macintosh. Check for both ``ENTER``
+        and ``RETURN`` to make sure your program will work for all platforms.
+
+        There are issues with how ``key_code`` behaves across different renderers and
+        operating systems. Watch out for unexpected behavior as you switch renderers and
+        operating systems.""")
 
     def _get_key_code(self) -> int:
         """The variable ``key_code`` is used to detect special keys such as the arrow keys
         (``UP``, ``DOWN``, ``LEFT``, and ``RIGHT``) as well as ``ALT``, ``CONTROL``, and
         ``SHIFT``.
 
-        Underlying Java field: PApplet.keyCode
+        Underlying Processing field: PApplet.keyCode
 
         Notes
         -----
@@ -1257,14 +1449,51 @@ class Sketch(
         constants.
         """
         return self._instance.keyCode
-    key_code: int = property(fget=_get_key_code)
+    key_code: int = property(
+        fget=_get_key_code,
+        doc="""The variable ``key_code`` is used to detect special keys such as the arrow keys
+        (``UP``, ``DOWN``, ``LEFT``, and ``RIGHT``) as well as ``ALT``, ``CONTROL``, and
+        ``SHIFT``.
+
+        Underlying Processing field: PApplet.keyCode
+
+        Notes
+        -----
+
+        The variable ``key_code`` is used to detect special keys such as the arrow keys
+        (``UP``, ``DOWN``, ``LEFT``, and ``RIGHT``) as well as ``ALT``, ``CONTROL``, and
+        ``SHIFT``.
+
+        When checking for these keys, it can be useful to first check if the key is
+        coded. This is done with the conditional ``if (key == CODED)``, as shown in the
+        example.
+
+        The keys included in the ASCII specification (``BACKSPACE``, ``TAB``, ``ENTER``,
+        ``RETURN``, ``ESC``, and ``DELETE``) do not require checking to see if the key
+        is coded; for those keys, you should simply use the ``key`` variable directly
+        (and not ``key_code``).  If you're making cross-platform projects, note that the
+        ``ENTER`` key is commonly used on PCs and Unix, while the ``RETURN`` key is used
+        on Macs. Make sure your program will work on all platforms by checking for both
+        ``ENTER`` and ``RETURN``.
+
+        For those familiar with Java, the values for ``UP`` and ``DOWN`` are simply
+        shorter versions of Java's ``key_event.VK_UP`` and ``key_event.VK_DOWN``. Other
+        ``key_code`` values can be found in the Java KeyEvent reference.
+
+        There are issues with how ``key_code`` behaves across different renderers and
+        operating systems. Watch out for unexpected behavior as you switch renderers and
+        operating systems and you are using keys are aren't mentioned in this reference
+        entry.
+
+        If you are using ``P2D`` or ``P3D`` as your renderer, use the ``NEWT`` KeyEvent
+        constants.""")
 
     def _get_mouse_button(self) -> int:
         """When a mouse button is pressed, the value of the system variable
         ``mouse_button`` is set to either ``LEFT``, ``RIGHT``, or ``CENTER``, depending
         on which button is pressed.
 
-        Underlying Java field: PApplet.mouseButton
+        Underlying Processing field: PApplet.mouseButton
 
         Notes
         -----
@@ -1277,13 +1506,29 @@ class Sketch(
         ``mouse_button``, as shown in the examples.)
         """
         return self._instance.mouseButton
-    mouse_button: int = property(fget=_get_mouse_button)
+    mouse_button: int = property(
+        fget=_get_mouse_button,
+        doc="""When a mouse button is pressed, the value of the system variable
+        ``mouse_button`` is set to either ``LEFT``, ``RIGHT``, or ``CENTER``, depending
+        on which button is pressed.
+
+        Underlying Processing field: PApplet.mouseButton
+
+        Notes
+        -----
+
+        When a mouse button is pressed, the value of the system variable
+        ``mouse_button`` is set to either ``LEFT``, ``RIGHT``, or ``CENTER``, depending
+        on which button is pressed. (If no button is pressed, ``mouse_button`` may be
+        reset to ``0``. For that reason, it's best to use ``mouse_pressed`` first to
+        test if any button is being pressed, and only then test the value of
+        ``mouse_button``, as shown in the examples.)""")
 
     def _get_mouse_x(self) -> int:
         """The system variable ``mouse_x`` always contains the current horizontal
         coordinate of the mouse.
 
-        Underlying Java field: PApplet.mouseX
+        Underlying Processing field: PApplet.mouseX
 
         Notes
         -----
@@ -1298,13 +1543,30 @@ class Sketch(
         ``mouse_x`` will continue to report its most recent position.
         """
         return self._instance.mouseX
-    mouse_x: int = property(fget=_get_mouse_x)
+    mouse_x: int = property(
+        fget=_get_mouse_x,
+        doc="""The system variable ``mouse_x`` always contains the current horizontal
+        coordinate of the mouse.
+
+        Underlying Processing field: PApplet.mouseX
+
+        Notes
+        -----
+
+        The system variable ``mouse_x`` always contains the current horizontal
+        coordinate of the mouse.
+
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``mouse_x`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
+        ``mouse_x`` will continue to report its most recent position.""")
 
     def _get_mouse_y(self) -> int:
         """The system variable ``mouse_y`` always contains the current vertical coordinate
         of the mouse.
 
-        Underlying Java field: PApplet.mouseY
+        Underlying Processing field: PApplet.mouseY
 
         Notes
         -----
@@ -1319,12 +1581,29 @@ class Sketch(
         ``mouse_y`` will continue to report its most recent position.
         """
         return self._instance.mouseY
-    mouse_y: int = property(fget=_get_mouse_y)
+    mouse_y: int = property(
+        fget=_get_mouse_y,
+        doc="""The system variable ``mouse_y`` always contains the current vertical coordinate
+        of the mouse.
+
+        Underlying Processing field: PApplet.mouseY
+
+        Notes
+        -----
+
+        The system variable ``mouse_y`` always contains the current vertical coordinate
+        of the mouse.
+
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``mouse_y`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
+        ``mouse_y`` will continue to report its most recent position.""")
 
     def _get_pixel_height(self) -> int:
         """Height of the display window in pixels.
 
-        Underlying Java field: PApplet.pixelHeight
+        Underlying Processing field: PApplet.pixelHeight
 
         Notes
         -----
@@ -1341,12 +1620,30 @@ class Sketch(
         ``width*height``.
         """
         return self._instance.pixelHeight
-    pixel_height: int = property(fget=_get_pixel_height)
+    pixel_height: int = property(
+        fget=_get_pixel_height,
+        doc="""Height of the display window in pixels.
+
+        Underlying Processing field: PApplet.pixelHeight
+
+        Notes
+        -----
+
+        Height of the display window in pixels. When ``pixel_density(2)`` is used to
+        make use of a high resolution display (called a Retina display on OSX or high-
+        dpi on Windows and Linux), the width and height of the Sketch do not change, but
+        the number of pixels is doubled. As a result, all operations that use pixels
+        (like ``load_pixels()``, ``get()``, etc.) happen in this doubled space. As a
+        convenience, the variables ``pixel_width`` and ``pixel_height`` hold the actual
+        width and height of the Sketch in pixels. This is useful for any Sketch that use
+        the ``pixels[]`` or ``np_pixels[]`` arrays, for instance, because the number of
+        elements in each array will be ``pixel_width*pixel_height``, not
+        ``width*height``.""")
 
     def _get_pixel_width(self) -> int:
         """Width of the display window in pixels.
 
-        Underlying Java field: PApplet.pixelWidth
+        Underlying Processing field: PApplet.pixelWidth
 
         Notes
         -----
@@ -1363,13 +1660,31 @@ class Sketch(
         ``width*height``.
         """
         return self._instance.pixelWidth
-    pixel_width: int = property(fget=_get_pixel_width)
+    pixel_width: int = property(
+        fget=_get_pixel_width,
+        doc="""Width of the display window in pixels.
+
+        Underlying Processing field: PApplet.pixelWidth
+
+        Notes
+        -----
+
+        Width of the display window in pixels. When ``pixel_density(2)`` is used to make
+        use of a high resolution display (called a Retina display on OSX or high-dpi on
+        Windows and Linux), the width and height of the Sketch do not change, but the
+        number of pixels is doubled. As a result, all operations that use pixels (like
+        ``load_pixels()``, ``get()``, etc.) happen in this doubled space. As a
+        convenience, the variables ``pixel_width`` and ``pixel_height`` hold the actual
+        width and height of the Sketch in pixels. This is useful for any Sketch that use
+        the ``pixels[]`` or ``np_pixels[]`` arrays, for instance, because the number of
+        elements in each array will be ``pixel_width*pixel_height``, not
+        ``width*height``.""")
 
     def _get_pmouse_x(self) -> int:
         """The system variable ``pmouse_x`` always contains the horizontal position of the
         mouse in the frame previous to the current frame.
 
-        Underlying Java field: PApplet.pmouseX
+        Underlying Processing field: PApplet.pmouseX
 
         Notes
         -----
@@ -1394,13 +1709,40 @@ class Sketch(
         ``pmouse_x`` and ``pmouse_y`` inside the mouse event functions.
         """
         return self._instance.pmouseX
-    pmouse_x: int = property(fget=_get_pmouse_x)
+    pmouse_x: int = property(
+        fget=_get_pmouse_x,
+        doc="""The system variable ``pmouse_x`` always contains the horizontal position of the
+        mouse in the frame previous to the current frame.
+
+        Underlying Processing field: PApplet.pmouseX
+
+        Notes
+        -----
+
+        The system variable ``pmouse_x`` always contains the horizontal position of the
+        mouse in the frame previous to the current frame.
+
+        You may find that ``pmouse_x`` and ``pmouse_y`` have different values when
+        referenced inside of ``draw()`` and inside of mouse events like
+        ``mouse_pressed()`` and ``mouse_moved()``. Inside ``draw()``, ``pmouse_x`` and
+        ``pmouse_y`` update only once per frame (once per trip through the ``draw()``
+        loop). But inside mouse events, they update each time the event is called. If
+        these values weren't updated immediately during mouse events, then the mouse
+        position would be read only once per frame, resulting in slight delays and
+        choppy interaction. If the mouse variables were always updated multiple times
+        per frame, then something like ``line(pmouse_x, pmouse_y, mouse_x, mouse_y)``
+        inside ``draw()`` would have lots of gaps, because ``pmouse_x`` may have changed
+        several times in between the calls to ``line()``.
+
+        If you want values relative to the previous frame, use ``pmouse_x`` and
+        ``pmouse_y`` inside ``draw()``. If you want continuous response, use
+        ``pmouse_x`` and ``pmouse_y`` inside the mouse event functions.""")
 
     def _get_pmouse_y(self) -> int:
         """The system variable ``pmouse_y`` always contains the vertical position of the
         mouse in the frame previous to the current frame.
 
-        Underlying Java field: PApplet.pmouseY
+        Underlying Processing field: PApplet.pmouseY
 
         Notes
         -----
@@ -1412,12 +1754,26 @@ class Sketch(
         ``draw()``, see the reference for ``pmouse_x``.
         """
         return self._instance.pmouseY
-    pmouse_y: int = property(fget=_get_pmouse_y)
+    pmouse_y: int = property(
+        fget=_get_pmouse_y,
+        doc="""The system variable ``pmouse_y`` always contains the vertical position of the
+        mouse in the frame previous to the current frame.
+
+        Underlying Processing field: PApplet.pmouseY
+
+        Notes
+        -----
+
+        The system variable ``pmouse_y`` always contains the vertical position of the
+        mouse in the frame previous to the current frame.
+
+        For more detail on how ``pmouse_y`` is updated inside of mouse events and
+        ``draw()``, see the reference for ``pmouse_x``.""")
 
     def _get_width(self) -> int:
         """System variable that stores the width of the display window.
 
-        Underlying Java field: PApplet.width
+        Underlying Processing field: PApplet.width
 
         Notes
         -----
@@ -1428,13 +1784,25 @@ class Sketch(
         of ``width`` defaults to 100 if ``size()`` is not used in a program.
         """
         return self._instance.width
-    width: int = property(fget=_get_width)
+    width: int = property(
+        fget=_get_width,
+        doc="""System variable that stores the width of the display window.
+
+        Underlying Processing field: PApplet.width
+
+        Notes
+        -----
+
+        System variable that stores the width of the display window. This value is set
+        by the first parameter of the ``size()`` function. For example, the function
+        call ``size(320, 240)`` sets the ``width`` variable to the value 320. The value
+        of ``width`` defaults to 100 if ``size()`` is not used in a program.""")
 
     @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
         """Extracts the alpha value from a color, scaled to match current ``color_mode()``.
 
-        Underlying Java method: PApplet.alpha
+        Underlying Processing method: PApplet.alpha
 
         Parameters
         ----------
@@ -1460,7 +1828,7 @@ class Sketch(
     def ambient(self, gray: float, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PApplet.ambient
+        Underlying Processing method: PApplet.ambient
 
         Methods
         -------
@@ -1505,7 +1873,7 @@ class Sketch(
     def ambient(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PApplet.ambient
+        Underlying Processing method: PApplet.ambient
 
         Methods
         -------
@@ -1550,7 +1918,7 @@ class Sketch(
     def ambient(self, rgb: int, /) -> None:
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PApplet.ambient
+        Underlying Processing method: PApplet.ambient
 
         Methods
         -------
@@ -1595,7 +1963,7 @@ class Sketch(
     def ambient(self, *args):
         """Sets the ambient reflectance for shapes drawn to the screen.
 
-        Underlying Java method: PApplet.ambient
+        Underlying Processing method: PApplet.ambient
 
         Methods
         -------
@@ -1640,7 +2008,7 @@ class Sketch(
     def ambient_light(self, v1: float, v2: float, v3: float, /) -> None:
         """Adds an ambient light.
 
-        Underlying Java method: PApplet.ambientLight
+        Underlying Processing method: PApplet.ambientLight
 
         Methods
         -------
@@ -1690,7 +2058,7 @@ class Sketch(
                       x: float, y: float, z: float, /) -> None:
         """Adds an ambient light.
 
-        Underlying Java method: PApplet.ambientLight
+        Underlying Processing method: PApplet.ambientLight
 
         Methods
         -------
@@ -1738,7 +2106,7 @@ class Sketch(
     def ambient_light(self, *args):
         """Adds an ambient light.
 
-        Underlying Java method: PApplet.ambientLight
+        Underlying Processing method: PApplet.ambientLight
 
         Methods
         -------
@@ -1788,7 +2156,7 @@ class Sketch(
                      n10: float, n11: float, n12: float, /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PApplet.applyMatrix
+        Underlying Processing method: PApplet.applyMatrix
 
         Methods
         -------
@@ -1889,7 +2257,7 @@ class Sketch(
             /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PApplet.applyMatrix
+        Underlying Processing method: PApplet.applyMatrix
 
         Methods
         -------
@@ -1972,7 +2340,7 @@ class Sketch(
     def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PApplet.applyMatrix
+        Underlying Processing method: PApplet.applyMatrix
 
         Methods
         -------
@@ -2055,7 +2423,7 @@ class Sketch(
     def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PApplet.applyMatrix
+        Underlying Processing method: PApplet.applyMatrix
 
         Methods
         -------
@@ -2137,7 +2505,7 @@ class Sketch(
     def apply_matrix(self, *args):
         """Multiplies the current matrix by the one specified through the parameters.
 
-        Underlying Java method: PApplet.applyMatrix
+        Underlying Processing method: PApplet.applyMatrix
 
         Methods
         -------
@@ -2221,7 +2589,7 @@ class Sketch(
             start: float, stop: float, /) -> None:
         """Draws an arc to the screen.
 
-        Underlying Java method: PApplet.arc
+        Underlying Processing method: PApplet.arc
 
         Methods
         -------
@@ -2281,7 +2649,7 @@ class Sketch(
             start: float, stop: float, mode: int, /) -> None:
         """Draws an arc to the screen.
 
-        Underlying Java method: PApplet.arc
+        Underlying Processing method: PApplet.arc
 
         Methods
         -------
@@ -2339,7 +2707,7 @@ class Sketch(
     def arc(self, *args):
         """Draws an arc to the screen.
 
-        Underlying Java method: PApplet.arc
+        Underlying Processing method: PApplet.arc
 
         Methods
         -------
@@ -2399,7 +2767,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2463,7 +2831,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2527,7 +2895,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2592,7 +2960,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2656,7 +3024,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2720,7 +3088,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2784,7 +3152,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2849,7 +3217,7 @@ class Sketch(
         """The ``background()`` function sets the color used for the background of the py5
         window.
 
-        Underlying Java method: PApplet.background
+        Underlying Processing method: PApplet.background
 
         Methods
         -------
@@ -2913,7 +3281,7 @@ class Sketch(
         """The ``begin_camera()`` and ``end_camera()`` functions enable advanced
         customization of the camera space.
 
-        Underlying Java method: PApplet.beginCamera
+        Underlying Processing method: PApplet.beginCamera
 
         Notes
         -----
@@ -2945,7 +3313,7 @@ class Sketch(
         """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
         shapes within shapes such as the center of the letter 'O'.
 
-        Underlying Java method: PApplet.beginContour
+        Underlying Processing method: PApplet.beginContour
 
         Notes
         -----
@@ -2973,7 +3341,7 @@ class Sketch(
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
         commands.
 
-        Underlying Java method: PApplet.beginRaw
+        Underlying Processing method: PApplet.beginRaw
 
         Methods
         -------
@@ -3029,7 +3397,7 @@ class Sketch(
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
         commands.
 
-        Underlying Java method: PApplet.beginRaw
+        Underlying Processing method: PApplet.beginRaw
 
         Methods
         -------
@@ -3086,7 +3454,7 @@ class Sketch(
         """To create vectors from 3D data, use the ``begin_raw()`` and ``end_raw()``
         commands.
 
-        Underlying Java method: PApplet.beginRaw
+        Underlying Processing method: PApplet.beginRaw
 
         Methods
         -------
@@ -3142,7 +3510,7 @@ class Sketch(
         """Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window.
 
-        Underlying Java method: PApplet.beginRecord
+        Underlying Processing method: PApplet.beginRecord
 
         Methods
         -------
@@ -3190,7 +3558,7 @@ class Sketch(
         """Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window.
 
-        Underlying Java method: PApplet.beginRecord
+        Underlying Processing method: PApplet.beginRecord
 
         Methods
         -------
@@ -3239,7 +3607,7 @@ class Sketch(
         """Opens a new file and all subsequent drawing functions are echoed to this file as
         well as the display window.
 
-        Underlying Java method: PApplet.beginRecord
+        Underlying Processing method: PApplet.beginRecord
 
         Methods
         -------
@@ -3287,7 +3655,7 @@ class Sketch(
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
 
-        Underlying Java method: PApplet.beginShape
+        Underlying Processing method: PApplet.beginShape
 
         Methods
         -------
@@ -3341,7 +3709,7 @@ class Sketch(
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
 
-        Underlying Java method: PApplet.beginShape
+        Underlying Processing method: PApplet.beginShape
 
         Methods
         -------
@@ -3395,7 +3763,7 @@ class Sketch(
         """Using the ``begin_shape()`` and ``end_shape()`` functions allow creating more
         complex forms.
 
-        Underlying Java method: PApplet.beginShape
+        Underlying Processing method: PApplet.beginShape
 
         Methods
         -------
@@ -3448,7 +3816,7 @@ class Sketch(
     def begin_closed_shape(self) -> None:
         """This method is used to start a custom closed shape.
 
-        Underlying Java method: PApplet.beginShape
+        Underlying Processing method: PApplet.beginShape
 
         Methods
         -------
@@ -3482,7 +3850,7 @@ class Sketch(
     def begin_closed_shape(self, kind: int, /) -> None:
         """This method is used to start a custom closed shape.
 
-        Underlying Java method: PApplet.beginShape
+        Underlying Processing method: PApplet.beginShape
 
         Methods
         -------
@@ -3516,7 +3884,7 @@ class Sketch(
     def begin_closed_shape(self, *args):
         """This method is used to start a custom closed shape.
 
-        Underlying Java method: PApplet.beginShape
+        Underlying Processing method: PApplet.beginShape
 
         Methods
         -------
@@ -3551,7 +3919,7 @@ class Sketch(
                x3: float, y3: float, x4: float, y4: float, /) -> None:
         """Draws a Bezier curve on the screen.
 
-        Underlying Java method: PApplet.bezier
+        Underlying Processing method: PApplet.bezier
 
         Methods
         -------
@@ -3617,7 +3985,7 @@ class Sketch(
                x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Draws a Bezier curve on the screen.
 
-        Underlying Java method: PApplet.bezier
+        Underlying Processing method: PApplet.bezier
 
         Methods
         -------
@@ -3681,7 +4049,7 @@ class Sketch(
     def bezier(self, *args):
         """Draws a Bezier curve on the screen.
 
-        Underlying Java method: PApplet.bezier
+        Underlying Processing method: PApplet.bezier
 
         Methods
         -------
@@ -3745,7 +4113,7 @@ class Sketch(
     def bezier_detail(self, detail: int, /) -> None:
         """Sets the resolution at which Beziers display.
 
-        Underlying Java method: PApplet.bezierDetail
+        Underlying Processing method: PApplet.bezierDetail
 
         Parameters
         ----------
@@ -3766,7 +4134,7 @@ class Sketch(
                      d: float, t: float, /) -> float:
         """Evaluates the Bezier at point t for points a, b, c, d.
 
-        Underlying Java method: PApplet.bezierPoint
+        Underlying Processing method: PApplet.bezierPoint
 
         Parameters
         ----------
@@ -3800,7 +4168,7 @@ class Sketch(
                        d: float, t: float, /) -> float:
         """Calculates the tangent of a point on a Bezier curve.
 
-        Underlying Java method: PApplet.bezierTangent
+        Underlying Processing method: PApplet.bezierTangent
 
         Parameters
         ----------
@@ -3833,7 +4201,7 @@ class Sketch(
                       y3: float, x4: float, y4: float, /) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
-        Underlying Java method: PApplet.bezierVertex
+        Underlying Processing method: PApplet.bezierVertex
 
         Methods
         -------
@@ -3892,7 +4260,7 @@ class Sketch(
                       y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
-        Underlying Java method: PApplet.bezierVertex
+        Underlying Processing method: PApplet.bezierVertex
 
         Methods
         -------
@@ -3949,7 +4317,7 @@ class Sketch(
     def bezier_vertex(self, *args):
         """Specifies vertex coordinates for Bezier curves.
 
-        Underlying Java method: PApplet.bezierVertex
+        Underlying Processing method: PApplet.bezierVertex
 
         Methods
         -------
@@ -4007,7 +4375,7 @@ class Sketch(
             self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """Create a collection of bezier vertices.
 
-        Underlying Java method: PApplet.bezierVertices
+        Underlying Processing method: PApplet.bezierVertices
 
         Parameters
         ----------
@@ -4037,7 +4405,7 @@ class Sketch(
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
-        Underlying Java method: PApplet.blend
+        Underlying Processing method: PApplet.blend
 
         Methods
         -------
@@ -4121,7 +4489,7 @@ class Sketch(
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
-        Underlying Java method: PApplet.blend
+        Underlying Processing method: PApplet.blend
 
         Methods
         -------
@@ -4204,7 +4572,7 @@ class Sketch(
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
-        Underlying Java method: PApplet.blend
+        Underlying Processing method: PApplet.blend
 
         Methods
         -------
@@ -4285,7 +4653,7 @@ class Sketch(
     def blend_mode(self, mode: int, /) -> None:
         """Blends the pixels in the display window according to a defined mode.
 
-        Underlying Java method: PApplet.blendMode
+        Underlying Processing method: PApplet.blendMode
 
         Parameters
         ----------
@@ -4328,7 +4696,7 @@ class Sketch(
     def blue(self, rgb: int, /) -> float:
         """Extracts the blue value from a color, scaled to match current ``color_mode()``.
 
-        Underlying Java method: PApplet.blue
+        Underlying Processing method: PApplet.blue
 
         Parameters
         ----------
@@ -4354,7 +4722,7 @@ class Sketch(
     def box(self, size: float, /) -> None:
         """A box is an extruded rectangle.
 
-        Underlying Java method: PApplet.box
+        Underlying Processing method: PApplet.box
 
         Methods
         -------
@@ -4391,7 +4759,7 @@ class Sketch(
     def box(self, w: float, h: float, d: float, /) -> None:
         """A box is an extruded rectangle.
 
-        Underlying Java method: PApplet.box
+        Underlying Processing method: PApplet.box
 
         Methods
         -------
@@ -4427,7 +4795,7 @@ class Sketch(
     def box(self, *args):
         """A box is an extruded rectangle.
 
-        Underlying Java method: PApplet.box
+        Underlying Processing method: PApplet.box
 
         Methods
         -------
@@ -4464,7 +4832,7 @@ class Sketch(
     def brightness(self, rgb: int, /) -> float:
         """Extracts the brightness value from a color.
 
-        Underlying Java method: PApplet.brightness
+        Underlying Processing method: PApplet.brightness
 
         Parameters
         ----------
@@ -4484,7 +4852,7 @@ class Sketch(
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
-        Underlying Java method: PApplet.camera
+        Underlying Processing method: PApplet.camera
 
         Methods
         -------
@@ -4555,7 +4923,7 @@ class Sketch(
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
-        Underlying Java method: PApplet.camera
+        Underlying Processing method: PApplet.camera
 
         Methods
         -------
@@ -4614,7 +4982,7 @@ class Sketch(
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
-        Underlying Java method: PApplet.camera
+        Underlying Processing method: PApplet.camera
 
         Methods
         -------
@@ -4672,7 +5040,7 @@ class Sketch(
     def circle(self, x: float, y: float, extent: float, /) -> None:
         """Draws a circle to the screen.
 
-        Underlying Java method: PApplet.circle
+        Underlying Processing method: PApplet.circle
 
         Parameters
         ----------
@@ -4698,7 +5066,7 @@ class Sketch(
     def clip(self, a: float, b: float, c: float, d: float, /) -> None:
         """Limits the rendering to the boundaries of a rectangle defined by the parameters.
 
-        Underlying Java method: PApplet.clip
+        Underlying Processing method: PApplet.clip
 
         Parameters
         ----------
@@ -4729,7 +5097,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -4807,7 +5175,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -4885,7 +5253,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -4963,7 +5331,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -5041,7 +5409,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -5119,7 +5487,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -5197,7 +5565,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -5275,7 +5643,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -5353,7 +5721,7 @@ class Sketch(
         """Creates colors for storing in variables of the ``color`` datatype (a 32 bit
         integer).
 
-        Underlying Java method: PApplet.color
+        Underlying Processing method: PApplet.color
 
         Methods
         -------
@@ -5430,7 +5798,7 @@ class Sketch(
     def color_mode(self, mode: int, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PApplet.colorMode
+        Underlying Processing method: PApplet.colorMode
 
         Methods
         -------
@@ -5489,7 +5857,7 @@ class Sketch(
     def color_mode(self, mode: int, max: float, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PApplet.colorMode
+        Underlying Processing method: PApplet.colorMode
 
         Methods
         -------
@@ -5549,7 +5917,7 @@ class Sketch(
                    max2: float, max3: float, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PApplet.colorMode
+        Underlying Processing method: PApplet.colorMode
 
         Methods
         -------
@@ -5609,7 +5977,7 @@ class Sketch(
                    max3: float, max_a: float, /) -> None:
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PApplet.colorMode
+        Underlying Processing method: PApplet.colorMode
 
         Methods
         -------
@@ -5667,7 +6035,7 @@ class Sketch(
     def color_mode(self, *args):
         """Changes the way py5 interprets color data.
 
-        Underlying Java method: PApplet.colorMode
+        Underlying Processing method: PApplet.colorMode
 
         Methods
         -------
@@ -5728,7 +6096,7 @@ class Sketch(
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
-        Underlying Java method: PApplet.copy
+        Underlying Processing method: PApplet.copy
 
         Methods
         -------
@@ -5758,7 +6126,7 @@ class Sketch(
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -5790,7 +6158,7 @@ class Sketch(
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
-        Underlying Java method: PApplet.copy
+        Underlying Processing method: PApplet.copy
 
         Methods
         -------
@@ -5820,7 +6188,7 @@ class Sketch(
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -5852,7 +6220,7 @@ class Sketch(
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
-        Underlying Java method: PApplet.copy
+        Underlying Processing method: PApplet.copy
 
         Methods
         -------
@@ -5882,7 +6250,7 @@ class Sketch(
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -5914,7 +6282,7 @@ class Sketch(
         window and copies a region of pixels from an image used as the ``src_img``
         parameter into the display window.
 
-        Underlying Java method: PApplet.copy
+        Underlying Processing method: PApplet.copy
 
         Methods
         -------
@@ -5944,7 +6312,7 @@ class Sketch(
             source image height
 
         src: Py5Image
-            an image variable referring to the source image
+            a source image to copy pixels from
 
         sw: int
             source image width
@@ -5975,7 +6343,7 @@ class Sketch(
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
         computer.
 
-        Underlying Java method: PApplet.createFont
+        Underlying Processing method: PApplet.createFont
 
         Methods
         -------
@@ -6037,7 +6405,7 @@ class Sketch(
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
         computer.
 
-        Underlying Java method: PApplet.createFont
+        Underlying Processing method: PApplet.createFont
 
         Methods
         -------
@@ -6100,7 +6468,7 @@ class Sketch(
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
         computer.
 
-        Underlying Java method: PApplet.createFont
+        Underlying Processing method: PApplet.createFont
 
         Methods
         -------
@@ -6162,7 +6530,7 @@ class Sketch(
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
         computer.
 
-        Underlying Java method: PApplet.createFont
+        Underlying Processing method: PApplet.createFont
 
         Methods
         -------
@@ -6222,7 +6590,7 @@ class Sketch(
     def create_graphics(self, w: int, h: int, /) -> Py5Graphics:
         """Creates and returns a new ``Py5Graphics`` object.
 
-        Underlying Java method: PApplet.createGraphics
+        Underlying Processing method: PApplet.createGraphics
 
         Methods
         -------
@@ -6292,7 +6660,7 @@ class Sketch(
     def create_graphics(self, w: int, h: int, renderer: str, /) -> Py5Graphics:
         """Creates and returns a new ``Py5Graphics`` object.
 
-        Underlying Java method: PApplet.createGraphics
+        Underlying Processing method: PApplet.createGraphics
 
         Methods
         -------
@@ -6363,7 +6731,7 @@ class Sketch(
                         path: str, /) -> Py5Graphics:
         """Creates and returns a new ``Py5Graphics`` object.
 
-        Underlying Java method: PApplet.createGraphics
+        Underlying Processing method: PApplet.createGraphics
 
         Methods
         -------
@@ -6433,7 +6801,7 @@ class Sketch(
     def create_graphics(self, *args):
         """Creates and returns a new ``Py5Graphics`` object.
 
-        Underlying Java method: PApplet.createGraphics
+        Underlying Processing method: PApplet.createGraphics
 
         Methods
         -------
@@ -6503,7 +6871,7 @@ class Sketch(
     def create_image(self, w: int, h: int, format: int, /) -> Py5Image:
         """Creates a new Py5Image (the datatype for storing images).
 
-        Underlying Java method: PApplet.createImage
+        Underlying Processing method: PApplet.createImage
 
         Parameters
         ----------
@@ -6537,7 +6905,7 @@ class Sketch(
     def create_shape(self) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PApplet.createShape
+        Underlying Processing method: PApplet.createShape
 
         Methods
         -------
@@ -6594,7 +6962,7 @@ class Sketch(
     def create_shape(self, type: int, /) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PApplet.createShape
+        Underlying Processing method: PApplet.createShape
 
         Methods
         -------
@@ -6651,7 +7019,7 @@ class Sketch(
     def create_shape(self, kind: int, /, *p: float) -> Py5Shape:
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PApplet.createShape
+        Underlying Processing method: PApplet.createShape
 
         Methods
         -------
@@ -6708,7 +7076,7 @@ class Sketch(
     def create_shape(self, *args):
         """The ``create_shape()`` function is used to define a new shape.
 
-        Underlying Java method: PApplet.createShape
+        Underlying Processing method: PApplet.createShape
 
         Methods
         -------
@@ -6766,7 +7134,7 @@ class Sketch(
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
-        Underlying Java method: PApplet.cursor
+        Underlying Processing method: PApplet.cursor
 
         Methods
         -------
@@ -6815,7 +7183,7 @@ class Sketch(
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
-        Underlying Java method: PApplet.cursor
+        Underlying Processing method: PApplet.cursor
 
         Methods
         -------
@@ -6864,7 +7232,7 @@ class Sketch(
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
-        Underlying Java method: PApplet.cursor
+        Underlying Processing method: PApplet.cursor
 
         Methods
         -------
@@ -6913,7 +7281,7 @@ class Sketch(
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
-        Underlying Java method: PApplet.cursor
+        Underlying Processing method: PApplet.cursor
 
         Methods
         -------
@@ -6962,7 +7330,7 @@ class Sketch(
         """Sets the cursor to a predefined symbol or an image, or makes it visible if
         already hidden.
 
-        Underlying Java method: PApplet.cursor
+        Underlying Processing method: PApplet.cursor
 
         Methods
         -------
@@ -7011,7 +7379,7 @@ class Sketch(
               x3: float, y3: float, x4: float, y4: float, /) -> None:
         """Draws a curved line on the screen.
 
-        Underlying Java method: PApplet.curve
+        Underlying Processing method: PApplet.curve
 
         Methods
         -------
@@ -7079,7 +7447,7 @@ class Sketch(
               x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Draws a curved line on the screen.
 
-        Underlying Java method: PApplet.curve
+        Underlying Processing method: PApplet.curve
 
         Methods
         -------
@@ -7145,7 +7513,7 @@ class Sketch(
     def curve(self, *args):
         """Draws a curved line on the screen.
 
-        Underlying Java method: PApplet.curve
+        Underlying Processing method: PApplet.curve
 
         Methods
         -------
@@ -7211,7 +7579,7 @@ class Sketch(
     def curve_detail(self, detail: int, /) -> None:
         """Sets the resolution at which curves display.
 
-        Underlying Java method: PApplet.curveDetail
+        Underlying Processing method: PApplet.curveDetail
 
         Parameters
         ----------
@@ -7232,7 +7600,7 @@ class Sketch(
                     d: float, t: float, /) -> float:
         """Evaluates the curve at point ``t`` for points ``a``, ``b``, ``c``, ``d``.
 
-        Underlying Java method: PApplet.curvePoint
+        Underlying Processing method: PApplet.curvePoint
 
         Parameters
         ----------
@@ -7268,7 +7636,7 @@ class Sketch(
                       d: float, t: float, /) -> float:
         """Calculates the tangent of a point on a curve.
 
-        Underlying Java method: PApplet.curveTangent
+        Underlying Processing method: PApplet.curveTangent
 
         Parameters
         ----------
@@ -7299,7 +7667,7 @@ class Sketch(
     def curve_tightness(self, tightness: float, /) -> None:
         """Modifies the quality of forms created with ``curve()`` and ``curve_vertex()``.
 
-        Underlying Java method: PApplet.curveTightness
+        Underlying Processing method: PApplet.curveTightness
 
         Parameters
         ----------
@@ -7324,7 +7692,7 @@ class Sketch(
     def curve_vertex(self, x: float, y: float, /) -> None:
         """Specifies vertex coordinates for curves.
 
-        Underlying Java method: PApplet.curveVertex
+        Underlying Processing method: PApplet.curveVertex
 
         Methods
         -------
@@ -7365,7 +7733,7 @@ class Sketch(
     def curve_vertex(self, x: float, y: float, z: float, /) -> None:
         """Specifies vertex coordinates for curves.
 
-        Underlying Java method: PApplet.curveVertex
+        Underlying Processing method: PApplet.curveVertex
 
         Methods
         -------
@@ -7405,7 +7773,7 @@ class Sketch(
     def curve_vertex(self, *args):
         """Specifies vertex coordinates for curves.
 
-        Underlying Java method: PApplet.curveVertex
+        Underlying Processing method: PApplet.curveVertex
 
         Methods
         -------
@@ -7446,7 +7814,7 @@ class Sketch(
             self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """Create a collection of curve vertices.
 
-        Underlying Java method: PApplet.curveVertices
+        Underlying Processing method: PApplet.curveVertices
 
         Parameters
         ----------
@@ -7472,7 +7840,7 @@ class Sketch(
     def day(cls) -> int:
         """Py5 communicates with the clock on your computer.
 
-        Underlying Java method: PApplet.day
+        Underlying Processing method: PApplet.day
 
         Notes
         -----
@@ -7486,7 +7854,7 @@ class Sketch(
                           nx: float, ny: float, nz: float, /) -> None:
         """Adds a directional light.
 
-        Underlying Java method: PApplet.directionalLight
+        Underlying Processing method: PApplet.directionalLight
 
         Parameters
         ----------
@@ -7531,7 +7899,7 @@ class Sketch(
         (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not.
 
-        Underlying Java method: PApplet.displayDensity
+        Underlying Processing method: PApplet.displayDensity
 
         Methods
         -------
@@ -7563,7 +7931,7 @@ class Sketch(
         (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not.
 
-        Underlying Java method: PApplet.displayDensity
+        Underlying Processing method: PApplet.displayDensity
 
         Methods
         -------
@@ -7594,7 +7962,7 @@ class Sketch(
         (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
         not.
 
-        Underlying Java method: PApplet.displayDensity
+        Underlying Processing method: PApplet.displayDensity
 
         Methods
         -------
@@ -7623,7 +7991,7 @@ class Sketch(
     def ellipse(self, a: float, b: float, c: float, d: float, /) -> None:
         """Draws an ellipse (oval) to the screen.
 
-        Underlying Java method: PApplet.ellipse
+        Underlying Processing method: PApplet.ellipse
 
         Parameters
         ----------
@@ -7654,7 +8022,7 @@ class Sketch(
         """Modifies the location from which ellipses are drawn by changing the way in which
         parameters given to ``ellipse()`` are intepreted.
 
-        Underlying Java method: PApplet.ellipseMode
+        Underlying Processing method: PApplet.ellipseMode
 
         Parameters
         ----------
@@ -7694,7 +8062,7 @@ class Sketch(
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PApplet.emissive
+        Underlying Processing method: PApplet.emissive
 
         Methods
         -------
@@ -7737,7 +8105,7 @@ class Sketch(
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PApplet.emissive
+        Underlying Processing method: PApplet.emissive
 
         Methods
         -------
@@ -7780,7 +8148,7 @@ class Sketch(
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PApplet.emissive
+        Underlying Processing method: PApplet.emissive
 
         Methods
         -------
@@ -7823,7 +8191,7 @@ class Sketch(
         """Sets the emissive color of the material used for drawing shapes drawn to the
         screen.
 
-        Underlying Java method: PApplet.emissive
+        Underlying Processing method: PApplet.emissive
 
         Methods
         -------
@@ -7865,7 +8233,7 @@ class Sketch(
         """The ``begin_camera()`` and ``end_camera()`` methods enable advanced
         customization of the camera space.
 
-        Underlying Java method: PApplet.endCamera
+        Underlying Processing method: PApplet.endCamera
 
         Notes
         -----
@@ -7880,7 +8248,7 @@ class Sketch(
         """Use the ``begin_contour()`` and ``end_contour()`` methods to create negative
         shapes within shapes such as the center of the letter 'O'.
 
-        Underlying Java method: PApplet.endContour
+        Underlying Processing method: PApplet.endContour
 
         Notes
         -----
@@ -7903,7 +8271,7 @@ class Sketch(
     def end_raw(self) -> None:
         """Complement to ``begin_raw()``; they must always be used together.
 
-        Underlying Java method: PApplet.endRaw
+        Underlying Processing method: PApplet.endRaw
 
         Notes
         -----
@@ -7916,7 +8284,7 @@ class Sketch(
     def end_record(self) -> None:
         """Stops the recording process started by ``begin_record()`` and closes the file.
 
-        Underlying Java method: PApplet.endRecord
+        Underlying Processing method: PApplet.endRecord
 
         Notes
         -----
@@ -7930,7 +8298,7 @@ class Sketch(
         """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
         be called after ``begin_shape()``.
 
-        Underlying Java method: PApplet.endShape
+        Underlying Processing method: PApplet.endShape
 
         Methods
         -------
@@ -7962,7 +8330,7 @@ class Sketch(
         """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
         be called after ``begin_shape()``.
 
-        Underlying Java method: PApplet.endShape
+        Underlying Processing method: PApplet.endShape
 
         Methods
         -------
@@ -7993,7 +8361,7 @@ class Sketch(
         """The ``end_shape()`` function is the companion to ``begin_shape()`` and may only
         be called after ``begin_shape()``.
 
-        Underlying Java method: PApplet.endShape
+        Underlying Processing method: PApplet.endShape
 
         Methods
         -------
@@ -8023,7 +8391,7 @@ class Sketch(
     def exit_sketch(self) -> None:
         """Quits/stops/exits the program.
 
-        Underlying Java method: PApplet.exit
+        Underlying Processing method: PApplet.exit
 
         Notes
         -----
@@ -8046,7 +8414,7 @@ class Sketch(
     def fill(self, gray: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8112,7 +8480,7 @@ class Sketch(
     def fill(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8178,7 +8546,7 @@ class Sketch(
     def fill(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8244,7 +8612,7 @@ class Sketch(
     def fill(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8310,7 +8678,7 @@ class Sketch(
     def fill(self, rgb: int, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8376,7 +8744,7 @@ class Sketch(
     def fill(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8442,7 +8810,7 @@ class Sketch(
     def fill(self, *args):
         """Sets the color used to fill shapes.
 
-        Underlying Java method: PApplet.fill
+        Underlying Processing method: PApplet.fill
 
         Methods
         -------
@@ -8508,7 +8876,7 @@ class Sketch(
     def apply_filter(self, kind: int, /) -> None:
         """Filters the display window using a preset filter or with a custom shader.
 
-        Underlying Java method: PApplet.filter
+        Underlying Processing method: PApplet.filter
 
         Methods
         -------
@@ -8562,7 +8930,7 @@ class Sketch(
     def apply_filter(self, kind: int, param: float, /) -> None:
         """Filters the display window using a preset filter or with a custom shader.
 
-        Underlying Java method: PApplet.filter
+        Underlying Processing method: PApplet.filter
 
         Methods
         -------
@@ -8616,7 +8984,7 @@ class Sketch(
     def apply_filter(self, shader: Py5Shader, /) -> None:
         """Filters the display window using a preset filter or with a custom shader.
 
-        Underlying Java method: PApplet.filter
+        Underlying Processing method: PApplet.filter
 
         Methods
         -------
@@ -8669,7 +9037,7 @@ class Sketch(
     def apply_filter(self, *args):
         """Filters the display window using a preset filter or with a custom shader.
 
-        Underlying Java method: PApplet.filter
+        Underlying Processing method: PApplet.filter
 
         Methods
         -------
@@ -8722,7 +9090,7 @@ class Sketch(
     def frame_rate(self, fps: float, /) -> None:
         """Specifies the number of frames to be displayed every second.
 
-        Underlying Java method: PApplet.frameRate
+        Underlying Processing method: PApplet.frameRate
 
         Parameters
         ----------
@@ -8745,7 +9113,7 @@ class Sketch(
                 top: float, near: float, far: float, /) -> None:
         """Sets a perspective matrix as defined by the parameters.
 
-        Underlying Java method: PApplet.frustum
+        Underlying Processing method: PApplet.frustum
 
         Parameters
         ----------
@@ -8797,7 +9165,7 @@ class Sketch(
     def full_screen(self) -> None:
         """Open a Sketch using the full size of the computer's display.
 
-        Underlying Java method: PApplet.fullScreen
+        Underlying Processing method: PApplet.fullScreen
 
         Methods
         -------
@@ -8851,7 +9219,7 @@ class Sketch(
     def full_screen(self, display: int, /) -> None:
         """Open a Sketch using the full size of the computer's display.
 
-        Underlying Java method: PApplet.fullScreen
+        Underlying Processing method: PApplet.fullScreen
 
         Methods
         -------
@@ -8905,7 +9273,7 @@ class Sketch(
     def full_screen(self, renderer: str, /) -> None:
         """Open a Sketch using the full size of the computer's display.
 
-        Underlying Java method: PApplet.fullScreen
+        Underlying Processing method: PApplet.fullScreen
 
         Methods
         -------
@@ -8959,7 +9327,7 @@ class Sketch(
     def full_screen(self, renderer: str, display: int, /) -> None:
         """Open a Sketch using the full size of the computer's display.
 
-        Underlying Java method: PApplet.fullScreen
+        Underlying Processing method: PApplet.fullScreen
 
         Methods
         -------
@@ -9012,7 +9380,7 @@ class Sketch(
     def full_screen(self, *args):
         """Open a Sketch using the full size of the computer's display.
 
-        Underlying Java method: PApplet.fullScreen
+        Underlying Processing method: PApplet.fullScreen
 
         Methods
         -------
@@ -9066,7 +9434,7 @@ class Sketch(
     def get(self) -> Py5Image:
         """Reads the color of any pixel or grabs a section of the drawing surface.
 
-        Underlying Java method: PApplet.get
+        Underlying Processing method: PApplet.get
 
         Methods
         -------
@@ -9124,7 +9492,7 @@ class Sketch(
     def get(self, x: int, y: int, /) -> int:
         """Reads the color of any pixel or grabs a section of the drawing surface.
 
-        Underlying Java method: PApplet.get
+        Underlying Processing method: PApplet.get
 
         Methods
         -------
@@ -9182,7 +9550,7 @@ class Sketch(
     def get(self, x: int, y: int, w: int, h: int, /) -> Py5Image:
         """Reads the color of any pixel or grabs a section of the drawing surface.
 
-        Underlying Java method: PApplet.get
+        Underlying Processing method: PApplet.get
 
         Methods
         -------
@@ -9240,7 +9608,7 @@ class Sketch(
     def get(self, *args):
         """Reads the color of any pixel or grabs a section of the drawing surface.
 
-        Underlying Java method: PApplet.get
+        Underlying Processing method: PApplet.get
 
         Methods
         -------
@@ -9297,7 +9665,7 @@ class Sketch(
     def get_frame_rate(self) -> float:
         """Get the running Sketch's current frame rate.
 
-        Underlying Java method: PApplet.getFrameRate
+        Underlying Processing method: PApplet.getFrameRate
 
         Notes
         -----
@@ -9317,7 +9685,7 @@ class Sketch(
     def get_graphics(self) -> Py5Graphics:
         """Get the ``Py5Graphics`` object used by the Sketch.
 
-        Underlying Java method: PApplet.getGraphics
+        Underlying Processing method: PApplet.getGraphics
 
         Notes
         -----
@@ -9333,7 +9701,7 @@ class Sketch(
     def get_matrix(self) -> NDArray[(Any, Any), Float]:
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PApplet.getMatrix
+        Underlying Processing method: PApplet.getMatrix
 
         Methods
         -------
@@ -9366,7 +9734,7 @@ class Sketch(
             2, 3), Float], /) -> NDArray[(2, 3), Float]:
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PApplet.getMatrix
+        Underlying Processing method: PApplet.getMatrix
 
         Methods
         -------
@@ -9399,7 +9767,7 @@ class Sketch(
             4, 4), Float], /) -> NDArray[(4, 4), Float]:
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PApplet.getMatrix
+        Underlying Processing method: PApplet.getMatrix
 
         Methods
         -------
@@ -9431,7 +9799,7 @@ class Sketch(
     def get_matrix(self, *args):
         """Get the current matrix as a numpy array.
 
-        Underlying Java method: PApplet.getMatrix
+        Underlying Processing method: PApplet.getMatrix
 
         Methods
         -------
@@ -9463,7 +9831,7 @@ class Sketch(
     def get_surface(self) -> Py5Surface:
         """Get the Py5Surface object used for the Sketch.
 
-        Underlying Java method: PApplet.getSurface
+        Underlying Processing method: PApplet.getSurface
 
         Notes
         -----
@@ -9476,7 +9844,7 @@ class Sketch(
     def green(self, rgb: int, /) -> float:
         """Extracts the green value from a color, scaled to match current ``color_mode()``.
 
-        Underlying Java method: PApplet.green
+        Underlying Processing method: PApplet.green
 
         Parameters
         ----------
@@ -9502,7 +9870,7 @@ class Sketch(
         """This function is used to enable or disable special features that control how
         graphics are drawn.
 
-        Underlying Java method: PApplet.hint
+        Underlying Processing method: PApplet.hint
 
         Parameters
         ----------
@@ -9586,7 +9954,7 @@ class Sketch(
     def hour(cls) -> int:
         """Py5 communicates with the clock on your computer.
 
-        Underlying Java method: PApplet.hour
+        Underlying Processing method: PApplet.hour
 
         Notes
         -----
@@ -9600,7 +9968,7 @@ class Sketch(
     def hue(self, rgb: int, /) -> float:
         """Extracts the hue value from a color.
 
-        Underlying Java method: PApplet.hue
+        Underlying Processing method: PApplet.hue
 
         Parameters
         ----------
@@ -9619,7 +9987,7 @@ class Sketch(
     def image(self, img: Py5Image, a: float, b: float, /) -> None:
         """The ``image()`` function draws an image to the display window.
 
-        Underlying Java method: PApplet.image
+        Underlying Processing method: PApplet.image
 
         Methods
         -------
@@ -9687,7 +10055,7 @@ class Sketch(
               c: float, d: float, /) -> None:
         """The ``image()`` function draws an image to the display window.
 
-        Underlying Java method: PApplet.image
+        Underlying Processing method: PApplet.image
 
         Methods
         -------
@@ -9755,7 +10123,7 @@ class Sketch(
               d: float, u1: int, v1: int, u2: int, v2: int, /) -> None:
         """The ``image()`` function draws an image to the display window.
 
-        Underlying Java method: PApplet.image
+        Underlying Processing method: PApplet.image
 
         Methods
         -------
@@ -9822,7 +10190,7 @@ class Sketch(
     def image(self, *args):
         """The ``image()`` function draws an image to the display window.
 
-        Underlying Java method: PApplet.image
+        Underlying Processing method: PApplet.image
 
         Methods
         -------
@@ -9889,7 +10257,7 @@ class Sketch(
         """Modifies the location from which images are drawn by changing the way in which
         parameters given to ``image()`` are intepreted.
 
-        Underlying Java method: PApplet.imageMode
+        Underlying Processing method: PApplet.imageMode
 
         Parameters
         ----------
@@ -9925,7 +10293,7 @@ class Sketch(
     def lerp_color(self, c1: int, c2: int, amt: float, /) -> int:
         """Calculates a color between two colors at a specific increment.
 
-        Underlying Java method: PApplet.lerpColor
+        Underlying Processing method: PApplet.lerpColor
 
         Methods
         -------
@@ -9968,7 +10336,7 @@ class Sketch(
     def lerp_color(self, c1: int, c2: int, amt: float, mode: int, /) -> int:
         """Calculates a color between two colors at a specific increment.
 
-        Underlying Java method: PApplet.lerpColor
+        Underlying Processing method: PApplet.lerpColor
 
         Methods
         -------
@@ -10011,7 +10379,7 @@ class Sketch(
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
 
-        Underlying Java method: PApplet.lerpColor
+        Underlying Processing method: PApplet.lerpColor
 
         Methods
         -------
@@ -10054,7 +10422,7 @@ class Sketch(
                       quadratic: float, /) -> None:
         """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
-        Underlying Java method: PApplet.lightFalloff
+        Underlying Processing method: PApplet.lightFalloff
 
         Parameters
         ----------
@@ -10089,7 +10457,7 @@ class Sketch(
     def light_specular(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the specular color for lights.
 
-        Underlying Java method: PApplet.lightSpecular
+        Underlying Processing method: PApplet.lightSpecular
 
         Parameters
         ----------
@@ -10118,7 +10486,7 @@ class Sketch(
     def lights(self) -> None:
         """Sets the default ambient light, directional light, falloff, and specular values.
 
-        Underlying Java method: PApplet.lights
+        Underlying Processing method: PApplet.lights
 
         Notes
         -----
@@ -10136,7 +10504,7 @@ class Sketch(
     def line(self, x1: float, y1: float, x2: float, y2: float, /) -> None:
         """Draws a line (a direct path between two points) to the screen.
 
-        Underlying Java method: PApplet.line
+        Underlying Processing method: PApplet.line
 
         Methods
         -------
@@ -10186,7 +10554,7 @@ class Sketch(
              x2: float, y2: float, z2: float, /) -> None:
         """Draws a line (a direct path between two points) to the screen.
 
-        Underlying Java method: PApplet.line
+        Underlying Processing method: PApplet.line
 
         Methods
         -------
@@ -10234,7 +10602,7 @@ class Sketch(
     def line(self, *args):
         """Draws a line (a direct path between two points) to the screen.
 
-        Underlying Java method: PApplet.line
+        Underlying Processing method: PApplet.line
 
         Methods
         -------
@@ -10282,7 +10650,7 @@ class Sketch(
     def lines(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """Draw a collection of lines to the screen.
 
-        Underlying Java method: PApplet.lines
+        Underlying Processing method: PApplet.lines
 
         Parameters
         ----------
@@ -10308,7 +10676,7 @@ class Sketch(
     def load_font(self, filename: str, /) -> Py5Font:
         """Loads a .vlw formatted font into a ``Py5Font`` object.
 
-        Underlying Java method: PApplet.loadFont
+        Underlying Processing method: PApplet.loadFont
 
         Parameters
         ----------
@@ -10355,7 +10723,7 @@ class Sketch(
     def load_pixels(self) -> None:
         """Loads the pixel data of the current display window into the ``pixels[]`` array.
 
-        Underlying Java method: PApplet.loadPixels
+        Underlying Processing method: PApplet.loadPixels
 
         Notes
         -----
@@ -10371,7 +10739,7 @@ class Sketch(
     def load_shader(self, frag_filename: str, /) -> Py5Shader:
         """Loads a shader into a ``Py5Shader`` object.
 
-        Underlying Java method: PApplet.loadShader
+        Underlying Processing method: PApplet.loadShader
 
         Methods
         -------
@@ -10393,7 +10761,7 @@ class Sketch(
         Notes
         -----
 
-        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        Loads a shader into a ``Py5Shader`` object. The shader file must be located in
         the Sketch's "data" directory to load correctly. Shaders are compatible with the
         ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -10414,7 +10782,7 @@ class Sketch(
                     vert_filename: str, /) -> Py5Shader:
         """Loads a shader into a ``Py5Shader`` object.
 
-        Underlying Java method: PApplet.loadShader
+        Underlying Processing method: PApplet.loadShader
 
         Methods
         -------
@@ -10436,7 +10804,7 @@ class Sketch(
         Notes
         -----
 
-        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        Loads a shader into a ``Py5Shader`` object. The shader file must be located in
         the Sketch's "data" directory to load correctly. Shaders are compatible with the
         ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -10456,7 +10824,7 @@ class Sketch(
     def load_shader(self, *args):
         """Loads a shader into a ``Py5Shader`` object.
 
-        Underlying Java method: PApplet.loadShader
+        Underlying Processing method: PApplet.loadShader
 
         Methods
         -------
@@ -10478,7 +10846,7 @@ class Sketch(
         Notes
         -----
 
-        Loads a shader into a ``Py5Shader`` object. The shader file must be loaded in
+        Loads a shader into a ``Py5Shader`` object. The shader file must be located in
         the Sketch's "data" directory to load correctly. Shaders are compatible with the
         ``P2D`` and ``P3D`` renderers, but not with the default renderer.
 
@@ -10498,7 +10866,7 @@ class Sketch(
     def load_shape(self, filename: str, /) -> Py5Shape:
         """Loads geometry into a variable of type ``Py5Shape``.
 
-        Underlying Java method: PApplet.loadShape
+        Underlying Processing method: PApplet.loadShape
 
         Methods
         -------
@@ -10542,7 +10910,7 @@ class Sketch(
     def load_shape(self, filename: str, options: str, /) -> Py5Shape:
         """Loads geometry into a variable of type ``Py5Shape``.
 
-        Underlying Java method: PApplet.loadShape
+        Underlying Processing method: PApplet.loadShape
 
         Methods
         -------
@@ -10586,7 +10954,7 @@ class Sketch(
     def load_shape(self, *args):
         """Loads geometry into a variable of type ``Py5Shape``.
 
-        Underlying Java method: PApplet.loadShape
+        Underlying Processing method: PApplet.loadShape
 
         Methods
         -------
@@ -10630,7 +10998,7 @@ class Sketch(
         """By default, py5 loops through ``draw()`` continuously, executing the code within
         it.
 
-        Underlying Java method: PApplet.loop
+        Underlying Processing method: PApplet.loop
 
         Notes
         -----
@@ -10645,7 +11013,7 @@ class Sketch(
         """Returns the number of milliseconds (thousandths of a second) since starting the
         program.
 
-        Underlying Java method: PApplet.millis
+        Underlying Processing method: PApplet.millis
 
         Notes
         -----
@@ -10660,7 +11028,7 @@ class Sketch(
     def minute(cls) -> int:
         """Py5 communicates with the clock on your computer.
 
-        Underlying Java method: PApplet.minute
+        Underlying Processing method: PApplet.minute
 
         Notes
         -----
@@ -10673,7 +11041,7 @@ class Sketch(
     def model_x(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
-        Underlying Java method: PApplet.modelX
+        Underlying Processing method: PApplet.modelX
 
         Parameters
         ----------
@@ -10707,7 +11075,7 @@ class Sketch(
     def model_y(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
-        Underlying Java method: PApplet.modelY
+        Underlying Processing method: PApplet.modelY
 
         Parameters
         ----------
@@ -10741,7 +11109,7 @@ class Sketch(
     def model_z(self, x: float, y: float, z: float, /) -> float:
         """Returns the three-dimensional X, Y, Z position in model space.
 
-        Underlying Java method: PApplet.modelZ
+        Underlying Processing method: PApplet.modelZ
 
         Parameters
         ----------
@@ -10776,7 +11144,7 @@ class Sketch(
     def month(cls) -> int:
         """Py5 communicates with the clock on your computer.
 
-        Underlying Java method: PApplet.month
+        Underlying Processing method: PApplet.month
 
         Notes
         -----
@@ -10789,7 +11157,7 @@ class Sketch(
     def no_clip(self) -> None:
         """Disables the clipping previously started by the ``clip()`` function.
 
-        Underlying Java method: PApplet.noClip
+        Underlying Processing method: PApplet.noClip
 
         Notes
         -----
@@ -10801,7 +11169,7 @@ class Sketch(
     def no_cursor(self) -> None:
         """Hides the cursor from view.
 
-        Underlying Java method: PApplet.noCursor
+        Underlying Processing method: PApplet.noCursor
 
         Notes
         -----
@@ -10814,7 +11182,7 @@ class Sketch(
     def no_fill(self) -> None:
         """Disables filling geometry.
 
-        Underlying Java method: PApplet.noFill
+        Underlying Processing method: PApplet.noFill
 
         Notes
         -----
@@ -10827,7 +11195,7 @@ class Sketch(
     def no_lights(self) -> None:
         """Disable all lighting.
 
-        Underlying Java method: PApplet.noLights
+        Underlying Processing method: PApplet.noLights
 
         Notes
         -----
@@ -10842,7 +11210,7 @@ class Sketch(
     def no_loop(self) -> None:
         """Stops py5 from continuously executing the code within ``draw()``.
 
-        Underlying Java method: PApplet.noLoop
+        Underlying Processing method: PApplet.noLoop
 
         Notes
         -----
@@ -10868,7 +11236,7 @@ class Sketch(
         """Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.
 
-        Underlying Java method: PApplet.noSmooth
+        Underlying Processing method: PApplet.noSmooth
 
         Notes
         -----
@@ -10899,7 +11267,7 @@ class Sketch(
     def no_stroke(self) -> None:
         """Disables drawing the stroke (outline).
 
-        Underlying Java method: PApplet.noStroke
+        Underlying Processing method: PApplet.noStroke
 
         Notes
         -----
@@ -10913,7 +11281,7 @@ class Sketch(
         """Removes the current fill value for displaying images and reverts to displaying
         images with their original hues.
 
-        Underlying Java method: PApplet.noTint
+        Underlying Processing method: PApplet.noTint
 
         Notes
         -----
@@ -10923,10 +11291,167 @@ class Sketch(
         """
         return self._instance.noTint()
 
+    @overload
+    def noise_detail(self, lod: int, /) -> None:
+        """Adjusts the character and level of detail of Processing's noise algorithm,
+        produced by the ``noise()`` function.
+
+        Underlying Processing method: PApplet.noiseDetail
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * noise_detail(lod: int, /) -> None
+         * noise_detail(lod: int, falloff: float, /) -> None
+
+        Parameters
+        ----------
+
+        falloff: float
+            falloff factor for each octave
+
+        lod: int
+            number of octaves to be used by the noise
+
+        Notes
+        -----
+
+        Adjusts the character and level of detail of Processing's noise algorithm,
+        produced by the ``noise()`` function. Similar to harmonics in physics,
+        Processing noise is computed over several octaves. Lower octaves contribute more
+        to the output signal and as such define the overall intensity of the noise,
+        whereas higher octaves create finer-grained details in the noise sequence.
+
+        By default, noise is computed over 4 octaves with each octave contributing
+        exactly half than its predecessor, starting at 50% strength for the first
+        octave. This falloff amount can be changed by adding an additional function
+        parameter. For example, a ``falloff`` factor of 0.75 means each octave will now
+        have 75% impact (25% less) of the previous lower octave. While any number
+        between 0.0 and 1.0 is valid, note that values greater than 0.5 may result in
+        noise() returning values greater than 1.0 or less than 0.0.
+
+        By changing these parameters, the signal created by the ``noise()`` function can
+        be adapted to fit very specific needs and characteristics.
+        """
+        pass
+
+    @overload
+    def noise_detail(self, lod: int, falloff: float, /) -> None:
+        """Adjusts the character and level of detail of Processing's noise algorithm,
+        produced by the ``noise()`` function.
+
+        Underlying Processing method: PApplet.noiseDetail
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * noise_detail(lod: int, /) -> None
+         * noise_detail(lod: int, falloff: float, /) -> None
+
+        Parameters
+        ----------
+
+        falloff: float
+            falloff factor for each octave
+
+        lod: int
+            number of octaves to be used by the noise
+
+        Notes
+        -----
+
+        Adjusts the character and level of detail of Processing's noise algorithm,
+        produced by the ``noise()`` function. Similar to harmonics in physics,
+        Processing noise is computed over several octaves. Lower octaves contribute more
+        to the output signal and as such define the overall intensity of the noise,
+        whereas higher octaves create finer-grained details in the noise sequence.
+
+        By default, noise is computed over 4 octaves with each octave contributing
+        exactly half than its predecessor, starting at 50% strength for the first
+        octave. This falloff amount can be changed by adding an additional function
+        parameter. For example, a ``falloff`` factor of 0.75 means each octave will now
+        have 75% impact (25% less) of the previous lower octave. While any number
+        between 0.0 and 1.0 is valid, note that values greater than 0.5 may result in
+        noise() returning values greater than 1.0 or less than 0.0.
+
+        By changing these parameters, the signal created by the ``noise()`` function can
+        be adapted to fit very specific needs and characteristics.
+        """
+        pass
+
+    def noise_detail(self, *args):
+        """Adjusts the character and level of detail of Processing's noise algorithm,
+        produced by the ``noise()`` function.
+
+        Underlying Processing method: PApplet.noiseDetail
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * noise_detail(lod: int, /) -> None
+         * noise_detail(lod: int, falloff: float, /) -> None
+
+        Parameters
+        ----------
+
+        falloff: float
+            falloff factor for each octave
+
+        lod: int
+            number of octaves to be used by the noise
+
+        Notes
+        -----
+
+        Adjusts the character and level of detail of Processing's noise algorithm,
+        produced by the ``noise()`` function. Similar to harmonics in physics,
+        Processing noise is computed over several octaves. Lower octaves contribute more
+        to the output signal and as such define the overall intensity of the noise,
+        whereas higher octaves create finer-grained details in the noise sequence.
+
+        By default, noise is computed over 4 octaves with each octave contributing
+        exactly half than its predecessor, starting at 50% strength for the first
+        octave. This falloff amount can be changed by adding an additional function
+        parameter. For example, a ``falloff`` factor of 0.75 means each octave will now
+        have 75% impact (25% less) of the previous lower octave. While any number
+        between 0.0 and 1.0 is valid, note that values greater than 0.5 may result in
+        noise() returning values greater than 1.0 or less than 0.0.
+
+        By changing these parameters, the signal created by the ``noise()`` function can
+        be adapted to fit very specific needs and characteristics.
+        """
+        return self._instance.noiseDetail(*args)
+
+    def noise_seed(self, seed: int, /) -> None:
+        """Sets the seed value for ``noise()``.
+
+        Underlying Processing method: PApplet.noiseSeed
+
+        Parameters
+        ----------
+
+        seed: int
+            seed value
+
+        Notes
+        -----
+
+        Sets the seed value for ``noise()``. By default, ``noise()`` produces different
+        results each time the program is run. Set the seed parameter to a constant to
+        return the same pseudo-random numbers each time the Sketch is run.
+        """
+        return self._instance.noiseSeed(seed)
+
     def normal(self, nx: float, ny: float, nz: float, /) -> None:
         """Sets the current normal vector.
 
-        Underlying Java method: PApplet.normal
+        Underlying Processing method: PApplet.normal
 
         Parameters
         ----------
@@ -10956,7 +11481,7 @@ class Sketch(
     def ortho(self) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PApplet.ortho
+        Underlying Processing method: PApplet.ortho
 
         Methods
         -------
@@ -11006,7 +11531,7 @@ class Sketch(
               bottom: float, top: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PApplet.ortho
+        Underlying Processing method: PApplet.ortho
 
         Methods
         -------
@@ -11056,7 +11581,7 @@ class Sketch(
               top: float, near: float, far: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PApplet.ortho
+        Underlying Processing method: PApplet.ortho
 
         Methods
         -------
@@ -11104,7 +11629,7 @@ class Sketch(
     def ortho(self, *args):
         """Sets an orthographic projection and defines a parallel clipping volume.
 
-        Underlying Java method: PApplet.ortho
+        Underlying Processing method: PApplet.ortho
 
         Methods
         -------
@@ -11149,12 +11674,30 @@ class Sketch(
         """
         return self._instance.ortho(*args)
 
+    def os_noise_seed(self, seed: int, /) -> None:
+        """Sets the seed value for ``os_noise()``.
+
+        Parameters
+        ----------
+
+        seed: int
+            seed value
+
+        Notes
+        -----
+
+        Sets the seed value for ``os_noise()``. By default, ``os_noise()`` produces
+        different results each time the program is run. Set the seed parameter to a
+        constant to return the same pseudo-random numbers each time the Sketch is run.
+        """
+        return self._instance.osNoiseSeed(seed)
+
     @overload
     def perspective(self) -> None:
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
-        Underlying Java method: PApplet.perspective
+        Underlying Processing method: PApplet.perspective
 
         Methods
         -------
@@ -11200,7 +11743,7 @@ class Sketch(
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
-        Underlying Java method: PApplet.perspective
+        Underlying Processing method: PApplet.perspective
 
         Methods
         -------
@@ -11244,7 +11787,7 @@ class Sketch(
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
-        Underlying Java method: PApplet.perspective
+        Underlying Processing method: PApplet.perspective
 
         Methods
         -------
@@ -11289,7 +11832,7 @@ class Sketch(
         high resolutions screens like Apple Retina displays and Windows High-DPI
         displays.
 
-        Underlying Java method: PApplet.pixelDensity
+        Underlying Processing method: PApplet.pixelDensity
 
         Parameters
         ----------
@@ -11332,7 +11875,7 @@ class Sketch(
     def point(self, x: float, y: float, /) -> None:
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
-        Underlying Java method: PApplet.point
+        Underlying Processing method: PApplet.point
 
         Methods
         -------
@@ -11380,7 +11923,7 @@ class Sketch(
     def point(self, x: float, y: float, z: float, /) -> None:
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
-        Underlying Java method: PApplet.point
+        Underlying Processing method: PApplet.point
 
         Methods
         -------
@@ -11427,7 +11970,7 @@ class Sketch(
     def point(self, *args):
         """Draws a point, a coordinate in space at the dimension of one pixel.
 
-        Underlying Java method: PApplet.point
+        Underlying Processing method: PApplet.point
 
         Methods
         -------
@@ -11475,7 +12018,7 @@ class Sketch(
                     x: float, y: float, z: float, /) -> None:
         """Adds a point light.
 
-        Underlying Java method: PApplet.pointLight
+        Underlying Processing method: PApplet.pointLight
 
         Parameters
         ----------
@@ -11514,7 +12057,7 @@ class Sketch(
         """Draw a collection of points, each a coordinate in space at the dimension of one
         pixel.
 
-        Underlying Java method: PApplet.points
+        Underlying Processing method: PApplet.points
 
         Parameters
         ----------
@@ -11539,7 +12082,7 @@ class Sketch(
         """The ``pop()`` function restores the previous drawing style settings and
         transformations after ``push()`` has changed them.
 
-        Underlying Java method: PApplet.pop
+        Underlying Processing method: PApplet.pop
 
         Notes
         -----
@@ -11567,7 +12110,7 @@ class Sketch(
     def pop_matrix(self) -> None:
         """Pops the current transformation matrix off the matrix stack.
 
-        Underlying Java method: PApplet.popMatrix
+        Underlying Processing method: PApplet.popMatrix
 
         Notes
         -----
@@ -11586,7 +12129,7 @@ class Sketch(
         ``pop_style()`` restores the prior settings; these functions are always used
         together.
 
-        Underlying Java method: PApplet.popStyle
+        Underlying Processing method: PApplet.popStyle
 
         Notes
         -----
@@ -11604,7 +12147,7 @@ class Sketch(
     def print_camera(self) -> None:
         """Prints the current camera matrix to standard output.
 
-        Underlying Java method: PApplet.printCamera
+        Underlying Processing method: PApplet.printCamera
 
         Notes
         -----
@@ -11616,7 +12159,7 @@ class Sketch(
     def print_matrix(self) -> None:
         """Prints the current matrix to standard output.
 
-        Underlying Java method: PApplet.printMatrix
+        Underlying Processing method: PApplet.printMatrix
 
         Notes
         -----
@@ -11628,7 +12171,7 @@ class Sketch(
     def print_projection(self) -> None:
         """Prints the current projection matrix to standard output.
 
-        Underlying Java method: PApplet.printProjection
+        Underlying Processing method: PApplet.printProjection
 
         Notes
         -----
@@ -11642,7 +12185,7 @@ class Sketch(
         """The ``push()`` function saves the current drawing style settings and
         transformations, while ``pop()`` restores these settings.
 
-        Underlying Java method: PApplet.push
+        Underlying Processing method: PApplet.push
 
         Notes
         -----
@@ -11672,7 +12215,7 @@ class Sketch(
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
-        Underlying Java method: PApplet.pushMatrix
+        Underlying Processing method: PApplet.pushMatrix
 
         Notes
         -----
@@ -11692,7 +12235,7 @@ class Sketch(
         """The ``push_style()`` function saves the current style settings and
         ``pop_style()`` restores the prior settings.
 
-        Underlying Java method: PApplet.pushStyle
+        Underlying Processing method: PApplet.pushStyle
 
         Notes
         -----
@@ -11718,7 +12261,7 @@ class Sketch(
              x3: float, y3: float, x4: float, y4: float, /) -> None:
         """A quad is a quadrilateral, a four sided polygon.
 
-        Underlying Java method: PApplet.quad
+        Underlying Processing method: PApplet.quad
 
         Parameters
         ----------
@@ -11762,7 +12305,7 @@ class Sketch(
                          x3: float, y3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
-        Underlying Java method: PApplet.quadraticVertex
+        Underlying Processing method: PApplet.quadraticVertex
 
         Methods
         -------
@@ -11812,7 +12355,7 @@ class Sketch(
                          x3: float, y3: float, z3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
-        Underlying Java method: PApplet.quadraticVertex
+        Underlying Processing method: PApplet.quadraticVertex
 
         Methods
         -------
@@ -11860,7 +12403,7 @@ class Sketch(
     def quadratic_vertex(self, *args):
         """Specifies vertex coordinates for quadratic Bezier curves.
 
-        Underlying Java method: PApplet.quadraticVertex
+        Underlying Processing method: PApplet.quadraticVertex
 
         Methods
         -------
@@ -11909,7 +12452,7 @@ class Sketch(
             self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """Create a collection of quadratic vertices.
 
-        Underlying Java method: PApplet.quadraticVertices
+        Underlying Processing method: PApplet.quadraticVertices
 
         Parameters
         ----------
@@ -11936,7 +12479,7 @@ class Sketch(
     def rect(self, a: float, b: float, c: float, d: float, /) -> None:
         """Draws a rectangle to the screen.
 
-        Underlying Java method: PApplet.rect
+        Underlying Processing method: PApplet.rect
 
         Methods
         -------
@@ -12001,7 +12544,7 @@ class Sketch(
              d: float, r: float, /) -> None:
         """Draws a rectangle to the screen.
 
-        Underlying Java method: PApplet.rect
+        Underlying Processing method: PApplet.rect
 
         Methods
         -------
@@ -12066,7 +12609,7 @@ class Sketch(
              tl: float, tr: float, br: float, bl: float, /) -> None:
         """Draws a rectangle to the screen.
 
-        Underlying Java method: PApplet.rect
+        Underlying Processing method: PApplet.rect
 
         Methods
         -------
@@ -12129,7 +12672,7 @@ class Sketch(
     def rect(self, *args):
         """Draws a rectangle to the screen.
 
-        Underlying Java method: PApplet.rect
+        Underlying Processing method: PApplet.rect
 
         Methods
         -------
@@ -12193,7 +12736,7 @@ class Sketch(
         """Modifies the location from which rectangles are drawn by changing the way in
         which parameters given to ``rect()`` are intepreted.
 
-        Underlying Java method: PApplet.rectMode
+        Underlying Processing method: PApplet.rectMode
 
         Parameters
         ----------
@@ -12232,7 +12775,7 @@ class Sketch(
     def red(self, rgb: int, /) -> float:
         """Extracts the red value from a color, scaled to match current ``color_mode()``.
 
-        Underlying Java method: PApplet.red
+        Underlying Processing method: PApplet.red
 
         Parameters
         ----------
@@ -12257,7 +12800,7 @@ class Sketch(
     def redraw(self) -> None:
         """Executes the code within ``draw()`` one time.
 
-        Underlying Java method: PApplet.redraw
+        Underlying Processing method: PApplet.redraw
 
         Notes
         -----
@@ -12278,7 +12821,7 @@ class Sketch(
     def reset_matrix(self) -> None:
         """Replaces the current matrix with the identity matrix.
 
-        Underlying Java method: PApplet.resetMatrix
+        Underlying Processing method: PApplet.resetMatrix
 
         Notes
         -----
@@ -12292,7 +12835,7 @@ class Sketch(
     def reset_shader(self) -> None:
         """Restores the default shaders.
 
-        Underlying Java method: PApplet.resetShader
+        Underlying Processing method: PApplet.resetShader
 
         Methods
         -------
@@ -12320,7 +12863,7 @@ class Sketch(
     def reset_shader(self, kind: int, /) -> None:
         """Restores the default shaders.
 
-        Underlying Java method: PApplet.resetShader
+        Underlying Processing method: PApplet.resetShader
 
         Methods
         -------
@@ -12347,7 +12890,7 @@ class Sketch(
     def reset_shader(self, *args):
         """Restores the default shaders.
 
-        Underlying Java method: PApplet.resetShader
+        Underlying Processing method: PApplet.resetShader
 
         Methods
         -------
@@ -12375,7 +12918,7 @@ class Sketch(
     def rotate(self, angle: float, /) -> None:
         """Rotates the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PApplet.rotate
+        Underlying Processing method: PApplet.rotate
 
         Methods
         -------
@@ -12425,7 +12968,7 @@ class Sketch(
     def rotate(self, angle: float, x: float, y: float, z: float, /) -> None:
         """Rotates the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PApplet.rotate
+        Underlying Processing method: PApplet.rotate
 
         Methods
         -------
@@ -12474,7 +13017,7 @@ class Sketch(
     def rotate(self, *args):
         """Rotates the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PApplet.rotate
+        Underlying Processing method: PApplet.rotate
 
         Methods
         -------
@@ -12523,7 +13066,7 @@ class Sketch(
     def rotate_x(self, angle: float, /) -> None:
         """Rotates around the x-axis the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PApplet.rotateX
+        Underlying Processing method: PApplet.rotateX
 
         Parameters
         ----------
@@ -12551,7 +13094,7 @@ class Sketch(
     def rotate_y(self, angle: float, /) -> None:
         """Rotates around the y-axis the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PApplet.rotateY
+        Underlying Processing method: PApplet.rotateY
 
         Parameters
         ----------
@@ -12579,7 +13122,7 @@ class Sketch(
     def rotate_z(self, angle: float, /) -> None:
         """Rotates around the z-axis the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PApplet.rotateZ
+        Underlying Processing method: PApplet.rotateZ
 
         Parameters
         ----------
@@ -12608,7 +13151,7 @@ class Sketch(
     def saturation(self, rgb: int, /) -> float:
         """Extracts the saturation value from a color.
 
-        Underlying Java method: PApplet.saturation
+        Underlying Processing method: PApplet.saturation
 
         Parameters
         ----------
@@ -12628,7 +13171,7 @@ class Sketch(
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PApplet.scale
+        Underlying Processing method: PApplet.scale
 
         Methods
         -------
@@ -12677,7 +13220,7 @@ class Sketch(
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PApplet.scale
+        Underlying Processing method: PApplet.scale
 
         Methods
         -------
@@ -12726,7 +13269,7 @@ class Sketch(
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PApplet.scale
+        Underlying Processing method: PApplet.scale
 
         Methods
         -------
@@ -12774,7 +13317,7 @@ class Sketch(
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PApplet.scale
+        Underlying Processing method: PApplet.scale
 
         Methods
         -------
@@ -12823,7 +13366,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenX
+        Underlying Processing method: PApplet.screenX
 
         Methods
         -------
@@ -12858,7 +13401,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenX
+        Underlying Processing method: PApplet.screenX
 
         Methods
         -------
@@ -12892,7 +13435,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the X value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenX
+        Underlying Processing method: PApplet.screenX
 
         Methods
         -------
@@ -12927,7 +13470,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenY
+        Underlying Processing method: PApplet.screenY
 
         Methods
         -------
@@ -12962,7 +13505,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenY
+        Underlying Processing method: PApplet.screenY
 
         Methods
         -------
@@ -12996,7 +13539,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the Y value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenY
+        Underlying Processing method: PApplet.screenY
 
         Methods
         -------
@@ -13030,7 +13573,7 @@ class Sketch(
         """Takes a three-dimensional X, Y, Z position and returns the Z value for where it
         will appear on a (two-dimensional) screen.
 
-        Underlying Java method: PApplet.screenZ
+        Underlying Processing method: PApplet.screenZ
 
         Parameters
         ----------
@@ -13056,7 +13599,7 @@ class Sketch(
     def second(cls) -> int:
         """Py5 communicates with the clock on your computer.
 
-        Underlying Java method: PApplet.second
+        Underlying Processing method: PApplet.second
 
         Notes
         -----
@@ -13070,7 +13613,7 @@ class Sketch(
     def set_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """Set the current matrix to the one specified through the parameter ``source``.
 
-        Underlying Java method: PApplet.setMatrix
+        Underlying Processing method: PApplet.setMatrix
 
         Methods
         -------
@@ -13103,7 +13646,7 @@ class Sketch(
     def set_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """Set the current matrix to the one specified through the parameter ``source``.
 
-        Underlying Java method: PApplet.setMatrix
+        Underlying Processing method: PApplet.setMatrix
 
         Methods
         -------
@@ -13135,7 +13678,7 @@ class Sketch(
     def set_matrix(self, *args):
         """Set the current matrix to the one specified through the parameter ``source``.
 
-        Underlying Java method: PApplet.setMatrix
+        Underlying Processing method: PApplet.setMatrix
 
         Methods
         -------
@@ -13168,7 +13711,7 @@ class Sketch(
     def shader(self, shader: Py5Shader, /) -> None:
         """Applies the shader specified by the parameters.
 
-        Underlying Java method: PApplet.shader
+        Underlying Processing method: PApplet.shader
 
         Methods
         -------
@@ -13199,7 +13742,7 @@ class Sketch(
     def shader(self, shader: Py5Shader, kind: int, /) -> None:
         """Applies the shader specified by the parameters.
 
-        Underlying Java method: PApplet.shader
+        Underlying Processing method: PApplet.shader
 
         Methods
         -------
@@ -13229,7 +13772,7 @@ class Sketch(
     def shader(self, *args):
         """Applies the shader specified by the parameters.
 
-        Underlying Java method: PApplet.shader
+        Underlying Processing method: PApplet.shader
 
         Methods
         -------
@@ -13260,7 +13803,7 @@ class Sketch(
     def shape(self, shape: Py5Shape, /) -> None:
         """Draws shapes to the display window.
 
-        Underlying Java method: PApplet.shape
+        Underlying Processing method: PApplet.shape
 
         Methods
         -------
@@ -13312,7 +13855,7 @@ class Sketch(
     def shape(self, shape: Py5Shape, x: float, y: float, /) -> None:
         """Draws shapes to the display window.
 
-        Underlying Java method: PApplet.shape
+        Underlying Processing method: PApplet.shape
 
         Methods
         -------
@@ -13365,7 +13908,7 @@ class Sketch(
               b: float, c: float, d: float, /) -> None:
         """Draws shapes to the display window.
 
-        Underlying Java method: PApplet.shape
+        Underlying Processing method: PApplet.shape
 
         Methods
         -------
@@ -13416,7 +13959,7 @@ class Sketch(
     def shape(self, *args):
         """Draws shapes to the display window.
 
-        Underlying Java method: PApplet.shape
+        Underlying Processing method: PApplet.shape
 
         Methods
         -------
@@ -13467,7 +14010,7 @@ class Sketch(
     def shape_mode(self, mode: int, /) -> None:
         """Modifies the location from which shapes draw.
 
-        Underlying Java method: PApplet.shapeMode
+        Underlying Processing method: PApplet.shapeMode
 
         Parameters
         ----------
@@ -13495,7 +14038,7 @@ class Sketch(
         """Shears a shape around the x-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PApplet.shearX
+        Underlying Processing method: PApplet.shearX
 
         Parameters
         ----------
@@ -13526,7 +14069,7 @@ class Sketch(
         """Shears a shape around the y-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PApplet.shearY
+        Underlying Processing method: PApplet.shearY
 
         Parameters
         ----------
@@ -13556,7 +14099,7 @@ class Sketch(
     def shininess(self, shine: float, /) -> None:
         """Sets the amount of gloss in the surface of shapes.
 
-        Underlying Java method: PApplet.shininess
+        Underlying Processing method: PApplet.shininess
 
         Parameters
         ----------
@@ -13577,7 +14120,7 @@ class Sketch(
     def size(self, width: int, height: int, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
 
-        Underlying Java method: PApplet.size
+        Underlying Processing method: PApplet.size
 
         Methods
         -------
@@ -13668,7 +14211,7 @@ class Sketch(
     def size(self, width: int, height: int, renderer: str, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
 
-        Underlying Java method: PApplet.size
+        Underlying Processing method: PApplet.size
 
         Methods
         -------
@@ -13760,7 +14303,7 @@ class Sketch(
              renderer: str, path: str, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
 
-        Underlying Java method: PApplet.size
+        Underlying Processing method: PApplet.size
 
         Methods
         -------
@@ -13850,7 +14393,7 @@ class Sketch(
     def size(self, *args):
         """Defines the dimension of the display window width and height in units of pixels.
 
-        Underlying Java method: PApplet.size
+        Underlying Processing method: PApplet.size
 
         Methods
         -------
@@ -13941,7 +14484,7 @@ class Sketch(
     def smooth(self) -> None:
         """Draws all geometry with smooth (anti-aliased) edges.
 
-        Underlying Java method: PApplet.smooth
+        Underlying Processing method: PApplet.smooth
 
         Methods
         -------
@@ -13997,7 +14540,7 @@ class Sketch(
     def smooth(self, level: int, /) -> None:
         """Draws all geometry with smooth (anti-aliased) edges.
 
-        Underlying Java method: PApplet.smooth
+        Underlying Processing method: PApplet.smooth
 
         Methods
         -------
@@ -14052,7 +14595,7 @@ class Sketch(
     def smooth(self, *args):
         """Draws all geometry with smooth (anti-aliased) edges.
 
-        Underlying Java method: PApplet.smooth
+        Underlying Processing method: PApplet.smooth
 
         Methods
         -------
@@ -14109,7 +14652,7 @@ class Sketch(
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
-        Underlying Java method: PApplet.specular
+        Underlying Processing method: PApplet.specular
 
         Methods
         -------
@@ -14154,7 +14697,7 @@ class Sketch(
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
-        Underlying Java method: PApplet.specular
+        Underlying Processing method: PApplet.specular
 
         Methods
         -------
@@ -14199,7 +14742,7 @@ class Sketch(
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
-        Underlying Java method: PApplet.specular
+        Underlying Processing method: PApplet.specular
 
         Methods
         -------
@@ -14244,7 +14787,7 @@ class Sketch(
         """Sets the specular color of the materials used for shapes drawn to the screen,
         which sets the color of highlights.
 
-        Underlying Java method: PApplet.specular
+        Underlying Processing method: PApplet.specular
 
         Methods
         -------
@@ -14287,7 +14830,7 @@ class Sketch(
     def sphere(self, r: float, /) -> None:
         """A sphere is a hollow ball made from tessellated triangles.
 
-        Underlying Java method: PApplet.sphere
+        Underlying Processing method: PApplet.sphere
 
         Parameters
         ----------
@@ -14307,7 +14850,7 @@ class Sketch(
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
-        Underlying Java method: PApplet.sphereDetail
+        Underlying Processing method: PApplet.sphereDetail
 
         Methods
         -------
@@ -14351,7 +14894,7 @@ class Sketch(
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
-        Underlying Java method: PApplet.sphereDetail
+        Underlying Processing method: PApplet.sphereDetail
 
         Methods
         -------
@@ -14394,7 +14937,7 @@ class Sketch(
         """Controls the detail used to render a sphere by adjusting the number of vertices
         of the sphere mesh.
 
-        Underlying Java method: PApplet.sphereDetail
+        Underlying Processing method: PApplet.sphereDetail
 
         Methods
         -------
@@ -14449,7 +14992,7 @@ class Sketch(
             /) -> None:
         """Adds a spot light.
 
-        Underlying Java method: PApplet.spotLight
+        Underlying Processing method: PApplet.spotLight
 
         Parameters
         ----------
@@ -14506,7 +15049,7 @@ class Sketch(
     def square(self, x: float, y: float, extent: float, /) -> None:
         """Draws a square to the screen.
 
-        Underlying Java method: PApplet.square
+        Underlying Processing method: PApplet.square
 
         Parameters
         ----------
@@ -14535,7 +15078,7 @@ class Sketch(
     def stroke(self, gray: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -14602,7 +15145,7 @@ class Sketch(
     def stroke(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -14669,7 +15212,7 @@ class Sketch(
     def stroke(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -14736,7 +15279,7 @@ class Sketch(
     def stroke(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -14803,7 +15346,7 @@ class Sketch(
     def stroke(self, rgb: int, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -14870,7 +15413,7 @@ class Sketch(
     def stroke(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -14937,7 +15480,7 @@ class Sketch(
     def stroke(self, *args):
         """Sets the color used to draw lines and borders around shapes.
 
-        Underlying Java method: PApplet.stroke
+        Underlying Processing method: PApplet.stroke
 
         Methods
         -------
@@ -15003,7 +15546,7 @@ class Sketch(
     def stroke_cap(self, cap: int, /) -> None:
         """Sets the style for rendering line endings.
 
-        Underlying Java method: PApplet.strokeCap
+        Underlying Processing method: PApplet.strokeCap
 
         Parameters
         ----------
@@ -15026,7 +15569,7 @@ class Sketch(
     def stroke_join(self, join: int, /) -> None:
         """Sets the style of the joints which connect line segments.
 
-        Underlying Java method: PApplet.strokeJoin
+        Underlying Processing method: PApplet.strokeJoin
 
         Parameters
         ----------
@@ -15047,7 +15590,7 @@ class Sketch(
         """Sets the width of the stroke used for lines, points, and the border around
         shapes.
 
-        Underlying Java method: PApplet.strokeWeight
+        Underlying Processing method: PApplet.strokeWeight
 
         Parameters
         ----------
@@ -15072,7 +15615,7 @@ class Sketch(
     def text(self, c: chr, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15162,7 +15705,7 @@ class Sketch(
     def text(self, c: chr, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15253,7 +15796,7 @@ class Sketch(
              stop: int, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15344,7 +15887,7 @@ class Sketch(
              stop: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15434,7 +15977,7 @@ class Sketch(
     def text(self, num: float, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15524,7 +16067,7 @@ class Sketch(
     def text(self, num: float, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15614,7 +16157,7 @@ class Sketch(
     def text(self, num: int, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15704,7 +16247,7 @@ class Sketch(
     def text(self, num: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15794,7 +16337,7 @@ class Sketch(
     def text(self, str: str, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15884,7 +16427,7 @@ class Sketch(
     def text(self, str: str, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -15975,7 +16518,7 @@ class Sketch(
              x2: float, y2: float, /) -> None:
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -16065,7 +16608,7 @@ class Sketch(
     def text(self, *args):
         """Draws text to the screen.
 
-        Underlying Java method: PApplet.text
+        Underlying Processing method: PApplet.text
 
         Methods
         -------
@@ -16155,7 +16698,7 @@ class Sketch(
     def text_align(self, align_x: int, /) -> None:
         """Sets the current alignment for drawing text.
 
-        Underlying Java method: PApplet.textAlign
+        Underlying Processing method: PApplet.textAlign
 
         Methods
         -------
@@ -16206,7 +16749,7 @@ class Sketch(
     def text_align(self, align_x: int, align_y: int, /) -> None:
         """Sets the current alignment for drawing text.
 
-        Underlying Java method: PApplet.textAlign
+        Underlying Processing method: PApplet.textAlign
 
         Methods
         -------
@@ -16256,7 +16799,7 @@ class Sketch(
     def text_align(self, *args):
         """Sets the current alignment for drawing text.
 
-        Underlying Java method: PApplet.textAlign
+        Underlying Processing method: PApplet.textAlign
 
         Methods
         -------
@@ -16306,7 +16849,7 @@ class Sketch(
     def text_ascent(self) -> float:
         """Returns ascent of the current font at its current size.
 
-        Underlying Java method: PApplet.textAscent
+        Underlying Processing method: PApplet.textAscent
 
         Notes
         -----
@@ -16319,7 +16862,7 @@ class Sketch(
     def text_descent(self) -> float:
         """Returns descent of the current font at its current size.
 
-        Underlying Java method: PApplet.textDescent
+        Underlying Processing method: PApplet.textDescent
 
         Notes
         -----
@@ -16333,7 +16876,7 @@ class Sketch(
     def text_font(self, which: Py5Font, /) -> None:
         """Sets the current font that will be drawn with the ``text()`` function.
 
-        Underlying Java method: PApplet.textFont
+        Underlying Processing method: PApplet.textFont
 
         Methods
         -------
@@ -16374,7 +16917,7 @@ class Sketch(
     def text_font(self, which: Py5Font, size: float, /) -> None:
         """Sets the current font that will be drawn with the ``text()`` function.
 
-        Underlying Java method: PApplet.textFont
+        Underlying Processing method: PApplet.textFont
 
         Methods
         -------
@@ -16414,7 +16957,7 @@ class Sketch(
     def text_font(self, *args):
         """Sets the current font that will be drawn with the ``text()`` function.
 
-        Underlying Java method: PApplet.textFont
+        Underlying Processing method: PApplet.textFont
 
         Methods
         -------
@@ -16454,7 +16997,7 @@ class Sketch(
     def text_leading(self, leading: float, /) -> None:
         """Sets the spacing between lines of text in units of pixels.
 
-        Underlying Java method: PApplet.textLeading
+        Underlying Processing method: PApplet.textLeading
 
         Parameters
         ----------
@@ -16477,7 +17020,7 @@ class Sketch(
         """Sets the way text draws to the screen, either as texture maps or as vector
         geometry.
 
-        Underlying Java method: PApplet.textMode
+        Underlying Processing method: PApplet.textMode
 
         Parameters
         ----------
@@ -16508,7 +17051,7 @@ class Sketch(
     def text_size(self, size: float, /) -> None:
         """Sets the current font size.
 
-        Underlying Java method: PApplet.textSize
+        Underlying Processing method: PApplet.textSize
 
         Parameters
         ----------
@@ -16528,7 +17071,7 @@ class Sketch(
     def text_width(self, c: chr, /) -> float:
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PApplet.textWidth
+        Underlying Processing method: PApplet.textWidth
 
         Methods
         -------
@@ -16569,7 +17112,7 @@ class Sketch(
                    start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PApplet.textWidth
+        Underlying Processing method: PApplet.textWidth
 
         Methods
         -------
@@ -16609,7 +17152,7 @@ class Sketch(
     def text_width(self, str: str, /) -> float:
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PApplet.textWidth
+        Underlying Processing method: PApplet.textWidth
 
         Methods
         -------
@@ -16649,7 +17192,7 @@ class Sketch(
     def text_width(self, *args):
         """Calculates and returns the width of any character or text string.
 
-        Underlying Java method: PApplet.textWidth
+        Underlying Processing method: PApplet.textWidth
 
         Methods
         -------
@@ -16689,7 +17232,7 @@ class Sketch(
     def texture(self, image: Py5Image, /) -> None:
         """Sets a texture to be applied to vertex points.
 
-        Underlying Java method: PApplet.texture
+        Underlying Processing method: PApplet.texture
 
         Parameters
         ----------
@@ -16712,7 +17255,7 @@ class Sketch(
     def texture_mode(self, mode: int, /) -> None:
         """Sets the coordinate space for texture mapping.
 
-        Underlying Java method: PApplet.textureMode
+        Underlying Processing method: PApplet.textureMode
 
         Parameters
         ----------
@@ -16737,7 +17280,7 @@ class Sketch(
     def texture_wrap(self, wrap: int, /) -> None:
         """Defines if textures repeat or draw once within a texture map.
 
-        Underlying Java method: PApplet.textureWrap
+        Underlying Processing method: PApplet.textureWrap
 
         Parameters
         ----------
@@ -16758,7 +17301,7 @@ class Sketch(
     def tint(self, gray: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -16826,7 +17369,7 @@ class Sketch(
     def tint(self, gray: float, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -16894,7 +17437,7 @@ class Sketch(
     def tint(self, v1: float, v2: float, v3: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -16962,7 +17505,7 @@ class Sketch(
     def tint(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -17030,7 +17573,7 @@ class Sketch(
     def tint(self, rgb: int, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -17098,7 +17641,7 @@ class Sketch(
     def tint(self, rgb: int, alpha: float, /) -> None:
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -17166,7 +17709,7 @@ class Sketch(
     def tint(self, *args):
         """Sets the fill value for displaying images.
 
-        Underlying Java method: PApplet.tint
+        Underlying Processing method: PApplet.tint
 
         Methods
         -------
@@ -17234,7 +17777,7 @@ class Sketch(
     def translate(self, x: float, y: float, /) -> None:
         """Specifies an amount to displace objects within the display window.
 
-        Underlying Java method: PApplet.translate
+        Underlying Processing method: PApplet.translate
 
         Methods
         -------
@@ -17278,7 +17821,7 @@ class Sketch(
     def translate(self, x: float, y: float, z: float, /) -> None:
         """Specifies an amount to displace objects within the display window.
 
-        Underlying Java method: PApplet.translate
+        Underlying Processing method: PApplet.translate
 
         Methods
         -------
@@ -17321,7 +17864,7 @@ class Sketch(
     def translate(self, *args):
         """Specifies an amount to displace objects within the display window.
 
-        Underlying Java method: PApplet.translate
+        Underlying Processing method: PApplet.translate
 
         Methods
         -------
@@ -17365,7 +17908,7 @@ class Sketch(
                  y2: float, x3: float, y3: float, /) -> None:
         """A triangle is a plane created by connecting three points.
 
-        Underlying Java method: PApplet.triangle
+        Underlying Processing method: PApplet.triangle
 
         Parameters
         ----------
@@ -17401,7 +17944,7 @@ class Sketch(
     def update_pixels(self) -> None:
         """Updates the display window with the data in the ``pixels[]`` array.
 
-        Underlying Java method: PApplet.updatePixels
+        Underlying Processing method: PApplet.updatePixels
 
         Methods
         -------
@@ -17440,7 +17983,7 @@ class Sketch(
     def update_pixels(self, x1: int, y1: int, x2: int, y2: int, /) -> None:
         """Updates the display window with the data in the ``pixels[]`` array.
 
-        Underlying Java method: PApplet.updatePixels
+        Underlying Processing method: PApplet.updatePixels
 
         Methods
         -------
@@ -17478,7 +18021,7 @@ class Sketch(
     def update_pixels(self, *args):
         """Updates the display window with the data in the ``pixels[]`` array.
 
-        Underlying Java method: PApplet.updatePixels
+        Underlying Processing method: PApplet.updatePixels
 
         Methods
         -------
@@ -17517,7 +18060,7 @@ class Sketch(
     def vertex(self, x: float, y: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PApplet.vertex
+        Underlying Processing method: PApplet.vertex
 
         Methods
         -------
@@ -17575,7 +18118,7 @@ class Sketch(
     def vertex(self, x: float, y: float, z: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PApplet.vertex
+        Underlying Processing method: PApplet.vertex
 
         Methods
         -------
@@ -17633,7 +18176,7 @@ class Sketch(
     def vertex(self, x: float, y: float, u: float, v: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PApplet.vertex
+        Underlying Processing method: PApplet.vertex
 
         Methods
         -------
@@ -17692,7 +18235,7 @@ class Sketch(
                u: float, v: float, /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PApplet.vertex
+        Underlying Processing method: PApplet.vertex
 
         Methods
         -------
@@ -17750,7 +18293,7 @@ class Sketch(
     def vertex(self, v: NDArray[(Any,), Float], /) -> None:
         """Add a new vertex to a shape.
 
-        Underlying Java method: PApplet.vertex
+        Underlying Processing method: PApplet.vertex
 
         Methods
         -------
@@ -17807,7 +18350,7 @@ class Sketch(
     def vertex(self, *args):
         """Add a new vertex to a shape.
 
-        Underlying Java method: PApplet.vertex
+        Underlying Processing method: PApplet.vertex
 
         Methods
         -------
@@ -17864,7 +18407,7 @@ class Sketch(
     def vertices(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
         """Create a collection of vertices.
 
-        Underlying Java method: PApplet.vertices
+        Underlying Processing method: PApplet.vertices
 
         Parameters
         ----------
@@ -17888,7 +18431,7 @@ class Sketch(
     def year(cls) -> int:
         """Py5 communicates with the clock on your computer.
 
-        Underlying Java method: PApplet.year
+        Underlying Processing method: PApplet.year
 
         Notes
         -----

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -28,14 +28,14 @@ from traitlets import Type, Instance, Unicode, List
 from ..kernel.kernel import Py5Kernel
 from .. import split_setup
 from . import py5bot
-
-from ..parsing import TransformDynamicVariablesToCalls, ReservedWordsValidation
+from ..parsing import TransformDynamicVariablesToCalls, Py5CodeValidation
 
 
 class Py5BotShell(ZMQInteractiveShell):
 
+    # needed to make sure code using the %%python bypass gets transformed
     ast_transformers = List(
-        [TransformDynamicVariablesToCalls(), ReservedWordsValidation()]).tag(config=True)
+        [TransformDynamicVariablesToCalls(), Py5CodeValidation()]).tag(config=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,7 +98,7 @@ class Py5BotKernel(Py5Kernel):
     shell_class = Type(Py5BotShell)
 
     implementation = 'py5bot'
-    implementation_version = '0.6.0-alpha.2'
+    implementation_version = '0.7.0a0'
 
 
 class Py5BotApp(IPKernelApp):

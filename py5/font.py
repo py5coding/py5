@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -63,7 +63,7 @@ def _return_list_str(f):
 class Py5Font:
     """Py5Font is the font class for py5.
 
-    Underlying Java class: PFont.PFont
+    Underlying Processing class: PFont.PFont
 
     Notes
     -----
@@ -90,7 +90,7 @@ class Py5Font:
     def ascent(self) -> float:
         """Get the ascent of this font from the baseline.
 
-        Underlying Java method: PFont.ascent
+        Underlying Processing method: PFont.ascent
 
         Notes
         -----
@@ -103,7 +103,7 @@ class Py5Font:
     def descent(self) -> float:
         """Get the descent of this font from the baseline.
 
-        Underlying Java method: PFont.descent
+        Underlying Processing method: PFont.descent
 
         Notes
         -----
@@ -116,7 +116,7 @@ class Py5Font:
     def get_default_size(self) -> int:
         """Get the font's size that will be used when ``text_font()`` is called.
 
-        Underlying Java method: PFont.getDefaultSize
+        Underlying Processing method: PFont.getDefaultSize
 
         Notes
         -----
@@ -131,7 +131,7 @@ class Py5Font:
     def get_glyph_count(self) -> int:
         """Get the number of glyphs contained in the font.
 
-        Underlying Java method: PFont.getGlyphCount
+        Underlying Processing method: PFont.getGlyphCount
 
         Notes
         -----
@@ -147,7 +147,7 @@ class Py5Font:
     def get_name(self) -> str:
         """Get the font's name.
 
-        Underlying Java method: PFont.getName
+        Underlying Processing method: PFont.getName
 
         Notes
         -----
@@ -160,7 +160,7 @@ class Py5Font:
     def get_post_script_name(self) -> str:
         """Get the font's postscript name.
 
-        Underlying Java method: PFont.getPostScriptName
+        Underlying Processing method: PFont.getPostScriptName
 
         Notes
         -----
@@ -173,7 +173,7 @@ class Py5Font:
     def get_shape(self, ch: chr, /) -> Py5Shape:
         """Get a single character as a ``Py5Shape`` object.
 
-        Underlying Java method: PFont.getShape
+        Underlying Processing method: PFont.getShape
 
         Methods
         -------
@@ -209,7 +209,7 @@ class Py5Font:
     def get_shape(self, ch: chr, detail: float, /) -> Py5Shape:
         """Get a single character as a ``Py5Shape`` object.
 
-        Underlying Java method: PFont.getShape
+        Underlying Processing method: PFont.getShape
 
         Methods
         -------
@@ -245,7 +245,7 @@ class Py5Font:
     def get_shape(self, *args):
         """Get a single character as a ``Py5Shape`` object.
 
-        Underlying Java method: PFont.getShape
+        Underlying Processing method: PFont.getShape
 
         Methods
         -------
@@ -280,7 +280,7 @@ class Py5Font:
     def get_size(self) -> int:
         """Get the font's size.
 
-        Underlying Java method: PFont.getSize
+        Underlying Processing method: PFont.getSize
 
         Notes
         -----
@@ -293,7 +293,7 @@ class Py5Font:
         """Boolean value reflecting if smoothing (anti-aliasing) was used when the font was
         created.
 
-        Underlying Java method: PFont.isSmooth
+        Underlying Processing method: PFont.isSmooth
 
         Notes
         -----
@@ -308,7 +308,7 @@ class Py5Font:
     def list(cls) -> List[str]:
         """Gets a list of the fonts installed on the system.
 
-        Underlying Java method: PFont.list
+        Underlying Processing method: PFont.list
 
         Notes
         -----
@@ -324,7 +324,7 @@ class Py5Font:
     def width(self, c: chr, /) -> float:
         """Get the width of a character in this font.
 
-        Underlying Java method: PFont.width
+        Underlying Processing method: PFont.width
 
         Parameters
         ----------

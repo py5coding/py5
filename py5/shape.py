@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -90,7 +90,7 @@ def _return_numpy_array(f):
 class Py5Shape:
     """Datatype for storing shapes.
 
-    Underlying Java class: PShape.PShape
+    Underlying Processing class: PShape.PShape
 
     Notes
     -----
@@ -150,7 +150,7 @@ class Py5Shape:
         """Adds a child ``Py5Shape`` object to a parent ``Py5Shape`` object that is defined
         as a ``GROUP``.
 
-        Underlying Java method: PShape.addChild
+        Underlying Processing method: PShape.addChild
 
         Methods
         -------
@@ -184,7 +184,7 @@ class Py5Shape:
         """Adds a child ``Py5Shape`` object to a parent ``Py5Shape`` object that is defined
         as a ``GROUP``.
 
-        Underlying Java method: PShape.addChild
+        Underlying Processing method: PShape.addChild
 
         Methods
         -------
@@ -217,7 +217,7 @@ class Py5Shape:
         """Adds a child ``Py5Shape`` object to a parent ``Py5Shape`` object that is defined
         as a ``GROUP``.
 
-        Underlying Java method: PShape.addChild
+        Underlying Processing method: PShape.addChild
 
         Methods
         -------
@@ -250,7 +250,7 @@ class Py5Shape:
     def ambient(self, gray: float, /) -> None:
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.ambient
+        Underlying Processing method: PShape.ambient
 
         Methods
         -------
@@ -300,7 +300,7 @@ class Py5Shape:
     def ambient(self, x: float, y: float, z: float, /) -> None:
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.ambient
+        Underlying Processing method: PShape.ambient
 
         Methods
         -------
@@ -350,7 +350,7 @@ class Py5Shape:
     def ambient(self, rgb: int, /) -> None:
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.ambient
+        Underlying Processing method: PShape.ambient
 
         Methods
         -------
@@ -400,7 +400,7 @@ class Py5Shape:
     def ambient(self, *args):
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.ambient
+        Underlying Processing method: PShape.ambient
 
         Methods
         -------
@@ -451,7 +451,7 @@ class Py5Shape:
                      n10: float, n11: float, n12: float, /) -> None:
         """Apply a transformation matrix to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.applyMatrix
+        Underlying Processing method: PShape.applyMatrix
 
         Methods
         -------
@@ -557,7 +557,7 @@ class Py5Shape:
             /) -> None:
         """Apply a transformation matrix to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.applyMatrix
+        Underlying Processing method: PShape.applyMatrix
 
         Methods
         -------
@@ -645,7 +645,7 @@ class Py5Shape:
     def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
         """Apply a transformation matrix to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.applyMatrix
+        Underlying Processing method: PShape.applyMatrix
 
         Methods
         -------
@@ -733,7 +733,7 @@ class Py5Shape:
     def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
         """Apply a transformation matrix to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.applyMatrix
+        Underlying Processing method: PShape.applyMatrix
 
         Methods
         -------
@@ -820,7 +820,7 @@ class Py5Shape:
     def apply_matrix(self, *args):
         """Apply a transformation matrix to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.applyMatrix
+        Underlying Processing method: PShape.applyMatrix
 
         Methods
         -------
@@ -910,7 +910,7 @@ class Py5Shape:
         negative shapes within a ``Py5Shape`` object such as the center of the letter
         'O'.
 
-        Underlying Java method: PShape.beginContour
+        Underlying Processing method: PShape.beginContour
 
         Notes
         -----
@@ -939,7 +939,7 @@ class Py5Shape:
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
 
-        Underlying Java method: PShape.beginShape
+        Underlying Processing method: PShape.beginShape
 
         Methods
         -------
@@ -974,7 +974,7 @@ class Py5Shape:
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
 
-        Underlying Java method: PShape.beginShape
+        Underlying Processing method: PShape.beginShape
 
         Methods
         -------
@@ -1009,7 +1009,7 @@ class Py5Shape:
         """This method is used to start a custom shape created with the ``create_shape()``
         function.
 
-        Underlying Java method: PShape.beginShape
+        Underlying Processing method: PShape.beginShape
 
         Methods
         -------
@@ -1044,7 +1044,7 @@ class Py5Shape:
         """This method is used to start a custom closed shape created with the
         ``create_shape()`` function.
 
-        Underlying Java method: PShape.beginShape
+        Underlying Processing method: PShape.beginShape
 
         Methods
         -------
@@ -1082,7 +1082,7 @@ class Py5Shape:
         """This method is used to start a custom closed shape created with the
         ``create_shape()`` function.
 
-        Underlying Java method: PShape.beginShape
+        Underlying Processing method: PShape.beginShape
 
         Methods
         -------
@@ -1120,7 +1120,7 @@ class Py5Shape:
         """This method is used to start a custom closed shape created with the
         ``create_shape()`` function.
 
-        Underlying Java method: PShape.beginShape
+        Underlying Processing method: PShape.beginShape
 
         Methods
         -------
@@ -1156,7 +1156,7 @@ class Py5Shape:
     def bezier_detail(self, detail: int, /) -> None:
         """Sets a ``Py5Shape`` object's resolution at which Beziers display.
 
-        Underlying Java method: PShape.bezierDetail
+        Underlying Processing method: PShape.bezierDetail
 
         Parameters
         ----------
@@ -1185,7 +1185,7 @@ class Py5Shape:
                       y3: float, x4: float, y4: float, /) -> None:
         """Specifies a ``Py5Shape`` object's vertex coordinates for Bezier curves.
 
-        Underlying Java method: PShape.bezierVertex
+        Underlying Processing method: PShape.bezierVertex
 
         Methods
         -------
@@ -1249,7 +1249,7 @@ class Py5Shape:
                       y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
         """Specifies a ``Py5Shape`` object's vertex coordinates for Bezier curves.
 
-        Underlying Java method: PShape.bezierVertex
+        Underlying Processing method: PShape.bezierVertex
 
         Methods
         -------
@@ -1311,7 +1311,7 @@ class Py5Shape:
     def bezier_vertex(self, *args):
         """Specifies a ``Py5Shape`` object's vertex coordinates for Bezier curves.
 
-        Underlying Java method: PShape.bezierVertex
+        Underlying Processing method: PShape.bezierVertex
 
         Methods
         -------
@@ -1374,7 +1374,7 @@ class Py5Shape:
         """Boolean value reflecting if the given coordinates are or are not contained
         within the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.contains
+        Underlying Processing method: PShape.contains
 
         Parameters
         ----------
@@ -1404,7 +1404,7 @@ class Py5Shape:
     def curve_detail(self, detail: int, /) -> None:
         """Sets the resolution at which a ``Py5Shape`` object's curves display.
 
-        Underlying Java method: PShape.curveDetail
+        Underlying Processing method: PShape.curveDetail
 
         Parameters
         ----------
@@ -1431,7 +1431,7 @@ class Py5Shape:
         """Modifies the quality of a ``Py5Shape`` object's forms created with
         ``Py5Shape.curve_vertex()``.
 
-        Underlying Java method: PShape.curveTightness
+        Underlying Processing method: PShape.curveTightness
 
         Parameters
         ----------
@@ -1463,7 +1463,7 @@ class Py5Shape:
     def curve_vertex(self, x: float, y: float, /) -> None:
         """Specifies a ``Py5Shape`` object's vertex coordinates for curves.
 
-        Underlying Java method: PShape.curveVertex
+        Underlying Processing method: PShape.curveVertex
 
         Methods
         -------
@@ -1511,7 +1511,7 @@ class Py5Shape:
     def curve_vertex(self, x: float, y: float, z: float, /) -> None:
         """Specifies a ``Py5Shape`` object's vertex coordinates for curves.
 
-        Underlying Java method: PShape.curveVertex
+        Underlying Processing method: PShape.curveVertex
 
         Methods
         -------
@@ -1558,7 +1558,7 @@ class Py5Shape:
     def curve_vertex(self, *args):
         """Specifies a ``Py5Shape`` object's vertex coordinates for curves.
 
-        Underlying Java method: PShape.curveVertex
+        Underlying Processing method: PShape.curveVertex
 
         Methods
         -------
@@ -1605,7 +1605,7 @@ class Py5Shape:
     def disable_style(self) -> None:
         """Disables the shape's style data and uses py5's current styles.
 
-        Underlying Java method: PShape.disableStyle
+        Underlying Processing method: PShape.disableStyle
 
         Notes
         -----
@@ -1619,7 +1619,7 @@ class Py5Shape:
     def emissive(self, gray: float, /) -> None:
         """Sets the emissive color of a ``Py5Shape`` object's material.
 
-        Underlying Java method: PShape.emissive
+        Underlying Processing method: PShape.emissive
 
         Methods
         -------
@@ -1666,7 +1666,7 @@ class Py5Shape:
     def emissive(self, x: float, y: float, z: float, /) -> None:
         """Sets the emissive color of a ``Py5Shape`` object's material.
 
-        Underlying Java method: PShape.emissive
+        Underlying Processing method: PShape.emissive
 
         Methods
         -------
@@ -1713,7 +1713,7 @@ class Py5Shape:
     def emissive(self, rgb: int, /) -> None:
         """Sets the emissive color of a ``Py5Shape`` object's material.
 
-        Underlying Java method: PShape.emissive
+        Underlying Processing method: PShape.emissive
 
         Methods
         -------
@@ -1760,7 +1760,7 @@ class Py5Shape:
     def emissive(self, *args):
         """Sets the emissive color of a ``Py5Shape`` object's material.
 
-        Underlying Java method: PShape.emissive
+        Underlying Processing method: PShape.emissive
 
         Methods
         -------
@@ -1806,7 +1806,7 @@ class Py5Shape:
     def enable_style(self) -> None:
         """Enables the shape's style data and ignores py5's current styles.
 
-        Underlying Java method: PShape.enableStyle
+        Underlying Processing method: PShape.enableStyle
 
         Notes
         -----
@@ -1821,7 +1821,7 @@ class Py5Shape:
         negative shapes within a ``Py5Shape`` object such as the center of the letter
         'O'.
 
-        Underlying Java method: PShape.endContour
+        Underlying Processing method: PShape.endContour
 
         Notes
         -----
@@ -1847,7 +1847,7 @@ class Py5Shape:
         """This method is used to complete a custom shape created with the
         ``create_shape()`` function.
 
-        Underlying Java method: PShape.endShape
+        Underlying Processing method: PShape.endShape
 
         Methods
         -------
@@ -1876,7 +1876,7 @@ class Py5Shape:
         """This method is used to complete a custom shape created with the
         ``create_shape()`` function.
 
-        Underlying Java method: PShape.endShape
+        Underlying Processing method: PShape.endShape
 
         Methods
         -------
@@ -1904,7 +1904,7 @@ class Py5Shape:
         """This method is used to complete a custom shape created with the
         ``create_shape()`` function.
 
-        Underlying Java method: PShape.endShape
+        Underlying Processing method: PShape.endShape
 
         Methods
         -------
@@ -1932,7 +1932,7 @@ class Py5Shape:
     def fill(self, gray: float, /) -> None:
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2005,7 +2005,7 @@ class Py5Shape:
     def fill(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2078,7 +2078,7 @@ class Py5Shape:
     def fill(self, x: float, y: float, z: float, /) -> None:
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2151,7 +2151,7 @@ class Py5Shape:
     def fill(self, x: float, y: float, z: float, a: float, /) -> None:
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2224,7 +2224,7 @@ class Py5Shape:
     def fill(self, rgb: int, /) -> None:
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2297,7 +2297,7 @@ class Py5Shape:
     def fill(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2370,7 +2370,7 @@ class Py5Shape:
     def fill(self, *args):
         """Sets the color used to fill the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.fill
+        Underlying Processing method: PShape.fill
 
         Methods
         -------
@@ -2444,7 +2444,7 @@ class Py5Shape:
         """Find a target ``Py5Shape`` object from anywhere within a ``Py5Shape`` object
         that is defined as a ``GROUP``.
 
-        Underlying Java method: PShape.findChild
+        Underlying Processing method: PShape.findChild
 
         Parameters
         ----------
@@ -2465,7 +2465,7 @@ class Py5Shape:
     def get_ambient(self, index: int, /) -> int:
         """Get the ambient reflectance setting for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getAmbient
+        Underlying Processing method: PShape.getAmbient
 
         Parameters
         ----------
@@ -2490,7 +2490,7 @@ class Py5Shape:
         """Extracts a child ``Py5Shape`` object from a parent ``Py5Shape`` object that is
         defined as a ``GROUP``.
 
-        Underlying Java method: PShape.getChild
+        Underlying Processing method: PShape.getChild
 
         Methods
         -------
@@ -2524,7 +2524,7 @@ class Py5Shape:
         """Extracts a child ``Py5Shape`` object from a parent ``Py5Shape`` object that is
         defined as a ``GROUP``.
 
-        Underlying Java method: PShape.getChild
+        Underlying Processing method: PShape.getChild
 
         Methods
         -------
@@ -2558,7 +2558,7 @@ class Py5Shape:
         """Extracts a child ``Py5Shape`` object from a parent ``Py5Shape`` object that is
         defined as a ``GROUP``.
 
-        Underlying Java method: PShape.getChild
+        Underlying Processing method: PShape.getChild
 
         Methods
         -------
@@ -2590,7 +2590,7 @@ class Py5Shape:
     def get_child_count(self) -> int:
         """Returns the number of children within the ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getChildCount
+        Underlying Processing method: PShape.getChildCount
 
         Notes
         -----
@@ -2603,7 +2603,7 @@ class Py5Shape:
         """Get a child ``Py5Shape`` object's index from a parent ``Py5Shape`` object that
         is defined as a ``GROUP``.
 
-        Underlying Java method: PShape.getChildIndex
+        Underlying Processing method: PShape.getChildIndex
 
         Parameters
         ----------
@@ -2626,7 +2626,7 @@ class Py5Shape:
     def get_children(self) -> List[Py5Shape]:
         """Get the children of a ``Py5Shape`` object as a list of ``Py5Shape`` objects.
 
-        Underlying Java method: PShape.getChildren
+        Underlying Processing method: PShape.getChildren
 
         Notes
         -----
@@ -2641,7 +2641,7 @@ class Py5Shape:
     def get_depth(self) -> float:
         """Get the ``Py5Shape`` object's depth.
 
-        Underlying Java method: PShape.getDepth
+        Underlying Processing method: PShape.getDepth
 
         Notes
         -----
@@ -2654,7 +2654,7 @@ class Py5Shape:
     def get_emissive(self, index: int, /) -> int:
         """Get the emissive color setting for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getEmissive
+        Underlying Processing method: PShape.getEmissive
 
         Parameters
         ----------
@@ -2676,7 +2676,7 @@ class Py5Shape:
     def get_family(self) -> int:
         """Get the Py5Shape object's "family" number.
 
-        Underlying Java method: PShape.getFamily
+        Underlying Processing method: PShape.getFamily
 
         Notes
         -----
@@ -2688,7 +2688,7 @@ class Py5Shape:
     def get_fill(self, index: int, /) -> int:
         """Gets the fill color used for a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getFill
+        Underlying Processing method: PShape.getFill
 
         Parameters
         ----------
@@ -2711,7 +2711,7 @@ class Py5Shape:
     def get_height(self) -> float:
         """Get the ``Py5Shape`` object's height.
 
-        Underlying Java method: PShape.getHeight
+        Underlying Processing method: PShape.getHeight
 
         Notes
         -----
@@ -2729,7 +2729,7 @@ class Py5Shape:
     def get_kind(self) -> int:
         """Get the Py5Shape object's "kind" number.
 
-        Underlying Java method: PShape.getKind
+        Underlying Processing method: PShape.getKind
 
         Notes
         -----
@@ -2742,7 +2742,7 @@ class Py5Shape:
     def get_name(self) -> str:
         """Get the name assigned to a Py5Shape object.
 
-        Underlying Java method: PShape.getName
+        Underlying Processing method: PShape.getName
 
         Notes
         -----
@@ -2753,18 +2753,18 @@ class Py5Shape:
         return self._instance.getName()
 
     @overload
-    def get_normal(self, index: int, /) -> NDArray[(Any,), Float]:
+    def get_normal(self, index: int, /) -> Py5Vector:
         """Get the normal vector for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getNormal
+        Underlying Processing method: PShape.getNormal
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * get_normal(index: int, /) -> NDArray[(Any,), Float]
-         * get_normal(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+         * get_normal(index: int, /) -> Py5Vector
+         * get_normal(index: int, vec: Py5Vector, /) -> Py5Vector
 
         Parameters
         ----------
@@ -2772,8 +2772,8 @@ class Py5Shape:
         index: int
             vertex index
 
-        vec: NDArray[(Any,), Float]
-            correctly sized numpy array to store normal vector
+        vec: Py5Vector
+            target object to place vertex normal vector into
 
         Notes
         -----
@@ -2790,19 +2790,18 @@ class Py5Shape:
         pass
 
     @overload
-    def get_normal(self, index: int, vec: NDArray[(
-            Any,), Float], /) -> NDArray[(Any,), Float]:
+    def get_normal(self, index: int, vec: Py5Vector, /) -> Py5Vector:
         """Get the normal vector for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getNormal
+        Underlying Processing method: PShape.getNormal
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * get_normal(index: int, /) -> NDArray[(Any,), Float]
-         * get_normal(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+         * get_normal(index: int, /) -> Py5Vector
+         * get_normal(index: int, vec: Py5Vector, /) -> Py5Vector
 
         Parameters
         ----------
@@ -2810,8 +2809,8 @@ class Py5Shape:
         index: int
             vertex index
 
-        vec: NDArray[(Any,), Float]
-            correctly sized numpy array to store normal vector
+        vec: Py5Vector
+            target object to place vertex normal vector into
 
         Notes
         -----
@@ -2831,15 +2830,15 @@ class Py5Shape:
     def get_normal(self, *args):
         """Get the normal vector for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getNormal
+        Underlying Processing method: PShape.getNormal
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * get_normal(index: int, /) -> NDArray[(Any,), Float]
-         * get_normal(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+         * get_normal(index: int, /) -> Py5Vector
+         * get_normal(index: int, vec: Py5Vector, /) -> Py5Vector
 
         Parameters
         ----------
@@ -2847,8 +2846,8 @@ class Py5Shape:
         index: int
             vertex index
 
-        vec: NDArray[(Any,), Float]
-            correctly sized numpy array to store normal vector
+        vec: Py5Vector
+            target object to place vertex normal vector into
 
         Notes
         -----
@@ -2867,7 +2866,7 @@ class Py5Shape:
     def get_normal_x(self, index: int, /) -> float:
         """Get the normal vector's x value for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getNormalX
+        Underlying Processing method: PShape.getNormalX
 
         Parameters
         ----------
@@ -2892,7 +2891,7 @@ class Py5Shape:
     def get_normal_y(self, index: int, /) -> float:
         """Get the normal vector's y value for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getNormalY
+        Underlying Processing method: PShape.getNormalY
 
         Parameters
         ----------
@@ -2917,7 +2916,7 @@ class Py5Shape:
     def get_normal_z(self, index: int, /) -> float:
         """Get the normal vector's z value for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getNormalZ
+        Underlying Processing method: PShape.getNormalZ
 
         Parameters
         ----------
@@ -2943,7 +2942,7 @@ class Py5Shape:
     def get_parent(self) -> Py5Shape:
         """Locate a child ``Py5Shape`` object's parent ``GROUP`` ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getParent
+        Underlying Processing method: PShape.getParent
 
         Notes
         -----
@@ -2957,7 +2956,7 @@ class Py5Shape:
     def get_shininess(self, index: int, /) -> float:
         """Get the shininess setting for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getShininess
+        Underlying Processing method: PShape.getShininess
 
         Parameters
         ----------
@@ -2979,7 +2978,7 @@ class Py5Shape:
     def get_specular(self, index: int, /) -> int:
         """Get the specular color setting for one of a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.getSpecular
+        Underlying Processing method: PShape.getSpecular
 
         Parameters
         ----------
@@ -3001,7 +3000,7 @@ class Py5Shape:
     def get_stroke(self, index: int, /) -> int:
         """Gets the stroke color used for lines and points in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getStroke
+        Underlying Processing method: PShape.getStroke
 
         Parameters
         ----------
@@ -3024,7 +3023,7 @@ class Py5Shape:
     def get_stroke_weight(self, index: int, /) -> float:
         """Gets the width of the stroke used for lines and points in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getStrokeWeight
+        Underlying Processing method: PShape.getStrokeWeight
 
         Parameters
         ----------
@@ -3048,7 +3047,7 @@ class Py5Shape:
     def get_texture_u(self, index: int, /) -> float:
         """Get the horizontal texture mapping coordinate for a particular vertex.
 
-        Underlying Java method: PShape.getTextureU
+        Underlying Processing method: PShape.getTextureU
 
         Parameters
         ----------
@@ -3068,7 +3067,7 @@ class Py5Shape:
     def get_texture_v(self, index: int, /) -> float:
         """Get the vertical texture mapping coordinate for a particular vertex.
 
-        Underlying Java method: PShape.getTextureV
+        Underlying Processing method: PShape.getTextureV
 
         Parameters
         ----------
@@ -3088,7 +3087,7 @@ class Py5Shape:
     def get_tint(self, index: int, /) -> int:
         """Get the texture tint color assigned to one vertex in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getTint
+        Underlying Processing method: PShape.getTint
 
         Parameters
         ----------
@@ -3105,19 +3104,19 @@ class Py5Shape:
         return self._instance.getTint(index)
 
     @overload
-    def get_vertex(self, index: int, /) -> NDArray[(Any,), Float]:
-        """The ``get_vertex()`` method returns a numpy array with the coordinates of the
+    def get_vertex(self, index: int, /) -> Py5Vector:
+        """The ``get_vertex()`` method returns a Py5Vector with the coordinates of the
         vertex point located at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.getVertex
+        Underlying Processing method: PShape.getVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * get_vertex(index: int, /) -> NDArray[(Any,), Float]
-         * get_vertex(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, /) -> Py5Vector
+         * get_vertex(index: int, vec: Py5Vector, /) -> Py5Vector
 
         Parameters
         ----------
@@ -3125,13 +3124,13 @@ class Py5Shape:
         index: int
             vertex index
 
-        vec: NDArray[(Any,), Float]
-            properly sized numpy array to assign the data to
+        vec: Py5Vector
+            target object to place vertex coordinates into
 
         Notes
         -----
 
-        The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        The ``get_vertex()`` method returns a Py5Vector with the coordinates of the
         vertex point located at the position defined by the ``index`` parameter. This
         method works when shapes are created as shown in the example, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
@@ -3140,20 +3139,19 @@ class Py5Shape:
         pass
 
     @overload
-    def get_vertex(self, index: int, vec: NDArray[(
-            Any,), Float], /) -> NDArray[(Any,), Float]:
-        """The ``get_vertex()`` method returns a numpy array with the coordinates of the
+    def get_vertex(self, index: int, vec: Py5Vector, /) -> Py5Vector:
+        """The ``get_vertex()`` method returns a Py5Vector with the coordinates of the
         vertex point located at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.getVertex
+        Underlying Processing method: PShape.getVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * get_vertex(index: int, /) -> NDArray[(Any,), Float]
-         * get_vertex(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, /) -> Py5Vector
+         * get_vertex(index: int, vec: Py5Vector, /) -> Py5Vector
 
         Parameters
         ----------
@@ -3161,13 +3159,13 @@ class Py5Shape:
         index: int
             vertex index
 
-        vec: NDArray[(Any,), Float]
-            properly sized numpy array to assign the data to
+        vec: Py5Vector
+            target object to place vertex coordinates into
 
         Notes
         -----
 
-        The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        The ``get_vertex()`` method returns a Py5Vector with the coordinates of the
         vertex point located at the position defined by the ``index`` parameter. This
         method works when shapes are created as shown in the example, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
@@ -3177,18 +3175,18 @@ class Py5Shape:
 
     @_get_pvector_wrapper
     def get_vertex(self, *args):
-        """The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        """The ``get_vertex()`` method returns a Py5Vector with the coordinates of the
         vertex point located at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.getVertex
+        Underlying Processing method: PShape.getVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * get_vertex(index: int, /) -> NDArray[(Any,), Float]
-         * get_vertex(index: int, vec: NDArray[(Any,), Float], /) -> NDArray[(Any,), Float]
+         * get_vertex(index: int, /) -> Py5Vector
+         * get_vertex(index: int, vec: Py5Vector, /) -> Py5Vector
 
         Parameters
         ----------
@@ -3196,13 +3194,13 @@ class Py5Shape:
         index: int
             vertex index
 
-        vec: NDArray[(Any,), Float]
-            properly sized numpy array to assign the data to
+        vec: Py5Vector
+            target object to place vertex coordinates into
 
         Notes
         -----
 
-        The ``get_vertex()`` method returns a numpy array with the coordinates of the
+        The ``get_vertex()`` method returns a Py5Vector with the coordinates of the
         vertex point located at the position defined by the ``index`` parameter. This
         method works when shapes are created as shown in the example, but won't work
         properly when a shape is defined explicitly (e.g. ``create_shape(RECT, 20, 20,
@@ -3213,7 +3211,7 @@ class Py5Shape:
     def get_vertex_code(self, index: int, /) -> int:
         """Get the vertex code for a particular vertex code index.
 
-        Underlying Java method: PShape.getVertexCode
+        Underlying Processing method: PShape.getVertexCode
 
         Parameters
         ----------
@@ -3238,7 +3236,7 @@ class Py5Shape:
     def get_vertex_code_count(self) -> int:
         """Get the number of vertex codes within a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getVertexCodeCount
+        Underlying Processing method: PShape.getVertexCodeCount
 
         Notes
         -----
@@ -3258,7 +3256,7 @@ class Py5Shape:
     def get_vertex_codes(self) -> NDArray[(Any,), Int]:
         """Get the vertex codes for a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.getVertexCodes
+        Underlying Processing method: PShape.getVertexCodes
 
         Notes
         -----
@@ -3278,7 +3276,7 @@ class Py5Shape:
         """The ``get_vertex_count()`` method returns the number of vertices that make up a
         ``Py5Shape``.
 
-        Underlying Java method: PShape.getVertexCount
+        Underlying Processing method: PShape.getVertexCount
 
         Notes
         -----
@@ -3292,7 +3290,7 @@ class Py5Shape:
     def get_vertex_x(self, index: int, /) -> float:
         """Get the value of the x coordinate for the vertex ``index``.
 
-        Underlying Java method: PShape.getVertexX
+        Underlying Processing method: PShape.getVertexX
 
         Parameters
         ----------
@@ -3310,7 +3308,7 @@ class Py5Shape:
     def get_vertex_y(self, index: int, /) -> float:
         """Get the value of the y coordinate for the vertex ``index``.
 
-        Underlying Java method: PShape.getVertexY
+        Underlying Processing method: PShape.getVertexY
 
         Parameters
         ----------
@@ -3328,7 +3326,7 @@ class Py5Shape:
     def get_vertex_z(self, index: int, /) -> float:
         """Get the value of the z coordinate for the vertex ``index``.
 
-        Underlying Java method: PShape.getVertexZ
+        Underlying Processing method: PShape.getVertexZ
 
         Parameters
         ----------
@@ -3346,7 +3344,7 @@ class Py5Shape:
     def get_width(self) -> float:
         """Get the ``Py5Shape`` object's width.
 
-        Underlying Java method: PShape.getWidth
+        Underlying Processing method: PShape.getWidth
 
         Notes
         -----
@@ -3364,7 +3362,7 @@ class Py5Shape:
     def is2d(self) -> bool:
         """Boolean value reflecting if the shape is or is not a 2D shape.
 
-        Underlying Java method: PShape.is2D
+        Underlying Processing method: PShape.is2D
 
         Notes
         -----
@@ -3379,7 +3377,7 @@ class Py5Shape:
     def is3d(self) -> bool:
         """Boolean value reflecting if the shape is or is not a 3D shape.
 
-        Underlying Java method: PShape.is3D
+        Underlying Processing method: PShape.is3D
 
         Notes
         -----
@@ -3395,7 +3393,7 @@ class Py5Shape:
         """Returns a boolean value ``True`` if the image is set to be visible, ``False`` if
         not.
 
-        Underlying Java method: PShape.isVisible
+        Underlying Processing method: PShape.isVisible
 
         Notes
         -----
@@ -3412,7 +3410,7 @@ class Py5Shape:
     def no_fill(self) -> None:
         """Disables the ``Py5Shape`` object's filling geometry.
 
-        Underlying Java method: PShape.noFill
+        Underlying Processing method: PShape.noFill
 
         Notes
         -----
@@ -3429,7 +3427,7 @@ class Py5Shape:
     def no_stroke(self) -> None:
         """Disables the ``Py5Shape`` object's stroke (outline).
 
-        Underlying Java method: PShape.noStroke
+        Underlying Processing method: PShape.noStroke
 
         Notes
         -----
@@ -3445,7 +3443,7 @@ class Py5Shape:
     def no_tint(self) -> None:
         """Stop applying a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.noTint
+        Underlying Processing method: PShape.noTint
 
         Notes
         -----
@@ -3461,7 +3459,7 @@ class Py5Shape:
     def normal(self, nx: float, ny: float, nz: float, /) -> None:
         """Sets the current normal vector for a ``Py5Shape`` object's vertices.
 
-        Underlying Java method: PShape.normal
+        Underlying Processing method: PShape.normal
 
         Parameters
         ----------
@@ -3496,7 +3494,7 @@ class Py5Shape:
         """Specifies a ``Py5Shape`` object's vertex coordinates for quadratic Bezier
         curves.
 
-        Underlying Java method: PShape.quadraticVertex
+        Underlying Processing method: PShape.quadraticVertex
 
         Methods
         -------
@@ -3552,7 +3550,7 @@ class Py5Shape:
         """Specifies a ``Py5Shape`` object's vertex coordinates for quadratic Bezier
         curves.
 
-        Underlying Java method: PShape.quadraticVertex
+        Underlying Processing method: PShape.quadraticVertex
 
         Methods
         -------
@@ -3606,7 +3604,7 @@ class Py5Shape:
         """Specifies a ``Py5Shape`` object's vertex coordinates for quadratic Bezier
         curves.
 
-        Underlying Java method: PShape.quadraticVertex
+        Underlying Processing method: PShape.quadraticVertex
 
         Methods
         -------
@@ -3660,7 +3658,7 @@ class Py5Shape:
         """Removes a child ``Py5Shape`` object from a parent ``Py5Shape`` object that is
         defined as a ``GROUP``.
 
-        Underlying Java method: PShape.removeChild
+        Underlying Processing method: PShape.removeChild
 
         Parameters
         ----------
@@ -3679,7 +3677,7 @@ class Py5Shape:
     def reset_matrix(self) -> None:
         """Replaces the current matrix of a shape with the identity matrix.
 
-        Underlying Java method: PShape.resetMatrix
+        Underlying Processing method: PShape.resetMatrix
 
         Notes
         -----
@@ -3693,7 +3691,7 @@ class Py5Shape:
     def rotate(self, angle: float, /) -> None:
         """Rotates the shape the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PShape.rotate
+        Underlying Processing method: PShape.rotate
 
         Methods
         -------
@@ -3738,7 +3736,7 @@ class Py5Shape:
     def rotate(self, angle: float, v0: float, v1: float, v2: float, /) -> None:
         """Rotates the shape the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PShape.rotate
+        Underlying Processing method: PShape.rotate
 
         Methods
         -------
@@ -3782,7 +3780,7 @@ class Py5Shape:
     def rotate(self, *args):
         """Rotates the shape the amount specified by the ``angle`` parameter.
 
-        Underlying Java method: PShape.rotate
+        Underlying Processing method: PShape.rotate
 
         Methods
         -------
@@ -3827,7 +3825,7 @@ class Py5Shape:
         """Rotates the shape around the x-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PShape.rotateX
+        Underlying Processing method: PShape.rotateX
 
         Parameters
         ----------
@@ -3858,7 +3856,7 @@ class Py5Shape:
         """Rotates the shape around the y-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PShape.rotateY
+        Underlying Processing method: PShape.rotateY
 
         Parameters
         ----------
@@ -3889,7 +3887,7 @@ class Py5Shape:
         """Rotates the shape around the z-axis the amount specified by the ``angle``
         parameter.
 
-        Underlying Java method: PShape.rotateZ
+        Underlying Processing method: PShape.rotateZ
 
         Parameters
         ----------
@@ -3921,7 +3919,7 @@ class Py5Shape:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PShape.scale
+        Underlying Processing method: PShape.scale
 
         Methods
         -------
@@ -3968,7 +3966,7 @@ class Py5Shape:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PShape.scale
+        Underlying Processing method: PShape.scale
 
         Methods
         -------
@@ -4015,7 +4013,7 @@ class Py5Shape:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PShape.scale
+        Underlying Processing method: PShape.scale
 
         Methods
         -------
@@ -4061,7 +4059,7 @@ class Py5Shape:
         """Increases or decreases the size of a shape by expanding and contracting
         vertices.
 
-        Underlying Java method: PShape.scale
+        Underlying Processing method: PShape.scale
 
         Methods
         -------
@@ -4107,7 +4105,7 @@ class Py5Shape:
     def set_ambient(self, ambient: int, /) -> None:
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.setAmbient
+        Underlying Processing method: PShape.setAmbient
 
         Methods
         -------
@@ -4150,7 +4148,7 @@ class Py5Shape:
     def set_ambient(self, index: int, ambient: int, /) -> None:
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.setAmbient
+        Underlying Processing method: PShape.setAmbient
 
         Methods
         -------
@@ -4193,7 +4191,7 @@ class Py5Shape:
     def set_ambient(self, *args):
         """Sets a ``Py5Shape`` object's ambient reflectance.
 
-        Underlying Java method: PShape.setAmbient
+        Underlying Processing method: PShape.setAmbient
 
         Methods
         -------
@@ -4236,7 +4234,7 @@ class Py5Shape:
     def set_emissive(self, emissive: int, /) -> None:
         """Sets a ``Py5Shape`` object's emissive color.
 
-        Underlying Java method: PShape.setEmissive
+        Underlying Processing method: PShape.setEmissive
 
         Methods
         -------
@@ -4273,7 +4271,7 @@ class Py5Shape:
     def set_emissive(self, index: int, emissive: int, /) -> None:
         """Sets a ``Py5Shape`` object's emissive color.
 
-        Underlying Java method: PShape.setEmissive
+        Underlying Processing method: PShape.setEmissive
 
         Methods
         -------
@@ -4310,7 +4308,7 @@ class Py5Shape:
     def set_emissive(self, *args):
         """Sets a ``Py5Shape`` object's emissive color.
 
-        Underlying Java method: PShape.setEmissive
+        Underlying Processing method: PShape.setEmissive
 
         Methods
         -------
@@ -4347,7 +4345,7 @@ class Py5Shape:
     def set_fill(self, fill: bool, /) -> None:
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setFill
+        Underlying Processing method: PShape.setFill
 
         Methods
         -------
@@ -4388,7 +4386,7 @@ class Py5Shape:
     def set_fill(self, fill: int, /) -> None:
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setFill
+        Underlying Processing method: PShape.setFill
 
         Methods
         -------
@@ -4429,7 +4427,7 @@ class Py5Shape:
     def set_fill(self, index: int, fill: int, /) -> None:
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setFill
+        Underlying Processing method: PShape.setFill
 
         Methods
         -------
@@ -4471,7 +4469,7 @@ class Py5Shape:
     def set_fill(self, *args):
         """The ``set_fill()`` method defines the fill color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setFill
+        Underlying Processing method: PShape.setFill
 
         Methods
         -------
@@ -4511,7 +4509,7 @@ class Py5Shape:
     def set_name(self, name: str, /) -> None:
         """Assign a name to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.setName
+        Underlying Processing method: PShape.setName
 
         Parameters
         ----------
@@ -4531,7 +4529,7 @@ class Py5Shape:
                  verts: NDArray[(Any, Any), Float], /) -> None:
         """Set many vertex points at the same time, using a numpy array.
 
-        Underlying Java method: PShape.setPath
+        Underlying Processing method: PShape.setPath
 
         Parameters
         ----------
@@ -4559,7 +4557,7 @@ class Py5Shape:
     def set_shininess(self, shine: float, /) -> None:
         """Sets the amount of gloss a ``Py5Shape`` object's surface has.
 
-        Underlying Java method: PShape.setShininess
+        Underlying Processing method: PShape.setShininess
 
         Methods
         -------
@@ -4596,7 +4594,7 @@ class Py5Shape:
     def set_shininess(self, index: int, shine: float, /) -> None:
         """Sets the amount of gloss a ``Py5Shape`` object's surface has.
 
-        Underlying Java method: PShape.setShininess
+        Underlying Processing method: PShape.setShininess
 
         Methods
         -------
@@ -4632,7 +4630,7 @@ class Py5Shape:
     def set_shininess(self, *args):
         """Sets the amount of gloss a ``Py5Shape`` object's surface has.
 
-        Underlying Java method: PShape.setShininess
+        Underlying Processing method: PShape.setShininess
 
         Methods
         -------
@@ -4670,7 +4668,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.setSpecular
+        Underlying Processing method: PShape.setSpecular
 
         Methods
         -------
@@ -4709,7 +4707,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.setSpecular
+        Underlying Processing method: PShape.setSpecular
 
         Methods
         -------
@@ -4748,7 +4746,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.setSpecular
+        Underlying Processing method: PShape.setSpecular
 
         Methods
         -------
@@ -4786,7 +4784,7 @@ class Py5Shape:
     def set_stroke(self, stroke: bool, /) -> None:
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setStroke
+        Underlying Processing method: PShape.setStroke
 
         Methods
         -------
@@ -4827,7 +4825,7 @@ class Py5Shape:
     def set_stroke(self, stroke: int, /) -> None:
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setStroke
+        Underlying Processing method: PShape.setStroke
 
         Methods
         -------
@@ -4868,7 +4866,7 @@ class Py5Shape:
     def set_stroke(self, index: int, stroke: int, /) -> None:
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setStroke
+        Underlying Processing method: PShape.setStroke
 
         Methods
         -------
@@ -4910,7 +4908,7 @@ class Py5Shape:
     def set_stroke(self, *args):
         """The ``set_stroke()`` method defines the outline color of a ``Py5Shape``.
 
-        Underlying Java method: PShape.setStroke
+        Underlying Processing method: PShape.setStroke
 
         Methods
         -------
@@ -4950,7 +4948,7 @@ class Py5Shape:
     def set_stroke_cap(self, cap: int, /) -> None:
         """Sets the style for rendering line endings in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.setStrokeCap
+        Underlying Processing method: PShape.setStrokeCap
 
         Parameters
         ----------
@@ -4975,7 +4973,7 @@ class Py5Shape:
         """Sets the style of the joints which connect line segments in a ``Py5Shape``
         object.
 
-        Underlying Java method: PShape.setStrokeJoin
+        Underlying Processing method: PShape.setStrokeJoin
 
         Parameters
         ----------
@@ -5001,7 +4999,7 @@ class Py5Shape:
     def set_stroke_weight(self, weight: float, /) -> None:
         """Sets the width of the stroke used for lines and points in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.setStrokeWeight
+        Underlying Processing method: PShape.setStrokeWeight
 
         Methods
         -------
@@ -5037,7 +5035,7 @@ class Py5Shape:
     def set_stroke_weight(self, index: int, weight: float, /) -> None:
         """Sets the width of the stroke used for lines and points in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.setStrokeWeight
+        Underlying Processing method: PShape.setStrokeWeight
 
         Methods
         -------
@@ -5072,7 +5070,7 @@ class Py5Shape:
     def set_stroke_weight(self, *args):
         """Sets the width of the stroke used for lines and points in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.setStrokeWeight
+        Underlying Processing method: PShape.setStrokeWeight
 
         Methods
         -------
@@ -5107,7 +5105,7 @@ class Py5Shape:
     def set_texture(self, tex: Py5Image, /) -> None:
         """Set a ``Py5Shape`` object's texture.
 
-        Underlying Java method: PShape.setTexture
+        Underlying Processing method: PShape.setTexture
 
         Parameters
         ----------
@@ -5134,7 +5132,7 @@ class Py5Shape:
     def set_texture_mode(self, mode: int, /) -> None:
         """Sets a ``Py5Shape`` object's coordinate space for texture mapping.
 
-        Underlying Java method: PShape.setTextureMode
+        Underlying Processing method: PShape.setTextureMode
 
         Parameters
         ----------
@@ -5165,7 +5163,7 @@ class Py5Shape:
         """Set the uv texture mapping coordinates for a given vertex in a ``Py5Shape``
         object.
 
-        Underlying Java method: PShape.setTextureUV
+        Underlying Processing method: PShape.setTextureUV
 
         Parameters
         ----------
@@ -5197,7 +5195,7 @@ class Py5Shape:
     def set_tint(self, tint: bool, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.setTint
+        Underlying Processing method: PShape.setTint
 
         Methods
         -------
@@ -5243,7 +5241,7 @@ class Py5Shape:
     def set_tint(self, fill: int, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.setTint
+        Underlying Processing method: PShape.setTint
 
         Methods
         -------
@@ -5289,7 +5287,7 @@ class Py5Shape:
     def set_tint(self, index: int, tint: int, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.setTint
+        Underlying Processing method: PShape.setTint
 
         Methods
         -------
@@ -5336,7 +5334,7 @@ class Py5Shape:
     def set_tint(self, *args):
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.setTint
+        Underlying Processing method: PShape.setTint
 
         Methods
         -------
@@ -5383,14 +5381,14 @@ class Py5Shape:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.setVertex
+        Underlying Processing method: PShape.setVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, vec: Py5Vector, /) -> None
          * set_vertex(index: int, x: float, y: float, /) -> None
          * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
@@ -5400,8 +5398,8 @@ class Py5Shape:
         index: int
             the location of the vertex
 
-        vec: NDArray[(Any,), Float]
-            the numpy array to define the x, y, z coordinates
+        vec: Py5Vector
+            the vector to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5427,14 +5425,14 @@ class Py5Shape:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.setVertex
+        Underlying Processing method: PShape.setVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, vec: Py5Vector, /) -> None
          * set_vertex(index: int, x: float, y: float, /) -> None
          * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
@@ -5444,8 +5442,8 @@ class Py5Shape:
         index: int
             the location of the vertex
 
-        vec: NDArray[(Any,), Float]
-            the numpy array to define the x, y, z coordinates
+        vec: Py5Vector
+            the vector to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5467,18 +5465,18 @@ class Py5Shape:
         pass
 
     @overload
-    def set_vertex(self, index: int, vec: NDArray[(Any,), Float], /) -> None:
+    def set_vertex(self, index: int, vec: Py5Vector, /) -> None:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.setVertex
+        Underlying Processing method: PShape.setVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, vec: Py5Vector, /) -> None
          * set_vertex(index: int, x: float, y: float, /) -> None
          * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
@@ -5488,8 +5486,8 @@ class Py5Shape:
         index: int
             the location of the vertex
 
-        vec: NDArray[(Any,), Float]
-            the numpy array to define the x, y, z coordinates
+        vec: Py5Vector
+            the vector to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5514,14 +5512,14 @@ class Py5Shape:
         """The ``set_vertex()`` method defines the coordinates of the vertex point located
         at the position defined by the ``index`` parameter.
 
-        Underlying Java method: PShape.setVertex
+        Underlying Processing method: PShape.setVertex
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * set_vertex(index: int, vec: NDArray[(Any,), Float], /) -> None
+         * set_vertex(index: int, vec: Py5Vector, /) -> None
          * set_vertex(index: int, x: float, y: float, /) -> None
          * set_vertex(index: int, x: float, y: float, z: float, /) -> None
 
@@ -5531,8 +5529,8 @@ class Py5Shape:
         index: int
             the location of the vertex
 
-        vec: NDArray[(Any,), Float]
-            the numpy array to define the x, y, z coordinates
+        vec: Py5Vector
+            the vector to define the x, y, z coordinates
 
         x: float
             the x value for the vertex
@@ -5556,7 +5554,7 @@ class Py5Shape:
     def set_visible(self, visible: bool, /) -> None:
         """Sets the shape to be visible or invisible.
 
-        Underlying Java method: PShape.setVisible
+        Underlying Processing method: PShape.setVisible
 
         Parameters
         ----------
@@ -5579,7 +5577,7 @@ class Py5Shape:
     def shininess(self, shine: float, /) -> None:
         """Sets the amount of gloss in the surface of a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.shininess
+        Underlying Processing method: PShape.shininess
 
         Parameters
         ----------
@@ -5605,7 +5603,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.specular
+        Underlying Processing method: PShape.specular
 
         Methods
         -------
@@ -5655,7 +5653,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.specular
+        Underlying Processing method: PShape.specular
 
         Methods
         -------
@@ -5705,7 +5703,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.specular
+        Underlying Processing method: PShape.specular
 
         Methods
         -------
@@ -5755,7 +5753,7 @@ class Py5Shape:
         """Sets the specular color of a ``Py5Shape`` object's material, which sets the
         color of highlight.
 
-        Underlying Java method: PShape.specular
+        Underlying Processing method: PShape.specular
 
         Methods
         -------
@@ -5804,7 +5802,7 @@ class Py5Shape:
     def stroke(self, gray: float, /) -> None:
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -5874,7 +5872,7 @@ class Py5Shape:
     def stroke(self, gray: float, alpha: float, /) -> None:
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -5944,7 +5942,7 @@ class Py5Shape:
     def stroke(self, x: float, y: float, z: float, /) -> None:
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -6014,7 +6012,7 @@ class Py5Shape:
     def stroke(self, x: float, y: float, z: float, alpha: float, /) -> None:
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -6084,7 +6082,7 @@ class Py5Shape:
     def stroke(self, rgb: int, /) -> None:
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -6154,7 +6152,7 @@ class Py5Shape:
     def stroke(self, rgb: int, alpha: float, /) -> None:
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -6224,7 +6222,7 @@ class Py5Shape:
     def stroke(self, *args):
         """Sets the color used to draw the ``Py5Shape`` object's lines.
 
-        Underlying Java method: PShape.stroke
+        Underlying Processing method: PShape.stroke
 
         Methods
         -------
@@ -6293,7 +6291,7 @@ class Py5Shape:
     def stroke_cap(self, cap: int, /) -> None:
         """Sets the style for rendering line endings in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.strokeCap
+        Underlying Processing method: PShape.strokeCap
 
         Parameters
         ----------
@@ -6318,7 +6316,7 @@ class Py5Shape:
         """Sets the style of the joints which connect line segments in a ``Py5Shape``
         object.
 
-        Underlying Java method: PShape.strokeJoin
+        Underlying Processing method: PShape.strokeJoin
 
         Parameters
         ----------
@@ -6342,7 +6340,7 @@ class Py5Shape:
     def stroke_weight(self, weight: float, /) -> None:
         """Sets the width of the stroke used for lines and points in a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.strokeWeight
+        Underlying Processing method: PShape.strokeWeight
 
         Parameters
         ----------
@@ -6364,7 +6362,7 @@ class Py5Shape:
     def texture(self, tex: Py5Image, /) -> None:
         """Sets a texture to be applied to a ``Py5Shape`` object's vertex points.
 
-        Underlying Java method: PShape.texture
+        Underlying Processing method: PShape.texture
 
         Parameters
         ----------
@@ -6389,7 +6387,7 @@ class Py5Shape:
     def texture_mode(self, mode: int, /) -> None:
         """Sets a ``Py5Shape`` object's coordinate space for texture mapping.
 
-        Underlying Java method: PShape.textureMode
+        Underlying Processing method: PShape.textureMode
 
         Parameters
         ----------
@@ -6418,7 +6416,7 @@ class Py5Shape:
     def tint(self, gray: float, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6488,7 +6486,7 @@ class Py5Shape:
     def tint(self, gray: float, alpha: float, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6558,7 +6556,7 @@ class Py5Shape:
     def tint(self, x: float, y: float, z: float, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6628,7 +6626,7 @@ class Py5Shape:
     def tint(self, x: float, y: float, z: float, alpha: float, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6698,7 +6696,7 @@ class Py5Shape:
     def tint(self, rgb: int, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6768,7 +6766,7 @@ class Py5Shape:
     def tint(self, rgb: int, alpha: float, /) -> None:
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6838,7 +6836,7 @@ class Py5Shape:
     def tint(self, *args):
         """Apply a color tint to a shape's texture map.
 
-        Underlying Java method: PShape.tint
+        Underlying Processing method: PShape.tint
 
         Methods
         -------
@@ -6908,7 +6906,7 @@ class Py5Shape:
     def translate(self, x: float, y: float, /) -> None:
         """Specifies an amount to displace the shape.
 
-        Underlying Java method: PShape.translate
+        Underlying Processing method: PShape.translate
 
         Methods
         -------
@@ -6950,7 +6948,7 @@ class Py5Shape:
     def translate(self, x: float, y: float, z: float, /) -> None:
         """Specifies an amount to displace the shape.
 
-        Underlying Java method: PShape.translate
+        Underlying Processing method: PShape.translate
 
         Methods
         -------
@@ -6991,7 +6989,7 @@ class Py5Shape:
     def translate(self, *args):
         """Specifies an amount to displace the shape.
 
-        Underlying Java method: PShape.translate
+        Underlying Processing method: PShape.translate
 
         Methods
         -------
@@ -7033,7 +7031,7 @@ class Py5Shape:
     def vertex(self, x: float, y: float, /) -> None:
         """Add a new vertex to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.vertex
+        Underlying Processing method: PShape.vertex
 
         Methods
         -------
@@ -7089,7 +7087,7 @@ class Py5Shape:
     def vertex(self, x: float, y: float, z: float, /) -> None:
         """Add a new vertex to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.vertex
+        Underlying Processing method: PShape.vertex
 
         Methods
         -------
@@ -7145,7 +7143,7 @@ class Py5Shape:
     def vertex(self, x: float, y: float, u: float, v: float, /) -> None:
         """Add a new vertex to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.vertex
+        Underlying Processing method: PShape.vertex
 
         Methods
         -------
@@ -7202,7 +7200,7 @@ class Py5Shape:
                u: float, v: float, /) -> None:
         """Add a new vertex to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.vertex
+        Underlying Processing method: PShape.vertex
 
         Methods
         -------
@@ -7257,7 +7255,7 @@ class Py5Shape:
     def vertex(self, *args):
         """Add a new vertex to a ``Py5Shape`` object.
 
-        Underlying Java method: PShape.vertex
+        Underlying Processing method: PShape.vertex
 
         Methods
         -------

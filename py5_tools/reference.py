@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -288,7 +288,6 @@ PY5_DIR_STR = [
     'no_tint',
     'noise',
     'noise_detail',
-    'noise_mode',
     'noise_seed',
     'norm',
     'NORMAL',
@@ -300,6 +299,8 @@ PY5_DIR_STR = [
     'OPENGL',
     'ortho',
     'ORTHOGRAPHIC',
+    'os_noise',
+    'os_noise_seed',
     'OTHER',
     'OVERLAY',
     'P2D',
@@ -308,7 +309,6 @@ PY5_DIR_STR = [
     'parse_json',
     'PATH',
     'PDF',
-    'PERLIN_NOISE',
     'PERSPECTIVE',
     'perspective',
     'PI',
@@ -350,6 +350,10 @@ PY5_DIR_STR = [
     'Py5Shader',
     'Py5Shape',
     'Py5Surface',
+    'Py5Vector',
+    'Py5Vector2D',
+    'Py5Vector3D',
+    'Py5Vector4D',
     'QUAD',
     'quad',
     'QUAD_BEZIER_VERTEX',
@@ -416,7 +420,6 @@ PY5_DIR_STR = [
     'shear_y',
     'SHIFT',
     'shininess',
-    'SIMPLEX_NOISE',
     'sin',
     'size',
     'Sketch',
@@ -733,7 +736,6 @@ PY5_ALL_STR = [
     'no_tint',
     'noise',
     'noise_detail',
-    'noise_mode',
     'noise_seed',
     'norm',
     'NORMAL',
@@ -744,6 +746,8 @@ PY5_ALL_STR = [
     'OPENGL',
     'ortho',
     'ORTHOGRAPHIC',
+    'os_noise',
+    'os_noise_seed',
     'OTHER',
     'OVERLAY',
     'P2D',
@@ -751,7 +755,6 @@ PY5_ALL_STR = [
     'parse_json',
     'PATH',
     'PDF',
-    'PERLIN_NOISE',
     'PERSPECTIVE',
     'perspective',
     'PI',
@@ -789,6 +792,10 @@ PY5_ALL_STR = [
     'Py5Shader',
     'Py5Shape',
     'Py5Surface',
+    'Py5Vector',
+    'Py5Vector2D',
+    'Py5Vector3D',
+    'Py5Vector4D',
     'QUAD',
     'quad',
     'QUAD_BEZIER_VERTEX',
@@ -855,7 +862,6 @@ PY5_ALL_STR = [
     'shear_y',
     'SHIFT',
     'shininess',
-    'SIMPLEX_NOISE',
     'sin',
     'size',
     'Sketch',

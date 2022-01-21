@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ from setuptools import setup
 with open('README.rst') as f:
     README = f.read()
 
-VERSION = '0.6.0-alpha.2'
+VERSION = '0.7.0a0'
 
 INSTALL_REQUIRES = [
     'autopep8>=1.5',
@@ -32,7 +32,6 @@ INSTALL_REQUIRES = [
     'ipywidgets>=7.6',
     'jpype1>=1.3',
     'line_profiler>=2.1.2',
-    'noise>=1.2',
     'nptyping>=1.4',
     'numpy>=1.19',
     'pandas>=1.0',
@@ -56,7 +55,6 @@ setup(
     name='py5',
     version=VERSION,
     packages=packages,
-    py_modules=['setup'],
     package_data={
         "py5": ['jars/*.jar', 'jars/*/*.jar'],
         "py5_tools": ['kernel/resources/*.png', 'py5bot/resources/*.png'],

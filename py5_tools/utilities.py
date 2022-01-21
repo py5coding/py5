@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -42,11 +42,11 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>py5utils</groupId>
-  <artifactId>py5utils</artifactId>
+  <groupId>py5</groupId>
+  <artifactId>py5utilities</artifactId>
   <version>0.1</version>
 
-  <name>py5utils</name>
+  <name>py5utilities</name>
   <url>https://py5.ixora.io/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,21 +59,21 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-processing4</artifactId>
-      <version>0.6.0-alpha.2</version>
+      <version>0.7.0a0</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/core.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-jogl</artifactId>
-      <version>0.6.0-alpha.2</version>
+      <version>0.7.0a0</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/jogl-all.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5</artifactId>
-      <version>0.6.0-alpha.2</version>
+      <version>0.7.0a0</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/py5.jar</systemPath>
     </dependency>
@@ -97,13 +97,13 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
         <configuration>
           <artifactItems>
             <artifactItem>
-              <groupId>py5utils</groupId>
-              <artifactId>py5utils</artifactId>
+              <groupId>py5</groupId>
+              <artifactId>py5utilities</artifactId>
               <version>0.1</version>
               <type>jar</type>
               <overWrite>true</overWrite>
               <outputDirectory>${{project.basedir}}/../jars</outputDirectory>
-              <destFileName>py5utils.jar</destFileName>
+              <destFileName>py5utilities.jar</destFileName>
             </artifactItem>
           </artifactItems>
         </configuration>

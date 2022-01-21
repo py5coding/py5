@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -21,21 +21,16 @@ from typing import overload, Union, Any, List
 
 import numpy as np
 
-import noise
+from jpype import JClass
+
+_OpenSimplex2S = JClass('py5.util.OpenSimplex2S')
 
 
 class MathMixin:
 
-    SIMPLEX_NOISE = 1  # CODEBUILDER INCLUDE
-    PERLIN_NOISE = 2  # CODEBUILDER INCLUDE
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._NOISE_MODE = self.SIMPLEX_NOISE
-        self._NOISE_SEED = 0
-        self._NOISE_OCTAVES = 4
-        self._NOISE_PERSISTENCE = 0.5
-        self._NOISE_LACUNARITY = 2.0
+        self._instance = kwargs['instance']
         self._rng = np.random.default_rng()
 
     # *** BEGIN METHODS ***
@@ -270,10 +265,10 @@ class MathMixin:
             lower bound of the value's current range
 
         start2: float
-            upper bound of the value's current range
+            lower bound of the value's target range
 
         stop1: float
-            lower bound of the value's target range
+            upper bound of the value's current range
 
         stop2: float
             upper bound of the value's target range
@@ -301,7 +296,7 @@ class MathMixin:
             ((value - start1) / (stop1 - start1))
 
     @overload
-    def dist(cls, x1: float, y1: float, x2: float, y2: float) -> float:
+    def dist(cls, x1: float, y1: float, x2: float, y2: float, /) -> float:
         """Calculates the distance between two points.
 
         Methods
@@ -309,8 +304,8 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * dist(x1: float, y1: float, x2: float, y2: float) -> float
-         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> float
+         * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
+         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
 
         Parameters
         ----------
@@ -340,14 +335,8 @@ class MathMixin:
         pass
 
     @overload
-    def dist(
-            cls,
-            x1: float,
-            y1: float,
-            z1: float,
-            x2: float,
-            y2: float,
-            z2: float) -> float:
+    def dist(cls, x1: float, y1: float, z1: float,
+             x2: float, y2: float, z2: float, /) -> float:
         """Calculates the distance between two points.
 
         Methods
@@ -355,8 +344,8 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * dist(x1: float, y1: float, x2: float, y2: float) -> float
-         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> float
+         * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
+         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
 
         Parameters
         ----------
@@ -394,8 +383,8 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * dist(x1: float, y1: float, x2: float, y2: float) -> float
-         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float) -> float
+         * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
+         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
 
         Parameters
         ----------
@@ -452,11 +441,13 @@ class MathMixin:
         parameter is the amount to interpolate between the two values where 0.0 equal to
         the first point, 0.1 is very near the first point, 0.5 is half-way in between,
         etc. The lerp function is convenient for creating motion along a straight path
-        and for drawing dotted lines."""
+        and for drawing dotted lines. If the ``amt`` parameter is greater than 1.0 or
+        less than 0.0, the interpolated value will be outside of the range specified by
+        the ``start`` and ``stop`` parameter values."""
         return amt * (stop - start) + start
 
     @overload
-    def mag(cls, a: float, b: float) -> float:
+    def mag(cls, a: float, b: float, /) -> float:
         """Calculates the magnitude (or length) of a vector.
 
         Methods
@@ -464,8 +455,8 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * mag(a: float, b: float) -> float
-         * mag(a: float, b: float, c: float) -> float
+         * mag(a: float, b: float, /) -> float
+         * mag(a: float, b: float, c: float, /) -> float
 
         Parameters
         ----------
@@ -490,7 +481,7 @@ class MathMixin:
         pass
 
     @overload
-    def mag(cls, a: float, b: float, c: float) -> float:
+    def mag(cls, a: float, b: float, c: float, /) -> float:
         """Calculates the magnitude (or length) of a vector.
 
         Methods
@@ -498,8 +489,8 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * mag(a: float, b: float) -> float
-         * mag(a: float, b: float, c: float) -> float
+         * mag(a: float, b: float, /) -> float
+         * mag(a: float, b: float, c: float, /) -> float
 
         Parameters
         ----------
@@ -532,8 +523,8 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * mag(a: float, b: float) -> float
-         * mag(a: float, b: float, c: float) -> float
+         * mag(a: float, b: float, /) -> float
+         * mag(a: float, b: float, c: float, /) -> float
 
         Parameters
         ----------
@@ -738,8 +729,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random() -> float
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
+         * random(high: float, /) -> float
+         * random(low: float, high: float, /) -> float
 
         Parameters
         ----------
@@ -774,7 +765,7 @@ class MathMixin:
         pass
 
     @overload
-    def random(self, high: float) -> float:
+    def random(self, high: float, /) -> float:
         """Generates random numbers.
 
         Methods
@@ -783,8 +774,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random() -> float
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
+         * random(high: float, /) -> float
+         * random(low: float, high: float, /) -> float
 
         Parameters
         ----------
@@ -819,7 +810,7 @@ class MathMixin:
         pass
 
     @overload
-    def random(self, low: float, high: float) -> float:
+    def random(self, low: float, high: float, /) -> float:
         """Generates random numbers.
 
         Methods
@@ -828,8 +819,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random() -> float
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
+         * random(high: float, /) -> float
+         * random(low: float, high: float, /) -> float
 
         Parameters
         ----------
@@ -872,8 +863,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random() -> float
-         * random(high: float) -> float
-         * random(low: float, high: float) -> float
+         * random(high: float, /) -> float
+         * random(low: float, high: float, /) -> float
 
         Parameters
         ----------
@@ -932,8 +923,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_int() -> int
-         * random_int(high: int) -> int
-         * random_int(low: int, high: int) -> int
+         * random_int(high: int, /) -> int
+         * random_int(low: int, high: int, /) -> int
 
         Parameters
         ----------
@@ -974,7 +965,7 @@ class MathMixin:
         pass
 
     @overload
-    def random_int(self, high: int) -> int:
+    def random_int(self, high: int, /) -> int:
         """Generates random integers.
 
         Methods
@@ -983,8 +974,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_int() -> int
-         * random_int(high: int) -> int
-         * random_int(low: int, high: int) -> int
+         * random_int(high: int, /) -> int
+         * random_int(low: int, high: int, /) -> int
 
         Parameters
         ----------
@@ -1025,7 +1016,7 @@ class MathMixin:
         pass
 
     @overload
-    def random_int(self, low: int, high: int) -> int:
+    def random_int(self, low: int, high: int, /) -> int:
         """Generates random integers.
 
         Methods
@@ -1034,8 +1025,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_int() -> int
-         * random_int(high: int) -> int
-         * random_int(low: int, high: int) -> int
+         * random_int(high: int, /) -> int
+         * random_int(low: int, high: int, /) -> int
 
         Parameters
         ----------
@@ -1084,8 +1075,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_int() -> int
-         * random_int(high: int) -> int
-         * random_int(low: int, high: int) -> int
+         * random_int(high: int, /) -> int
+         * random_int(low: int, high: int, /) -> int
 
         Parameters
         ----------
@@ -1168,8 +1159,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_gaussian() -> float
-         * random_gaussian(loc: float) -> float
-         * random_gaussian(loc: float, scale: float) -> float
+         * random_gaussian(loc: float, /) -> float
+         * random_gaussian(loc: float, scale: float, /) -> float
 
         Parameters
         ----------
@@ -1203,7 +1194,7 @@ class MathMixin:
         pass
 
     @overload
-    def random_gaussian(self, loc: float) -> float:
+    def random_gaussian(self, loc: float, /) -> float:
         """Generates random gaussian values.
 
         Methods
@@ -1212,8 +1203,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_gaussian() -> float
-         * random_gaussian(loc: float) -> float
-         * random_gaussian(loc: float, scale: float) -> float
+         * random_gaussian(loc: float, /) -> float
+         * random_gaussian(loc: float, scale: float, /) -> float
 
         Parameters
         ----------
@@ -1247,7 +1238,7 @@ class MathMixin:
         pass
 
     @overload
-    def random_gaussian(self, loc: float, scale: float) -> float:
+    def random_gaussian(self, loc: float, scale: float, /) -> float:
         """Generates random gaussian values.
 
         Methods
@@ -1256,8 +1247,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_gaussian() -> float
-         * random_gaussian(loc: float) -> float
-         * random_gaussian(loc: float, scale: float) -> float
+         * random_gaussian(loc: float, /) -> float
+         * random_gaussian(loc: float, scale: float, /) -> float
 
         Parameters
         ----------
@@ -1299,8 +1290,8 @@ class MathMixin:
         You can use any of the following signatures:
 
          * random_gaussian() -> float
-         * random_gaussian(loc: float) -> float
-         * random_gaussian(loc: float, scale: float) -> float
+         * random_gaussian(loc: float, /) -> float
+         * random_gaussian(loc: float, scale: float, /) -> float
 
         Parameters
         ----------
@@ -1349,27 +1340,23 @@ class MathMixin:
             f'No matching overloads found for Sketch.random_gaussian({types})')
 
     @overload
-    def noise(self, x: float, **kwargs) -> float:
-        """Generate pseudo-random noise values for specific coodinates.
+    def noise(self, x: float, /) -> float:
+        """Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm.
+
+        Underlying Processing method: PApplet.noise
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x: float, **kwargs) -> float
-         * noise(x: float, y: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
+         * noise(x: float, /) -> float
+         * noise(x: float, y: float, /) -> float
+         * noise(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
-
-        kwargs
-            keyword arguments to override existing noise detail or noise seed settings
-
-        w: float
-            w-coordinate in noise space
 
         x: float
             x-coordinate in noise space
@@ -1383,78 +1370,82 @@ class MathMixin:
         Notes
         -----
 
-        Generate pseudo-random noise values for specific coodinates. Noise functions are
-        random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` function. Several well-known noise
-        algorithms were developed by Ken Perlin and have been used in graphical
-        applications to generate procedural textures, shapes, terrains, and other
-        seemingly organic forms.
+        Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm. Noise functions are random sequence generators that produce a
+        more natural, harmonic succession of numbers compared to the ``random()``
+        method.
 
-        In contrast to the ``random()`` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
-        (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-        Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-        algorithm. The noise value can be animated by moving through the noise space, as
-        demonstrated in the examples. Any dimension can also be interpreted as time. An
-        easy way to animate the noise value is to pass the ``noise()`` function the
-        ``frame_count`` divided by a scaling factor, as is done in a few of the
-        examples.
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+        is done in a few of the examples.
 
-        The generated noise values for both Perlin Noise and Simplex Noise will be
-        between -1 and 1. This contrasts with Processing's noise function, which
-        typically returns values between 0 and 1.
-
-        Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-        generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-        generated in only 1 dimension, but as a convenience, py5 will add a second
-        dimension for you (with a value of 0) if only one dimension is used.
+        The generated noise values for this method will typically be between 0 and 1,
+        and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        (smooth version / SuperSimplex). That algorithm generates noise values between
+        -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+        these differences when modifying your code to switch from one to the other.
+        There are other differences in the character of the noise values generated by
+        both methods, so you'll need to do some experimentation to get the results you
+        want.
 
         The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, both noise algorithms are computed over several octaves which are added
-        together for the final result.
+        the method's use of frequencies. Similar to the concept of harmonics in physics,
+        both noise algorithms are computed over several octaves which are added together
+        for the final result.
 
-        The nature of the noise values returned can be adjusted with ``noise_mode()``,
-        ``noise_seed()``, and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with ``noise_seed()``
+        and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
+        the input coordinates. As the method works within an infinite space, the value
         of the coordinates doesn't matter as such; only the distance between successive
-        coordinates is important (such as when using ``noise()`` within a loop). As a
-        general rule, the smaller the difference between coordinates, the smoother the
-        resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-        but this will differ depending on the use case and the noise settings.
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
 
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly.
+        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        broadcasting when needed and calculate the values efficiently. Using numpy array
+        parameters will be much faster and efficient than calling the ``noise()`` method
+        repeatedly in a loop. See the examples to see how this can be done.
 
-        Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-        automatically vectorize the operations and use broadcasting when needed."""
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
         pass
 
     @overload
-    def noise(self, x: float, y: float, **kwargs) -> float:
-        """Generate pseudo-random noise values for specific coodinates.
+    def noise(self, x: float, y: float, /) -> float:
+        """Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm.
+
+        Underlying Processing method: PApplet.noise
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x: float, **kwargs) -> float
-         * noise(x: float, y: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
+         * noise(x: float, /) -> float
+         * noise(x: float, y: float, /) -> float
+         * noise(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
-
-        kwargs
-            keyword arguments to override existing noise detail or noise seed settings
-
-        w: float
-            w-coordinate in noise space
 
         x: float
             x-coordinate in noise space
@@ -1468,75 +1459,262 @@ class MathMixin:
         Notes
         -----
 
-        Generate pseudo-random noise values for specific coodinates. Noise functions are
-        random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` function. Several well-known noise
-        algorithms were developed by Ken Perlin and have been used in graphical
-        applications to generate procedural textures, shapes, terrains, and other
-        seemingly organic forms.
+        Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm. Noise functions are random sequence generators that produce a
+        more natural, harmonic succession of numbers compared to the ``random()``
+        method.
 
-        In contrast to the ``random()`` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
-        (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-        Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-        algorithm. The noise value can be animated by moving through the noise space, as
-        demonstrated in the examples. Any dimension can also be interpreted as time. An
-        easy way to animate the noise value is to pass the ``noise()`` function the
-        ``frame_count`` divided by a scaling factor, as is done in a few of the
-        examples.
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+        is done in a few of the examples.
 
-        The generated noise values for both Perlin Noise and Simplex Noise will be
-        between -1 and 1. This contrasts with Processing's noise function, which
-        typically returns values between 0 and 1.
-
-        Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-        generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-        generated in only 1 dimension, but as a convenience, py5 will add a second
-        dimension for you (with a value of 0) if only one dimension is used.
+        The generated noise values for this method will typically be between 0 and 1,
+        and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        (smooth version / SuperSimplex). That algorithm generates noise values between
+        -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+        these differences when modifying your code to switch from one to the other.
+        There are other differences in the character of the noise values generated by
+        both methods, so you'll need to do some experimentation to get the results you
+        want.
 
         The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, both noise algorithms are computed over several octaves which are added
-        together for the final result.
+        the method's use of frequencies. Similar to the concept of harmonics in physics,
+        both noise algorithms are computed over several octaves which are added together
+        for the final result.
 
-        The nature of the noise values returned can be adjusted with ``noise_mode()``,
-        ``noise_seed()``, and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with ``noise_seed()``
+        and ``noise_detail()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
+        the input coordinates. As the method works within an infinite space, the value
         of the coordinates doesn't matter as such; only the distance between successive
-        coordinates is important (such as when using ``noise()`` within a loop). As a
-        general rule, the smaller the difference between coordinates, the smoother the
-        resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-        but this will differ depending on the use case and the noise settings.
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
 
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly.
+        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        broadcasting when needed and calculate the values efficiently. Using numpy array
+        parameters will be much faster and efficient than calling the ``noise()`` method
+        repeatedly in a loop. See the examples to see how this can be done.
 
-        Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-        automatically vectorize the operations and use broadcasting when needed."""
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
         pass
 
     @overload
-    def noise(self, x: float, y: float, z: float, **kwargs) -> float:
-        """Generate pseudo-random noise values for specific coodinates.
+    def noise(self, x: float, y: float, z: float, /) -> float:
+        """Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm.
+
+        Underlying Processing method: PApplet.noise
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x: float, **kwargs) -> float
-         * noise(x: float, y: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
+         * noise(x: float, /) -> float
+         * noise(x: float, y: float, /) -> float
+         * noise(x: float, y: float, z: float, /) -> float
 
         Parameters
         ----------
 
-        kwargs
-            keyword arguments to override existing noise detail or noise seed settings
+        x: float
+            x-coordinate in noise space
+
+        y: float
+            y-coordinate in noise space
+
+        z: float
+            z-coordinate in noise space
+
+        Notes
+        -----
+
+        Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm. Noise functions are random sequence generators that produce a
+        more natural, harmonic succession of numbers compared to the ``random()``
+        method.
+
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        space, in which each coordinate corresponds to a fixed pseudo-random value
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+        is done in a few of the examples.
+
+        The generated noise values for this method will typically be between 0 and 1,
+        and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        (smooth version / SuperSimplex). That algorithm generates noise values between
+        -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+        these differences when modifying your code to switch from one to the other.
+        There are other differences in the character of the noise values generated by
+        both methods, so you'll need to do some experimentation to get the results you
+        want.
+
+        The actual noise structure is similar to that of an audio signal, in respect to
+        the method's use of frequencies. Similar to the concept of harmonics in physics,
+        both noise algorithms are computed over several octaves which are added together
+        for the final result.
+
+        The nature of the noise values returned can be adjusted with ``noise_seed()``
+        and ``noise_detail()``.
+
+        Another way to adjust the character of the resulting sequence is the scale of
+        the input coordinates. As the method works within an infinite space, the value
+        of the coordinates doesn't matter as such; only the distance between successive
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
+
+        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        broadcasting when needed and calculate the values efficiently. Using numpy array
+        parameters will be much faster and efficient than calling the ``noise()`` method
+        repeatedly in a loop. See the examples to see how this can be done.
+
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
+        pass
+
+    def noise(self, *args) -> float:
+        """Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm.
+
+        Underlying Processing method: PApplet.noise
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * noise(x: float, /) -> float
+         * noise(x: float, y: float, /) -> float
+         * noise(x: float, y: float, z: float, /) -> float
+
+        Parameters
+        ----------
+
+        x: float
+            x-coordinate in noise space
+
+        y: float
+            y-coordinate in noise space
+
+        z: float
+            z-coordinate in noise space
+
+        Notes
+        -----
+
+        Generate pseudo-random noise values for specific coodinates using Processing's
+        noise algorithm. Noise functions are random sequence generators that produce a
+        more natural, harmonic succession of numbers compared to the ``random()``
+        method.
+
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        space, in which each coordinate corresponds to a fixed pseudo-random value
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
+        is done in a few of the examples.
+
+        The generated noise values for this method will typically be between 0 and 1,
+        and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
+        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        (smooth version / SuperSimplex). That algorithm generates noise values between
+        -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
+        these differences when modifying your code to switch from one to the other.
+        There are other differences in the character of the noise values generated by
+        both methods, so you'll need to do some experimentation to get the results you
+        want.
+
+        The actual noise structure is similar to that of an audio signal, in respect to
+        the method's use of frequencies. Similar to the concept of harmonics in physics,
+        both noise algorithms are computed over several octaves which are added together
+        for the final result.
+
+        The nature of the noise values returned can be adjusted with ``noise_seed()``
+        and ``noise_detail()``.
+
+        Another way to adjust the character of the resulting sequence is the scale of
+        the input coordinates. As the method works within an infinite space, the value
+        of the coordinates doesn't matter as such; only the distance between successive
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
+
+        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        broadcasting when needed and calculate the values efficiently. Using numpy array
+        parameters will be much faster and efficient than calling the ``noise()`` method
+        repeatedly in a loop. See the examples to see how this can be done.
+
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
+        if any(isinstance(arg, np.ndarray) for arg in args):
+            arrays = np.broadcast_arrays(*args)
+            return np.array(self._instance.noiseArray(
+                *[a.flatten() for a in arrays])).reshape(arrays[0].shape)
+        else:
+            return self._instance.noise(*args)
+
+    @overload
+    def os_noise(self, x: float, y: float, /) -> float:
+        """Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex).
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * os_noise(x: float, y: float, /) -> float
+         * os_noise(x: float, y: float, z: float, /) -> float
+         * os_noise(x: float, y: float, z: float, w: float, /) -> float
+
+        Parameters
+        ----------
 
         w: float
             w-coordinate in noise space
@@ -1553,75 +1731,76 @@ class MathMixin:
         Notes
         -----
 
-        Generate pseudo-random noise values for specific coodinates. Noise functions are
+        Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` function. Several well-known noise
-        algorithms were developed by Ken Perlin and have been used in graphical
-        applications to generate procedural textures, shapes, terrains, and other
-        seemingly organic forms.
+        numbers compared to the ``random()`` method.
 
-        In contrast to the ``random()`` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
-        (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-        Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-        algorithm. The noise value can be animated by moving through the noise space, as
-        demonstrated in the examples. Any dimension can also be interpreted as time. An
-        easy way to animate the noise value is to pass the ``noise()`` function the
-        ``frame_count`` divided by a scaling factor, as is done in a few of the
-        examples.
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+        as is done in a few of the examples.
 
-        The generated noise values for both Perlin Noise and Simplex Noise will be
-        between -1 and 1. This contrasts with Processing's noise function, which
-        typically returns values between 0 and 1.
+        The generated noise values for this method will be between -1 and 1, and can be
+        generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+        constant value as an extra parameter, as shown in a few examples. Py5 also
+        provides the ``noise()`` method, which generates noise using Processing's noise
+        algorithm. That algorithm typically generates noise values between 0 and 1, and
+        can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+        when modifying your code to switch from one to the other. There are other
+        differences in the character of the noise values generated by both methods, so
+        you'll need to do some experimentation to get the results you want.
 
-        Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-        generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-        generated in only 1 dimension, but as a convenience, py5 will add a second
-        dimension for you (with a value of 0) if only one dimension is used.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, both noise algorithms are computed over several octaves which are added
-        together for the final result.
-
-        The nature of the noise values returned can be adjusted with ``noise_mode()``,
-        ``noise_seed()``, and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with
+        ``os_noise_seed()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
+        the input coordinates. As the method works within an infinite space, the value
         of the coordinates doesn't matter as such; only the distance between successive
-        coordinates is important (such as when using ``noise()`` within a loop). As a
-        general rule, the smaller the difference between coordinates, the smoother the
-        resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-        but this will differ depending on the use case and the noise settings.
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
 
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly.
+        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        use broadcasting when needed and calculate the values efficiently. Using numpy
+        array parameters will be much faster and efficient than calling the
+        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+        be done. The noise algorithm for this method is implemented in Java.
 
-        Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-        automatically vectorize the operations and use broadcasting when needed."""
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
         pass
 
     @overload
-    def noise(self, x: float, y: float, z: float, w: float, **kwargs) -> float:
-        """Generate pseudo-random noise values for specific coodinates.
+    def os_noise(self, x: float, y: float, z: float, /) -> float:
+        """Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x: float, **kwargs) -> float
-         * noise(x: float, y: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
+         * os_noise(x: float, y: float, /) -> float
+         * os_noise(x: float, y: float, z: float, /) -> float
+         * os_noise(x: float, y: float, z: float, w: float, /) -> float
 
         Parameters
         ----------
-
-        kwargs
-            keyword arguments to override existing noise detail or noise seed settings
 
         w: float
             w-coordinate in noise space
@@ -1638,74 +1817,76 @@ class MathMixin:
         Notes
         -----
 
-        Generate pseudo-random noise values for specific coodinates. Noise functions are
+        Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` function. Several well-known noise
-        algorithms were developed by Ken Perlin and have been used in graphical
-        applications to generate procedural textures, shapes, terrains, and other
-        seemingly organic forms.
+        numbers compared to the ``random()`` method.
 
-        In contrast to the ``random()`` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
-        (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-        Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-        algorithm. The noise value can be animated by moving through the noise space, as
-        demonstrated in the examples. Any dimension can also be interpreted as time. An
-        easy way to animate the noise value is to pass the ``noise()`` function the
-        ``frame_count`` divided by a scaling factor, as is done in a few of the
-        examples.
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+        as is done in a few of the examples.
 
-        The generated noise values for both Perlin Noise and Simplex Noise will be
-        between -1 and 1. This contrasts with Processing's noise function, which
-        typically returns values between 0 and 1.
+        The generated noise values for this method will be between -1 and 1, and can be
+        generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+        constant value as an extra parameter, as shown in a few examples. Py5 also
+        provides the ``noise()`` method, which generates noise using Processing's noise
+        algorithm. That algorithm typically generates noise values between 0 and 1, and
+        can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+        when modifying your code to switch from one to the other. There are other
+        differences in the character of the noise values generated by both methods, so
+        you'll need to do some experimentation to get the results you want.
 
-        Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-        generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-        generated in only 1 dimension, but as a convenience, py5 will add a second
-        dimension for you (with a value of 0) if only one dimension is used.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, both noise algorithms are computed over several octaves which are added
-        together for the final result.
-
-        The nature of the noise values returned can be adjusted with ``noise_mode()``,
-        ``noise_seed()``, and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with
+        ``os_noise_seed()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
+        the input coordinates. As the method works within an infinite space, the value
         of the coordinates doesn't matter as such; only the distance between successive
-        coordinates is important (such as when using ``noise()`` within a loop). As a
-        general rule, the smaller the difference between coordinates, the smoother the
-        resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-        but this will differ depending on the use case and the noise settings.
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
 
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly.
+        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        use broadcasting when needed and calculate the values efficiently. Using numpy
+        array parameters will be much faster and efficient than calling the
+        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+        be done. The noise algorithm for this method is implemented in Java.
 
-        Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-        automatically vectorize the operations and use broadcasting when needed."""
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
         pass
 
-    def noise(self, *args, **kwargs) -> float:
-        """Generate pseudo-random noise values for specific coodinates.
+    @overload
+    def os_noise(self, x: float, y: float, z: float, w: float, /) -> float:
+        """Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
         Methods
         -------
 
         You can use any of the following signatures:
 
-         * noise(x: float, **kwargs) -> float
-         * noise(x: float, y: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, **kwargs) -> float
-         * noise(x: float, y: float, z: float, w: float, **kwargs) -> float
+         * os_noise(x: float, y: float, /) -> float
+         * os_noise(x: float, y: float, z: float, /) -> float
+         * os_noise(x: float, y: float, z: float, w: float, /) -> float
 
         Parameters
         ----------
-
-        kwargs
-            keyword arguments to override existing noise detail or noise seed settings
 
         w: float
             w-coordinate in noise space
@@ -1722,195 +1903,146 @@ class MathMixin:
         Notes
         -----
 
-        Generate pseudo-random noise values for specific coodinates. Noise functions are
+        Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` function. Several well-known noise
-        algorithms were developed by Ken Perlin and have been used in graphical
-        applications to generate procedural textures, shapes, terrains, and other
-        seemingly organic forms.
+        numbers compared to the ``random()`` method.
 
-        In contrast to the ``random()`` function, noise is defined in an n-dimensional
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
-        (fixed only for the lifespan of the program). Py5 can generate Perlin Noise and
-        Simplex Noise. By default, py5 will generate noise using the Simplex Noise
-        algorithm. The noise value can be animated by moving through the noise space, as
-        demonstrated in the examples. Any dimension can also be interpreted as time. An
-        easy way to animate the noise value is to pass the ``noise()`` function the
-        ``frame_count`` divided by a scaling factor, as is done in a few of the
-        examples.
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+        as is done in a few of the examples.
 
-        The generated noise values for both Perlin Noise and Simplex Noise will be
-        between -1 and 1. This contrasts with Processing's noise function, which
-        typically returns values between 0 and 1.
+        The generated noise values for this method will be between -1 and 1, and can be
+        generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+        constant value as an extra parameter, as shown in a few examples. Py5 also
+        provides the ``noise()`` method, which generates noise using Processing's noise
+        algorithm. That algorithm typically generates noise values between 0 and 1, and
+        can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+        when modifying your code to switch from one to the other. There are other
+        differences in the character of the noise values generated by both methods, so
+        you'll need to do some experimentation to get the results you want.
 
-        Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-        generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-        generated in only 1 dimension, but as a convenience, py5 will add a second
-        dimension for you (with a value of 0) if only one dimension is used.
-
-        The actual noise structure is similar to that of an audio signal, in respect to
-        the function's use of frequencies. Similar to the concept of harmonics in
-        physics, both noise algorithms are computed over several octaves which are added
-        together for the final result.
-
-        The nature of the noise values returned can be adjusted with ``noise_mode()``,
-        ``noise_seed()``, and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with
+        ``os_noise_seed()``.
 
         Another way to adjust the character of the resulting sequence is the scale of
-        the input coordinates. As the function works within an infinite space, the value
+        the input coordinates. As the method works within an infinite space, the value
         of the coordinates doesn't matter as such; only the distance between successive
-        coordinates is important (such as when using ``noise()`` within a loop). As a
-        general rule, the smaller the difference between coordinates, the smoother the
-        resulting noise sequence. Steps of 0.005-0.03 work best for most applications,
-        but this will differ depending on the use case and the noise settings.
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
 
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly.
+        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        use broadcasting when needed and calculate the values efficiently. Using numpy
+        array parameters will be much faster and efficient than calling the
+        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+        be done. The noise algorithm for this method is implemented in Java.
 
-        Py5's ``noise()`` function can also accept numpy arrays as parameters. It will
-        automatically vectorize the operations and use broadcasting when needed."""
-        len_args = len(args)
-        noise_args = {
-            'octaves': self._NOISE_OCTAVES,
-            'persistence': self._NOISE_PERSISTENCE,
-            'lacunarity': self._NOISE_LACUNARITY,
-            'base': self._NOISE_SEED,
-            # this will override other parameters if specified by the user
-            **kwargs
-        }
-        noisef = lambda *x, **_: x[0]
-        if self._NOISE_MODE == self.PERLIN_NOISE:
-            if len_args not in [1, 2, 3]:
-                raise RuntimeError(
-                    'Sorry, Perlin noise can only be generated in 1, 2, or 3 dimensions.')
-            noisef = {
-                1: noise.pnoise1,
-                2: noise.pnoise2,
-                3: noise.pnoise3}[len_args]
-        elif self._NOISE_MODE == self.SIMPLEX_NOISE:
-            if len_args not in [1, 2, 3, 4]:
-                raise RuntimeError(
-                    'Sorry, Simplex noise can only be generated in 1, 2, 3, or 4 dimensions.')
-            noisef = {
-                1: noise.snoise2,
-                2: noise.snoise2,
-                3: noise.snoise3,
-                4: noise.snoise4}[len_args]
-            if len_args == 1:
-                args = args[0], 0
-            if len_args in [3, 4]:
-                del noise_args['base']
-        if any(isinstance(v, np.ndarray) for v in args):
-            noisef = np.vectorize(noisef)
-        return noisef(*args, **noise_args)
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
+        pass
 
-    def noise_mode(self, mode: int) -> None:
-        """Sets the kind of noise that the ``noise()`` function will generate.
+    def os_noise(self, *args) -> float:
+        """Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex).
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * os_noise(x: float, y: float, /) -> float
+         * os_noise(x: float, y: float, z: float, /) -> float
+         * os_noise(x: float, y: float, z: float, w: float, /) -> float
 
         Parameters
         ----------
 
-        mode: int
-            kind of noise to generate, either PERLIN_NOISE or SIMPLEX_NOISE
+        w: float
+            w-coordinate in noise space
+
+        x: float
+            x-coordinate in noise space
+
+        y: float
+            y-coordinate in noise space
+
+        z: float
+            z-coordinate in noise space
 
         Notes
         -----
 
-        Sets the kind of noise that the ``noise()`` function will generate. This can be
-        either Perlin Noise or Simplex Noise. By default, py5 will generate noise using
-        the Simplex Noise algorithm.
+        Generate pseudo-random noise values for specific coodinates using the
+        OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
+        random sequence generators that produce a more natural, harmonic succession of
+        numbers compared to the ``random()`` method.
 
-        Perlin Noise can be generated in 1, 2, or 3 dimensions and Simplex Noise can be
-        generated in 1, 2, 3, or 4 dimensions. Technically Simplex Noise cannot be
-        generated in only 1 dimension, but as a convenience, py5 will add a second
-        dimension for you (with a value of 0) if only one dimension is used.
+        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        space, in which each coordinate corresponds to a fixed pseudo-random value
+        (fixed only for the lifespan of the program). The noise value can be animated by
+        moving through the noise space, as demonstrated in the examples. Any dimension
+        can also be interpreted as time. An easy way to animate the noise value is to
+        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
+        as is done in a few of the examples.
 
-        The specific Perlin Noise implementation provided by py5 is the "Improved Perlin
-        Noise" algorithm as described in Ken Perlin's 2002 SIGGRAPH paper. This uses the
-        fifth degree polynomial ``f(t)=6t^5-15t^4+10t^3`` as the blending function. This
-        is different from the "Classic Perlin Noise" algorithm, described in Ken
-        Perlin's 1985 SIGGRAPH paper, which uses the third degree polynomial
-        ``f(t)=3t^2-2t^3`` instead. The Simplex Noise algorithm, also developed by Ken
-        Perlin, is different from Perlin Noise, and uses a completely different approach
-        for generating noise values. Processing's noise algorithm is a valid and useful
-        noise algorithm but is not identical to any of the algorithms mentioned here, so
-        py5's noise values will not match Processing's no matter what inputs or settings
-        are used.
+        The generated noise values for this method will be between -1 and 1, and can be
+        generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
+        constant value as an extra parameter, as shown in a few examples. Py5 also
+        provides the ``noise()`` method, which generates noise using Processing's noise
+        algorithm. That algorithm typically generates noise values between 0 and 1, and
+        can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
+        when modifying your code to switch from one to the other. There are other
+        differences in the character of the noise values generated by both methods, so
+        you'll need to do some experimentation to get the results you want.
 
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly."""
-        if mode in [self.PERLIN_NOISE, self.SIMPLEX_NOISE]:
-            self._NOISE_MODE = mode
+        The nature of the noise values returned can be adjusted with
+        ``os_noise_seed()``.
 
-    def noise_detail(self, octaves: float = None, persistence: float = None,
-                     lacunarity: float = None) -> None:
-        """Adjusts the character and level of detail produced by the ``noise()`` function.
+        Another way to adjust the character of the resulting sequence is the scale of
+        the input coordinates. As the method works within an infinite space, the value
+        of the coordinates doesn't matter as such; only the distance between successive
+        coordinates is important. As a general rule, the smaller the difference between
+        coordinates, the smoother the resulting noise sequence. Steps of 0.005-0.03 work
+        best for most applications, but this will differ depending on the use case and
+        the noise settings.
 
-        Parameters
-        ----------
+        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        use broadcasting when needed and calculate the values efficiently. Using numpy
+        array parameters will be much faster and efficient than calling the
+        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
+        be done. The noise algorithm for this method is implemented in Java.
 
-        lacunarity: float = None
-            change in noise frequency from one octave to the next
-
-        octaves: float = None
-            number of noise octaves
-
-        persistence: float = None
-            change in noise amplitude from one octave to the next
-
-        Notes
-        -----
-
-        Adjusts the character and level of detail produced by the ``noise()`` function.
-        Similar to harmonics in physics, noise is computed over several octaves. Lower
-        octaves contribute more to the output signal and as such define the overall
-        intensity of the noise, whereas higher octaves create finer-grained details in
-        the noise sequence.
-
-        By default, noise is computed over 4 octaves. Each octave has half the amplitude
-        and twice the frequency of its predecessor. The decrease in amplitude can be
-        adjusted with the ``persistence`` parameter. The increase in frequency can be
-        adjusted with the ``lacunarity`` parameter.
-
-        For example, a ``persistence`` parameter of 0.75 means each octave will now have
-        75% impact (25% less) of the previous lower octave. A ``lacunarity`` parameter
-        of 4 means that each octave will have 4 times the frequency of the previous
-        lower octave, providing noise at a finer-grained scale than what the default
-        value of 2 would provide.
-
-        By changing these parameters, the signal created by the ``noise()`` function can
-        be adapted to fit very specific needs and characteristics.
-
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly."""
-        if octaves:
-            self._NOISE_OCTAVES = octaves
-        if persistence:
-            self._NOISE_PERSISTENCE = persistence
-        if lacunarity:
-            self._NOISE_LACUNARITY = lacunarity
-
-    def noise_seed(self, seed: int) -> None:
-        """Sets the seed value for ``noise()``.
-
-        Parameters
-        ----------
-
-        seed: int
-            seed value
-
-        Notes
-        -----
-
-        Sets the seed value for ``noise()``. By default, ``noise()`` produces different
-        results each time the program is run. Set the seed parameter to a constant to
-        return the same pseudo-random numbers each time the Sketch is run.
-
-        Py5's noise functionality is provided by the Python noise library. The noise
-        library provides more advanced features than what is documented here. To use the
-        more advanced features, import that library directly."""
-        # NOTE: perlin noise requires integer seeds
-        self._NOISE_SEED = seed
+        Noise generation is a rich and complex topic, and there are many noise
+        algorithms and libraries available that are worth learning about. Early versions
+        of py5 used the Python "noise" library, which can generate noise using the
+        "Improved Perlin Noise" algorithm (as described in Ken Perlin's 2002 SIGGRAPH
+        paper) and the Simplex Noise algorithm (also developed by Ken Perlin). That
+        Python library was removed from py5 because it has some bugs and hasn't had a
+        release in years. Nevertheless, it might be useful to you, and can be installed
+        separately like any other Python package. You can also try the Python library
+        "vnoise", which is a pure Python implementation of the Improved Perlin Noise
+        algorithm. Note that py5 can also employ Java libraries, so consider "FastNoise
+        Lite" to experiment with a large selection of noise algorithms with efficient
+        implementations."""
+        if any(isinstance(arg, np.ndarray) for arg in args):
+            arrays = np.broadcast_arrays(*args)
+            return np.array(self._instance.osNoiseArray(
+                *[a.flatten() for a in arrays])).reshape(arrays[0].shape)
+        else:
+            return self._instance.osNoise(*args)

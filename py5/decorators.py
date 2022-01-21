@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2021 Jim Schmitz
+#   Copyright (C) 2020-2022 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -33,6 +33,8 @@ def _text_fix_str(f):
     def decorated(self_, *args):
         if isinstance(args[0], str):
             args = [JString(args[0]), *args[1:]]
+        elif isinstance(args[0], int):
+            args = [JInt(args[0]), *args[1:]]
         return f(self_, *args)
 
     return decorated

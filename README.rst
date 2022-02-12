@@ -1,7 +1,9 @@
 py5
 ---
 
-.. image:: https://img.shields.io/pypi/dm/py5?label=py5%20PyPI%20downloads
+.. image:: https://pepy.tech/badge/py5/month
+
+.. image:: https://pepy.tech/badge/py5/week
 
 .. image:: https://mybinder.org/badge_logo.svg
     :target: https://mybinder.org/v2/gh/hx2A/py5examples/HEAD?urlpath=lab
@@ -32,7 +34,7 @@ Here is a simple example of a working py5 Sketch:
 
 
 
-If you have Java 11 installed on your computer, you can install py5 using pip:
+If you have Java 17 installed on your computer, you can install py5 using pip:
 
 .. code::
 

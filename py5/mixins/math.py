@@ -17,9 +17,12 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-from typing import overload, Union, Any, List
+from __future__ import annotations
+
+from typing import overload, Union, Any
 
 import numpy as np
+import numpy.typing as npt
 
 from jpype import JClass
 
@@ -36,13 +39,14 @@ class MathMixin:
     # *** BEGIN METHODS ***
 
     @classmethod
-    def sin(cls, angle: float) -> float:
+    def sin(cls, angle: Union[float, npt.ArrayLike]
+            ) -> Union[float, npt.NDArray]:
         """Calculates the sine of an angle.
 
         Parameters
         ----------
 
-        angle: float
+        angle: Union[float, npt.ArrayLike]
             angle in radians
 
         Notes
@@ -56,13 +60,14 @@ class MathMixin:
         return np.sin(angle)
 
     @classmethod
-    def cos(cls, angle: float) -> float:
+    def cos(cls, angle: Union[float, npt.ArrayLike]
+            ) -> Union[float, npt.NDArray]:
         """Calculates the cosine of an angle.
 
         Parameters
         ----------
 
-        angle: float
+        angle: Union[float, npt.ArrayLike]
             angle in radians
 
         Notes
@@ -76,13 +81,14 @@ class MathMixin:
         return np.cos(angle)
 
     @classmethod
-    def tan(cls, angle: float) -> float:
+    def tan(cls, angle: Union[float, npt.ArrayLike]
+            ) -> Union[float, npt.NDArray]:
         """Calculates the ratio of the sine and cosine of an angle.
 
         Parameters
         ----------
 
-        angle: float
+        angle: Union[float, npt.ArrayLike]
             angle in radians
 
         Notes
@@ -96,13 +102,14 @@ class MathMixin:
         return np.tan(angle)
 
     @classmethod
-    def asin(cls, value: float) -> float:
+    def asin(cls, value: Union[float, npt.ArrayLike]
+             ) -> Union[float, npt.NDArray]:
         """The inverse of ``sin()``, returns the arc sine of a value.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             value in the range of -1 to 1 whose arc sine is to be returned
 
         Notes
@@ -116,13 +123,14 @@ class MathMixin:
         return np.arcsin(value)
 
     @classmethod
-    def acos(cls, value: float) -> float:
+    def acos(cls, value: Union[float, npt.ArrayLike]
+             ) -> Union[float, npt.NDArray]:
         """The inverse of ``cos()``, returns the arc cosine of a value.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             value in the range of -1 to 1 whose arc cosine is to be returned
 
         Notes
@@ -136,13 +144,14 @@ class MathMixin:
         return np.arccos(value)
 
     @classmethod
-    def atan(cls, value: float) -> float:
+    def atan(cls, value: Union[float, npt.ArrayLike]
+             ) -> Union[float, npt.NDArray]:
         """The inverse of ``tan()``, returns the arc tangent of a value.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             value whose arc tangent is to be returned
 
         Notes
@@ -156,17 +165,22 @@ class MathMixin:
         return np.arctan(value)
 
     @classmethod
-    def atan2(cls, y: float, x: float) -> float:
+    def atan2(cls,
+              y: Union[float,
+                       npt.ArrayLike],
+              x: Union[float,
+                       npt.ArrayLike]) -> Union[float,
+                                                npt.NDArray]:
         """Calculates the angle (in radians) from a specified point to the coordinate
         origin as measured from the positive x-axis.
 
         Parameters
         ----------
 
-        x: float
+        x: Union[float, npt.ArrayLike]
             x-coordinate of the point
 
-        y: float
+        y: Union[float, npt.ArrayLike]
             y-coordinate of the point
 
         Notes
@@ -183,13 +197,16 @@ class MathMixin:
         return np.arctan2(y, x)
 
     @classmethod
-    def degrees(cls, radians: float) -> float:
+    def degrees(cls,
+                radians: Union[float,
+                               npt.ArrayLike]) -> Union[float,
+                                                        npt.NDArray]:
         """Converts a radian measurement to its corresponding value in degrees.
 
         Parameters
         ----------
 
-        radians: float
+        radians: Union[float, npt.ArrayLike]
             radian value to convert to degrees
 
         Notes
@@ -205,13 +222,16 @@ class MathMixin:
         return np.degrees(radians)
 
     @classmethod
-    def radians(cls, degrees: float) -> float:
+    def radians(cls,
+                degrees: Union[float,
+                               npt.ArrayLike]) -> Union[float,
+                                                        npt.NDArray]:
         """Converts a degree measurement to its corresponding value in radians.
 
         Parameters
         ----------
 
-        degrees: float
+        degrees: Union[float, npt.ArrayLike]
             degree value to convert to radians
 
         Notes
@@ -227,19 +247,26 @@ class MathMixin:
         return np.radians(degrees)
 
     @classmethod
-    def constrain(cls, amt: float, low: float, high: float) -> float:
+    def constrain(cls,
+                  amt: Union[float,
+                             npt.NDArray],
+                  low: Union[float,
+                             npt.NDArray],
+                  high: Union[float,
+                              npt.NDArray]) -> Union[float,
+                                                     npt.NDArray]:
         """Constrains a value to not exceed a maximum and minimum value.
 
         Parameters
         ----------
 
-        amt: float
+        amt: Union[float, npt.NDArray]
             the value to constrain
 
-        high: float
+        high: Union[float, npt.NDArray]
             minimum limit
 
-        low: float
+        low: Union[float, npt.NDArray]
             maximum limit
 
         Notes
@@ -249,31 +276,36 @@ class MathMixin:
         return np.where(amt < low, low, np.where(amt > high, high, amt))
 
     @classmethod
-    def remap(
-            cls,
-            value: float,
-            start1: float,
-            stop1: float,
-            start2: float,
-            stop2: float) -> float:
+    def remap(cls,
+              value: Union[float,
+                           npt.NDArray],
+              start1: Union[float,
+                            npt.NDArray],
+              stop1: Union[float,
+                           npt.NDArray],
+              start2: Union[float,
+                            npt.NDArray],
+              stop2: Union[float,
+                           npt.NDArray]) -> Union[float,
+                                                  npt.NDArray]:
         """Re-maps a number from one range to another.
 
         Parameters
         ----------
 
-        start1: float
+        start1: Union[float, npt.NDArray]
             lower bound of the value's current range
 
-        start2: float
+        start2: Union[float, npt.NDArray]
             lower bound of the value's target range
 
-        stop1: float
+        stop1: Union[float, npt.NDArray]
             upper bound of the value's current range
 
-        stop2: float
+        stop2: Union[float, npt.NDArray]
             upper bound of the value's target range
 
-        value: float
+        value: Union[float, npt.NDArray]
             the incoming value to be converted
 
         Notes
@@ -296,7 +328,8 @@ class MathMixin:
             ((value - start1) / (stop1 - start1))
 
     @overload
-    def dist(cls, x1: float, y1: float, x2: float, y2: float, /) -> float:
+    def dist(cls, x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float,
+             npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
         """Calculates the distance between two points.
 
         Methods
@@ -304,28 +337,28 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
-         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+         * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x1: float
+        x1: Union[float, npt.NDArray]
             x-coordinate of the first point
 
-        x2: float
+        x2: Union[float, npt.NDArray]
             x-coordinate of the second point
 
-        y1: float
+        y1: Union[float, npt.NDArray]
             y-coordinate of the first point
 
-        y2: float
+        y2: Union[float, npt.NDArray]
             y-coordinate of the second point
 
-        z1: float
+        z1: Union[float, npt.NDArray]
             z-coordinate of the first point
 
-        z2: float
+        z2: Union[float, npt.NDArray]
             z-coordinate of the second point
 
         Notes
@@ -335,8 +368,21 @@ class MathMixin:
         pass
 
     @overload
-    def dist(cls, x1: float, y1: float, z1: float,
-             x2: float, y2: float, z2: float, /) -> float:
+    def dist(cls,
+             x1: Union[float,
+                       npt.NDArray],
+             y1: Union[float,
+                       npt.NDArray],
+             z1: Union[float,
+                       npt.NDArray],
+             x2: Union[float,
+                       npt.NDArray],
+             y2: Union[float,
+                       npt.NDArray],
+             z2: Union[float,
+                       npt.NDArray],
+             /) -> Union[float,
+                         npt.NDArray]:
         """Calculates the distance between two points.
 
         Methods
@@ -344,28 +390,28 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
-         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+         * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x1: float
+        x1: Union[float, npt.NDArray]
             x-coordinate of the first point
 
-        x2: float
+        x2: Union[float, npt.NDArray]
             x-coordinate of the second point
 
-        y1: float
+        y1: Union[float, npt.NDArray]
             y-coordinate of the first point
 
-        y2: float
+        y2: Union[float, npt.NDArray]
             y-coordinate of the second point
 
-        z1: float
+        z1: Union[float, npt.NDArray]
             z-coordinate of the first point
 
-        z2: float
+        z2: Union[float, npt.NDArray]
             z-coordinate of the second point
 
         Notes
@@ -375,7 +421,7 @@ class MathMixin:
         pass
 
     @classmethod
-    def dist(cls, *args: float) -> float:
+    def dist(cls, *args: Union[float, npt.NDArray]) -> float:
         """Calculates the distance between two points.
 
         Methods
@@ -383,28 +429,28 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
-         * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+         * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x1: float
+        x1: Union[float, npt.NDArray]
             x-coordinate of the first point
 
-        x2: float
+        x2: Union[float, npt.NDArray]
             x-coordinate of the second point
 
-        y1: float
+        y1: Union[float, npt.NDArray]
             y-coordinate of the first point
 
-        y2: float
+        y2: Union[float, npt.NDArray]
             y-coordinate of the second point
 
-        z1: float
+        z1: Union[float, npt.NDArray]
             z-coordinate of the first point
 
-        z2: float
+        z2: Union[float, npt.NDArray]
             z-coordinate of the second point
 
         Notes
@@ -419,19 +465,26 @@ class MathMixin:
                              args[(len(args) // 2):])])**0.5
 
     @classmethod
-    def lerp(cls, start: float, stop: float, amt: float) -> float:
+    def lerp(cls,
+             start: Union[float,
+                          npt.NDArray],
+             stop: Union[float,
+                         npt.NDArray],
+             amt: Union[float,
+                        npt.NDArray]) -> Union[float,
+                                               npt.NDArray]:
         """Calculates a number between two numbers at a specific increment.
 
         Parameters
         ----------
 
-        amt: float
+        amt: Union[float, npt.NDArray]
             float between 0.0 and 1.0
 
-        start: float
+        start: Union[float, npt.NDArray]
             first value
 
-        stop: float
+        stop: Union[float, npt.NDArray]
             second value
 
         Notes
@@ -447,7 +500,8 @@ class MathMixin:
         return amt * (stop - start) + start
 
     @overload
-    def mag(cls, a: float, b: float, /) -> float:
+    def mag(cls, a: Union[float, npt.NDArray],
+            b: Union[float, npt.NDArray], /) -> float:
         """Calculates the magnitude (or length) of a vector.
 
         Methods
@@ -455,19 +509,19 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * mag(a: float, b: float, /) -> float
-         * mag(a: float, b: float, c: float, /) -> float
+         * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
+         * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
 
         Parameters
         ----------
 
-        a: float
+        a: Union[float, npt.NDArray]
             first value
 
-        b: float
+        b: Union[float, npt.NDArray]
             second value
 
-        c: float
+        c: Union[float, npt.NDArray]
             third value
 
         Notes
@@ -481,7 +535,8 @@ class MathMixin:
         pass
 
     @overload
-    def mag(cls, a: float, b: float, c: float, /) -> float:
+    def mag(cls, a: Union[float, npt.NDArray], b: Union[float,
+            npt.NDArray], c: Union[float, npt.NDArray], /) -> float:
         """Calculates the magnitude (or length) of a vector.
 
         Methods
@@ -489,19 +544,19 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * mag(a: float, b: float, /) -> float
-         * mag(a: float, b: float, c: float, /) -> float
+         * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
+         * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
 
         Parameters
         ----------
 
-        a: float
+        a: Union[float, npt.NDArray]
             first value
 
-        b: float
+        b: Union[float, npt.NDArray]
             second value
 
-        c: float
+        c: Union[float, npt.NDArray]
             third value
 
         Notes
@@ -515,7 +570,7 @@ class MathMixin:
         pass
 
     @classmethod
-    def mag(cls, *args: float) -> float:
+    def mag(cls, *args: Union[float, npt.NDArray]) -> float:
         """Calculates the magnitude (or length) of a vector.
 
         Methods
@@ -523,19 +578,19 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * mag(a: float, b: float, /) -> float
-         * mag(a: float, b: float, c: float, /) -> float
+         * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
+         * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
 
         Parameters
         ----------
 
-        a: float
+        a: Union[float, npt.NDArray]
             first value
 
-        b: float
+        b: Union[float, npt.NDArray]
             second value
 
-        c: float
+        c: Union[float, npt.NDArray]
             third value
 
         Notes
@@ -549,19 +604,26 @@ class MathMixin:
         return sum([x * x for x in args])**0.5
 
     @classmethod
-    def norm(cls, value: float, start: float, stop: float) -> float:
+    def norm(cls,
+             value: Union[float,
+                          npt.NDArray],
+             start: Union[float,
+                          npt.NDArray],
+             stop: Union[float,
+                         npt.NDArray]) -> Union[float,
+                                                npt.NDArray]:
         """Normalizes a number from another range into a value between 0 and 1.
 
         Parameters
         ----------
 
-        start: float
+        start: Union[float, npt.NDArray]
             lower bound of the value's current range
 
-        stop: float
+        stop: Union[float, npt.NDArray]
             upper bound of the value's current range
 
-        value: float
+        value: Union[float, npt.NDArray]
             the incoming value to be converted
 
         Notes
@@ -576,13 +638,13 @@ class MathMixin:
         return (value - start) / (stop - start)
 
     @classmethod
-    def sq(cls, value: float) -> float:
+    def sq(cls, value: Union[float, npt.NDArray]) -> Union[float, npt.NDArray]:
         """Squares a number (multiplies a number by itself).
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.NDArray]
             number to square
 
         Notes
@@ -594,13 +656,14 @@ class MathMixin:
         return value * value
 
     @classmethod
-    def sqrt(cls, value: float) -> Union[float, complex]:
+    def sqrt(cls, value: Union[float, npt.NDArray]
+             ) -> Union[float, complex, npt.NDArray]:
         """Calculates the square root of a number.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.NDArray]
             value to calculate the square root of
 
         Notes
@@ -619,14 +682,15 @@ class MathMixin:
         return value**0.5
 
     @classmethod
-    def floor(cls, value: float) -> int:
+    def floor(cls, value: Union[float, npt.ArrayLike]
+              ) -> Union[int, npt.NDArray]:
         """Calculates the closest int value that is less than or equal to the value of the
         parameter.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             number to round down
 
         Notes
@@ -636,17 +700,18 @@ class MathMixin:
         parameter.
 
         This function makes a call to the numpy ``floor()`` function."""
-        return int(np.floor(value))
+        return np.floor(value).astype(np.int_)
 
     @classmethod
-    def ceil(cls, value: float) -> int:
+    def ceil(cls, value: Union[float, npt.ArrayLike]
+             ) -> Union[int, npt.NDArray]:
         """Calculates the closest int value that is greater than or equal to the value of
         the parameter.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             number to round up
 
         Notes
@@ -656,17 +721,18 @@ class MathMixin:
         the parameter.
 
         This function makes a call to the numpy ``ceil()`` function."""
-        return int(np.ceil(value))
+        return np.ceil(value).astype(np.int_)
 
     @classmethod
-    def exp(cls, value: float) -> float:
+    def exp(cls, value: Union[float, npt.ArrayLike]
+            ) -> Union[float, npt.NDArray]:
         """Returns Euler's number e (2.71828...) raised to the power of the ``n``
         parameter.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             exponent to raise
 
         Notes
@@ -679,13 +745,14 @@ class MathMixin:
         return np.exp(value)
 
     @classmethod
-    def log(cls, value: float) -> float:
+    def log(cls, value: Union[float, npt.ArrayLike]
+            ) -> Union[float, npt.NDArray]:
         """Calculates the natural logarithm (the base-e logarithm) of a number.
 
         Parameters
         ----------
 
-        value: float
+        value: Union[float, npt.ArrayLike]
             number greater than 0.0
 
         Notes
@@ -1131,13 +1198,13 @@ class MathMixin:
         raise TypeError(
             f'No matching overloads found for Sketch.random_int({types})')
 
-    def random_choice(self, objects: List[Any]) -> Any:
+    def random_choice(self, objects: list[Any]) -> Any:
         """Select a random item from a list.
 
         Parameters
         ----------
 
-        objects: List[Any]
+        objects: list[Any]
             list of objects to choose from
 
         Notes
@@ -1340,7 +1407,8 @@ class MathMixin:
             f'No matching overloads found for Sketch.random_gaussian({types})')
 
     @overload
-    def noise(self, x: float, /) -> float:
+    def noise(self, x: Union[float, npt.NDArray], /
+              ) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm.
 
@@ -1351,20 +1419,20 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * noise(x: float, /) -> float
-         * noise(x: float, y: float, /) -> float
-         * noise(x: float, y: float, z: float, /) -> float
+         * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1429,7 +1497,8 @@ class MathMixin:
         pass
 
     @overload
-    def noise(self, x: float, y: float, /) -> float:
+    def noise(self, x: Union[float, npt.NDArray], y: Union[float,
+              npt.NDArray], /) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm.
 
@@ -1440,20 +1509,20 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * noise(x: float, /) -> float
-         * noise(x: float, y: float, /) -> float
-         * noise(x: float, y: float, z: float, /) -> float
+         * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1518,7 +1587,8 @@ class MathMixin:
         pass
 
     @overload
-    def noise(self, x: float, y: float, z: float, /) -> float:
+    def noise(self, x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
+              z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm.
 
@@ -1529,20 +1599,20 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * noise(x: float, /) -> float
-         * noise(x: float, y: float, /) -> float
-         * noise(x: float, y: float, z: float, /) -> float
+         * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1606,7 +1676,7 @@ class MathMixin:
         implementations."""
         pass
 
-    def noise(self, *args) -> float:
+    def noise(self, *args) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm.
 
@@ -1617,20 +1687,20 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * noise(x: float, /) -> float
-         * noise(x: float, y: float, /) -> float
-         * noise(x: float, y: float, z: float, /) -> float
+         * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1700,7 +1770,8 @@ class MathMixin:
             return self._instance.noise(*args)
 
     @overload
-    def os_noise(self, x: float, y: float, /) -> float:
+    def os_noise(self, x: Union[float, npt.NDArray],
+                 y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -1709,23 +1780,23 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * os_noise(x: float, y: float, /) -> float
-         * os_noise(x: float, y: float, z: float, /) -> float
-         * os_noise(x: float, y: float, z: float, w: float, /) -> float
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        w: float
+        w: Union[float, npt.NDArray]
             w-coordinate in noise space
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1786,7 +1857,8 @@ class MathMixin:
         pass
 
     @overload
-    def os_noise(self, x: float, y: float, z: float, /) -> float:
+    def os_noise(self, x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
+                 z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -1795,23 +1867,23 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * os_noise(x: float, y: float, /) -> float
-         * os_noise(x: float, y: float, z: float, /) -> float
-         * os_noise(x: float, y: float, z: float, w: float, /) -> float
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        w: float
+        w: Union[float, npt.NDArray]
             w-coordinate in noise space
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1872,7 +1944,17 @@ class MathMixin:
         pass
 
     @overload
-    def os_noise(self, x: float, y: float, z: float, w: float, /) -> float:
+    def os_noise(self,
+                 x: Union[float,
+                          npt.NDArray],
+                 y: Union[float,
+                          npt.NDArray],
+                 z: Union[float,
+                          npt.NDArray],
+                 w: Union[float,
+                          npt.NDArray],
+                 /) -> Union[float,
+                             npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -1881,23 +1963,23 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * os_noise(x: float, y: float, /) -> float
-         * os_noise(x: float, y: float, z: float, /) -> float
-         * os_noise(x: float, y: float, z: float, w: float, /) -> float
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        w: float
+        w: Union[float, npt.NDArray]
             w-coordinate in noise space
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes
@@ -1957,7 +2039,7 @@ class MathMixin:
         implementations."""
         pass
 
-    def os_noise(self, *args) -> float:
+    def os_noise(self, *args) -> Union[float, npt.NDArray]:
         """Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -1966,23 +2048,23 @@ class MathMixin:
 
         You can use any of the following signatures:
 
-         * os_noise(x: float, y: float, /) -> float
-         * os_noise(x: float, y: float, z: float, /) -> float
-         * os_noise(x: float, y: float, z: float, w: float, /) -> float
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+         * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
         Parameters
         ----------
 
-        w: float
+        w: Union[float, npt.NDArray]
             w-coordinate in noise space
 
-        x: float
+        x: Union[float, npt.NDArray]
             x-coordinate in noise space
 
-        y: float
+        y: Union[float, npt.NDArray]
             y-coordinate in noise space
 
-        z: float
+        z: Union[float, npt.NDArray]
             z-coordinate in noise space
 
         Notes

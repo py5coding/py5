@@ -204,8 +204,8 @@ class Py5Surface:
         the window in the same way as they do for many other windows on their computer.
         By default, the Sketch window is not resizable.
 
-        Changing the window size will clear the drawing canvas. If your Sketch uses
-        this, the ``width`` and ``height`` variables will change.
+        Changing the window size will clear the drawing canvas. If you do this, the
+        ``width`` and ``height`` variables will change.
         """
         return self._instance.setResizable(resizable)
 
@@ -229,8 +229,8 @@ class Py5Surface:
         Set a new width and height for the Sketch window. You do not need to call
         ``Py5Surface.set_resizable()`` before calling this.
 
-        Changing the window size will clear the drawing canvas. If your Sketch uses
-        this, the ``width`` and ``height`` variables will change.
+        Changing the window size will clear the drawing canvas. If you do this, the
+        ``width`` and ``height`` variables will change.
         """
         return self._instance.setSize(width, height)
 

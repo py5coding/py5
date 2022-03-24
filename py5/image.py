@@ -20,7 +20,7 @@
 from __future__ import annotations
 
 import functools
-from typing import overload, List, Union  # noqa
+from typing import overload, Union  # noqa
 
 from .base import Py5Base
 from .mixins import PixelPy5ImageMixin
@@ -1078,7 +1078,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         return self._instance.loadPixels()
 
     @overload
-    def mask(self, mask_array: NDArray[(Any,), Int], /) -> None:
+    def mask(self, mask_array: npt.NDArray[np.integer], /) -> None:
         """Masks part of an image from displaying by loading another image and using it as
         an alpha channel.
 
@@ -1090,7 +1090,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: NDArray[(Any,), Int], /) -> None
+         * mask(mask_array: npt.NDArray[np.integer], /) -> None
 
         Parameters
         ----------
@@ -1098,8 +1098,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: NDArray[(Any,), Int]
-            array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
+        mask_array: npt.NDArray[np.integer]
+            1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
         -----
@@ -1130,7 +1130,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: NDArray[(Any,), Int], /) -> None
+         * mask(mask_array: npt.NDArray[np.integer], /) -> None
 
         Parameters
         ----------
@@ -1138,8 +1138,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: NDArray[(Any,), Int]
-            array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
+        mask_array: npt.NDArray[np.integer]
+            1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
         -----
@@ -1169,7 +1169,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: NDArray[(Any,), Int], /) -> None
+         * mask(mask_array: npt.NDArray[np.integer], /) -> None
 
         Parameters
         ----------
@@ -1177,8 +1177,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: NDArray[(Any,), Int]
-            array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
+        mask_array: npt.NDArray[np.integer]
+            1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
         -----

@@ -44,7 +44,9 @@ def _get_method_line_regex(mode):
 
 def _remove_comments(code):
     # remove # comments
-    code = COMMENT_LINE.sub('', code)
+    code = ''.join(['\n' if COMMENT_LINE.match(
+        l) else l for l in code.splitlines(keepends=True)])
+
     # remove docstrings
     for docstring in DOCSTRING.findall(code):
         code = code.replace(docstring, (len(docstring.split('\n')) - 1) * '\n')
@@ -52,43 +54,39 @@ def _remove_comments(code):
     return code
 
 
-def find_cutoff(code, mode):
+def find_cutoffs(code, mode):
     method_line = _get_method_line_regex(mode)
     code = _remove_comments(code)
 
-    # find the cutoff point
+    def_statement = False
+    leading_global_statements = []
+    settings_statements = []
+    other_statements = []
+
     for i, line in enumerate(code.split('\n')):
+        if not line.strip():
+            continue
         if line == 'def setup():':
+            def_statement = True
             continue
-        if line.strip() and GLOBAL_STATEMENT_LINE.match(line):
+
+        if GLOBAL_STATEMENT_LINE.match(
+                line) and not settings_statements and not other_statements:
+            leading_global_statements.append(i)
             continue
-        if line.strip() and not ((m := method_line.match(line)) and m.groups()[0] in [
+
+        if ((m := method_line.match(line)) and m.groups()[0] in [
                 'size', 'full_screen', 'smooth', 'no_smooth', 'pixel_density']):
-            cutoff = i
-            break
-    else:
-        cutoff = i + 1
+            settings_statements.append(i)
+        else:
+            other_statements.append(i)
 
-    return cutoff
+    cutoff1 = max(leading_global_statements) + \
+        1 if leading_global_statements else int(def_statement)
+    cutoff2 = (min(other_statements) if other_statements else max(
+        settings_statements) + 1) if settings_statements else cutoff1
 
-
-def find_leading_global_statements_cutoff(code):
-    code = _remove_comments(code)
-    found_global_statement = False
-
-    # find the cutoff point
-    for i, line in enumerate(code.split('\n')):
-        if line == 'def setup():':
-            continue
-        if line.strip() and GLOBAL_STATEMENT_LINE.match(line):
-            found_global_statement = True
-        if line.strip() and not GLOBAL_STATEMENT_LINE.match(line):
-            cutoff = i
-            break
-    else:
-        cutoff = i + 1
-
-    return cutoff if found_global_statement else 0
+    return cutoff1, cutoff2
 
 
 def check_for_special_functions(code, mode):
@@ -110,8 +108,8 @@ def check_for_special_functions(code, mode):
 
 
 def count_noncomment_lines(code):
-    stripped_code = COMMENT_LINE.sub('', code).strip()
-    return len(stripped_code.split('\n')) if stripped_code else 0
+    stripped_code = _remove_comments(code).strip()
+    return len(stripped_code.splitlines()) if stripped_code else 0
 
 
 def transform(functions, sketch_globals, sketch_locals, println, *, mode):
@@ -132,16 +130,15 @@ def transform(functions, sketch_globals, sketch_locals, println, *, mode):
     try:
         setup = functions['setup']
         code = inspect.getsource(setup).strip()
-        global_cutoff = find_leading_global_statements_cutoff(code) or 1
-        cutoff = find_cutoff(code, mode)
+        cutoff1, cutoff2 = find_cutoffs(code, mode)
 
         # build the fake code
         lines, lineno = inspect.getsourcelines(setup)
         filename = inspect.getfile(setup)
-        fake_settings_code = (lineno - 1) * '\n' + "def _py5_faux_settings():\n" + (
-            global_cutoff - 1) * '\n' + ''.join(lines[global_cutoff:cutoff])
-        fake_setup_code = (lineno - 1) * '\n' + "def _py5_faux_setup():\n" + (
-            cutoff - global_cutoff) * '\n' + ''.join([*lines[1:global_cutoff], *lines[cutoff:]])
+        fake_settings_code = (lineno - 1) * '\n' + "def _py5_faux_settings():\n" + \
+            (cutoff1 - 1) * '\n' + ''.join(lines[cutoff1:cutoff2])
+        fake_setup_code = (lineno - 1) * '\n' + "def _py5_faux_setup():\n" + ''.join(
+            lines[1:cutoff1]) + (cutoff2 - cutoff1) * '\n' + ''.join(lines[cutoff2:])
 
         # if the fake settings code is empty, there's no need to change
         # anything

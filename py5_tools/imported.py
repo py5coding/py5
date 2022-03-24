@@ -95,7 +95,7 @@ def draw():
 _CODE_FRAMEWORK = """
 {0}
 
-run_sketch(block=True)
+run_sketch(block=True, py5_options={2}, sketch_args={3})
 if {1} and is_dead_from_error:
     exit_sketch()
 """
@@ -118,7 +118,9 @@ def run_code(
         sketch_path,
         classpath=None,
         new_process=False,
-        exit_if_error=False):
+        exit_if_error=False,
+        py5_options=None,
+        sketch_args=None):
     sketch_path = Path(sketch_path)
     if not sketch_path.exists():
         print(f'file {sketch_path} not found')
@@ -133,19 +135,32 @@ def run_code(
             sketch_path,
             classpath,
             new_process,
-            exit_if_error)
+            exit_if_error,
+            py5_options,
+            sketch_args)
     else:
-        _run_code(sketch_path, classpath, new_process, exit_if_error)
+        _run_code(
+            sketch_path,
+            classpath,
+            new_process,
+            exit_if_error,
+            py5_options,
+            sketch_args)
 
 
-def _run_static_code(code, sketch_path, classpath, new_process, exit_if_error):
+def _run_static_code(
+        code,
+        sketch_path,
+        classpath,
+        new_process,
+        exit_if_error,
+        py5_options,
+        sketch_args):
     py5bot_mgr = py5bot.Py5BotManager()
     success, result = py5bot.check_for_problems(code, sketch_path)
     if success:
         py5bot_globals, py5bot_settings, py5bot_setup = result
-        py5bot_mgr.write_code(
-            py5bot_globals, py5bot_settings, py5bot_setup, len(
-                code.splitlines()))
+        py5bot_mgr.write_code(py5bot_globals, py5bot_settings, py5bot_setup)
         new_sketch_path = py5bot_mgr.tempdir / '_PY5_STATIC_FRAMEWORK_CODE_.py'
         new_sketch_code = _STATIC_CODE_FRAMEWORK.format(
             py5bot_mgr.settings_filename.as_posix(),
@@ -154,12 +169,24 @@ def _run_static_code(code, sketch_path, classpath, new_process, exit_if_error):
             new_sketch_code += _STATIC_CODE_FRAMEWORK_OSX_EXTRA
         with open(new_sketch_path, 'w') as f:
             f.write(new_sketch_code)
-        _run_code(new_sketch_path, classpath, new_process, exit_if_error)
+        _run_code(
+            new_sketch_path,
+            classpath,
+            new_process,
+            exit_if_error,
+            py5_options,
+            sketch_args)
     else:
         print(result, file=sys.stderr)
 
 
-def _run_code(sketch_path, classpath, new_process, exit_if_error):
+def _run_code(
+        sketch_path,
+        classpath,
+        new_process,
+        exit_if_error,
+        py5_options,
+        sketch_args):
     def _run_sketch(sketch_path, classpath, exit_if_error):
         if not jvm.is_jvm_running():
             if classpath:
@@ -173,8 +200,13 @@ def _run_code(sketch_path, classpath, new_process, exit_if_error):
                 'You must exit the currently running sketch before running another sketch.')
             return None
 
+        py5_options_str = str(
+            [f'--{o}' for o in py5_options]) if py5_options else 'None'
+        sketch_args_str = str(sketch_args)
+
         with open(sketch_path, 'r') as f:
-            sketch_code = _CODE_FRAMEWORK.format(f.read(), exit_if_error)
+            sketch_code = _CODE_FRAMEWORK.format(
+                f.read(), exit_if_error, py5_options_str, sketch_args_str)
 
         # does the code parse? if not, display an error message
         try:

@@ -17,14 +17,21 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-import os
+from __future__ import annotations
 
+import os
+import sys
+import platform
+import subprocess
 from pathlib import Path
-from typing import Any, Union, List, Dict  # noqa
+
+from typing import Any, Union  # noqa
 
 
 import jpype
 
+
+_PY5_REQUIRED_JAVA_VERSION = 17
 
 _options = []
 _classpath = []
@@ -52,13 +59,13 @@ def _check_jvm_running() -> None:
         raise RuntimeError("the jvm is already running")
 
 
-def add_options(*options: List[str]) -> None:
+def add_options(*options: list[str]) -> None:
     """Provide JVM options to use when the JVM starts.
 
     Parameters
     ----------
 
-    options: List[str]
+    options: list[str]
         list of desired JVM options
 
     Notes
@@ -145,13 +152,13 @@ def add_jars(path: Union[Path, str]) -> None:
             jpype.addClassPath(jarfile.absolute())
 
 
-def get_jvm_debug_info() -> Dict[str, Any]:
+def get_jvm_debug_info() -> dict[str, Any]:
     """Get Java Virtual Machine debug information.
 
     Notes
     -----
 
-    Get Java Virtual Machine debug information. The py5 library requires Java 11 or
+    Get Java Virtual Machine debug information. The py5 library requires Java 17 or
     greater to be installed and the ``$JAVA_HOME`` environment variable to be
     properly set. If one or both of these conditions are not true, py5 will not
     work.
@@ -167,17 +174,71 @@ def get_jvm_debug_info() -> Dict[str, Any]:
     return out
 
 
+def _evaluate_java_version(path, n=1):
+    path = Path(path)
+    for _ in range(n):
+        try:
+            if (java_path := path / 'bin' / ('java.exe' if platform.system()
+                                             == 'Windows' else 'java')).exists():
+                stderr = subprocess.run(
+                    [str(java_path), "-XshowSettings:properties"], stderr=subprocess.PIPE
+                ).stderr.decode("utf-8").splitlines()
+                for l in stderr:
+                    if l.find('java.version =') >= 0:
+                        return int(l.split('=')[1].split('.', maxsplit=1)[0])
+            path = path.parent
+        except Exception:
+            break
+
+    return 0
+
+
 def _start_jvm() -> None:
+    jpype_exception = None
+    default_jvm_path = None
+
+    if hasattr(sys, '_MEIPASS'):
+        if (pyinstaller_java_home := Path(
+                getattr(sys, '_MEIPASS')) / 'JAVA_HOME').exists():
+            os.environ['JAVA_HOME'] = str(pyinstaller_java_home)
+
+    try:
+        default_jvm_path = jpype.getDefaultJVMPath()
+    except Exception as e:
+        jpype_exception = e
+
+    if 'JAVA_HOME' not in os.environ and (
+        default_jvm_path is None or _evaluate_java_version(
+            default_jvm_path,
+            n=4) < _PY5_REQUIRED_JAVA_VERSION):
+        possible_jdks = []
+        if (dot_jdk := Path(Path.home(), '.jdk')).exists():
+            possible_jdks.extend(
+                dot_jdk.glob(
+                    '*/Contents/Home/' if platform.system() == 'Darwin' else '*'))
+        if (dot_jre := Path(Path.home(), '.jre')).exists():
+            possible_jdks.extend(
+                dot_jre.glob(
+                    '*/Contents/Home/' if platform.system() == 'Darwin' else '*'))
+
+        for d in possible_jdks:
+            if _evaluate_java_version(d) >= _PY5_REQUIRED_JAVA_VERSION:
+                os.environ['JAVA_HOME'] = str(d)
+                try:
+                    default_jvm_path = jpype.getDefaultJVMPath()
+                    jpype_exception = None
+                except Exception as e:
+                    jpype_exception = e
+                break
+
     for c in _classpath:
-        print(f'adding {c}')
         jpype.addClassPath(c)
-    jpype.startJVM(*_options, convertStrings=False)
+
+    if jpype_exception is not None:
+        raise jpype_exception
+
+    jpype.startJVM(default_jvm_path, *_options, convertStrings=False)
 
 
-__all__ = [
-    'is_jvm_running',
-    'add_options',
-    'get_classpath',
-    'add_classpath',
-    'add_jars',
-    'get_jvm_debug_info']
+__all__ = ['is_jvm_running', 'add_options', 'get_classpath',
+           'add_classpath', 'add_jars', 'get_jvm_debug_info']

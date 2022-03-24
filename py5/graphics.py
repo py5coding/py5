@@ -20,10 +20,10 @@
 from __future__ import annotations
 
 import functools
-from typing import overload, List  # noqa
-from nptyping import NDArray, Float  # noqa
+from typing import overload  # noqa
 
 import numpy as np  # noqa
+import numpy.typing as npt  # noqa
 
 from jpype import JClass
 
@@ -882,8 +882,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -936,11 +935,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -986,8 +982,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -1040,11 +1035,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -1060,7 +1052,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
+    def apply_matrix(self, source: npt.NDArray[np.floating], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
         Underlying Processing method: PGraphics.applyMatrix
@@ -1072,8 +1064,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -1126,97 +1117,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
-
-        Notes
-        -----
-
-        Multiplies the current matrix by the one specified through the parameters. This
-        is very slow because it will try to calculate the inverse of the transform, so
-        avoid it whenever possible. The equivalent function in OpenGL is
-        ``gl_mult_matrix()``.
-
-        This method is the same as ``apply_matrix()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``apply_matrix()``.
-        """
-        pass
-
-    @overload
-    def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """Multiplies the current matrix by the one specified through the parameters.
-
-        Underlying Processing method: PGraphics.applyMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-        Parameters
-        ----------
-
-        n00: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n01: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n02: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n03: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n10: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n11: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n12: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n13: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n20: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n21: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n22: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n23: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n30: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n31: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n32: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n33: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -1243,8 +1145,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -1297,11 +1198,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -7296,7 +7194,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.get(*args)
 
     @overload
-    def get_matrix(self) -> NDArray[(Any, Any), Float]:
+    def get_matrix(self) -> npt.NDArray[np.floating]:
         """Get the current matrix as a numpy array.
 
         Underlying Processing method: PGraphics.getMatrix
@@ -7306,18 +7204,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+         * get_matrix() -> npt.NDArray[np.floating]
+         * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
         Parameters
         ----------
 
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
+        target: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -7331,8 +7225,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def get_matrix(self, target: NDArray[(
-            2, 3), Float], /) -> NDArray[(2, 3), Float]:
+    def get_matrix(
+            self, target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]:
         """Get the current matrix as a numpy array.
 
         Underlying Processing method: PGraphics.getMatrix
@@ -7342,54 +7236,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+         * get_matrix() -> npt.NDArray[np.floating]
+         * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
         Parameters
         ----------
 
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
-
-        Notes
-        -----
-
-        Get the current matrix as a numpy array. Use the ``target`` parameter to put the
-        matrix data in a properly sized and typed numpy array.
-
-        This method is the same as ``get_matrix()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``get_matrix()``.
-        """
-        pass
-
-    @overload
-    def get_matrix(self, target: NDArray[(
-            4, 4), Float], /) -> NDArray[(4, 4), Float]:
-        """Get the current matrix as a numpy array.
-
-        Underlying Processing method: PGraphics.getMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
-
-        Parameters
-        ----------
-
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
+        target: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -7413,18 +7267,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+         * get_matrix() -> npt.NDArray[np.floating]
+         * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
         Parameters
         ----------
 
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
+        target: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -8585,7 +8435,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.loadShape(*args)
 
     @overload
-    def mask(self, mask_array: NDArray[(Any,), Int], /) -> None:
+    def mask(self, mask_array: npt.NDArray[np.integer], /) -> None:
         """Masks part of the Py5Graphics drawing surface from displaying by loading an
         image and using it as an alpha channel.
 
@@ -8597,7 +8447,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: NDArray[(Any,), Int], /) -> None
+         * mask(mask_array: npt.NDArray[np.integer], /) -> None
 
         Parameters
         ----------
@@ -8605,8 +8455,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: NDArray[(Any,), Int]
-            array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
+        mask_array: npt.NDArray[np.integer]
+            1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
         -----
@@ -8637,7 +8487,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: NDArray[(Any,), Int], /) -> None
+         * mask(mask_array: npt.NDArray[np.integer], /) -> None
 
         Parameters
         ----------
@@ -8645,8 +8495,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: NDArray[(Any,), Int]
-            array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
+        mask_array: npt.NDArray[np.integer]
+            1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
         -----
@@ -8676,7 +8526,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: NDArray[(Any,), Int], /) -> None
+         * mask(mask_array: npt.NDArray[np.integer], /) -> None
 
         Parameters
         ----------
@@ -8684,8 +8534,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: NDArray[(Any,), Int]
-            array of integers used as the alpha channel, needs to be the same length as the image's pixel array.
+        mask_array: npt.NDArray[np.integer]
+            1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
         -----
@@ -11115,64 +10965,16 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.screenZ(x, y, z)
 
     @overload
-    def set_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
+    def set_matrix(self, source: npt.NDArray[np.floating], /) -> None:
         """Set the current matrix to the one specified through the parameter ``source``.
 
         Underlying Processing method: PGraphics.setMatrix
 
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
         Parameters
         ----------
 
-        source: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        source: NDArray[(4, 4), Float]
-            transformation matrix data
-
-        Notes
-        -----
-
-        Set the current matrix to the one specified through the parameter ``source``.
-        Inside the Processing code it will call ``Py5Graphics.reset_matrix()`` followed
-        by ``Py5Graphics.apply_matrix()``. This will be very slow because
-        ``Py5Graphics.apply_matrix()`` will try to calculate the inverse of the
-        transform, so avoid it whenever possible.
-
-        This method is the same as ``set_matrix()`` but linked to a ``Py5Graphics``
-        object. To see example code for how it can be used, see ``set_matrix()``.
-        """
-        pass
-
-    @overload
-    def set_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """Set the current matrix to the one specified through the parameter ``source``.
-
-        Underlying Processing method: PGraphics.setMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-        Parameters
-        ----------
-
-        source: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        source: NDArray[(4, 4), Float]
-            transformation matrix data
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -11193,22 +10995,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Underlying Processing method: PGraphics.setMatrix
 
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
         Parameters
         ----------
 
-        source: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        source: NDArray[(4, 4), Float]
-            transformation matrix data
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -12840,8 +12631,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -12856,7 +12647,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -12934,8 +12725,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -12950,7 +12741,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13016,7 +12807,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text(self, chars: List[chr], start: int,
+    def text(self, chars: list[chr], start: int,
              stop: int, x: float, y: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
@@ -13029,8 +12820,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13045,7 +12836,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13111,7 +12902,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text(self, chars: List[chr], start: int,
+    def text(self, chars: list[chr], start: int,
              stop: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
@@ -13124,8 +12915,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13140,7 +12931,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13218,8 +13009,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13234,7 +13025,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13312,8 +13103,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13328,7 +13119,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13406,8 +13197,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13422,7 +13213,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13500,8 +13291,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13516,7 +13307,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13594,8 +13385,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13610,7 +13401,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13688,8 +13479,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13704,7 +13495,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13783,8 +13574,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13799,7 +13590,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13877,8 +13668,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13893,7 +13684,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14383,7 +14174,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -14392,7 +14183,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -14415,7 +14206,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text_width(self, chars: List[chr],
+    def text_width(self, chars: list[chr],
                    start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
@@ -14427,7 +14218,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -14436,7 +14227,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -14470,7 +14261,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -14479,7 +14270,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -14513,7 +14304,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -14522,7 +14313,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -15447,7 +15238,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -15459,11 +15250,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -15507,7 +15298,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -15519,11 +15310,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -15567,7 +15358,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -15579,11 +15370,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -15628,7 +15419,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -15640,11 +15431,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -15678,7 +15469,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def vertex(self, v: NDArray[(Any,), Float], /) -> None:
+    def vertex(self, v: npt.NDArray[np.floating], /) -> None:
         """Add a new vertex to a shape.
 
         Underlying Processing method: PGraphics.vertex
@@ -15688,7 +15479,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -15700,11 +15491,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -15747,7 +15538,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -15759,11 +15550,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex

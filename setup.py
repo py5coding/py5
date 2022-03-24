@@ -23,7 +23,7 @@ from setuptools import setup
 with open('README.rst') as f:
     README = f.read()
 
-VERSION = '0.7.0a0'
+VERSION = '0.7.1a6'
 
 INSTALL_REQUIRES = [
     'autopep8>=1.5',
@@ -32,8 +32,7 @@ INSTALL_REQUIRES = [
     'ipywidgets>=7.6',
     'jpype1>=1.3',
     'line_profiler>=2.1.2',
-    'nptyping>=1.4',
-    'numpy>=1.19',
+    'numpy>=1.21',
     'pandas>=1.0',
     'pillow>=8.1',
     'pyobjc>=7.3;sys_platform=="darwin"',
@@ -56,7 +55,7 @@ setup(
     version=VERSION,
     packages=packages,
     package_data={
-        "py5": ['jars/*.jar', 'jars/*/*.jar'],
+        "py5": ['jars/*.jar', 'jars/*/*.jar', 'natives/*/*.dll', 'natives/*/*.so', 'natives/*/*.dylib'],
         "py5_tools": ['kernel/resources/*.png', 'py5bot/resources/*.png'],
     },
     python_requires='>3.8',
@@ -66,6 +65,7 @@ setup(
     long_description_content_type='text/x-rst',
     author='Jim Schmitz',
     author_email='jim@ixora.io',
+    url='https://github.com/hx2A/py5generator',
     entry_points={
         'console_scripts': [
             'run_sketch = py5_tools.tools.run_sketch:main',

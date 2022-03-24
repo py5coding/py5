@@ -17,12 +17,15 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+from __future__ import annotations
+
 import threading
 from pathlib import Path
 from io import BytesIO
-from typing import overload, List, Union  # noqa
+from typing import overload, Union  # noqa
 
 import numpy as np
+import numpy.typing as npt
 from PIL import Image
 import jpype
 
@@ -155,7 +158,7 @@ class PixelMixin:
         self._java_bb.asIntBuffer().get(self._instance.pixels)
         self._instance.updatePixels()
 
-    def _get_np_pixels(self) -> np.ndarray:
+    def _get_np_pixels(self) -> npt.NDArray[np.uint8]:
         """The ``np_pixels[]`` array contains the values for all the pixels in the display
         window.
 
@@ -191,9 +194,8 @@ class PixelMixin:
         To set the entire contents of ``np_pixels[]`` to the contents of another
         properly sized numpy array, consider using ``set_np_pixels()``."""
         return self._np_pixels
-    np_pixels: np.ndarray = property(
-        fget=_get_np_pixels,
-        doc="""The ``np_pixels[]`` array contains the values for all the pixels in the display
+    np_pixels: npt.NDArray[np.uint8] = property(
+        fget=_get_np_pixels, doc="""The ``np_pixels[]`` array contains the values for all the pixels in the display
         window.
 
         Notes
@@ -228,14 +230,16 @@ class PixelMixin:
         To set the entire contents of ``np_pixels[]`` to the contents of another
         properly sized numpy array, consider using ``set_np_pixels()``.""")
 
-    def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
+    def set_np_pixels(self,
+                      array: npt.NDArray[np.uint8],
+                      bands: str = 'ARGB') -> None:
         """Set the entire contents of ``np_pixels[]`` to the contents of another properly
         sized and typed numpy array.
 
         Parameters
         ----------
 
-        array: np.ndarray
+        array: npt.NDArray[np.uint8]
             properly sized numpy array to be copied to np_pixels[]
 
         bands: str = 'ARGB'
@@ -349,6 +353,9 @@ class PixelMixin:
     # *** END METHODS ***
 
 
+# NOTE: changes to the below method signatures will not update the
+# reference docs automatically
+
 class PixelPy5GraphicsMixin(PixelMixin):
 
     def load_np_pixels(self) -> None:
@@ -405,7 +412,7 @@ class PixelPy5GraphicsMixin(PixelMixin):
         ``Py5Graphics`` object."""
         return super().update_np_pixels()
 
-    def _get_np_pixels(self) -> np.ndarray:
+    def _get_np_pixels(self) -> npt.NDArray[np.uint8]:
         """The ``np_pixels[]`` array contains the values for all the pixels in the
         Py5Graphics drawing surface.
 
@@ -449,9 +456,8 @@ class PixelPy5GraphicsMixin(PixelMixin):
         This field is the same as ``np_pixels[]`` but linked to a ``Py5Graphics``
         object."""
         return super()._get_np_pixels()
-    np_pixels: np.ndarray = property(
-        fget=_get_np_pixels,
-        doc="""The ``np_pixels[]`` array contains the values for all the pixels in the
+    np_pixels: npt.NDArray[np.uint8] = property(
+        fget=_get_np_pixels, doc="""The ``np_pixels[]`` array contains the values for all the pixels in the
         Py5Graphics drawing surface.
 
         Notes
@@ -494,14 +500,16 @@ class PixelPy5GraphicsMixin(PixelMixin):
         This field is the same as ``np_pixels[]`` but linked to a ``Py5Graphics``
         object.""")
 
-    def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
+    def set_np_pixels(self,
+                      array: npt.NDArray[np.uint8],
+                      bands: str = 'ARGB') -> None:
         """Set the entire contents of ``Py5Graphics.np_pixels[]`` to the contents of
         another properly sized and typed numpy array.
 
         Parameters
         ----------
 
-        array: np.ndarray
+        array: npt.NDArray[np.uint8]
             properly sized numpy array to be copied to np_pixels[]
 
         bands: str = 'ARGB'
@@ -635,7 +643,7 @@ class PixelPy5ImageMixin(PixelMixin):
         after modifying ``Py5Image.pixels[]``."""
         return super().update_np_pixels()
 
-    def _get_np_pixels(self) -> np.ndarray:
+    def _get_np_pixels(self) -> npt.NDArray[np.uint8]:
         """The ``np_pixels[]`` array contains the values for all the pixels in the image.
 
         Notes
@@ -664,9 +672,8 @@ class PixelPy5ImageMixin(PixelMixin):
         To set the entire contents of ``np_pixels[]`` to the contents of another equally
         sized numpy array, consider using ``Py5Image.set_np_pixels()``."""
         return super()._get_np_pixels()
-    np_pixels: np.ndarray = property(
-        fget=_get_np_pixels,
-        doc="""The ``np_pixels[]`` array contains the values for all the pixels in the image.
+    np_pixels: npt.NDArray[np.uint8] = property(
+        fget=_get_np_pixels, doc="""The ``np_pixels[]`` array contains the values for all the pixels in the image.
 
         Notes
         -----
@@ -694,14 +701,16 @@ class PixelPy5ImageMixin(PixelMixin):
         To set the entire contents of ``np_pixels[]`` to the contents of another equally
         sized numpy array, consider using ``Py5Image.set_np_pixels()``.""")
 
-    def set_np_pixels(self, array: np.ndarray, bands: str = 'ARGB') -> None:
+    def set_np_pixels(self,
+                      array: npt.NDArray[np.uint8],
+                      bands: str = 'ARGB') -> None:
         """Set the entire contents of ``Py5Image.np_pixels[]`` to the contents of another
         properly sized and typed numpy array.
 
         Parameters
         ----------
 
-        array: np.ndarray
+        array: npt.NDArray[np.uint8]
             properly sized numpy array to be copied to np_pixels[]
 
         bands: str = 'ARGB'

@@ -117,10 +117,10 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
                 str(exc_value),
                 py5info))
 
-        m = _PY5_STATIC_CODE_FILENAME_REGEX.search(errmsg)
-        if m:
-            errmsg = "py5 encountered an error in your code:" + \
-                errmsg[m.span()[1]:]
+        while m := _PY5_STATIC_CODE_FILENAME_REGEX.search(errmsg):
+            errmsg = errmsg[m.span()[1]:]
+        else:
+            errmsg = "py5 encountered an error in your code:" + errmsg
 
     println(errmsg, stderr=True)
 

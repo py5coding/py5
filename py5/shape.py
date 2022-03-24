@@ -21,9 +21,9 @@ from __future__ import annotations
 
 import functools
 from pathlib import Path
-from typing import overload, List  # noqa
+from typing import overload  # noqa
 import numpy as np
-from nptyping import NDArray, Float, Int  # noqa
+import numpy.typing as npt  # noqa
 
 from jpype import JException
 from jpype.types import JBoolean, JInt, JFloat
@@ -460,8 +460,7 @@ class Py5Shape:
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -514,11 +513,8 @@ class Py5Shape:
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -566,8 +562,7 @@ class Py5Shape:
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -620,11 +615,8 @@ class Py5Shape:
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -642,7 +634,7 @@ class Py5Shape:
         pass
 
     @overload
-    def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
+    def apply_matrix(self, source: npt.NDArray[np.floating], /) -> None:
         """Apply a transformation matrix to a ``Py5Shape`` object.
 
         Underlying Processing method: PShape.applyMatrix
@@ -654,8 +646,7 @@ class Py5Shape:
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -708,99 +699,8 @@ class Py5Shape:
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
-
-        Notes
-        -----
-
-        Apply a transformation matrix to a ``Py5Shape`` object. This can be used to
-        scale, rotate, and translate a shape with one call.
-
-        Making productive use of this method requires some knowledge of 2D or 3D
-        transformation matrices, and perhaps some knowledge of Processing's source code.
-
-        Transformations are cummulative and therefore will be applied on top of existing
-        transformations. Use ``Py5Shape.reset_matrix()`` to set the transformation
-        matrix to the identity matrix.
-        """
-        pass
-
-    @overload
-    def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """Apply a transformation matrix to a ``Py5Shape`` object.
-
-        Underlying Processing method: PShape.applyMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-        Parameters
-        ----------
-
-        n00: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n01: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n02: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n03: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n10: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n11: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n12: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n13: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n20: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n21: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n22: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n23: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n30: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n31: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n32: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n33: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -829,8 +729,7 @@ class Py5Shape:
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -883,11 +782,8 @@ class Py5Shape:
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -2623,7 +2519,7 @@ class Py5Shape:
         return self._instance.getChildIndex(who)
 
     @_return_list_py5shapes
-    def get_children(self) -> List[Py5Shape]:
+    def get_children(self) -> list[Py5Shape]:
         """Get the children of a ``Py5Shape`` object as a list of ``Py5Shape`` objects.
 
         Underlying Processing method: PShape.getChildren
@@ -3253,7 +3149,7 @@ class Py5Shape:
         return self._instance.getVertexCodeCount()
 
     @_return_numpy_array
-    def get_vertex_codes(self) -> NDArray[(Any,), Int]:
+    def get_vertex_codes(self) -> npt.NDArray[np.integer]:
         """Get the vertex codes for a ``Py5Shape`` object.
 
         Underlying Processing method: PShape.getVertexCodes
@@ -4526,7 +4422,7 @@ class Py5Shape:
         return self._instance.setName(name)
 
     def set_path(self, vcount: int,
-                 verts: NDArray[(Any, Any), Float], /) -> None:
+                 verts: npt.NDArray[np.floating], /) -> None:
         """Set many vertex points at the same time, using a numpy array.
 
         Underlying Processing method: PShape.setPath
@@ -4537,8 +4433,8 @@ class Py5Shape:
         vcount: int
             number of vertices
 
-        verts: NDArray[(Any, Any), Float]
-            array of vertex coordinates
+        verts: npt.NDArray[np.floating]
+            2D array of vertex coordinates
 
         Notes
         -----

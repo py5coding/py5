@@ -17,11 +17,13 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+from __future__ import annotations
+
 import sys
 import time
 import threading
 from collections.abc import Iterable
-from typing import Callable, Dict, Tuple, Any
+from typing import Callable, Any
 
 from .. import methods
 
@@ -146,14 +148,14 @@ class ThreadsMixin:
             name: str = None,
             *,
             daemon: bool = True,
-            args: Tuple = None,
-            kwargs: Dict = None) -> str:
+            args: tuple = None,
+            kwargs: dict = None) -> str:
         """Launch a new thread to execute a function in parallel with your Sketch code.
 
         Parameters
         ----------
 
-        args: Tuple = None
+        args: tuple = None
             positional arguments to pass to the given function
 
         daemon: bool = True
@@ -162,7 +164,7 @@ class ThreadsMixin:
         f: Callable
             function to call in the launched thread
 
-        kwargs: Dict = None
+        kwargs: dict = None
             keyword arguments to pass to the given function
 
         name: str = None
@@ -206,15 +208,15 @@ class ThreadsMixin:
             name: str = None,
             *,
             daemon: bool = True,
-            args: Tuple = None,
-            kwargs: Dict = None) -> Py5Promise:
+            args: tuple = None,
+            kwargs: dict = None) -> Py5Promise:
         """Create a ``Py5Promise`` object that will store the returned result of a function
         when that function completes.
 
         Parameters
         ----------
 
-        args: Tuple = None
+        args: tuple = None
             positional arguments to pass to the given function
 
         daemon: bool = True
@@ -223,7 +225,7 @@ class ThreadsMixin:
         f: Callable
             function to call in the launched thread
 
-        kwargs: Dict = None
+        kwargs: dict = None
             keyword arguments to pass to the given function
 
         name: str = None
@@ -275,15 +277,15 @@ class ThreadsMixin:
             *,
             time_delay: float = 0,
             daemon: bool = True,
-            args: Tuple = None,
-            kwargs: Dict = None) -> str:
+            args: tuple = None,
+            kwargs: dict = None) -> str:
         """Launch a new thread that will repeatedly execute a function in parallel with
         your Sketch code.
 
         Parameters
         ----------
 
-        args: Tuple = None
+        args: tuple = None
             positional arguments to pass to the given function
 
         daemon: bool = True
@@ -292,7 +294,7 @@ class ThreadsMixin:
         f: Callable
             function to call in the launched thread
 
-        kwargs: Dict = None
+        kwargs: dict = None
             keyword arguments to pass to the given function
 
         name: str = None

@@ -21,14 +21,16 @@
 """
 py5 is a version of Processing for Python 3.8+. It makes the Processing Java libraries available to the CPython interpreter using JPype.
 """
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 from io import BytesIO
 import inspect
-from typing import overload, Any, Callable, Union, Dict, List, Tuple  # noqa
-from nptyping import NDArray, Float, Int  # noqa
+from typing import overload, Any, Callable, Union  # noqa
 
 import numpy as np  # noqa
+import numpy.typing as npt  # noqa
 from PIL import Image  # noqa
 from jpype import JClass  # noqa
 import jpype.imports  # noqa
@@ -37,11 +39,8 @@ from jpype.types import JArray, JString, JFloat, JInt, JChar  # noqa
 import py5_tools
 
 if not py5_tools.is_jvm_running():
-    base_path = Path(
-        getattr(
-            sys,
-            '_MEIPASS',
-            Path(__file__).absolute().parent))
+    base_path = Path(getattr(sys, '_MEIPASS')) / 'py5' if hasattr(sys,
+                                                                  '_MEIPASS') else Path(__file__).absolute().parent
     # add py5 jars to the classpath first
     py5_tools.add_jars(str(base_path / 'jars'))
     # if the cwd has a jars subdirectory, add that next
@@ -54,21 +53,21 @@ if not py5_tools.is_jvm_running():
 
     debug_info = py5_tools.get_jvm_debug_info()
     java_version = debug_info['jvm version'][0]
-    if not started_jvm or java_version < 11:
+    if not started_jvm or java_version < 17:
         print(
-            "py5 is unable to start a Java 11 Virtual Machine.",
+            "py5 is unable to start a Java 17 Virtual Machine.",
             file=sys.stderr)
         print(
-            "This library requires Java 11 to be installed and a properly set JAVA_HOME environment variable.",
+            "This library requires Java 17 to be installed and a properly set JAVA_HOME environment variable.",
             file=sys.stderr)
         print(
             "Here is some debug info about your installation that might help you identify the source of this problem.",
             file=sys.stderr)
         print(debug_info, file=sys.stderr)
-        raise RuntimeError("py5 is unable to start Java 11 Virtual Machine")
+        raise RuntimeError("py5 is unable to start Java 17 Virtual Machine")
 
 from .methods import register_exception_msg  # noqa
-from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5Promise, _in_ipython_session  # noqa
+from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5Promise  # noqa
 from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
 from .create_font_tool import create_font_file  # noqa
 from .image_conversion import register_image_conversion, NumpyImageArray  # noqa
@@ -83,7 +82,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.7.0a0'
+__version__ = '0.7.1a6'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -100,7 +99,6 @@ AMBIENT = 0
 ARC = 32
 ARGB = 2
 ARGS_BGCOLOR = "--bgcolor"
-ARGS_DENSITY = "--density"
 ARGS_DISABLE_AWT = "--disable-awt"
 ARGS_DISPLAY = "--display"
 ARGS_EDITOR_LOCATION = "--editor-location"
@@ -111,6 +109,7 @@ ARGS_LOCATION = "--location"
 ARGS_PRESENT = "--present"
 ARGS_SKETCH_FOLDER = "--sketch-path"
 ARGS_STOP_COLOR = "--stop-color"
+ARGS_UI_SCALE = "--ui-scale"
 ARGS_WINDOW_COLOR = "--window-color"
 ARROW = 0
 BACKSPACE = '\b'
@@ -280,7 +279,7 @@ WINDOWS = 1
 X = 0
 Y = 1
 Z = 2
-pargs: List[str] = None
+pargs: list[str] = None
 display_height: int = None
 display_width: int = None
 finished: bool = None
@@ -299,6 +298,8 @@ pixel_width: int = None
 pmouse_x: int = None
 pmouse_y: int = None
 width: int = None
+window_x: int = None
+window_y: int = None
 
 
 def alpha(rgb: int, /) -> float:
@@ -674,8 +675,7 @@ def apply_matrix(n00: float, n01: float, n02: float,
 
      * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
      * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+     * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
     Parameters
     ----------
@@ -728,11 +728,8 @@ def apply_matrix(n00: float, n01: float, n02: float,
     n33: float
         numbers which define the 4x4 matrix to be multiplied
 
-    source: NDArray[(2, 3), Float]
-        2D transformation matrix
-
-    source: NDArray[(4, 4), Float]
-        3D transformation matrix
+    source: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -775,8 +772,7 @@ def apply_matrix(
 
      * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
      * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+     * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
     Parameters
     ----------
@@ -829,11 +825,8 @@ def apply_matrix(
     n33: float
         numbers which define the 4x4 matrix to be multiplied
 
-    source: NDArray[(2, 3), Float]
-        2D transformation matrix
-
-    source: NDArray[(4, 4), Float]
-        3D transformation matrix
+    source: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -847,7 +840,7 @@ def apply_matrix(
 
 
 @overload
-def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
+def apply_matrix(source: npt.NDArray[np.floating], /) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
     Underlying Processing method: PApplet.applyMatrix
@@ -859,8 +852,7 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
 
      * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
      * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+     * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
     Parameters
     ----------
@@ -913,95 +905,8 @@ def apply_matrix(source: NDArray[(2, 3), Float], /) -> None:
     n33: float
         numbers which define the 4x4 matrix to be multiplied
 
-    source: NDArray[(2, 3), Float]
-        2D transformation matrix
-
-    source: NDArray[(4, 4), Float]
-        3D transformation matrix
-
-    Notes
-    -----
-
-    Multiplies the current matrix by the one specified through the parameters. This
-    is very slow because it will try to calculate the inverse of the transform, so
-    avoid it whenever possible. The equivalent function in OpenGL is
-    ``gl_mult_matrix()``.
-    """
-    pass
-
-
-@overload
-def apply_matrix(source: NDArray[(4, 4), Float], /) -> None:
-    """Multiplies the current matrix by the one specified through the parameters.
-
-    Underlying Processing method: PApplet.applyMatrix
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
-     * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-    Parameters
-    ----------
-
-    n00: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n01: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n02: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n03: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n10: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n11: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n12: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n13: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n20: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n21: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n22: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n23: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n30: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n31: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n32: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    n33: float
-        numbers which define the 4x4 matrix to be multiplied
-
-    source: NDArray[(2, 3), Float]
-        2D transformation matrix
-
-    source: NDArray[(4, 4), Float]
-        3D transformation matrix
+    source: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -1026,8 +931,7 @@ def apply_matrix(*args):
 
      * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
      * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-     * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+     * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
     Parameters
     ----------
@@ -1080,11 +984,8 @@ def apply_matrix(*args):
     n33: float
         numbers which define the 4x4 matrix to be multiplied
 
-    source: NDArray[(2, 3), Float]
-        2D transformation matrix
-
-    source: NDArray[(4, 4), Float]
-        3D transformation matrix
+    source: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -2906,7 +2807,7 @@ def bezier_vertex(*args):
     return _py5sketch.bezier_vertex(*args)
 
 
-def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
+def bezier_vertices(coordinates: npt.NDArray[np.floating], /) -> None:
     """Create a collection of bezier vertices.
 
     Underlying Processing method: PApplet.bezierVertices
@@ -2914,8 +2815,8 @@ def bezier_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Parameters
     ----------
 
-    coordinates: NDArray[(Any, Any), Float]
-        array of bezier vertex coordinates
+    coordinates: npt.NDArray[np.floating]
+        2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
 
     Notes
     -----
@@ -4902,12 +4803,12 @@ def create_font(name: str, size: float, /) -> Py5Font:
 
      * create_font(name: str, size: float, /) -> Py5Font
      * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
     Parameters
     ----------
 
-    charset: List[chr]
+    charset: list[chr]
         array containing characters to be generated
 
     name: str
@@ -4965,12 +4866,12 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
 
      * create_font(name: str, size: float, /) -> Py5Font
      * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
     Parameters
     ----------
 
-    charset: List[chr]
+    charset: list[chr]
         array containing characters to be generated
 
     name: str
@@ -5015,7 +4916,7 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
 
 @overload
 def create_font(name: str, size: float, smooth: bool,
-                charset: List[chr], /) -> Py5Font:
+                charset: list[chr], /) -> Py5Font:
     """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
     inside the Sketch's "data" folder or a font that's installed elsewhere on the
     computer.
@@ -5029,12 +4930,12 @@ def create_font(name: str, size: float, smooth: bool,
 
      * create_font(name: str, size: float, /) -> Py5Font
      * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
     Parameters
     ----------
 
-    charset: List[chr]
+    charset: list[chr]
         array containing characters to be generated
 
     name: str
@@ -5091,12 +4992,12 @@ def create_font(*args):
 
      * create_font(name: str, size: float, /) -> Py5Font
      * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-     * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+     * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
     Parameters
     ----------
 
-    charset: List[chr]
+    charset: list[chr]
         array containing characters to be generated
 
     name: str
@@ -6382,7 +6283,7 @@ def curve_vertex(*args):
     return _py5sketch.curve_vertex(*args)
 
 
-def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
+def curve_vertices(coordinates: npt.NDArray[np.floating], /) -> None:
     """Create a collection of curve vertices.
 
     Underlying Processing method: PApplet.curveVertices
@@ -6390,8 +6291,8 @@ def curve_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Parameters
     ----------
 
-    coordinates: NDArray[(Any, Any), Float]
-        array of curve vertex coordinates
+    coordinates: npt.NDArray[np.floating]
+        2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
     Notes
     -----
@@ -8308,7 +8209,7 @@ def get_graphics() -> Py5Graphics:
 
 
 @overload
-def get_matrix() -> NDArray[(Any, Any), Float]:
+def get_matrix() -> npt.NDArray[np.floating]:
     """Get the current matrix as a numpy array.
 
     Underlying Processing method: PApplet.getMatrix
@@ -8318,18 +8219,14 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
 
     You can use any of the following signatures:
 
-     * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+     * get_matrix() -> npt.NDArray[np.floating]
+     * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
     Parameters
     ----------
 
-    target: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    target: NDArray[(4, 4), Float]
-        transformation matrix data
+    target: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -8341,7 +8238,8 @@ def get_matrix() -> NDArray[(Any, Any), Float]:
 
 
 @overload
-def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
+def get_matrix(target: npt.NDArray[np.floating], /
+               ) -> npt.NDArray[np.floating]:
     """Get the current matrix as a numpy array.
 
     Underlying Processing method: PApplet.getMatrix
@@ -8351,51 +8249,14 @@ def get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]:
 
     You can use any of the following signatures:
 
-     * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+     * get_matrix() -> npt.NDArray[np.floating]
+     * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
     Parameters
     ----------
 
-    target: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    target: NDArray[(4, 4), Float]
-        transformation matrix data
-
-    Notes
-    -----
-
-    Get the current matrix as a numpy array. Use the ``target`` parameter to put the
-    matrix data in a properly sized and typed numpy array.
-    """
-    pass
-
-
-@overload
-def get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]:
-    """Get the current matrix as a numpy array.
-
-    Underlying Processing method: PApplet.getMatrix
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
-
-    Parameters
-    ----------
-
-    target: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    target: NDArray[(4, 4), Float]
-        transformation matrix data
+    target: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -8416,18 +8277,14 @@ def get_matrix(*args):
 
     You can use any of the following signatures:
 
-     * get_matrix() -> NDArray[(Any, Any), Float]
-     * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-     * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+     * get_matrix() -> npt.NDArray[np.floating]
+     * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
     Parameters
     ----------
 
-    target: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    target: NDArray[(4, 4), Float]
-        transformation matrix data
+    target: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -9269,7 +9126,7 @@ def line(*args):
     return _py5sketch.line(*args)
 
 
-def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
+def lines(coordinates: npt.NDArray[np.floating], /) -> None:
     """Draw a collection of lines to the screen.
 
     Underlying Processing method: PApplet.lines
@@ -9277,8 +9134,8 @@ def lines(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Parameters
     ----------
 
-    coordinates: NDArray[(Any, Any), Float]
-        array of line coordinates
+    coordinates: npt.NDArray[np.floating]
+        2D array of line coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
     Notes
     -----
@@ -10710,7 +10567,7 @@ def point_light(v1: float, v2: float, v3: float,
     return _py5sketch.point_light(v1, v2, v3, x, y, z)
 
 
-def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
+def points(coordinates: npt.NDArray[np.floating], /) -> None:
     """Draw a collection of points, each a coordinate in space at the dimension of one
     pixel.
 
@@ -10719,8 +10576,8 @@ def points(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Parameters
     ----------
 
-    coordinates: NDArray[(Any, Any), Float]
-        array of point coordinates
+    coordinates: npt.NDArray[np.floating]
+        2D array of point coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
     Notes
     -----
@@ -11115,7 +10972,7 @@ def quadratic_vertex(*args):
     return _py5sketch.quadratic_vertex(*args)
 
 
-def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
+def quadratic_vertices(coordinates: npt.NDArray[np.floating], /) -> None:
     """Create a collection of quadratic vertices.
 
     Underlying Processing method: PApplet.quadraticVertices
@@ -11123,8 +10980,8 @@ def quadratic_vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Parameters
     ----------
 
-    coordinates: NDArray[(Any, Any), Float]
-        array of quadratic vertex coordinates
+    coordinates: npt.NDArray[np.floating]
+        2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
     Notes
     -----
@@ -12303,61 +12160,16 @@ def second() -> int:
 
 
 @overload
-def set_matrix(source: NDArray[(2, 3), Float], /) -> None:
+def set_matrix(source: npt.NDArray[np.floating], /) -> None:
     """Set the current matrix to the one specified through the parameter ``source``.
 
     Underlying Processing method: PApplet.setMatrix
 
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
     Parameters
     ----------
 
-    source: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    source: NDArray[(4, 4), Float]
-        transformation matrix data
-
-    Notes
-    -----
-
-    Set the current matrix to the one specified through the parameter ``source``.
-    Inside the Processing code it will call ``reset_matrix()`` followed by
-    ``apply_matrix()``. This will be very slow because ``apply_matrix()`` will try
-    to calculate the inverse of the transform, so avoid it whenever possible.
-    """
-    pass
-
-
-@overload
-def set_matrix(source: NDArray[(4, 4), Float], /) -> None:
-    """Set the current matrix to the one specified through the parameter ``source``.
-
-    Underlying Processing method: PApplet.setMatrix
-
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-    Parameters
-    ----------
-
-    source: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    source: NDArray[(4, 4), Float]
-        transformation matrix data
+    source: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -12375,22 +12187,11 @@ def set_matrix(*args):
 
     Underlying Processing method: PApplet.setMatrix
 
-    Methods
-    -------
-
-    You can use any of the following signatures:
-
-     * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-     * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
     Parameters
     ----------
 
-    source: NDArray[(2, 3), Float]
-        transformation matrix data
-
-    source: NDArray[(4, 4), Float]
-        transformation matrix data
+    source: npt.NDArray[np.floating]
+        transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
     Notes
     -----
@@ -14342,8 +14143,8 @@ def text(c: chr, x: float, y: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14358,7 +14159,7 @@ def text(c: chr, x: float, y: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14433,8 +14234,8 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14449,7 +14250,7 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14512,7 +14313,7 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
 
 
 @overload
-def text(chars: List[chr], start: int, stop: int,
+def text(chars: list[chr], start: int, stop: int,
          x: float, y: float, /) -> None:
     """Draws text to the screen.
 
@@ -14525,8 +14326,8 @@ def text(chars: List[chr], start: int, stop: int,
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14541,7 +14342,7 @@ def text(chars: List[chr], start: int, stop: int,
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14604,7 +14405,7 @@ def text(chars: List[chr], start: int, stop: int,
 
 
 @overload
-def text(chars: List[chr], start: int, stop: int,
+def text(chars: list[chr], start: int, stop: int,
          x: float, y: float, z: float, /) -> None:
     """Draws text to the screen.
 
@@ -14617,8 +14418,8 @@ def text(chars: List[chr], start: int, stop: int,
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14633,7 +14434,7 @@ def text(chars: List[chr], start: int, stop: int,
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14708,8 +14509,8 @@ def text(num: float, x: float, y: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14724,7 +14525,7 @@ def text(num: float, x: float, y: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14799,8 +14600,8 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14815,7 +14616,7 @@ def text(num: float, x: float, y: float, z: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14890,8 +14691,8 @@ def text(num: int, x: float, y: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14906,7 +14707,7 @@ def text(num: int, x: float, y: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -14981,8 +14782,8 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -14997,7 +14798,7 @@ def text(num: int, x: float, y: float, z: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -15072,8 +14873,8 @@ def text(str: str, x: float, y: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -15088,7 +14889,7 @@ def text(str: str, x: float, y: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -15163,8 +14964,8 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -15179,7 +14980,7 @@ def text(str: str, x: float, y: float, z: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -15254,8 +15055,8 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -15270,7 +15071,7 @@ def text(str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -15344,8 +15145,8 @@ def text(*args):
 
      * text(c: chr, x: float, y: float, /) -> None
      * text(c: chr, x: float, y: float, z: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-     * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+     * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
      * text(num: float, x: float, y: float, /) -> None
      * text(num: float, x: float, y: float, z: float, /) -> None
      * text(num: int, x: float, y: float, /) -> None
@@ -15360,7 +15161,7 @@ def text(*args):
     c: chr
         the alphanumeric character to be displayed
 
-    chars: List[chr]
+    chars: list[chr]
         the alphanumberic symbols to be displayed
 
     num: float
@@ -15818,7 +15619,7 @@ def text_width(c: chr, /) -> float:
     You can use any of the following signatures:
 
      * text_width(c: chr, /) -> float
-     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(chars: list[chr], start: int, length: int, /) -> float
      * text_width(str: str, /) -> float
 
     Parameters
@@ -15827,7 +15628,7 @@ def text_width(c: chr, /) -> float:
     c: chr
         the character to measure
 
-    chars: List[chr]
+    chars: list[chr]
         the character to measure
 
     length: int
@@ -15848,7 +15649,7 @@ def text_width(c: chr, /) -> float:
 
 
 @overload
-def text_width(chars: List[chr], start: int, length: int, /) -> float:
+def text_width(chars: list[chr], start: int, length: int, /) -> float:
     """Calculates and returns the width of any character or text string.
 
     Underlying Processing method: PApplet.textWidth
@@ -15859,7 +15660,7 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
     You can use any of the following signatures:
 
      * text_width(c: chr, /) -> float
-     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(chars: list[chr], start: int, length: int, /) -> float
      * text_width(str: str, /) -> float
 
     Parameters
@@ -15868,7 +15669,7 @@ def text_width(chars: List[chr], start: int, length: int, /) -> float:
     c: chr
         the character to measure
 
-    chars: List[chr]
+    chars: list[chr]
         the character to measure
 
     length: int
@@ -15900,7 +15701,7 @@ def text_width(str: str, /) -> float:
     You can use any of the following signatures:
 
      * text_width(c: chr, /) -> float
-     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(chars: list[chr], start: int, length: int, /) -> float
      * text_width(str: str, /) -> float
 
     Parameters
@@ -15909,7 +15710,7 @@ def text_width(str: str, /) -> float:
     c: chr
         the character to measure
 
-    chars: List[chr]
+    chars: list[chr]
         the character to measure
 
     length: int
@@ -15940,7 +15741,7 @@ def text_width(*args):
     You can use any of the following signatures:
 
      * text_width(c: chr, /) -> float
-     * text_width(chars: List[chr], start: int, length: int, /) -> float
+     * text_width(chars: list[chr], start: int, length: int, /) -> float
      * text_width(str: str, /) -> float
 
     Parameters
@@ -15949,7 +15750,7 @@ def text_width(*args):
     c: chr
         the character to measure
 
-    chars: List[chr]
+    chars: list[chr]
         the character to measure
 
     length: int
@@ -16823,7 +16624,7 @@ def vertex(x: float, y: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(v: npt.NDArray[np.floating], /) -> None
      * vertex(x: float, y: float, /) -> None
      * vertex(x: float, y: float, u: float, v: float, /) -> None
      * vertex(x: float, y: float, z: float, /) -> None
@@ -16835,11 +16636,11 @@ def vertex(x: float, y: float, /) -> None:
     u: float
         horizontal coordinate for the texture mapping
 
-    v: NDArray[(Any,), Float]
-        vertical coordinate for the texture mapping
-
     v: float
         vertical coordinate for the texture mapping
+
+    v: npt.NDArray[np.floating]
+        vertical coordinate data for the texture mapping
 
     x: float
         x-coordinate of the vertex
@@ -16882,7 +16683,7 @@ def vertex(x: float, y: float, z: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(v: npt.NDArray[np.floating], /) -> None
      * vertex(x: float, y: float, /) -> None
      * vertex(x: float, y: float, u: float, v: float, /) -> None
      * vertex(x: float, y: float, z: float, /) -> None
@@ -16894,11 +16695,11 @@ def vertex(x: float, y: float, z: float, /) -> None:
     u: float
         horizontal coordinate for the texture mapping
 
-    v: NDArray[(Any,), Float]
-        vertical coordinate for the texture mapping
-
     v: float
         vertical coordinate for the texture mapping
+
+    v: npt.NDArray[np.floating]
+        vertical coordinate data for the texture mapping
 
     x: float
         x-coordinate of the vertex
@@ -16941,7 +16742,7 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(v: npt.NDArray[np.floating], /) -> None
      * vertex(x: float, y: float, /) -> None
      * vertex(x: float, y: float, u: float, v: float, /) -> None
      * vertex(x: float, y: float, z: float, /) -> None
@@ -16953,11 +16754,11 @@ def vertex(x: float, y: float, u: float, v: float, /) -> None:
     u: float
         horizontal coordinate for the texture mapping
 
-    v: NDArray[(Any,), Float]
-        vertical coordinate for the texture mapping
-
     v: float
         vertical coordinate for the texture mapping
+
+    v: npt.NDArray[np.floating]
+        vertical coordinate data for the texture mapping
 
     x: float
         x-coordinate of the vertex
@@ -17000,7 +16801,7 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(v: npt.NDArray[np.floating], /) -> None
      * vertex(x: float, y: float, /) -> None
      * vertex(x: float, y: float, u: float, v: float, /) -> None
      * vertex(x: float, y: float, z: float, /) -> None
@@ -17012,11 +16813,11 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
     u: float
         horizontal coordinate for the texture mapping
 
-    v: NDArray[(Any,), Float]
-        vertical coordinate for the texture mapping
-
     v: float
         vertical coordinate for the texture mapping
+
+    v: npt.NDArray[np.floating]
+        vertical coordinate data for the texture mapping
 
     x: float
         x-coordinate of the vertex
@@ -17049,7 +16850,7 @@ def vertex(x: float, y: float, z: float, u: float, v: float, /) -> None:
 
 
 @overload
-def vertex(v: NDArray[(Any,), Float], /) -> None:
+def vertex(v: npt.NDArray[np.floating], /) -> None:
     """Add a new vertex to a shape.
 
     Underlying Processing method: PApplet.vertex
@@ -17059,7 +16860,7 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(v: npt.NDArray[np.floating], /) -> None
      * vertex(x: float, y: float, /) -> None
      * vertex(x: float, y: float, u: float, v: float, /) -> None
      * vertex(x: float, y: float, z: float, /) -> None
@@ -17071,11 +16872,11 @@ def vertex(v: NDArray[(Any,), Float], /) -> None:
     u: float
         horizontal coordinate for the texture mapping
 
-    v: NDArray[(Any,), Float]
-        vertical coordinate for the texture mapping
-
     v: float
         vertical coordinate for the texture mapping
+
+    v: npt.NDArray[np.floating]
+        vertical coordinate data for the texture mapping
 
     x: float
         x-coordinate of the vertex
@@ -17117,7 +16918,7 @@ def vertex(*args):
 
     You can use any of the following signatures:
 
-     * vertex(v: NDArray[(Any,), Float], /) -> None
+     * vertex(v: npt.NDArray[np.floating], /) -> None
      * vertex(x: float, y: float, /) -> None
      * vertex(x: float, y: float, u: float, v: float, /) -> None
      * vertex(x: float, y: float, z: float, /) -> None
@@ -17129,11 +16930,11 @@ def vertex(*args):
     u: float
         horizontal coordinate for the texture mapping
 
-    v: NDArray[(Any,), Float]
-        vertical coordinate for the texture mapping
-
     v: float
         vertical coordinate for the texture mapping
+
+    v: npt.NDArray[np.floating]
+        vertical coordinate data for the texture mapping
 
     x: float
         x-coordinate of the vertex
@@ -17165,7 +16966,7 @@ def vertex(*args):
     return _py5sketch.vertex(*args)
 
 
-def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
+def vertices(coordinates: npt.NDArray[np.floating], /) -> None:
     """Create a collection of vertices.
 
     Underlying Processing method: PApplet.vertices
@@ -17173,8 +16974,8 @@ def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     Parameters
     ----------
 
-    coordinates: NDArray[(Any, Any), Float]
-        array of vertex coordinates
+    coordinates: npt.NDArray[np.floating]
+        2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
     Notes
     -----
@@ -17189,6 +16990,109 @@ def vertices(coordinates: NDArray[(Any, Any), Float], /) -> None:
     return _py5sketch.vertices(coordinates)
 
 
+def window_move(x: int, y: int, /) -> None:
+    """Set the Sketch's window location.
+
+    Underlying Processing method: Sketch.windowMove
+
+    Parameters
+    ----------
+
+    x: int
+        x-coordinate for window location
+
+    y: int
+        y-coordinate for window location
+
+    Notes
+    -----
+
+    Set the Sketch's window location. Calling this repeatedly from the ``draw()``
+    function may result in a sluggish Sketch. Negative or invalid coordinates are
+    ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
+    """
+    return _py5sketch.window_move(x, y)
+
+
+def window_resizable(resizable: bool, /) -> None:
+    """Set the Sketch window as resizable by the user.
+
+    Underlying Processing method: Sketch.windowResizable
+
+    Parameters
+    ----------
+
+    resizable: bool
+        should the Sketch window be resizable
+
+    Notes
+    -----
+
+    Set the Sketch window as resizable by the user. The user will be able to resize
+    the window in the same way as they do for many other windows on their computer.
+    By default, the Sketch window is not resizable.
+
+    Changing the window size will clear the drawing canvas. If you do this, the
+    ``width`` and ``height`` variables will change.
+
+    This method provides the same funcationality as ``Py5Surface.set_resizable()``
+    but without the need to interact directly with the ``Py5Surface`` object.
+    """
+    return _py5sketch.window_resizable(resizable)
+
+
+def window_resize(new_width: int, new_height: int, /) -> None:
+    """Set a new width and height for the Sketch window.
+
+    Underlying Processing method: Sketch.windowResize
+
+    Parameters
+    ----------
+
+    new_height: int
+        new window height
+
+    new_width: int
+        new window width
+
+    Notes
+    -----
+
+    Set a new width and height for the Sketch window. You do not need to call
+    ``window_resizable()`` before calling this.
+
+    Changing the window size will clear the drawing canvas. If you do this, the
+    ``width`` and ``height`` variables will change.
+
+    This method provides the same funcationality as ``Py5Surface.set_size()`` but
+    without the need to interact directly with the ``Py5Surface`` object.
+    """
+    return _py5sketch.window_resize(new_width, new_height)
+
+
+def window_title(title: str, /) -> None:
+    """Set the Sketch window's title.
+
+    Underlying Processing method: Sketch.windowTitle
+
+    Parameters
+    ----------
+
+    title: str
+        new window title
+
+    Notes
+    -----
+
+    Set the Sketch window's title. This will typically appear at the window's title
+    bar. The default window title is "Sketch".
+
+    This method provides the same funcationality as ``Py5Surface.set_title()`` but
+    without the need to interact directly with the ``Py5Surface`` object.
+    """
+    return _py5sketch.window_title(title)
+
+
 def year() -> int:
     """Py5 communicates with the clock on your computer.
 
@@ -17201,94 +17105,6 @@ def year() -> int:
     returns the current year as an integer (2003, 2004, 2005, etc).
     """
     return Sketch.year()
-
-##############################################################################
-# module functions from data.py
-##############################################################################
-
-
-def load_json(json_path: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
-    """Load a JSON data file from a file or URL.
-
-    Parameters
-    ----------
-
-    json_path: Union[str, Path]
-        url or file path for JSON data file
-
-    kwargs: Dict[str, Any]
-        keyword arguments
-
-    Notes
-    -----
-
-    Load a JSON data file from a file or URL. When loading a file, the path can be
-    in the data directory, relative to the current working directory
-    (``sketch_path()``), or an absolute path. When loading from a URL, the
-    ``json_path`` parameter must start with ``http://`` or ``https://``.
-
-    When loading JSON data from a URL, the data is retrieved using the Python
-    requests library with the ``get`` method, and the ``kwargs`` parameter is passed
-    along to that method. When loading JSON data from a file, the data is loaded
-    using the Python json library with the ``load`` method, and again the ``kwargs``
-    parameter passed along to that method.
-    """
-    return _py5sketch.load_json(json_path, **kwargs)
-
-
-def save_json(json_data: Any,
-              filename: Union[str,
-                              Path],
-              **kwargs: Dict[str,
-                             Any]) -> None:
-    """Save JSON data to a file.
-
-    Parameters
-    ----------
-
-    filename: Union[str, Path]
-        filename to save JSON data object to
-
-    json_data: Any
-        json data object
-
-    kwargs: Dict[str, Any]
-        keyword arguments
-
-    Notes
-    -----
-
-    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
-    saved relative to the current working directory (``sketch_path()``).
-
-    The JSON data is saved using the Python json library with the ``dump`` method,
-    and the ``kwargs`` parameter is passed along to that method.
-    """
-    return _py5sketch.save_json(json_data, filename, **kwargs)
-
-
-def parse_json(serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
-    """Parse serialized JSON data from a string.
-
-    Parameters
-    ----------
-
-    kwargs: Dict[str, Any]
-        keyword arguments
-
-    serialized_json: Any
-        JSON data object that has been serialized as a string
-
-    Notes
-    -----
-
-    Parse serialized JSON data from a string. When reading JSON data from a file,
-    ``load_json()`` is the better choice.
-
-    The JSON data is parsed using the Python json library with the ``loads`` method,
-    and the ``kwargs`` parameter is passed along to that method.
-    """
-    return Sketch.parse_json(serialized_json, **kwargs)
 
 ##############################################################################
 # module functions from print_tools.py
@@ -17365,302 +17181,105 @@ def println(
     return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
 
 ##############################################################################
-# module functions from threads.py
+# module functions from data.py
 ##############################################################################
 
 
-def launch_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
+def load_json(json_path: Union[str, Path], **kwargs: dict[str, Any]) -> Any:
+    """Load a JSON data file from a file or URL.
 
     Parameters
     ----------
 
-    args: Tuple = None
-        positional arguments to pass to the given function
+    json_path: Union[str, Path]
+        url or file path for JSON data file
 
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
+    kwargs: dict[str, Any]
+        keyword arguments
 
     Notes
     -----
 
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
+    Load a JSON data file from a file or URL. When loading a file, the path can be
+    in the data directory, relative to the current working directory
+    (``sketch_path()``), or an absolute path. When loading from a URL, the
+    ``json_path`` parameter must start with ``http://`` or ``https://``.
 
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
+    When loading JSON data from a URL, the data is retrieved using the Python
+    requests library with the ``get`` method, and the ``kwargs`` parameter is passed
+    along to that method. When loading JSON data from a file, the data is loaded
+    using the Python json library with the ``load`` method, and again the ``kwargs``
+    parameter passed along to that method.
     """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+    return _py5sketch.load_json(json_path, **kwargs)
 
 
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: Tuple = None,
-        kwargs: Dict = None) -> Py5Promise:
-    """Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes.
+def save_json(json_data: Any,
+              filename: Union[str,
+                              Path],
+              **kwargs: dict[str,
+                             Any]) -> None:
+    """Save JSON data to a file.
 
     Parameters
     ----------
 
-    args: Tuple = None
-        positional arguments to pass to the given function
+    filename: Union[str, Path]
+        filename to save JSON data object to
 
-    daemon: bool = True
-        if the thread should be a daemon thread
+    json_data: Any
+        json data object
 
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
+    kwargs: dict[str, Any]
+        keyword arguments
 
     Notes
     -----
 
-    Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
+    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
+    saved relative to the current working directory (``sketch_path()``).
 
-    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
-    when the ``result`` property contains the value function ``f`` returned. Before
-    then, the ``result`` property will be ``None``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
+    The JSON data is saved using the Python json library with the ``dump`` method,
+    and the ``kwargs`` parameter is passed along to that method.
     """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+    return _py5sketch.save_json(json_data, filename, **kwargs)
 
 
-def launch_repeating_thread(f: Callable, name: str = None, *,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: Tuple = None, kwargs: Dict = None) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
+def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
+    """Parse serialized JSON data from a string.
 
     Parameters
     ----------
 
-    args: Tuple = None
-        positional arguments to pass to the given function
+    kwargs: dict[str, Any]
+        keyword arguments
 
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: Dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
+    serialized_json: Any
+        JSON data object that has been serialized as a string
 
     Notes
     -----
 
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+    Parse serialized JSON data from a string. When reading JSON data from a file,
+    ``load_json()`` is the better choice.
 
-    Use the ``time_delay`` parameter to set the time in seconds between one call to
-    function ``f`` and the next call. Set this parameter to ``0`` if you want each
-    call to happen immediately after the previous call finishes. If the function
-    ``f`` takes longer than expected to finish, py5 will wait for it to finish
-    before making the next call. There will not be overlapping calls to function
-    ``f``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
+    The JSON data is parsed using the Python json library with the ``loads`` method,
+    and the ``kwargs`` parameter is passed along to that method.
     """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with ``list_threads()``.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The ``wait`` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
-    ``False``. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use ``launch_repeating_thread()``
-    instead.
-
-    Use ``has_thread()`` to determine if a thread of a given name exists and
-    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
-    to stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The ``wait`` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
-    If you would rather the Sketch waited for threads to exit, create an ``exiting``
-    method and make a call to ``stop_all_threads(wait=True)``.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
+    return Sketch.parse_json(serialized_json, **kwargs)
 
 ##############################################################################
 # module functions from math.py
 ##############################################################################
 
 
-def sin(angle: float) -> float:
+def sin(angle: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Calculates the sine of an angle.
 
     Parameters
     ----------
 
-    angle: float
+    angle: Union[float, npt.ArrayLike]
         angle in radians
 
     Notes
@@ -17675,13 +17294,13 @@ def sin(angle: float) -> float:
     return Sketch.sin(angle)
 
 
-def cos(angle: float) -> float:
+def cos(angle: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Calculates the cosine of an angle.
 
     Parameters
     ----------
 
-    angle: float
+    angle: Union[float, npt.ArrayLike]
         angle in radians
 
     Notes
@@ -17696,13 +17315,13 @@ def cos(angle: float) -> float:
     return Sketch.cos(angle)
 
 
-def tan(angle: float) -> float:
+def tan(angle: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Calculates the ratio of the sine and cosine of an angle.
 
     Parameters
     ----------
 
-    angle: float
+    angle: Union[float, npt.ArrayLike]
         angle in radians
 
     Notes
@@ -17717,13 +17336,13 @@ def tan(angle: float) -> float:
     return Sketch.tan(angle)
 
 
-def asin(value: float) -> float:
+def asin(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """The inverse of ``sin()``, returns the arc sine of a value.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         value in the range of -1 to 1 whose arc sine is to be returned
 
     Notes
@@ -17738,13 +17357,13 @@ def asin(value: float) -> float:
     return Sketch.asin(value)
 
 
-def acos(value: float) -> float:
+def acos(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """The inverse of ``cos()``, returns the arc cosine of a value.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         value in the range of -1 to 1 whose arc cosine is to be returned
 
     Notes
@@ -17759,13 +17378,13 @@ def acos(value: float) -> float:
     return Sketch.acos(value)
 
 
-def atan(value: float) -> float:
+def atan(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """The inverse of ``tan()``, returns the arc tangent of a value.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         value whose arc tangent is to be returned
 
     Notes
@@ -17780,17 +17399,18 @@ def atan(value: float) -> float:
     return Sketch.atan(value)
 
 
-def atan2(y: float, x: float) -> float:
+def atan2(y: Union[float, npt.ArrayLike], x: Union[float,
+          npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Calculates the angle (in radians) from a specified point to the coordinate
     origin as measured from the positive x-axis.
 
     Parameters
     ----------
 
-    x: float
+    x: Union[float, npt.ArrayLike]
         x-coordinate of the point
 
-    y: float
+    y: Union[float, npt.ArrayLike]
         y-coordinate of the point
 
     Notes
@@ -17808,13 +17428,13 @@ def atan2(y: float, x: float) -> float:
     return Sketch.atan2(y, x)
 
 
-def degrees(radians: float) -> float:
+def degrees(radians: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Converts a radian measurement to its corresponding value in degrees.
 
     Parameters
     ----------
 
-    radians: float
+    radians: Union[float, npt.ArrayLike]
         radian value to convert to degrees
 
     Notes
@@ -17831,13 +17451,13 @@ def degrees(radians: float) -> float:
     return Sketch.degrees(radians)
 
 
-def radians(degrees: float) -> float:
+def radians(degrees: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Converts a degree measurement to its corresponding value in radians.
 
     Parameters
     ----------
 
-    degrees: float
+    degrees: Union[float, npt.ArrayLike]
         degree value to convert to radians
 
     Notes
@@ -17854,19 +17474,25 @@ def radians(degrees: float) -> float:
     return Sketch.radians(degrees)
 
 
-def constrain(amt: float, low: float, high: float) -> float:
+def constrain(amt: Union[float,
+                         npt.NDArray],
+              low: Union[float,
+                         npt.NDArray],
+              high: Union[float,
+                          npt.NDArray]) -> Union[float,
+                                                 npt.NDArray]:
     """Constrains a value to not exceed a maximum and minimum value.
 
     Parameters
     ----------
 
-    amt: float
+    amt: Union[float, npt.NDArray]
         the value to constrain
 
-    high: float
+    high: Union[float, npt.NDArray]
         minimum limit
 
-    low: float
+    low: Union[float, npt.NDArray]
         maximum limit
 
     Notes
@@ -17877,30 +17503,35 @@ def constrain(amt: float, low: float, high: float) -> float:
     return Sketch.constrain(amt, low, high)
 
 
-def remap(
-        value: float,
-        start1: float,
-        stop1: float,
-        start2: float,
-        stop2: float) -> float:
+def remap(value: Union[float,
+                       npt.NDArray],
+          start1: Union[float,
+                        npt.NDArray],
+          stop1: Union[float,
+                       npt.NDArray],
+          start2: Union[float,
+                        npt.NDArray],
+          stop2: Union[float,
+                       npt.NDArray]) -> Union[float,
+                                              npt.NDArray]:
     """Re-maps a number from one range to another.
 
     Parameters
     ----------
 
-    start1: float
+    start1: Union[float, npt.NDArray]
         lower bound of the value's current range
 
-    start2: float
+    start2: Union[float, npt.NDArray]
         lower bound of the value's target range
 
-    stop1: float
+    stop1: Union[float, npt.NDArray]
         upper bound of the value's current range
 
-    stop2: float
+    stop2: Union[float, npt.NDArray]
         upper bound of the value's target range
 
-    value: float
+    value: Union[float, npt.NDArray]
         the incoming value to be converted
 
     Notes
@@ -17924,7 +17555,8 @@ def remap(
 
 
 @overload
-def dist(x1: float, y1: float, x2: float, y2: float, /) -> float:
+def dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float,
+         npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Calculates the distance between two points.
 
     Methods
@@ -17932,28 +17564,28 @@ def dist(x1: float, y1: float, x2: float, y2: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
-     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x1: float
+    x1: Union[float, npt.NDArray]
         x-coordinate of the first point
 
-    x2: float
+    x2: Union[float, npt.NDArray]
         x-coordinate of the second point
 
-    y1: float
+    y1: Union[float, npt.NDArray]
         y-coordinate of the first point
 
-    y2: float
+    y2: Union[float, npt.NDArray]
         y-coordinate of the second point
 
-    z1: float
+    z1: Union[float, npt.NDArray]
         z-coordinate of the first point
 
-    z2: float
+    z2: Union[float, npt.NDArray]
         z-coordinate of the second point
 
     Notes
@@ -17965,8 +17597,20 @@ def dist(x1: float, y1: float, x2: float, y2: float, /) -> float:
 
 
 @overload
-def dist(x1: float, y1: float, z1: float, x2: float,
-         y2: float, z2: float, /) -> float:
+def dist(x1: Union[float,
+                   npt.NDArray],
+         y1: Union[float,
+                   npt.NDArray],
+         z1: Union[float,
+                   npt.NDArray],
+         x2: Union[float,
+                   npt.NDArray],
+         y2: Union[float,
+                   npt.NDArray],
+         z2: Union[float,
+                   npt.NDArray],
+         /) -> Union[float,
+                     npt.NDArray]:
     """Calculates the distance between two points.
 
     Methods
@@ -17974,28 +17618,28 @@ def dist(x1: float, y1: float, z1: float, x2: float,
 
     You can use any of the following signatures:
 
-     * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
-     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x1: float
+    x1: Union[float, npt.NDArray]
         x-coordinate of the first point
 
-    x2: float
+    x2: Union[float, npt.NDArray]
         x-coordinate of the second point
 
-    y1: float
+    y1: Union[float, npt.NDArray]
         y-coordinate of the first point
 
-    y2: float
+    y2: Union[float, npt.NDArray]
         y-coordinate of the second point
 
-    z1: float
+    z1: Union[float, npt.NDArray]
         z-coordinate of the first point
 
-    z2: float
+    z2: Union[float, npt.NDArray]
         z-coordinate of the second point
 
     Notes
@@ -18006,7 +17650,7 @@ def dist(x1: float, y1: float, z1: float, x2: float,
     pass
 
 
-def dist(*args: float) -> float:
+def dist(*args: Union[float, npt.NDArray]) -> float:
     """Calculates the distance between two points.
 
     Methods
@@ -18014,28 +17658,28 @@ def dist(*args: float) -> float:
 
     You can use any of the following signatures:
 
-     * dist(x1: float, y1: float, x2: float, y2: float, /) -> float
-     * dist(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> float
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x1: float
+    x1: Union[float, npt.NDArray]
         x-coordinate of the first point
 
-    x2: float
+    x2: Union[float, npt.NDArray]
         x-coordinate of the second point
 
-    y1: float
+    y1: Union[float, npt.NDArray]
         y-coordinate of the first point
 
-    y2: float
+    y2: Union[float, npt.NDArray]
         y-coordinate of the second point
 
-    z1: float
+    z1: Union[float, npt.NDArray]
         z-coordinate of the first point
 
-    z2: float
+    z2: Union[float, npt.NDArray]
         z-coordinate of the second point
 
     Notes
@@ -18046,19 +17690,25 @@ def dist(*args: float) -> float:
     return Sketch.dist(*args)
 
 
-def lerp(start: float, stop: float, amt: float) -> float:
+def lerp(start: Union[float,
+                      npt.NDArray],
+         stop: Union[float,
+                     npt.NDArray],
+         amt: Union[float,
+                    npt.NDArray]) -> Union[float,
+                                           npt.NDArray]:
     """Calculates a number between two numbers at a specific increment.
 
     Parameters
     ----------
 
-    amt: float
+    amt: Union[float, npt.NDArray]
         float between 0.0 and 1.0
 
-    start: float
+    start: Union[float, npt.NDArray]
         first value
 
-    stop: float
+    stop: Union[float, npt.NDArray]
         second value
 
     Notes
@@ -18076,7 +17726,8 @@ def lerp(start: float, stop: float, amt: float) -> float:
 
 
 @overload
-def mag(a: float, b: float, /) -> float:
+def mag(a: Union[float, npt.NDArray],
+        b: Union[float, npt.NDArray], /) -> float:
     """Calculates the magnitude (or length) of a vector.
 
     Methods
@@ -18084,19 +17735,19 @@ def mag(a: float, b: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * mag(a: float, b: float, /) -> float
-     * mag(a: float, b: float, c: float, /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
 
     Parameters
     ----------
 
-    a: float
+    a: Union[float, npt.NDArray]
         first value
 
-    b: float
+    b: Union[float, npt.NDArray]
         second value
 
-    c: float
+    c: Union[float, npt.NDArray]
         third value
 
     Notes
@@ -18112,7 +17763,8 @@ def mag(a: float, b: float, /) -> float:
 
 
 @overload
-def mag(a: float, b: float, c: float, /) -> float:
+def mag(a: Union[float, npt.NDArray], b: Union[float,
+        npt.NDArray], c: Union[float, npt.NDArray], /) -> float:
     """Calculates the magnitude (or length) of a vector.
 
     Methods
@@ -18120,19 +17772,19 @@ def mag(a: float, b: float, c: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * mag(a: float, b: float, /) -> float
-     * mag(a: float, b: float, c: float, /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
 
     Parameters
     ----------
 
-    a: float
+    a: Union[float, npt.NDArray]
         first value
 
-    b: float
+    b: Union[float, npt.NDArray]
         second value
 
-    c: float
+    c: Union[float, npt.NDArray]
         third value
 
     Notes
@@ -18147,7 +17799,7 @@ def mag(a: float, b: float, c: float, /) -> float:
     pass
 
 
-def mag(*args: float) -> float:
+def mag(*args: Union[float, npt.NDArray]) -> float:
     """Calculates the magnitude (or length) of a vector.
 
     Methods
@@ -18155,19 +17807,19 @@ def mag(*args: float) -> float:
 
     You can use any of the following signatures:
 
-     * mag(a: float, b: float, /) -> float
-     * mag(a: float, b: float, c: float, /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
 
     Parameters
     ----------
 
-    a: float
+    a: Union[float, npt.NDArray]
         first value
 
-    b: float
+    b: Union[float, npt.NDArray]
         second value
 
-    c: float
+    c: Union[float, npt.NDArray]
         third value
 
     Notes
@@ -18182,19 +17834,25 @@ def mag(*args: float) -> float:
     return Sketch.mag(*args)
 
 
-def norm(value: float, start: float, stop: float) -> float:
+def norm(value: Union[float,
+                      npt.NDArray],
+         start: Union[float,
+                      npt.NDArray],
+         stop: Union[float,
+                     npt.NDArray]) -> Union[float,
+                                            npt.NDArray]:
     """Normalizes a number from another range into a value between 0 and 1.
 
     Parameters
     ----------
 
-    start: float
+    start: Union[float, npt.NDArray]
         lower bound of the value's current range
 
-    stop: float
+    stop: Union[float, npt.NDArray]
         upper bound of the value's current range
 
-    value: float
+    value: Union[float, npt.NDArray]
         the incoming value to be converted
 
     Notes
@@ -18210,13 +17868,13 @@ def norm(value: float, start: float, stop: float) -> float:
     return Sketch.norm(value, start, stop)
 
 
-def sq(value: float) -> float:
+def sq(value: Union[float, npt.NDArray]) -> Union[float, npt.NDArray]:
     """Squares a number (multiplies a number by itself).
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.NDArray]
         number to square
 
     Notes
@@ -18229,13 +17887,14 @@ def sq(value: float) -> float:
     return Sketch.sq(value)
 
 
-def sqrt(value: float) -> Union[float, complex]:
+def sqrt(value: Union[float, npt.NDArray]
+         ) -> Union[float, complex, npt.NDArray]:
     """Calculates the square root of a number.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.NDArray]
         value to calculate the square root of
 
     Notes
@@ -18255,14 +17914,14 @@ def sqrt(value: float) -> Union[float, complex]:
     return Sketch.sqrt(value)
 
 
-def floor(value: float) -> int:
+def floor(value: Union[float, npt.ArrayLike]) -> Union[int, npt.NDArray]:
     """Calculates the closest int value that is less than or equal to the value of the
     parameter.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         number to round down
 
     Notes
@@ -18276,14 +17935,14 @@ def floor(value: float) -> int:
     return Sketch.floor(value)
 
 
-def ceil(value: float) -> int:
+def ceil(value: Union[float, npt.ArrayLike]) -> Union[int, npt.NDArray]:
     """Calculates the closest int value that is greater than or equal to the value of
     the parameter.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         number to round up
 
     Notes
@@ -18297,14 +17956,14 @@ def ceil(value: float) -> int:
     return Sketch.ceil(value)
 
 
-def exp(value: float) -> float:
+def exp(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Returns Euler's number e (2.71828...) raised to the power of the ``n``
     parameter.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         exponent to raise
 
     Notes
@@ -18318,13 +17977,13 @@ def exp(value: float) -> float:
     return Sketch.exp(value)
 
 
-def log(value: float) -> float:
+def log(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     """Calculates the natural logarithm (the base-e logarithm) of a number.
 
     Parameters
     ----------
 
-    value: float
+    value: Union[float, npt.ArrayLike]
         number greater than 0.0
 
     Notes
@@ -18760,13 +18419,13 @@ def random_int(*args: int) -> int:
     return _py5sketch.random_int(*args)
 
 
-def random_choice(objects: List[Any]) -> Any:
+def random_choice(objects: list[Any]) -> Any:
     """Select a random item from a list.
 
     Parameters
     ----------
 
-    objects: List[Any]
+    objects: list[Any]
         list of objects to choose from
 
     Notes
@@ -18964,7 +18623,7 @@ def random_gaussian(*args: float) -> float:
 
 
 @overload
-def noise(x: float, /) -> float:
+def noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using Processing's
     noise algorithm.
 
@@ -18975,20 +18634,20 @@ def noise(x: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * noise(x: float, /) -> float
-     * noise(x: float, y: float, /) -> float
-     * noise(x: float, y: float, z: float, /) -> float
+     * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19055,7 +18714,8 @@ def noise(x: float, /) -> float:
 
 
 @overload
-def noise(x: float, y: float, /) -> float:
+def noise(x: Union[float, npt.NDArray], y: Union[float,
+          npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using Processing's
     noise algorithm.
 
@@ -19066,20 +18726,20 @@ def noise(x: float, y: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * noise(x: float, /) -> float
-     * noise(x: float, y: float, /) -> float
-     * noise(x: float, y: float, z: float, /) -> float
+     * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19146,7 +18806,8 @@ def noise(x: float, y: float, /) -> float:
 
 
 @overload
-def noise(x: float, y: float, z: float, /) -> float:
+def noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
+          z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using Processing's
     noise algorithm.
 
@@ -19157,20 +18818,20 @@ def noise(x: float, y: float, z: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * noise(x: float, /) -> float
-     * noise(x: float, y: float, /) -> float
-     * noise(x: float, y: float, z: float, /) -> float
+     * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19236,7 +18897,7 @@ def noise(x: float, y: float, z: float, /) -> float:
     pass
 
 
-def noise(*args) -> float:
+def noise(*args) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using Processing's
     noise algorithm.
 
@@ -19247,20 +18908,20 @@ def noise(*args) -> float:
 
     You can use any of the following signatures:
 
-     * noise(x: float, /) -> float
-     * noise(x: float, y: float, /) -> float
-     * noise(x: float, y: float, z: float, /) -> float
+     * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19327,7 +18988,8 @@ def noise(*args) -> float:
 
 
 @overload
-def os_noise(x: float, y: float, /) -> float:
+def os_noise(x: Union[float, npt.NDArray], y: Union[float,
+             npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -19336,23 +18998,23 @@ def os_noise(x: float, y: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * os_noise(x: float, y: float, /) -> float
-     * os_noise(x: float, y: float, z: float, /) -> float
-     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    w: float
+    w: Union[float, npt.NDArray]
         w-coordinate in noise space
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19415,7 +19077,8 @@ def os_noise(x: float, y: float, /) -> float:
 
 
 @overload
-def os_noise(x: float, y: float, z: float, /) -> float:
+def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
+             z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -19424,23 +19087,23 @@ def os_noise(x: float, y: float, z: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * os_noise(x: float, y: float, /) -> float
-     * os_noise(x: float, y: float, z: float, /) -> float
-     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    w: float
+    w: Union[float, npt.NDArray]
         w-coordinate in noise space
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19503,7 +19166,8 @@ def os_noise(x: float, y: float, z: float, /) -> float:
 
 
 @overload
-def os_noise(x: float, y: float, z: float, w: float, /) -> float:
+def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float,
+             npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -19512,23 +19176,23 @@ def os_noise(x: float, y: float, z: float, w: float, /) -> float:
 
     You can use any of the following signatures:
 
-     * os_noise(x: float, y: float, /) -> float
-     * os_noise(x: float, y: float, z: float, /) -> float
-     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    w: float
+    w: Union[float, npt.NDArray]
         w-coordinate in noise space
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19590,7 +19254,7 @@ def os_noise(x: float, y: float, z: float, w: float, /) -> float:
     pass
 
 
-def os_noise(*args) -> float:
+def os_noise(*args) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -19599,23 +19263,23 @@ def os_noise(*args) -> float:
 
     You can use any of the following signatures:
 
-     * os_noise(x: float, y: float, /) -> float
-     * os_noise(x: float, y: float, z: float, /) -> float
-     * os_noise(x: float, y: float, z: float, w: float, /) -> float
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
 
-    w: float
+    w: Union[float, npt.NDArray]
         w-coordinate in noise space
 
-    x: float
+    x: Union[float, npt.NDArray]
         x-coordinate in noise space
 
-    y: float
+    y: Union[float, npt.NDArray]
         y-coordinate in noise space
 
-    z: float
+    z: Union[float, npt.NDArray]
         z-coordinate in noise space
 
     Notes
@@ -19725,17 +19389,17 @@ def update_np_pixels() -> None:
     return _py5sketch.update_np_pixels()
 
 
-np_pixels: np.ndarray = None
+np_pixels: npt.NDArray[np.uint8] = None
 
 
-def set_np_pixels(array: np.ndarray, bands: str = 'ARGB') -> None:
+def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = 'ARGB') -> None:
     """Set the entire contents of ``np_pixels[]`` to the contents of another properly
     sized and typed numpy array.
 
     Parameters
     ----------
 
-    array: np.ndarray
+    array: npt.NDArray[np.uint8]
         properly sized numpy array to be copied to np_pixels[]
 
     bands: str = 'ARGB'
@@ -19817,6 +19481,291 @@ def save(filename: Union[str,
         drop_alpha=drop_alpha,
         use_thread=use_thread,
         **params)
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None) -> Py5Promise:
+    """Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
+    when the ``result`` property contains the value function ``f`` returned. Before
+    then, the ``result`` property will be ``None``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_repeating_thread(f: Callable, name: str = None, *,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: tuple = None, kwargs: dict = None) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the ``time_delay`` parameter to set the time in seconds between one call to
+    function ``f`` and the next call. Set this parameter to ``0`` if you want each
+    call to happen immediately after the previous call finishes. If the function
+    ``f`` takes longer than expected to finish, py5 will wait for it to finish
+    before making the next call. There will not be overlapping calls to function
+    ``f``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with ``list_threads()``.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The ``wait`` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
+    ``False``. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use ``launch_repeating_thread()``
+    instead.
+
+    Use ``has_thread()`` to determine if a thread of a given name exists and
+    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
+    to stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The ``wait`` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
+    If you would rather the Sketch waited for threads to exit, create an ``exiting``
+    method and make a call to ``stop_all_threads(wait=True)``.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
 
 ##############################################################################
 # module functions from sketch.py
@@ -19947,13 +19896,13 @@ def hot_reload_draw(draw: Callable) -> None:
     return _py5sketch.hot_reload_draw(draw)
 
 
-def profile_functions(function_names: List[str]) -> None:
+def profile_functions(function_names: list[str]) -> None:
     """Profile the execution times of the Sketch's functions with a line profiler.
 
     Parameters
     ----------
 
-    function_names: List[str]
+    function_names: list[str]
         names of py5 functions to be profiled
 
     Notes
@@ -20078,16 +20027,13 @@ def save_frame(filename: Union[str,
 
 
 def create_image_from_numpy(
-        array: np.array,
-        bands: str = 'ARGB',
-        *,
-        dst: Py5Image = None) -> Py5Image:
+        array: npt.NDArray[np.uint8], bands: str = 'ARGB', *, dst: Py5Image = None) -> Py5Image:
     """Convert a numpy array into a Py5Image object.
 
     Parameters
     ----------
 
-    array: np.array
+    array: npt.NDArray[np.uint8]
         numpy image array
 
     bands: str = 'ARGB'
@@ -20224,9 +20170,9 @@ def request_image(image_path: Union[str, Path]) -> Py5Promise:
 
 
 def run_sketch(block: bool = None, *,
-               py5_options: List[str] = None,
-               sketch_args: List[str] = None,
-               sketch_functions: Dict[str, Callable] = None) -> None:
+               py5_options: list[str] = None,
+               sketch_args: list[str] = None,
+               sketch_functions: dict[str, Callable] = None) -> None:
     """Run the Sketch.
 
     Parameters
@@ -20235,13 +20181,13 @@ def run_sketch(block: bool = None, *,
     block: bool = None
         method returns immediately (False) or blocks until Sketch exits (True)
 
-    py5_options: List[str] = None
+    py5_options: list[str] = None
         command line arguments to pass to Processing as arguments
 
-    sketch_args: List[str] = None
+    sketch_args: list[str] = None
         command line arguments that become Sketch arguments
 
-    sketch_functions: Dict[str, Callable] = None
+    sketch_functions: dict[str, Callable] = None
         sketch methods when using module mode
 
     Notes

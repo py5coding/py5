@@ -17,10 +17,12 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+from __future__ import annotations
+
 import json
 import re
 from pathlib import Path
-from typing import Any, Union, Dict, overload
+from typing import Any, Union, overload
 import requests
 
 
@@ -31,7 +33,7 @@ class DataMixin:
 
     # *** BEGIN METHODS ***
     def load_json(
-            self, json_path: Union[str, Path], **kwargs: Dict[str, Any]) -> Any:
+            self, json_path: Union[str, Path], **kwargs: dict[str, Any]) -> Any:
         """Load a JSON data file from a file or URL.
 
         Parameters
@@ -40,7 +42,7 @@ class DataMixin:
         json_path: Union[str, Path]
             url or file path for JSON data file
 
-        kwargs: Dict[str, Any]
+        kwargs: dict[str, Any]
             keyword arguments
 
         Notes
@@ -87,7 +89,7 @@ class DataMixin:
                   json_data: Any,
                   filename: Union[str,
                                   Path],
-                  **kwargs: Dict[str,
+                  **kwargs: dict[str,
                                  Any]) -> None:
         """Save JSON data to a file.
 
@@ -100,7 +102,7 @@ class DataMixin:
         json_data: Any
             json data object
 
-        kwargs: Dict[str, Any]
+        kwargs: dict[str, Any]
             keyword arguments
 
         Notes
@@ -119,13 +121,13 @@ class DataMixin:
             json.dump(json_data, f, **kwargs)
 
     @classmethod
-    def parse_json(cls, serialized_json: Any, **kwargs: Dict[str, Any]) -> Any:
+    def parse_json(cls, serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
         """Parse serialized JSON data from a string.
 
         Parameters
         ----------
 
-        kwargs: Dict[str, Any]
+        kwargs: dict[str, Any]
             keyword arguments
 
         serialized_json: Any

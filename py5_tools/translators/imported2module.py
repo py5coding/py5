@@ -44,7 +44,10 @@ def post_translate(code):
 
 
 def translate_code(code):
-    util.translate_code(translate_token, code, post_translate=post_translate)
+    return util.translate_code(
+        translate_token,
+        code,
+        post_translate=post_translate)
 
 
 def translate_file(src: Union[str, Path], dest: Union[str, Path]):

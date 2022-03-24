@@ -1,6 +1,27 @@
+# *****************************************************************************
+#
+#   Part of the py5 library
+#   Copyright (C) 2020-2022 Jim Schmitz
+#
+#   This library is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published by
+#   the Free Software Foundation, either version 2.1 of the License, or (at
+#   your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+#   General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public License
+#   along with this library. If not, see <https://www.gnu.org/licenses/>.
+#
+# *****************************************************************************
+from __future__ import annotations
+
 import sys
 import functools
-from typing import Callable, Tuple, Dict, List, NewType
+from typing import Callable
 
 import numpy as np
 
@@ -9,9 +30,6 @@ import PIL.ImageFile
 from PIL import Image
 
 from .sketch import Sketch
-
-
-PIL_ImageFile = NewType('PIL_ImageFile', PIL.ImageFile.ImageFile)
 
 
 class RenderHelperSketch(Sketch):
@@ -143,7 +161,7 @@ def _osx_renderer_check(renderer):
 
 def render_frame(draw: Callable, width: int, height: int,
                  renderer: str = Sketch.HIDDEN, *,
-                 draw_args: Tuple = None, draw_kwargs: Dict = None,
+                 draw_args: tuple = None, draw_kwargs: dict = None,
                  use_py5graphics=False) -> PIL.ImageFile.ImageFile:
     """Helper function to render a single frame using the passed ``draw`` function
     argument.
@@ -154,10 +172,10 @@ def render_frame(draw: Callable, width: int, height: int,
     draw: Callable
         function that executes py5 draw commands
 
-    draw_args: Tuple = None
+    draw_args: tuple = None
         additional positional arguments to pass to draw function
 
-    draw_kwargs: Dict = None
+    draw_kwargs: dict = None
         additional keyword arguments to pass to draw function
 
     height: int
@@ -213,12 +231,18 @@ def render_frame(draw: Callable, width: int, height: int,
         return ahs.output[0]
 
 
-def render_frame_sequence(draw: Callable, width: int, height: int,
-                          renderer: str = Sketch.HIDDEN, *,
-                          limit: int = 1, setup: Callable = None,
-                          setup_args: Tuple = None, setup_kwargs: Dict = None,
-                          draw_args: Tuple = None, draw_kwargs: Dict = None,
-                          use_py5graphics=False) -> List[PIL_ImageFile]:
+def render_frame_sequence(draw: Callable,
+                          width: int,
+                          height: int,
+                          renderer: str = Sketch.HIDDEN,
+                          *,
+                          limit: int = 1,
+                          setup: Callable = None,
+                          setup_args: tuple = None,
+                          setup_kwargs: dict = None,
+                          draw_args: tuple = None,
+                          draw_kwargs: dict = None,
+                          use_py5graphics=False) -> list[PIL.ImageFile.ImageFile]:
     """Helper function to render a sequence of frames using the passed ``draw``
     function argument.
 
@@ -228,10 +252,10 @@ def render_frame_sequence(draw: Callable, width: int, height: int,
     draw: Callable
         function that executes py5 draw commands
 
-    draw_args: Tuple = None
+    draw_args: tuple = None
         additional positional arguments to pass to draw function
 
-    draw_kwargs: Dict = None
+    draw_kwargs: dict = None
         additional keyword arguments to pass to draw function
 
     height: int
@@ -246,10 +270,10 @@ def render_frame_sequence(draw: Callable, width: int, height: int,
     setup: Callable = None
         function that executes py5 setup commands
 
-    setup_args: Tuple = None
+    setup_args: tuple = None
         additional positional arguments to pass to setup function
 
-    setup_kwargs: Dict = None
+    setup_kwargs: dict = None
         additional keyword arguments to pass to setup function
 
     use_py5graphics: bool = False
@@ -370,8 +394,8 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
 
 def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
                     limit: int = 1, setup: Callable = None,
-                    setup_args: Tuple = None, setup_kwargs: Dict = None,
-                    use_py5graphics=False) -> List[PIL_ImageFile]:
+                    setup_args: tuple = None, setup_kwargs: dict = None,
+                    use_py5graphics=False) -> list[PIL.ImageFile.ImageFile]:
     """Decorator function to render a sequence of frames using the decorated ``draw``
     function.
 
@@ -390,10 +414,10 @@ def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     setup: Callable = None
         optional setup function
 
-    setup_args: Tuple = None
+    setup_args: tuple = None
         additional positional arguments to pass to setup function
 
-    setup_kwargs: Dict = None
+    setup_kwargs: dict = None
         additional keyword arguments to pass to setup function
 
     use_py5graphics: bool = False

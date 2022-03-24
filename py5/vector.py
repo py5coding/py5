@@ -19,14 +19,13 @@
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import Union, Tuple
+from typing import Union
 import operator
 from collections.abc import Sequence, Iterable
 import re
 
 import numpy as np
-
-from nptyping import NDArray
+import numpy.typing as npt
 
 
 class Py5Vector(Sequence):
@@ -544,9 +543,8 @@ class Py5Vector(Sequence):
         -----
 
         The vector's y dimension value. This is the vector's 2nd dimension.""")
-    data: NDArray = property(
-        _get_data,
-        doc="""Numpy array used to store the vector's data values.
+    data: npt.NDArray[np.floating] = property(
+        _get_data, doc="""Numpy array used to store the vector's data values.
 
         Notes
         -----
@@ -603,19 +601,19 @@ class Py5Vector(Sequence):
 
     def lerp(self,
              other: Union[Py5Vector,
-                          NDArray],
+                          np.ndarray],
              amt: Union[float,
-                        NDArray]) -> Union[Py5Vector,
-                                           NDArray]:
+                        np.ndarray]) -> Union[Py5Vector,
+                                              np.ndarray[np.floating]]:
         """Calculates a vector between two vectors at a specific increment.
 
         Parameters
         ----------
 
-        amt: Union[float, NDArray]
+        amt: Union[float, np.ndarray]
             float between 0.0 and 1.0
 
-        other: Union[Py5Vector, NDArray]
+        other: Union[Py5Vector, np.ndarray]
             other vector to interpolate between
 
         Notes
@@ -637,14 +635,14 @@ class Py5Vector(Sequence):
                               'lerp of',
                               maybe_vector=True)
 
-    def dist(self, other: Union[Py5Vector, NDArray]
-             ) -> Union[Py5Vector, NDArray]:
+    def dist(self, other: Union[Py5Vector, np.ndarray]
+             ) -> Union[Py5Vector, np.ndarray[np.floating]]:
         """Calculate the distance between two vectors.
 
         Parameters
         ----------
 
-        other: Union[Py5Vector, NDArray]
+        other: Union[Py5Vector, np.ndarray]
             vector to calculate the distance from
 
         Notes
@@ -661,13 +659,14 @@ class Py5Vector(Sequence):
                     axis=-1)),
             'distance between')
 
-    def dot(self, other: Union[Py5Vector, NDArray]) -> Union[float, NDArray]:
+    def dot(self, other: Union[Py5Vector, np.ndarray]
+            ) -> Union[float, np.ndarray[np.floating]]:
         """Calculate the dot product between two vectors.
 
         Parameters
         ----------
 
-        other: Union[Py5Vector, NDArray]
+        other: Union[Py5Vector, np.ndarray]
             vector to calculate the dot product with
 
         Notes
@@ -680,14 +679,14 @@ class Py5Vector(Sequence):
 
     def angle_between(self,
                       other: Union[Py5Vector,
-                                   NDArray]) -> Union[Py5Vector,
-                                                      NDArray]:
+                                   np.ndarray]) -> Union[Py5Vector,
+                                                         np.ndarray[np.floating]]:
         """Measure the angle between two vectors.
 
         Parameters
         ----------
 
-        other: Union[Py5Vector, NDArray]
+        other: Union[Py5Vector, np.ndarray]
             vector to measure angle between
 
         Notes
@@ -698,14 +697,17 @@ class Py5Vector(Sequence):
         return self._run_calc(other, lambda s, o: np.arccos(
             ((s / np.sum(s**2)**0.5) * (o / np.sum(o**2, axis=-1)**0.5)).sum(axis=-1)), 'angle between')
 
-    def cross(self, other: Union[Py5Vector, NDArray]
-              ) -> Union[float, Py5Vector, NDArray]:
+    def cross(self,
+              other: Union[Py5Vector,
+                           np.ndarray]) -> Union[float,
+                                                 Py5Vector,
+                                                 np.ndarray[np.floating]]:
         """Calculate the vector cross product of two 3D vectors.
 
         Parameters
         ----------
 
-        other: Union[Py5Vector, NDArray]
+        other: Union[Py5Vector, np.ndarray]
             2D or 3D vector to calculate the cross product with
 
         Notes
@@ -884,7 +886,7 @@ class Py5Vector(Sequence):
                 self._data *= max_mag / (mag_sq**0.5)
         return self
 
-    def _get_heading(self) -> Union(float, Tuple[float]):
+    def _get_heading(self) -> Union(float, tuple[float]):
         """The vector's heading, measured in radians.
 
         Notes

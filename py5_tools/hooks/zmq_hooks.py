@@ -19,12 +19,13 @@
 # *****************************************************************************
 import io
 
-from ipykernel.zmqshell import ZMQInteractiveShell
 import ipywidgets as widgets
 
 import PIL
 
 from .hooks import SketchPortalHook
+
+from .. import environ as _environ
 
 
 Sketch = 'Sketch'
@@ -115,19 +116,11 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     frames to the notebook client, wasting resources. A Sketch can only have one
     open portal, so opening a new portal with different options will replace an
     existing portal."""
-    try:
-        __IPYTHON__  # type: ignore
-        in_ipython_session = True
-        in_jupyter_zmq_shell = isinstance(
-            get_ipython(), ZMQInteractiveShell)  # type: ignore
-    except NameError:
-        in_ipython_session = False
-        in_jupyter_zmq_shell = False
-
-    if not in_ipython_session:
+    environment = _environ.Environment()
+    if not environment.in_ipython_session:
         raise RuntimeError(
             'The sketch_widget() function can only be used with IPython and ZMQInteractiveShell (such as Jupyter Lab)')
-    if not in_jupyter_zmq_shell:
+    if not environment.in_jupyter_zmq_shell:
         raise RuntimeError(
             'The sketch_widget() function can only be used with ZMQInteractiveShell (such as Jupyter Lab)')
 

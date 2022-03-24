@@ -17,8 +17,10 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+from __future__ import annotations
+
 import functools
-from typing import overload, List  # noqa
+from typing import overload  # noqa
 
 import jpype
 from jpype import JException, JArray, JString  # noqa
@@ -305,7 +307,7 @@ class Py5Font:
 
     @classmethod
     @_return_list_str
-    def list(cls) -> List[str]:
+    def list(cls) -> list[str]:
         """Gets a list of the fonts installed on the system.
 
         Underlying Processing method: PFont.list

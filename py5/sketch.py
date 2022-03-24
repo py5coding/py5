@@ -17,23 +17,29 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+from __future__ import annotations
+
 import time
 import os
 import sys
+import platform
+import warnings
 from io import BytesIO
 from pathlib import Path
 import functools
-from typing import overload, Any, Callable, Union, Dict, List  # noqa
-from nptyping import NDArray, Float, Int  # noqa
+from typing import overload, Any, Callable, Union  # noqa
 
 import jpype
 from jpype.types import JException, JArray, JInt  # noqa
 
-import numpy as np  # noqa
+import numpy as np
+import numpy.typing as npt
 
+import py5_tools.environ as _environ
+from py5_tools.printstreams import _DefaultPrintlnStream, _DisplayPubPrintlnStream
 from .methods import Py5Methods
 from .base import Py5Base
-from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, _DefaultPrintlnStream, _DisplayPubPrintlnStream
+from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream
 from .mixins.threads import Py5Promise  # noqa
 from .image import Py5Image, _return_py5image  # noqa
 from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
@@ -50,19 +56,21 @@ from . import reference
 
 _Sketch = jpype.JClass('py5.core.Sketch')
 
+
 try:
+    # be aware that __IPYTHON__ and get_ipython() are inserted into the user
+    # namespace late in the kernel startup process
     __IPYTHON__  # type: ignore
-    _in_ipython_session = True
-    from ipykernel.zmqshell import ZMQInteractiveShell
-    _ipython_shell = get_ipython()  # type: ignore
-    _in_jupyter_zmq_shell = isinstance(_ipython_shell, ZMQInteractiveShell)
-    if sys.platform == 'darwin' and _ipython_shell.active_eventloop != 'osx':
+    if sys.platform == 'darwin' and get_ipython(
+    ).active_eventloop != 'osx':  # type: ignore
         print("Importing py5 on OSX but the necessary Jupyter OSX event loop not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library.")
         _ipython_shell.run_line_magic('gui', 'osx')
-except NameError:
-    _in_ipython_session = False
-    _ipython_shell = None
-    _in_jupyter_zmq_shell = False
+except Exception:
+    pass
+
+
+_PY5_LAST_WINDOW_X = None
+_PY5_LAST_WINDOW_Y = None
 
 
 def _auto_convert_to_py5image(f):
@@ -133,10 +141,15 @@ class Sketch(
         # otherwise, it will be garbage collected and lead to segmentation
         # faults!
         self._py5_methods = None
-        self.set_println_stream(_DisplayPubPrintlnStream(
-        ) if _in_jupyter_zmq_shell else _DefaultPrintlnStream())
-        self._instance.setPy5IconPath(
-            str(Path(__file__).parent.parent / 'py5_tools/kernel/resources/logo-64x64.png'))
+        self._environ = None
+        iconPath = Path(__file__).parent.parent / \
+            'py5_tools/kernel/resources/logo-64x64.png'
+        if iconPath.exists():
+            self._instance.setPy5IconPath(str(iconPath))
+        elif hasattr(sys, '_MEIPASS'):
+            warnings.warn(
+                "py5 logo image cannot be found. You are running this Sketch with pyinstaller and the image is missing from the packaging. I'm going to nag you until you fix it :)")
+        _Sketch.setJOGLProperties(str(Path(__file__).parent))
 
         # attempt to instantiate Py5Utilities
         self.utils = None
@@ -146,7 +159,7 @@ class Sketch(
             pass
 
     def run_sketch(self, block: bool = None, *,
-                   py5_options: List = None, sketch_args: List = None) -> None:
+                   py5_options: list = None, sketch_args: list = None) -> None:
         """Run the Sketch.
 
         Parameters
@@ -155,13 +168,13 @@ class Sketch(
         block: bool = None
             method returns immediately (False) or blocks until Sketch exits (True)
 
-        py5_options: List[str] = None
+        py5_options: list[str] = None
             command line arguments to pass to Processing as arguments
 
-        sketch_args: List[str] = None
+        sketch_args: list[str] = None
             command line arguments that become Sketch arguments
 
-        sketch_functions: Dict[str, Callable] = None
+        sketch_functions: dict[str, Callable] = None
             sketch methods when using module mode
 
         Notes
@@ -227,10 +240,13 @@ class Sketch(
         self._run_sketch(methods, block, py5_options, sketch_args)
 
     def _run_sketch(self,
-                    methods: Dict[str, Callable],
+                    methods: dict[str, Callable],
                     block: bool,
-                    py5_options: List[str] = None,
-                    sketch_args: List[str] = None) -> None:
+                    py5_options: list[str] = None,
+                    sketch_args: list[str] = None) -> None:
+        self._environ = _environ.Environment()
+        self.set_println_stream(_DisplayPubPrintlnStream(
+        ) if self._environ.in_jupyter_zmq_shell else _DefaultPrintlnStream())
         self._init_println_stream()
 
         self._py5_methods = Py5Methods(self)
@@ -246,6 +262,13 @@ class Sketch(
             sketch_args = []
         if not any([a.startswith('--sketch-path') for a in py5_options]):
             py5_options.append('--sketch-path=' + os.getcwd())
+        if not any([a.startswith('--location') for a in py5_options]
+                   ) and _PY5_LAST_WINDOW_X is not None and _PY5_LAST_WINDOW_Y is not None:
+            py5_options.append(
+                '--location=' +
+                str(_PY5_LAST_WINDOW_X) +
+                ',' +
+                str(_PY5_LAST_WINDOW_Y))
         args = py5_options + [''] + sketch_args
 
         try:
@@ -256,7 +279,7 @@ class Sketch(
                 str(e),
                 stderr=True)
 
-        if sys.platform == 'darwin' and _in_ipython_session and block:
+        if platform.system() == 'Darwin' and self._environ.in_ipython_session and block:
             if (renderer := self._instance.getRendererName()) in [
                     'JAVA2D', 'P2D', 'P3D', 'FX2D']:
                 self.println(
@@ -266,7 +289,7 @@ class Sketch(
                     stderr=True)
                 block = False
 
-        if block or (block is None and not _in_ipython_session):
+        if block or (block is None and not self._environ.in_ipython_session):
             # wait for the sketch to finish
             surface = self.get_surface()
             if surface._instance is not None:
@@ -287,6 +310,11 @@ class Sketch(
                 time.sleep(pause)
 
     def _shutdown(self):
+        global _PY5_LAST_WINDOW_X
+        global _PY5_LAST_WINDOW_Y
+        if self._instance.lastWindowX is not None and self._instance.lastWindowY is not None:
+            _PY5_LAST_WINDOW_X = int(self._instance.lastWindowX)
+            _PY5_LAST_WINDOW_Y = int(self._instance.lastWindowY)
         super()._shutdown()
 
     def _terminate_sketch(self):
@@ -597,13 +625,13 @@ class Sketch(
         replace a running Sketch's draw function with a different one."""
         self._py5_methods.set_functions(**dict(draw=draw))
 
-    def profile_functions(self, function_names: List[str]) -> None:
+    def profile_functions(self, function_names: list[str]) -> None:
         """Profile the execution times of the Sketch's functions with a line profiler.
 
         Parameters
         ----------
 
-        function_names: List[str]
+        function_names: list[str]
             names of py5 functions to be profiled
 
         Notes
@@ -744,18 +772,17 @@ class Sketch(
 
     # *** Py5Image methods ***
 
-    def create_image_from_numpy(
-            self,
-            array: np.array,
-            bands: str = 'ARGB',
-            *,
-            dst: Py5Image = None) -> Py5Image:
+    def create_image_from_numpy(self,
+                                array: npt.NDArray[np.uint8],
+                                bands: str = 'ARGB',
+                                *,
+                                dst: Py5Image = None) -> Py5Image:
         """Convert a numpy array into a Py5Image object.
 
         Parameters
         ----------
 
-        array: np.array
+        array: npt.NDArray[np.uint8]
             numpy image array
 
         bands: str = 'ARGB'
@@ -936,7 +963,6 @@ class Sketch(
     ARC = 32
     ARGB = 2
     ARGS_BGCOLOR = "--bgcolor"
-    ARGS_DENSITY = "--density"
     ARGS_DISABLE_AWT = "--disable-awt"
     ARGS_DISPLAY = "--display"
     ARGS_EDITOR_LOCATION = "--editor-location"
@@ -947,6 +973,7 @@ class Sketch(
     ARGS_PRESENT = "--present"
     ARGS_SKETCH_FOLDER = "--sketch-path"
     ARGS_STOP_COLOR = "--stop-color"
+    ARGS_UI_SCALE = "--ui-scale"
     ARGS_WINDOW_COLOR = "--window-color"
     ARROW = 0
     BACKSPACE = '\b'
@@ -1118,7 +1145,7 @@ class Sketch(
     Z = 2
 
     @_return_list_str
-    def _get_pargs(self) -> List[str]:
+    def _get_pargs(self) -> list[str]:
         """List of strings passed to the Sketch through the call to ``run_sketch()``.
 
         Underlying Processing field: PApplet.args
@@ -1131,7 +1158,7 @@ class Sketch(
         to make this more useful.
         """
         return self._instance.args
-    pargs: List[str] = property(
+    pargs: list[str] = property(
         fget=_get_pargs,
         doc="""List of strings passed to the Sketch through the call to ``run_sketch()``.
 
@@ -1798,6 +1825,54 @@ class Sketch(
         call ``size(320, 240)`` sets the ``width`` variable to the value 320. The value
         of ``width`` defaults to 100 if ``size()`` is not used in a program.""")
 
+    def _get_window_x(self) -> int:
+        """The x-coordinate of the current window location.
+
+        Underlying Processing field: Sketch.windowX
+
+        Notes
+        -----
+
+        The x-coordinate of the current window location. The location is measured from
+        the Sketch window's upper left corner.
+        """
+        return self._instance.windowX
+    window_x: int = property(
+        fget=_get_window_x,
+        doc="""The x-coordinate of the current window location.
+
+        Underlying Processing field: Sketch.windowX
+
+        Notes
+        -----
+
+        The x-coordinate of the current window location. The location is measured from
+        the Sketch window's upper left corner.""")
+
+    def _get_window_y(self) -> int:
+        """The y-coordinate of the current window location.
+
+        Underlying Processing field: Sketch.windowY
+
+        Notes
+        -----
+
+        The y-coordinate of the current window location. The location is measured from
+        the Sketch window's upper left corner.
+        """
+        return self._instance.windowY
+    window_y: int = property(
+        fget=_get_window_y,
+        doc="""The y-coordinate of the current window location.
+
+        Underlying Processing field: Sketch.windowY
+
+        Notes
+        -----
+
+        The y-coordinate of the current window location. The location is measured from
+        the Sketch window's upper left corner.""")
+
     @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
         """Extracts the alpha value from a color, scaled to match current ``color_mode()``.
@@ -2165,8 +2240,7 @@ class Sketch(
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -2219,11 +2293,8 @@ class Sketch(
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -2266,8 +2337,7 @@ class Sketch(
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -2320,11 +2390,8 @@ class Sketch(
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -2337,7 +2404,7 @@ class Sketch(
         pass
 
     @overload
-    def apply_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
+    def apply_matrix(self, source: npt.NDArray[np.floating], /) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
         Underlying Processing method: PApplet.applyMatrix
@@ -2349,8 +2416,7 @@ class Sketch(
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -2403,94 +2469,8 @@ class Sketch(
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
-
-        Notes
-        -----
-
-        Multiplies the current matrix by the one specified through the parameters. This
-        is very slow because it will try to calculate the inverse of the transform, so
-        avoid it whenever possible. The equivalent function in OpenGL is
-        ``gl_mult_matrix()``.
-        """
-        pass
-
-    @overload
-    def apply_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """Multiplies the current matrix by the one specified through the parameters.
-
-        Underlying Processing method: PApplet.applyMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
-         * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-        Parameters
-        ----------
-
-        n00: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n01: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n02: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n03: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n10: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n11: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n12: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n13: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n20: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n21: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n22: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n23: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n30: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n31: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n32: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        n33: float
-            numbers which define the 4x4 matrix to be multiplied
-
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -2514,8 +2494,7 @@ class Sketch(
 
          * apply_matrix(n00: float, n01: float, n02: float, n03: float, n10: float, n11: float, n12: float, n13: float, n20: float, n21: float, n22: float, n23: float, n30: float, n31: float, n32: float, n33: float, /) -> None
          * apply_matrix(n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /) -> None
-         * apply_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * apply_matrix(source: NDArray[(4, 4), Float], /) -> None
+         * apply_matrix(source: npt.NDArray[np.floating], /) -> None
 
         Parameters
         ----------
@@ -2568,11 +2547,8 @@ class Sketch(
         n33: float
             numbers which define the 4x4 matrix to be multiplied
 
-        source: NDArray[(2, 3), Float]
-            2D transformation matrix
-
-        source: NDArray[(4, 4), Float]
-            3D transformation matrix
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -4372,7 +4348,7 @@ class Sketch(
         return self._instance.bezierVertex(*args)
 
     def bezier_vertices(
-            self, coordinates: NDArray[(Any, Any), Float], /) -> None:
+            self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of bezier vertices.
 
         Underlying Processing method: PApplet.bezierVertices
@@ -4380,8 +4356,8 @@ class Sketch(
         Parameters
         ----------
 
-        coordinates: NDArray[(Any, Any), Float]
-            array of bezier vertex coordinates
+        coordinates: npt.NDArray[np.floating]
+            2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
 
         Notes
         -----
@@ -6352,12 +6328,12 @@ class Sketch(
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: List[chr]
+        charset: list[chr]
             array containing characters to be generated
 
         name: str
@@ -6414,12 +6390,12 @@ class Sketch(
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: List[chr]
+        charset: list[chr]
             array containing characters to be generated
 
         name: str
@@ -6463,7 +6439,7 @@ class Sketch(
 
     @overload
     def create_font(self, name: str, size: float, smooth: bool,
-                    charset: List[chr], /) -> Py5Font:
+                    charset: list[chr], /) -> Py5Font:
         """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
         computer.
@@ -6477,12 +6453,12 @@ class Sketch(
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: List[chr]
+        charset: list[chr]
             array containing characters to be generated
 
         name: str
@@ -6539,12 +6515,12 @@ class Sketch(
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: List[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: List[chr]
+        charset: list[chr]
             array containing characters to be generated
 
         name: str
@@ -7810,8 +7786,7 @@ class Sketch(
         """
         return self._instance.curveVertex(*args)
 
-    def curve_vertices(
-            self, coordinates: NDArray[(Any, Any), Float], /) -> None:
+    def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of curve vertices.
 
         Underlying Processing method: PApplet.curveVertices
@@ -7819,8 +7794,8 @@ class Sketch(
         Parameters
         ----------
 
-        coordinates: NDArray[(Any, Any), Float]
-            array of curve vertex coordinates
+        coordinates: npt.NDArray[np.floating]
+            2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
         -----
@@ -9698,7 +9673,7 @@ class Sketch(
         return self._instance.getGraphics()
 
     @overload
-    def get_matrix(self) -> NDArray[(Any, Any), Float]:
+    def get_matrix(self) -> npt.NDArray[np.floating]:
         """Get the current matrix as a numpy array.
 
         Underlying Processing method: PApplet.getMatrix
@@ -9708,18 +9683,14 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+         * get_matrix() -> npt.NDArray[np.floating]
+         * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
         Parameters
         ----------
 
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
+        target: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -9730,8 +9701,8 @@ class Sketch(
         pass
 
     @overload
-    def get_matrix(self, target: NDArray[(
-            2, 3), Float], /) -> NDArray[(2, 3), Float]:
+    def get_matrix(
+            self, target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]:
         """Get the current matrix as a numpy array.
 
         Underlying Processing method: PApplet.getMatrix
@@ -9741,51 +9712,14 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+         * get_matrix() -> npt.NDArray[np.floating]
+         * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
         Parameters
         ----------
 
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
-
-        Notes
-        -----
-
-        Get the current matrix as a numpy array. Use the ``target`` parameter to put the
-        matrix data in a properly sized and typed numpy array.
-        """
-        pass
-
-    @overload
-    def get_matrix(self, target: NDArray[(
-            4, 4), Float], /) -> NDArray[(4, 4), Float]:
-        """Get the current matrix as a numpy array.
-
-        Underlying Processing method: PApplet.getMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
-
-        Parameters
-        ----------
-
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
+        target: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -9806,18 +9740,14 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * get_matrix() -> NDArray[(Any, Any), Float]
-         * get_matrix(target: NDArray[(2, 3), Float], /) -> NDArray[(2, 3), Float]
-         * get_matrix(target: NDArray[(4, 4), Float], /) -> NDArray[(4, 4), Float]
+         * get_matrix() -> npt.NDArray[np.floating]
+         * get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]
 
         Parameters
         ----------
 
-        target: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        target: NDArray[(4, 4), Float]
-            transformation matrix data
+        target: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -10647,7 +10577,7 @@ class Sketch(
         """
         return self._instance.line(*args)
 
-    def lines(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
+    def lines(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Draw a collection of lines to the screen.
 
         Underlying Processing method: PApplet.lines
@@ -10655,8 +10585,8 @@ class Sketch(
         Parameters
         ----------
 
-        coordinates: NDArray[(Any, Any), Float]
-            array of line coordinates
+        coordinates: npt.NDArray[np.floating]
+            2D array of line coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
         -----
@@ -12053,7 +11983,7 @@ class Sketch(
         """
         return self._instance.pointLight(v1, v2, v3, x, y, z)
 
-    def points(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
+    def points(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Draw a collection of points, each a coordinate in space at the dimension of one
         pixel.
 
@@ -12062,8 +11992,8 @@ class Sketch(
         Parameters
         ----------
 
-        coordinates: NDArray[(Any, Any), Float]
-            array of point coordinates
+        coordinates: npt.NDArray[np.floating]
+            2D array of point coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
         -----
@@ -12449,7 +12379,7 @@ class Sketch(
         return self._instance.quadraticVertex(*args)
 
     def quadratic_vertices(
-            self, coordinates: NDArray[(Any, Any), Float], /) -> None:
+            self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of quadratic vertices.
 
         Underlying Processing method: PApplet.quadraticVertices
@@ -12457,8 +12387,8 @@ class Sketch(
         Parameters
         ----------
 
-        coordinates: NDArray[(Any, Any), Float]
-            array of quadratic vertex coordinates
+        coordinates: npt.NDArray[np.floating]
+            2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
         -----
@@ -13610,60 +13540,16 @@ class Sketch(
         return cls._cls.second()
 
     @overload
-    def set_matrix(self, source: NDArray[(2, 3), Float], /) -> None:
+    def set_matrix(self, source: npt.NDArray[np.floating], /) -> None:
         """Set the current matrix to the one specified through the parameter ``source``.
 
         Underlying Processing method: PApplet.setMatrix
 
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
         Parameters
         ----------
 
-        source: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        source: NDArray[(4, 4), Float]
-            transformation matrix data
-
-        Notes
-        -----
-
-        Set the current matrix to the one specified through the parameter ``source``.
-        Inside the Processing code it will call ``reset_matrix()`` followed by
-        ``apply_matrix()``. This will be very slow because ``apply_matrix()`` will try
-        to calculate the inverse of the transform, so avoid it whenever possible.
-        """
-        pass
-
-    @overload
-    def set_matrix(self, source: NDArray[(4, 4), Float], /) -> None:
-        """Set the current matrix to the one specified through the parameter ``source``.
-
-        Underlying Processing method: PApplet.setMatrix
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
-        Parameters
-        ----------
-
-        source: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        source: NDArray[(4, 4), Float]
-            transformation matrix data
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -13680,22 +13566,11 @@ class Sketch(
 
         Underlying Processing method: PApplet.setMatrix
 
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set_matrix(source: NDArray[(2, 3), Float], /) -> None
-         * set_matrix(source: NDArray[(4, 4), Float], /) -> None
-
         Parameters
         ----------
 
-        source: NDArray[(2, 3), Float]
-            transformation matrix data
-
-        source: NDArray[(4, 4), Float]
-            transformation matrix data
+        source: npt.NDArray[np.floating]
+            transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
 
         Notes
         -----
@@ -15624,8 +15499,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -15640,7 +15515,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -15714,8 +15589,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -15730,7 +15605,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -15792,7 +15667,7 @@ class Sketch(
         pass
 
     @overload
-    def text(self, chars: List[chr], start: int,
+    def text(self, chars: list[chr], start: int,
              stop: int, x: float, y: float, /) -> None:
         """Draws text to the screen.
 
@@ -15805,8 +15680,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -15821,7 +15696,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -15883,7 +15758,7 @@ class Sketch(
         pass
 
     @overload
-    def text(self, chars: List[chr], start: int,
+    def text(self, chars: list[chr], start: int,
              stop: int, x: float, y: float, z: float, /) -> None:
         """Draws text to the screen.
 
@@ -15896,8 +15771,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -15912,7 +15787,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -15986,8 +15861,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16002,7 +15877,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16076,8 +15951,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16092,7 +15967,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16166,8 +16041,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16182,7 +16057,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16256,8 +16131,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16272,7 +16147,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16346,8 +16221,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16362,7 +16237,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16436,8 +16311,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16452,7 +16327,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16527,8 +16402,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16543,7 +16418,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -16617,8 +16492,8 @@ class Sketch(
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: List[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -16633,7 +16508,7 @@ class Sketch(
         c: chr
             the alphanumeric character to be displayed
 
-        chars: List[chr]
+        chars: list[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -17079,7 +16954,7 @@ class Sketch(
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -17088,7 +16963,7 @@ class Sketch(
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -17108,7 +16983,7 @@ class Sketch(
         pass
 
     @overload
-    def text_width(self, chars: List[chr],
+    def text_width(self, chars: list[chr],
                    start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
@@ -17120,7 +16995,7 @@ class Sketch(
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -17129,7 +17004,7 @@ class Sketch(
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -17160,7 +17035,7 @@ class Sketch(
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -17169,7 +17044,7 @@ class Sketch(
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -17200,7 +17075,7 @@ class Sketch(
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: List[chr], start: int, length: int, /) -> float
+         * text_width(chars: list[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -17209,7 +17084,7 @@ class Sketch(
         c: chr
             the character to measure
 
-        chars: List[chr]
+        chars: list[chr]
             the character to measure
 
         length: int
@@ -18067,7 +17942,7 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -18079,11 +17954,11 @@ class Sketch(
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -18125,7 +18000,7 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -18137,11 +18012,11 @@ class Sketch(
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -18183,7 +18058,7 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -18195,11 +18070,11 @@ class Sketch(
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -18242,7 +18117,7 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -18254,11 +18129,11 @@ class Sketch(
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -18290,7 +18165,7 @@ class Sketch(
         pass
 
     @overload
-    def vertex(self, v: NDArray[(Any,), Float], /) -> None:
+    def vertex(self, v: npt.NDArray[np.floating], /) -> None:
         """Add a new vertex to a shape.
 
         Underlying Processing method: PApplet.vertex
@@ -18300,7 +18175,7 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -18312,11 +18187,11 @@ class Sketch(
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -18357,7 +18232,7 @@ class Sketch(
 
         You can use any of the following signatures:
 
-         * vertex(v: NDArray[(Any,), Float], /) -> None
+         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -18369,11 +18244,11 @@ class Sketch(
         u: float
             horizontal coordinate for the texture mapping
 
-        v: NDArray[(Any,), Float]
-            vertical coordinate for the texture mapping
-
         v: float
             vertical coordinate for the texture mapping
+
+        v: npt.NDArray[np.floating]
+            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -18404,7 +18279,7 @@ class Sketch(
         """
         return self._instance.vertex(*args)
 
-    def vertices(self, coordinates: NDArray[(Any, Any), Float], /) -> None:
+    def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of vertices.
 
         Underlying Processing method: PApplet.vertices
@@ -18412,8 +18287,8 @@ class Sketch(
         Parameters
         ----------
 
-        coordinates: NDArray[(Any, Any), Float]
-            array of vertex coordinates
+        coordinates: npt.NDArray[np.floating]
+            2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
         -----
@@ -18426,6 +18301,105 @@ class Sketch(
         vertex. There should be two or three columns for 2D or 3D points, respectively.
         """
         return self._instance.vertices(coordinates)
+
+    def window_move(self, x: int, y: int, /) -> None:
+        """Set the Sketch's window location.
+
+        Underlying Processing method: Sketch.windowMove
+
+        Parameters
+        ----------
+
+        x: int
+            x-coordinate for window location
+
+        y: int
+            y-coordinate for window location
+
+        Notes
+        -----
+
+        Set the Sketch's window location. Calling this repeatedly from the ``draw()``
+        function may result in a sluggish Sketch. Negative or invalid coordinates are
+        ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
+        """
+        return self._instance.windowMove(x, y)
+
+    def window_resizable(self, resizable: bool, /) -> None:
+        """Set the Sketch window as resizable by the user.
+
+        Underlying Processing method: Sketch.windowResizable
+
+        Parameters
+        ----------
+
+        resizable: bool
+            should the Sketch window be resizable
+
+        Notes
+        -----
+
+        Set the Sketch window as resizable by the user. The user will be able to resize
+        the window in the same way as they do for many other windows on their computer.
+        By default, the Sketch window is not resizable.
+
+        Changing the window size will clear the drawing canvas. If you do this, the
+        ``width`` and ``height`` variables will change.
+
+        This method provides the same funcationality as ``Py5Surface.set_resizable()``
+        but without the need to interact directly with the ``Py5Surface`` object.
+        """
+        return self._instance.windowResizable(resizable)
+
+    def window_resize(self, new_width: int, new_height: int, /) -> None:
+        """Set a new width and height for the Sketch window.
+
+        Underlying Processing method: Sketch.windowResize
+
+        Parameters
+        ----------
+
+        new_height: int
+            new window height
+
+        new_width: int
+            new window width
+
+        Notes
+        -----
+
+        Set a new width and height for the Sketch window. You do not need to call
+        ``window_resizable()`` before calling this.
+
+        Changing the window size will clear the drawing canvas. If you do this, the
+        ``width`` and ``height`` variables will change.
+
+        This method provides the same funcationality as ``Py5Surface.set_size()`` but
+        without the need to interact directly with the ``Py5Surface`` object.
+        """
+        return self._instance.windowResize(new_width, new_height)
+
+    def window_title(self, title: str, /) -> None:
+        """Set the Sketch window's title.
+
+        Underlying Processing method: Sketch.windowTitle
+
+        Parameters
+        ----------
+
+        title: str
+            new window title
+
+        Notes
+        -----
+
+        Set the Sketch window's title. This will typically appear at the window's title
+        bar. The default window title is "Sketch".
+
+        This method provides the same funcationality as ``Py5Surface.set_title()`` but
+        without the need to interact directly with the ``Py5Surface`` object.
+        """
+        return self._instance.windowTitle(title)
 
     @classmethod
     def year(cls) -> int:

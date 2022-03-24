@@ -17,11 +17,14 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+from __future__ import annotations
+
+
 import functools
-from typing import overload, List, Any  # noqa
-from nptyping import NDArray, Float, Int  # noqa
+from typing import overload, Any  # noqa
 
 import numpy as np  # noqa
+import numpy.typing as npt  # noqa
 
 from .base import Py5Base
 from .image import Py5Image  # noqa
@@ -111,16 +114,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -140,11 +142,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -161,14 +160,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -227,16 +226,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -256,11 +254,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -277,14 +272,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -343,16 +338,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -372,11 +366,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -393,14 +384,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -459,16 +450,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -488,11 +478,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -509,14 +496,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -575,16 +562,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -604,11 +590,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -625,14 +608,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -692,16 +675,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -721,11 +703,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -742,14 +721,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -808,16 +787,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -837,11 +815,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -858,14 +833,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -924,16 +899,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -953,11 +927,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -974,14 +945,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1040,16 +1011,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1069,11 +1039,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1090,14 +1057,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1157,16 +1124,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1186,11 +1152,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1207,14 +1170,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1261,7 +1224,7 @@ class Py5Shader(Py5Base):
         pass
 
     @overload
-    def set(self, name: str, vec: NDArray[(Any,), Float], /) -> None:
+    def set(self, name: str, vec: npt.NDArray[np.floating], /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -1273,16 +1236,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1302,11 +1264,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1323,14 +1282,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1377,8 +1336,8 @@ class Py5Shader(Py5Base):
         pass
 
     @overload
-    def set(self, name: str, vec: NDArray[(
-            Any,), Float], ncoords: int, /) -> None:
+    def set(self, name: str,
+            vec: npt.NDArray[np.floating], ncoords: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -1390,16 +1349,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1419,11 +1377,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1440,14 +1395,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1506,16 +1461,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1535,11 +1489,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1556,14 +1507,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1622,16 +1573,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1651,11 +1601,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1672,14 +1619,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1738,16 +1685,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1767,11 +1713,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1788,14 +1731,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1854,16 +1797,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1883,11 +1825,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -1904,14 +1843,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -1958,7 +1897,7 @@ class Py5Shader(Py5Base):
         pass
 
     @overload
-    def set(self, name: str, vec: NDArray[(Any,), Int], /) -> None:
+    def set(self, name: str, vec: npt.NDArray[np.integer], /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -1970,16 +1909,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -1999,11 +1937,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2020,14 +1955,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2074,8 +2009,8 @@ class Py5Shader(Py5Base):
         pass
 
     @overload
-    def set(self, name: str, vec: NDArray[(
-            Any,), Int], ncoords: int, /) -> None:
+    def set(self, name: str,
+            vec: npt.NDArray[np.integer], ncoords: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -2087,16 +2022,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2116,11 +2050,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2137,14 +2068,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2203,16 +2134,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2232,11 +2162,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2253,14 +2180,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2307,7 +2234,7 @@ class Py5Shader(Py5Base):
         pass
 
     @overload
-    def set(self, name: str, mat: NDArray[(2, 3), Float], /) -> None:
+    def set(self, name: str, mat: npt.NDArray[np.floating], /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -2319,16 +2246,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2348,11 +2274,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2369,14 +2292,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2423,7 +2346,8 @@ class Py5Shader(Py5Base):
         pass
 
     @overload
-    def set(self, name: str, mat: NDArray[(4, 4), Float], /) -> None:
+    def set(self, name: str,
+            mat: npt.NDArray[np.floating], use3x3: bool, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -2435,16 +2359,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2464,11 +2387,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2485,131 +2405,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
 
-        w: bool
-            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
-        w: float
-            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
-
-        w: int
-            fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
-
-        x: bool
-            first component of the variable to modify
-
-        x: float
-            first component of the variable to modify
-
-        x: int
-            first component of the variable to modify
-
-        y: bool
-            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
-
-        y: float
-            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
-
-        y: int
-            second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
-
-        z: bool
-            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
-
-        z: float
-            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
-
-        z: int
-            third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
-
-        Notes
-        -----
-
-        Sets the uniform variables inside the shader to modify the effect while the
-        program is running.
-        """
-        pass
-
-    @overload
-    def set(self, name: str, mat: NDArray[(
-            4, 4), Float], use3x3: bool, /) -> None:
-        """Sets the uniform variables inside the shader to modify the effect while the
-        program is running.
-
-        Underlying Processing method: PShader.set
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
-         * set(name: str, tex: Py5Image, /) -> None
-         * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
-         * set(name: str, vec: Py5Vector, /) -> None
-         * set(name: str, x: bool, /) -> None
-         * set(name: str, x: bool, y: bool, /) -> None
-         * set(name: str, x: bool, y: bool, z: bool, /) -> None
-         * set(name: str, x: bool, y: bool, z: bool, w: bool, /) -> None
-         * set(name: str, x: float, /) -> None
-         * set(name: str, x: float, y: float, /) -> None
-         * set(name: str, x: float, y: float, z: float, /) -> None
-         * set(name: str, x: float, y: float, z: float, w: float, /) -> None
-         * set(name: str, x: int, /) -> None
-         * set(name: str, x: int, y: int, /) -> None
-         * set(name: str, x: int, y: int, z: int, /) -> None
-         * set(name: str, x: int, y: int, z: int, w: int, /) -> None
-
-        Parameters
-        ----------
-
-        boolvec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable
-
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
-
-        name: str
-            the name of the uniform variable to modify
-
-        ncoords: int
-            number of coordinates per element, max 4
-
-        tex: Py5Image
-            sets the sampler uniform variable to read from this image texture
-
-        use3x3: bool
-            enforces the numpy array is 3 x 3
-
-        vec: JArray(JBoolean)
-            modifies all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: Py5Vector
-            vector of values to modify all the components of an array/vector uniform variable
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2668,16 +2471,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2697,11 +2499,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2718,14 +2517,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
@@ -2784,16 +2583,15 @@ class Py5Shader(Py5Base):
         You can use any of the following signatures:
 
          * set(name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None
-         * set(name: str, mat: NDArray[(2, 3), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], /) -> None
-         * set(name: str, mat: NDArray[(4, 4), Float], use3x3: bool, /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], /) -> None
+         * set(name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None
          * set(name: str, tex: Py5Image, /) -> None
          * set(name: str, vec: JArray(JBoolean), /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Float], ncoords: int, /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], /) -> None
-         * set(name: str, vec: NDArray[(Any,), Int], ncoords: int, /) -> None
          * set(name: str, vec: Py5Vector, /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], /) -> None
+         * set(name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], /) -> None
+         * set(name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None
          * set(name: str, x: bool, /) -> None
          * set(name: str, x: bool, y: bool, /) -> None
          * set(name: str, x: bool, y: bool, z: bool, /) -> None
@@ -2813,11 +2611,8 @@ class Py5Shader(Py5Base):
         boolvec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        mat: NDArray[(2, 3), Float]
-            numpy array of values
-
-        mat: NDArray[(4, 4), Float]
-            numpy array of values
+        mat: npt.NDArray[np.floating]
+            2D numpy array of values with shape 2x3 for 2D matrices or 4x4 for 3D matrices
 
         name: str
             the name of the uniform variable to modify
@@ -2834,14 +2629,14 @@ class Py5Shader(Py5Base):
         vec: JArray(JBoolean)
             modifies all the components of an array/vector uniform variable
 
-        vec: NDArray[(Any,), Float]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
-        vec: NDArray[(Any,), Int]
-            numpy array of values to modify all the components of an array/vector uniform variable
-
         vec: Py5Vector
             vector of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.floating]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
+
+        vec: npt.NDArray[np.integer]
+            1D numpy array of values to modify all the components of an array/vector uniform variable
 
         w: bool
             fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)

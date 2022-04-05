@@ -82,7 +82,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.7.1a6'
+__version__ = '0.7.2a0'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -20172,7 +20172,8 @@ def request_image(image_path: Union[str, Path]) -> Py5Promise:
 def run_sketch(block: bool = None, *,
                py5_options: list[str] = None,
                sketch_args: list[str] = None,
-               sketch_functions: dict[str, Callable] = None) -> None:
+               sketch_functions: dict[str, Callable] = None,
+               _osx_alt_run_method: bool = True) -> None:
     """Run the Sketch.
 
     Parameters
@@ -20275,7 +20276,12 @@ def run_sketch(block: bool = None, *,
 
     _prepare_dynamic_variables(caller_locals, caller_globals)
 
-    _py5sketch._run_sketch(functions, block, py5_options, sketch_args)
+    _py5sketch._run_sketch(
+        functions,
+        block,
+        py5_options,
+        sketch_args,
+        _osx_alt_run_method)
 
 
 def get_current_sketch() -> Sketch:

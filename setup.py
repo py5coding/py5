@@ -20,10 +20,10 @@
 import os
 from setuptools import setup
 
-with open('README.rst') as f:
+with open('README.md') as f:
     README = f.read()
 
-VERSION = '0.7.1a6'
+VERSION = '0.7.2a0'
 
 INSTALL_REQUIRES = [
     'autopep8>=1.5',
@@ -62,10 +62,17 @@ setup(
     install_requires=INSTALL_REQUIRES,
     description='Processing for CPython',
     long_description=README,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
+    url='https://py5.ixora.io/',
     author='Jim Schmitz',
     author_email='jim@ixora.io',
-    url='https://github.com/hx2A/py5generator',
+    download_url='https://pypi.org/project/py5',
+    project_urls={
+        "Bug Tracker": 'https://github.com/hx2A/py5generator/issues',
+        "Documentation": 'https://py5.ixora.io/',
+        "Source Code": 'https://github.com/hx2A/py5',
+    },
+    platforms=["Windows", "Linux", "Mac OS-X"],
     entry_points={
         'console_scripts': [
             'run_sketch = py5_tools.tools.run_sketch:main',
@@ -85,6 +92,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Java',
     ],
 )

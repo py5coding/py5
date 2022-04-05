@@ -225,7 +225,7 @@ def render_frame(draw: Callable, width: int, height: int,
     HelperClass = RenderHelperGraphicsCanvas if use_py5graphics else RenderHelperSketch
     ahs = HelperClass(None, draw, width, height, renderer,
                       draw_args=draw_args, draw_kwargs=draw_kwargs)
-    ahs.run_sketch(block=True)
+    ahs.run_sketch(block=True, _osx_alt_run_method=False)
 
     if not ahs.is_dead_from_error and ahs.output:
         return ahs.output[0]
@@ -325,7 +325,7 @@ def render_frame_sequence(draw: Callable,
     ahs = HelperClass(setup, draw, width, height, renderer, limit=limit,
                       setup_args=setup_args, setup_kwargs=setup_kwargs,
                       draw_args=draw_args, draw_kwargs=draw_kwargs)
-    ahs.run_sketch(block=True)
+    ahs.run_sketch(block=True, _osx_alt_run_method=False)
 
     if not ahs.is_dead_from_error:
         return ahs.output

@@ -120,7 +120,7 @@ def _py5bot_setup():
     exit_sketch()
 
 
-run_sketch(sketch_functions=dict(settings=_py5bot_settings, setup=_py5bot_setup), block=True)
+run_sketch(sketch_functions=dict(settings=_py5bot_settings, setup=_py5bot_setup), block=True, _osx_alt_run_method=False)
 if is_dead_from_error:
     exit_sketch()
 

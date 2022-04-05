@@ -24,12 +24,6 @@ from multiprocessing import Process
 from pathlib import Path
 import re
 
-import jpype
-if sys.platform == 'darwin':
-    from PyObjCTools import AppHelper
-else:
-    AppHelper = None
-
 import stackprinter
 
 from . import jvm
@@ -245,22 +239,7 @@ def _run_code(
         py5_ns = dict()
         py5_ns.update(py5.__dict__)
 
-        def exec_compiled_code():
-            exec(sketch_compiled, py5_ns)
-
-        if sys.platform == 'darwin':
-            def launch_exec_compiled_code():
-                exec_compiled_code()
-                AppHelper.stopEventLoop()
-
-            proxy = jpype.JProxy(
-                'java.lang.Runnable', {
-                    'run': launch_exec_compiled_code})
-            run_sketch_thread = jpype.JClass('java.lang.Thread')(proxy)
-            run_sketch_thread.start()
-            AppHelper.runConsoleEventLoop()
-        else:
-            exec_compiled_code()
+        exec(sketch_compiled, py5_ns)
 
     if new_process:
         p = Process(

@@ -61,9 +61,9 @@ try:
     # be aware that __IPYTHON__ and get_ipython() are inserted into the user
     # namespace late in the kernel startup process
     __IPYTHON__  # type: ignore
-    if sys.platform == 'darwin' and get_ipython(
-    ).active_eventloop != 'osx':  # type: ignore
-        print("Importing py5 on OSX but the necessary Jupyter OSX event loop not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library.")
+    if sys.platform == 'darwin' and (
+            _ipython_shell := get_ipython()).active_eventloop != 'osx':  # type: ignore
+        print("Importing py5 on OSX but the necessary Jupyter OSX event loop has not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library.")
         _ipython_shell.run_line_magic('gui', 'osx')
 except Exception:
     pass
@@ -159,7 +159,8 @@ class Sketch(
             pass
 
     def run_sketch(self, block: bool = None, *,
-                   py5_options: list = None, sketch_args: list = None) -> None:
+                   py5_options: list = None, sketch_args: list = None,
+                   _osx_alt_run_method: bool = True) -> None:
         """Run the Sketch.
 
         Parameters
@@ -237,13 +238,19 @@ class Sketch(
 
         methods = dict([(e, getattr(self, e)) for e in reference.METHODS if hasattr(
             self, e) and callable(getattr(self, e))])
-        self._run_sketch(methods, block, py5_options, sketch_args)
+        self._run_sketch(
+            methods,
+            block,
+            py5_options,
+            sketch_args,
+            _osx_alt_run_method)
 
     def _run_sketch(self,
                     methods: dict[str, Callable],
                     block: bool,
                     py5_options: list[str] = None,
-                    sketch_args: list[str] = None) -> None:
+                    sketch_args: list[str] = None,
+                    _osx_alt_run_method: bool = True) -> None:
         self._environ = _environ.Environment()
         self.set_println_stream(_DisplayPubPrintlnStream(
         ) if self._environ.in_jupyter_zmq_shell else _DefaultPrintlnStream())
@@ -272,7 +279,31 @@ class Sketch(
         args = py5_options + [''] + sketch_args
 
         try:
-            _Sketch.runSketch(args, self._instance)
+            if _osx_alt_run_method and platform.system() == 'Darwin':
+                from PyObjCTools import AppHelper
+
+                def run():
+                    _Sketch.runSketch(args, self._instance)
+                    if not self._environ.in_ipython_session:
+                        while not self.is_dead:
+                            time.sleep(0.05)
+                        if self.is_dead_from_error:
+                            surface = self.get_surface()
+                            while not surface.is_stopped():
+                                time.sleep(0.05)
+                        AppHelper.stopEventLoop()
+
+                if block == False and not self._environ.in_ipython_session:
+                    self.println(
+                        "On OSX, blocking is manditory when Sketch is not run through Jupyter. This applies to all renderers.",
+                        stderr=True)
+
+                proxy = jpype.JProxy('java.lang.Runnable', dict(run=run))
+                jpype.JClass('java.lang.Thread')(proxy).start()
+                if not self._environ.in_ipython_session:
+                    AppHelper.runConsoleEventLoop()
+            else:
+                _Sketch.runSketch(args, self._instance)
         except Exception as e:
             self.println(
                 'Java exception thrown by Sketch.runSketch:\n' +
@@ -283,9 +314,9 @@ class Sketch(
             if (renderer := self._instance.getRendererName()) in [
                     'JAVA2D', 'P2D', 'P3D', 'FX2D']:
                 self.println(
-                    "On OSX, blocking is not allowed in Jupyter when using the",
+                    "On OSX, blocking is not allowed when Sketch using the",
                     renderer,
-                    "renderer.",
+                    "renderer is run though Jupyter.",
                     stderr=True)
                 block = False
 

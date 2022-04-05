@@ -51,7 +51,7 @@ import ast as _PY5BOT_ast
 
 
 _CODE_TEMPLATE_END = """
-py5.run_sketch(block=True, sketch_functions=dict(settings=_py5_settings, setup=_py5_setup))
+py5.run_sketch(block=True, sketch_functions=dict(settings=_py5_settings, setup=_py5_setup), _osx_alt_run_method=False)
 if py5.is_dead_from_error:
     py5.exit_sketch()
 

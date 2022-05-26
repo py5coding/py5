@@ -174,8 +174,8 @@ class PixelMixin:
         value in ``np_pixels[]`` is an integer between 0 and 255.
 
         This numpy array is very similar to the image arrays used by other popular
-        Python image libraries, but note that some of them like opencv will by default
-        order the color channels as RGBA.
+        Python image libraries, but note that many of them will arrange the channels in
+        a different order such as RGBA or BGR.
 
         When the pixel density is set to higher than 1 with the ``pixel_density()``
         function, the size of ``np_pixels[]``'s height and width dimensions will change.
@@ -210,8 +210,8 @@ class PixelMixin:
         value in ``np_pixels[]`` is an integer between 0 and 255.
 
         This numpy array is very similar to the image arrays used by other popular
-        Python image libraries, but note that some of them like opencv will by default
-        order the color channels as RGBA.
+        Python image libraries, but note that many of them will arrange the channels in
+        a different order such as RGBA or BGR.
 
         When the pixel density is set to higher than 1 with the ``pixel_density()``
         function, the size of ``np_pixels[]``'s height and width dimensions will change.

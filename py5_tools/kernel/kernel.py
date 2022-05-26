@@ -62,6 +62,11 @@ class Py5Shell(ZMQInteractiveShell):
 
     banner2 = Unicode("Activating py5 imported mode").tag(config=True)
 
+    def run_cell(self, *args, **kwargs):
+        # TODO: deprecated
+        self.log.warning("This kernel is deprecated. Uninstall it with `jupyter kernelspec uninstall py5`, install the new py5jupyter package, and then install the kernel with `python -m py5jupyter.kernels.py5.install --sys-prefix`.")
+        return super(Py5Shell, self).run_cell(*args, **kwargs)
+
 
 InteractiveShellABC.register(Py5Shell)
 
@@ -75,7 +80,7 @@ class Py5Kernel(IPythonKernel):
                        *_PY5_HELP_LINKS]).tag(config=True)
 
     implementation = 'py5'
-    implementation_version = '0.7.2a0'
+    implementation_version = '0.8.0a2'
 
 
 class Py5App(IPKernelApp):
@@ -90,5 +95,5 @@ class Py5App(IPKernelApp):
 
     extensions = List(
         Unicode(), [
-            'py5_tools.magics', 'py5_tools.py5bot']).tag(
+            'py5_tools.magics', 'py5_tools.magics.py5bot']).tag(
         config=True)

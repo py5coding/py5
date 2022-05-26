@@ -20,15 +20,28 @@
 
 
 
-
-METHODS = [
-    'settings', 'setup', 'draw', 'pre_draw', 'post_draw',
-    'key_pressed', 'key_typed', 'key_released',
-    'mouse_clicked', 'mouse_dragged', 'mouse_moved', 'mouse_entered',
-    'mouse_exited', 'mouse_pressed', 'mouse_released', 'mouse_wheel',
-    'window_moved', 'window_resized',
-    'exiting', 'movie_event'
-]
+METHODS = dict(
+    settings=[0],
+    setup=[0],
+    draw=[0],
+    pre_draw=[0],
+    post_draw=[0],
+    key_pressed=[0, 1],
+    key_typed=[0, 1],
+    key_released=[0, 1],
+    mouse_clicked=[0, 1],
+    mouse_dragged=[0, 1],
+    mouse_moved=[0, 1],
+    mouse_entered=[0, 1],
+    mouse_exited=[0, 1],
+    mouse_pressed=[0, 1],
+    mouse_released=[0, 1],
+    mouse_wheel=[0, 1],
+    window_moved=[0],
+    window_resized=[0],
+    exiting=[0],
+    movie_event=[1],
+)
 
 FILE_CLASS_LOOKUP = dict([
     (('font.py',), 'Py5Font'),
@@ -42,6 +55,8 @@ FILE_CLASS_LOOKUP = dict([
     (('mixins', 'math.py'), 'Sketch'),
     (('mixins', 'pixels.py'), 'Sketch'),
     (('mixins', 'threads.py'), 'Sketch'),
+    (('keyevent.py',), 'Py5KeyEvent'),
+    (('mouseevent.py',), 'Py5MouseEvent'),
 ])
 
 METHOD_SIGNATURES_LOOKUP = dict([
@@ -70,6 +85,7 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Sketch', 'brightness'), ['(rgb: int, /) -> float']),
     (('Sketch', 'camera'), ['() -> None', '(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float, center_z: float, up_x: float, up_y: float, up_z: float, /) -> None']),
     (('Sketch', 'circle'), ['(x: float, y: float, extent: float, /) -> None']),
+    (('Sketch', 'clear'), ['() -> None']),
     (('Sketch', 'clip'), ['(a: float, b: float, c: float, d: float, /) -> None']),
     (('Sketch', 'color'), ['(fgray: float, /) -> int', '(fgray: float, falpha: float, /) -> int', '(v1: float, v2: float, v3: float, /) -> int', '(v1: float, v2: float, v3: float, alpha: float, /) -> int', '(gray: int, /) -> int', '(gray: int, alpha: int, /) -> int', '(v1: int, v2: int, v3: int, /) -> int', '(v1: int, v2: int, v3: int, alpha: int, /) -> int']),
     (('Sketch', 'color_mode'), ['(mode: int, /) -> None', '(mode: int, max: float, /) -> None', '(mode: int, max1: float, max2: float, max3: float, /) -> None', '(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None']),
@@ -214,6 +230,7 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Sketch', 'vertex'), ['(x: float, y: float, /) -> None', '(x: float, y: float, z: float, /) -> None', '(x: float, y: float, u: float, v: float, /) -> None', '(x: float, y: float, z: float, u: float, v: float, /) -> None', '(v: npt.NDArray[np.floating], /) -> None']),
     (('Sketch', 'vertices'), ['(coordinates: npt.NDArray[np.floating], /) -> None']),
     (('Sketch', 'window_move'), ['(x: int, y: int, /) -> None']),
+    (('Sketch', 'window_ratio'), ['(wide: int, high: int, /) -> None']),
     (('Sketch', 'window_resizable'), ['(resizable: bool, /) -> None']),
     (('Sketch', 'window_resize'), ['(new_width: int, new_height: int, /) -> None']),
     (('Sketch', 'window_title'), ['(title: str, /) -> None']),
@@ -535,6 +552,29 @@ METHOD_SIGNATURES_LOOKUP = dict([
     (('Py5Image', 'load_pixels'), ['() -> None']),
     (('Py5Image', 'mask'), ['(mask_array: npt.NDArray[np.integer], /) -> None', '(img: Py5Image, /) -> None']),
     (('Py5Image', 'update_pixels'), ['() -> None', '(x: int, y: int, w: int, h: int, /) -> None']),
+    (('Py5KeyEvent', 'get_action'), ['() -> int']),
+    (('Py5KeyEvent', 'get_key'), ['() -> chr']),
+    (('Py5KeyEvent', 'get_key_code'), ['() -> int']),
+    (('Py5KeyEvent', 'get_millis'), ['() -> int']),
+    (('Py5KeyEvent', 'get_modifiers'), ['() -> int']),
+    (('Py5KeyEvent', 'get_native'), ['() -> Any']),
+    (('Py5KeyEvent', 'is_alt_down'), ['() -> bool']),
+    (('Py5KeyEvent', 'is_auto_repeat'), ['() -> bool']),
+    (('Py5KeyEvent', 'is_control_down'), ['() -> bool']),
+    (('Py5KeyEvent', 'is_meta_down'), ['() -> bool']),
+    (('Py5KeyEvent', 'is_shift_down'), ['() -> bool']),
+    (('Py5MouseEvent', 'get_action'), ['() -> int']),
+    (('Py5MouseEvent', 'get_button'), ['() -> int']),
+    (('Py5MouseEvent', 'get_count'), ['() -> int']),
+    (('Py5MouseEvent', 'get_millis'), ['() -> int']),
+    (('Py5MouseEvent', 'get_modifiers'), ['() -> int']),
+    (('Py5MouseEvent', 'get_native'), ['() -> Any']),
+    (('Py5MouseEvent', 'get_x'), ['() -> int']),
+    (('Py5MouseEvent', 'get_y'), ['() -> int']),
+    (('Py5MouseEvent', 'is_alt_down'), ['() -> bool']),
+    (('Py5MouseEvent', 'is_control_down'), ['() -> bool']),
+    (('Py5MouseEvent', 'is_meta_down'), ['() -> bool']),
+    (('Py5MouseEvent', 'is_shift_down'), ['() -> bool']),
     (('Py5Vector', 'astype'), ['(dtype) -> Py5Vector']),
     (('Py5Vector', 'tolist'), ['() -> list[float]']),
     (('Py5Vector', 'lerp'), ['(other: Union[Py5Vector, np.ndarray], amt: Union[float, np.ndarray]) -> Union[Py5Vector, np.ndarray[np.floating]]']),

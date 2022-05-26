@@ -23,6 +23,7 @@ py5 is a version of Processing for Python 3.8+. It makes the Processing Java lib
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from io import BytesIO
@@ -45,6 +46,10 @@ if not py5_tools.is_jvm_running():
     py5_tools.add_jars(str(base_path / 'jars'))
     # if the cwd has a jars subdirectory, add that next
     py5_tools.add_jars(Path('jars'))
+    # if the PY5_CLASSPATH environment variable exists, add those jars
+    if (py5_classpath := os.environ.get('PY5_JARS')):
+        py5_tools.add_jars(Path(py5_classpath))
+
     try:
         py5_tools.jvm._start_jvm()
         started_jvm = True
@@ -67,7 +72,7 @@ if not py5_tools.is_jvm_running():
         raise RuntimeError("py5 is unable to start Java 17 Virtual Machine")
 
 from .methods import register_exception_msg  # noqa
-from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5Promise  # noqa
+from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5KeyEvent, Py5MouseEvent, Py5Promise  # noqa
 from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
 from .create_font_tool import create_font_file  # noqa
 from .image_conversion import register_image_conversion, NumpyImageArray  # noqa
@@ -82,7 +87,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.7.2a0'
+__version__ = '0.8.0a2'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 
@@ -297,6 +302,13 @@ pixel_height: int = None
 pixel_width: int = None
 pmouse_x: int = None
 pmouse_y: int = None
+ratio_left: float = None
+ratio_scale: float = None
+ratio_top: float = None
+rheight: int = None
+rmouse_x: int = None
+rmouse_y: int = None
+rwidth: int = None
 width: int = None
 window_x: int = None
 window_y: int = None
@@ -3497,6 +3509,24 @@ def circle(x: float, y: float, extent: float, /) -> None:
     origin may be changed with the ``ellipse_mode()`` function.
     """
     return _py5sketch.circle(x, y, extent)
+
+
+def clear() -> None:
+    """Clear the drawing surface by setting every pixel to black.
+
+    Underlying Processing method: Sketch.clear
+
+    Notes
+    -----
+
+    Clear the drawing surface by setting every pixel to black. Calling this method
+    is the same as passing ``0`` to the ``background()`` method, as in
+    ``background(0)``.
+
+    This method behaves differently than ``Py5Graphics.clear()`` because
+    ``Py5Graphics`` objects allow transparent pixels.
+    """
+    return _py5sketch.clear()
 
 
 def clip(a: float, b: float, c: float, d: float, /) -> None:
@@ -17014,6 +17044,52 @@ def window_move(x: int, y: int, /) -> None:
     return _py5sketch.window_move(x, y)
 
 
+def window_ratio(wide: int, high: int, /) -> None:
+    """Set a window ratio to enable scale invariant drawing.
+
+    Underlying Processing method: Sketch.windowRatio
+
+    Parameters
+    ----------
+
+    high: int
+        height of scale invariant display window
+
+    wide: int
+        width of scale invariant display window
+
+    Notes
+    -----
+
+    Set a window ratio to enable scale invariant drawing. If the Sketch window is
+    resizable, drawing in a consistent way can be challenging as the window changes
+    size. This method activates some transformations to let the user draw to the
+    window in a way that will be consistent for all window sizes.
+
+    The usefulness of this feature is demonstrated in the example code. The size of
+    the text will change as the window changes size. Observe the example makes two
+    calls to ``text_size()`` with fixed values of ``200`` and ``100``. Without this
+    feature, calculating the appropriate text size for all window sizes would be
+    difficult. Similarly, positioning the text in the same relative location would
+    also involve several calculations. Using ``window_ratio()`` makes resizable
+    Sketches that resize well easier to create.
+
+    When using this feature, use ``rmouse_x`` and ``rmouse_y`` to get the cursor
+    coordinates. The transformations involve calls to ``translate()`` and
+    ``scale()``, and the parameters to those methods can be accessed with
+    ``ratio_top``, ``ratio_left``, and ``ratio_scale``. The transformed coordinates
+    enabled with this feature can be negative for the top and left areas of the
+    window that do not fit the desired aspect ratio. Experimenting with the example
+    and seeing how the numbers change will provide more understanding than what can
+    be explained with words.
+
+    When calling this method, it is better to do so with values like
+    ``window_ratio(1280, 720)`` and not ``window_ratio(16, 9)``. The aspect ratio is
+    the same for both but the latter might result in floating point accuracy issues.
+    """
+    return _py5sketch.window_ratio(wide, high)
+
+
 def window_resizable(resizable: bool, /) -> None:
     """Set the Sketch window as resizable by the user.
 
@@ -17035,7 +17111,7 @@ def window_resizable(resizable: bool, /) -> None:
     Changing the window size will clear the drawing canvas. If you do this, the
     ``width`` and ``height`` variables will change.
 
-    This method provides the same funcationality as ``Py5Surface.set_resizable()``
+    This method provides the same functionality as ``Py5Surface.set_resizable()``
     but without the need to interact directly with the ``Py5Surface`` object.
     """
     return _py5sketch.window_resizable(resizable)
@@ -17064,7 +17140,7 @@ def window_resize(new_width: int, new_height: int, /) -> None:
     Changing the window size will clear the drawing canvas. If you do this, the
     ``width`` and ``height`` variables will change.
 
-    This method provides the same funcationality as ``Py5Surface.set_size()`` but
+    This method provides the same functionality as ``Py5Surface.set_size()`` but
     without the need to interact directly with the ``Py5Surface`` object.
     """
     return _py5sketch.window_resize(new_width, new_height)
@@ -17087,7 +17163,7 @@ def window_title(title: str, /) -> None:
     Set the Sketch window's title. This will typically appear at the window's title
     bar. The default window title is "Sketch".
 
-    This method provides the same funcationality as ``Py5Surface.set_title()`` but
+    This method provides the same functionality as ``Py5Surface.set_title()`` but
     without the need to interact directly with the ``Py5Surface`` object.
     """
     return _py5sketch.window_title(title)
@@ -20246,12 +20322,8 @@ def run_sketch(block: bool = None, *,
     mixed in with the Jupyter Kernel logs."""
     caller_globals = inspect.stack()[1].frame.f_globals
     caller_locals = inspect.stack()[1].frame.f_locals
-    if sketch_functions:
-        functions = dict([(e, sketch_functions[e])
-                         for e in reference.METHODS if e in sketch_functions and callable(sketch_functions[e])])
-    else:
-        functions = dict([(e, caller_locals[e])
-                         for e in reference.METHODS if e in caller_locals and callable(caller_locals[e])])
+    functions, function_param_counts = methods._extract_py5_user_function_data(
+        sketch_functions if sketch_functions else caller_locals)
     functions = _split_setup.transform(
         functions,
         caller_globals,
@@ -20278,6 +20350,7 @@ def run_sketch(block: bool = None, *,
 
     _py5sketch._run_sketch(
         functions,
+        function_param_counts,
         block,
         py5_options,
         sketch_args,

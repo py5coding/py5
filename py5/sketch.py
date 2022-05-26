@@ -37,7 +37,7 @@ import numpy.typing as npt
 
 import py5_tools.environ as _environ
 from py5_tools.printstreams import _DefaultPrintlnStream, _DisplayPubPrintlnStream
-from .methods import Py5Methods
+from .methods import Py5Methods, _extract_py5_user_function_data
 from .base import Py5Base
 from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream
 from .mixins.threads import Py5Promise  # noqa
@@ -47,6 +47,8 @@ from .surface import Py5Surface, _return_py5surface  # noqa
 from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
 from .font import Py5Font, _return_py5font, _load_py5font, _return_list_str  # noqa
 from .graphics import Py5Graphics, _return_py5graphics  # noqa
+from .keyevent import Py5KeyEvent, _convert_jchar_to_chr, _convert_jint_to_int  # noqa
+from .mouseevent import Py5MouseEvent  # noqa
 from .decorators import _text_fix_str, _convert_hex_color, _context_wrapper  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
 from . import image_conversion
@@ -236,10 +238,11 @@ class Sketch(
                 ('py5 internal problem: did you create a class with an `__init__()` '
                  'method without a call to `super().__init__()`?'))
 
-        methods = dict([(e, getattr(self, e)) for e in reference.METHODS if hasattr(
-            self, e) and callable(getattr(self, e))])
+        methods, method_param_counts = _extract_py5_user_function_data(dict(
+            [(e, getattr(self, e)) for e in reference.METHODS.keys() if hasattr(self, e)]))
         self._run_sketch(
             methods,
+            method_param_counts,
             block,
             py5_options,
             sketch_args,
@@ -247,6 +250,7 @@ class Sketch(
 
     def _run_sketch(self,
                     methods: dict[str, Callable],
+                    method_param_counts: dict[str, int],
                     block: bool,
                     py5_options: list[str] = None,
                     sketch_args: list[str] = None,
@@ -257,7 +261,7 @@ class Sketch(
         self._init_println_stream()
 
         self._py5_methods = Py5Methods(self)
-        self._py5_methods.set_functions(**methods)
+        self._py5_methods.add_functions(methods, method_param_counts)
         self._py5_methods.profile_functions(self._methods_to_profile)
         self._py5_methods.add_pre_hooks(self._pre_hooks_to_add)
         self._py5_methods.add_post_hooks(self._post_hooks_to_add)
@@ -654,7 +658,12 @@ class Sketch(
 
         Perform a hot reload of the Sketch's draw function. This method allows you to
         replace a running Sketch's draw function with a different one."""
-        self._py5_methods.set_functions(**dict(draw=draw))
+        methods, method_param_counts = _extract_py5_user_function_data(
+            dict(draw=draw))
+        if 'draw' in methods:
+            self._py5_methods.add_functions(methods, method_param_counts)
+        else:
+            self.println("The new draw() function must take no parameters")
 
     def profile_functions(self, function_names: list[str]) -> None:
         """Profile the execution times of the Sketch's functions with a line profiler.
@@ -1418,6 +1427,7 @@ class Sketch(
         run in a Java Virtual Machine. This field provides the Java version name for
         that Virtual Machine.""")
 
+    @_convert_jchar_to_chr
     def _get_key(self) -> chr:
         """The system variable ``key`` always contains the value of the most recent key on
         the keyboard that was used (either pressed or released).
@@ -1468,6 +1478,7 @@ class Sketch(
         operating systems. Watch out for unexpected behavior as you switch renderers and
         operating systems.""")
 
+    @_convert_jint_to_int
     def _get_key_code(self) -> int:
         """The variable ``key_code`` is used to detect special keys such as the arrow keys
         (``UP``, ``DOWN``, ``LEFT``, and ``RIGHT``) as well as ``ALT``, ``CONTROL``, and
@@ -1827,6 +1838,242 @@ class Sketch(
 
         For more detail on how ``pmouse_y`` is updated inside of mouse events and
         ``draw()``, see the reference for ``pmouse_x``.""")
+
+    def _get_ratio_left(self) -> float:
+        """Width of the left section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch.
+
+        Underlying Processing field: Sketch.ratioLeft
+
+        Notes
+        -----
+
+        Width of the left section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch. This will always be greater than or equal to
+        zero. Experimenting with the example and seeing how this value changes will
+        provide more understanding than what can be explained with words. See
+        ``window_ratio()`` for more information about how to activate scale invariant
+        drawing and why it is useful.
+        """
+        return self._instance.ratioLeft
+    ratio_left: float = property(
+        fget=_get_ratio_left,
+        doc="""Width of the left section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch.
+
+        Underlying Processing field: Sketch.ratioLeft
+
+        Notes
+        -----
+
+        Width of the left section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch. This will always be greater than or equal to
+        zero. Experimenting with the example and seeing how this value changes will
+        provide more understanding than what can be explained with words. See
+        ``window_ratio()`` for more information about how to activate scale invariant
+        drawing and why it is useful.""")
+
+    def _get_ratio_scale(self) -> float:
+        """Scaling factor used to maintain scale invariant drawing.
+
+        Underlying Processing field: Sketch.ratioScale
+
+        Notes
+        -----
+
+        Scaling factor used to maintain scale invariant drawing. Experimenting with the
+        example and seeing how this value changes will provide more understanding than
+        what can be explained with words. See ``window_ratio()`` for more information
+        about how to activate scale invariant drawing and why it is useful.
+        """
+        return self._instance.ratioScale
+    ratio_scale: float = property(
+        fget=_get_ratio_scale,
+        doc="""Scaling factor used to maintain scale invariant drawing.
+
+        Underlying Processing field: Sketch.ratioScale
+
+        Notes
+        -----
+
+        Scaling factor used to maintain scale invariant drawing. Experimenting with the
+        example and seeing how this value changes will provide more understanding than
+        what can be explained with words. See ``window_ratio()`` for more information
+        about how to activate scale invariant drawing and why it is useful.""")
+
+    def _get_ratio_top(self) -> float:
+        """Height of the top section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch.
+
+        Underlying Processing field: Sketch.ratioTop
+
+        Notes
+        -----
+
+        Height of the top section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch. This will always be greater than or equal to
+        zero. Experimenting with the example and seeing how this value changes will
+        provide more understanding than what can be explained with words. See
+        ``window_ratio()`` for more information about how to activate scale invariant
+        drawing and why it is useful.
+        """
+        return self._instance.ratioTop
+    ratio_top: float = property(
+        fget=_get_ratio_top,
+        doc="""Height of the top section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch.
+
+        Underlying Processing field: Sketch.ratioTop
+
+        Notes
+        -----
+
+        Height of the top section of the window that does not fit the desired aspect
+        ratio of a scale invariant Sketch. This will always be greater than or equal to
+        zero. Experimenting with the example and seeing how this value changes will
+        provide more understanding than what can be explained with words. See
+        ``window_ratio()`` for more information about how to activate scale invariant
+        drawing and why it is useful.""")
+
+    def _get_rheight(self) -> int:
+        """The height of the scale invariant display window.
+
+        Underlying Processing field: Sketch.rheight
+
+        Notes
+        -----
+
+        The height of the scale invariant display window. This will be the value of the
+        ``high`` parameter used in the call to ``window_ratio()`` that activates scale
+        invariant drawing. This field should only be used in a scale invariant Sketch.
+        See ``window_ratio()`` for more information about how to activate this and why
+        it is useful.
+        """
+        return self._instance.rheight
+    rheight: int = property(
+        fget=_get_rheight,
+        doc="""The height of the scale invariant display window.
+
+        Underlying Processing field: Sketch.rheight
+
+        Notes
+        -----
+
+        The height of the scale invariant display window. This will be the value of the
+        ``high`` parameter used in the call to ``window_ratio()`` that activates scale
+        invariant drawing. This field should only be used in a scale invariant Sketch.
+        See ``window_ratio()`` for more information about how to activate this and why
+        it is useful.""")
+
+    def _get_rmouse_x(self) -> int:
+        """The current horizonal coordinate of the mouse after activating scale invariant
+        drawing.
+
+        Underlying Processing field: Sketch.rmouseX
+
+        Notes
+        -----
+
+        The current horizonal coordinate of the mouse after activating scale invariant
+        drawing. See ``window_ratio()`` for more information about how to activate this
+        and why it is useful.
+
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``rmouse_x`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
+        ``rmouse_x`` will continue to report its most recent position.
+        """
+        return self._instance.rmouseX
+    rmouse_x: int = property(
+        fget=_get_rmouse_x,
+        doc="""The current horizonal coordinate of the mouse after activating scale invariant
+        drawing.
+
+        Underlying Processing field: Sketch.rmouseX
+
+        Notes
+        -----
+
+        The current horizonal coordinate of the mouse after activating scale invariant
+        drawing. See ``window_ratio()`` for more information about how to activate this
+        and why it is useful.
+
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``rmouse_x`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
+        ``rmouse_x`` will continue to report its most recent position.""")
+
+    def _get_rmouse_y(self) -> int:
+        """The current vertical coordinate of the mouse after activating scale invariant
+        drawing.
+
+        Underlying Processing field: Sketch.rmouseY
+
+        Notes
+        -----
+
+        The current vertical coordinate of the mouse after activating scale invariant
+        drawing. See ``window_ratio()`` for more information about how to activate this
+        and why it is useful.
+
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``rmouse_y`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
+        ``rmouse_y`` will continue to report its most recent position.
+        """
+        return self._instance.rmouseY
+    rmouse_y: int = property(
+        fget=_get_rmouse_y,
+        doc="""The current vertical coordinate of the mouse after activating scale invariant
+        drawing.
+
+        Underlying Processing field: Sketch.rmouseY
+
+        Notes
+        -----
+
+        The current vertical coordinate of the mouse after activating scale invariant
+        drawing. See ``window_ratio()`` for more information about how to activate this
+        and why it is useful.
+
+        Note that py5 can only track the mouse position when the pointer is over the
+        current window. The default value of ``rmouse_y`` is ``0``, so ``0`` will be
+        returned until the mouse moves in front of the Sketch window. (This typically
+        happens when a Sketch is first run.)  Once the mouse moves away from the window,
+        ``rmouse_y`` will continue to report its most recent position.""")
+
+    def _get_rwidth(self) -> int:
+        """The width of the scale invariant display window.
+
+        Underlying Processing field: Sketch.rwidth
+
+        Notes
+        -----
+
+        The width of the scale invariant display window. This will be the value of the
+        ``wide`` parameter used in the call to ``window_ratio()`` that activates scale
+        invariant drawing. This field should only be used in a scale invariant Sketch.
+        See ``window_ratio()`` for more information about how to activate this and why
+        it is useful.
+        """
+        return self._instance.rwidth
+    rwidth: int = property(
+        fget=_get_rwidth,
+        doc="""The width of the scale invariant display window.
+
+        Underlying Processing field: Sketch.rwidth
+
+        Notes
+        -----
+
+        The width of the scale invariant display window. This will be the value of the
+        ``wide`` parameter used in the call to ``window_ratio()`` that activates scale
+        invariant drawing. This field should only be used in a scale invariant Sketch.
+        See ``window_ratio()`` for more information about how to activate this and why
+        it is useful.""")
 
     def _get_width(self) -> int:
         """System variable that stores the width of the display window.
@@ -5069,6 +5316,23 @@ class Sketch(
         origin may be changed with the ``ellipse_mode()`` function.
         """
         return self._instance.circle(x, y, extent)
+
+    def clear(self) -> None:
+        """Clear the drawing surface by setting every pixel to black.
+
+        Underlying Processing method: Sketch.clear
+
+        Notes
+        -----
+
+        Clear the drawing surface by setting every pixel to black. Calling this method
+        is the same as passing ``0`` to the ``background()`` method, as in
+        ``background(0)``.
+
+        This method behaves differently than ``Py5Graphics.clear()`` because
+        ``Py5Graphics`` objects allow transparent pixels.
+        """
+        return self._instance.clear()
 
     def clip(self, a: float, b: float, c: float, d: float, /) -> None:
         """Limits the rendering to the boundaries of a rectangle defined by the parameters.
@@ -18356,6 +18620,51 @@ class Sketch(
         """
         return self._instance.windowMove(x, y)
 
+    def window_ratio(self, wide: int, high: int, /) -> None:
+        """Set a window ratio to enable scale invariant drawing.
+
+        Underlying Processing method: Sketch.windowRatio
+
+        Parameters
+        ----------
+
+        high: int
+            height of scale invariant display window
+
+        wide: int
+            width of scale invariant display window
+
+        Notes
+        -----
+
+        Set a window ratio to enable scale invariant drawing. If the Sketch window is
+        resizable, drawing in a consistent way can be challenging as the window changes
+        size. This method activates some transformations to let the user draw to the
+        window in a way that will be consistent for all window sizes.
+
+        The usefulness of this feature is demonstrated in the example code. The size of
+        the text will change as the window changes size. Observe the example makes two
+        calls to ``text_size()`` with fixed values of ``200`` and ``100``. Without this
+        feature, calculating the appropriate text size for all window sizes would be
+        difficult. Similarly, positioning the text in the same relative location would
+        also involve several calculations. Using ``window_ratio()`` makes resizable
+        Sketches that resize well easier to create.
+
+        When using this feature, use ``rmouse_x`` and ``rmouse_y`` to get the cursor
+        coordinates. The transformations involve calls to ``translate()`` and
+        ``scale()``, and the parameters to those methods can be accessed with
+        ``ratio_top``, ``ratio_left``, and ``ratio_scale``. The transformed coordinates
+        enabled with this feature can be negative for the top and left areas of the
+        window that do not fit the desired aspect ratio. Experimenting with the example
+        and seeing how the numbers change will provide more understanding than what can
+        be explained with words.
+
+        When calling this method, it is better to do so with values like
+        ``window_ratio(1280, 720)`` and not ``window_ratio(16, 9)``. The aspect ratio is
+        the same for both but the latter might result in floating point accuracy issues.
+        """
+        return self._instance.windowRatio(wide, high)
+
     def window_resizable(self, resizable: bool, /) -> None:
         """Set the Sketch window as resizable by the user.
 
@@ -18377,7 +18686,7 @@ class Sketch(
         Changing the window size will clear the drawing canvas. If you do this, the
         ``width`` and ``height`` variables will change.
 
-        This method provides the same funcationality as ``Py5Surface.set_resizable()``
+        This method provides the same functionality as ``Py5Surface.set_resizable()``
         but without the need to interact directly with the ``Py5Surface`` object.
         """
         return self._instance.windowResizable(resizable)
@@ -18405,7 +18714,7 @@ class Sketch(
         Changing the window size will clear the drawing canvas. If you do this, the
         ``width`` and ``height`` variables will change.
 
-        This method provides the same funcationality as ``Py5Surface.set_size()`` but
+        This method provides the same functionality as ``Py5Surface.set_size()`` but
         without the need to interact directly with the ``Py5Surface`` object.
         """
         return self._instance.windowResize(new_width, new_height)
@@ -18427,7 +18736,7 @@ class Sketch(
         Set the Sketch window's title. This will typically appear at the window's title
         bar. The default window title is "Sketch".
 
-        This method provides the same funcationality as ``Py5Surface.set_title()`` but
+        This method provides the same functionality as ``Py5Surface.set_title()`` but
         without the need to interact directly with the ``Py5Surface`` object.
         """
         return self._instance.windowTitle(title)

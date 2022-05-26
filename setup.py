@@ -23,7 +23,7 @@ from setuptools import setup
 with open('README.md') as f:
     README = f.read()
 
-VERSION = '0.7.2a0'
+VERSION = '0.8.0a2'
 
 INSTALL_REQUIRES = [
     'autopep8>=1.5',
@@ -32,7 +32,7 @@ INSTALL_REQUIRES = [
     'ipywidgets>=7.6',
     'jpype1>=1.3',
     'line_profiler>=2.1.2',
-    'numpy>=1.21',
+    'numpy>=1.22',
     'pandas>=1.0',
     'pillow>=8.1',
     'pyobjc>=7.3;sys_platform=="darwin"',
@@ -50,7 +50,7 @@ for d, _, _ in [*os.walk(pjoin(here, 'py5')), *
     if os.path.exists(pjoin(d, '__init__.py')):
         packages.append(d[len(here)+1:].replace(os.path.sep, '.'))
 
-setup(
+setup_args = dict(
     name='py5',
     version=VERSION,
     packages=packages,
@@ -60,6 +60,9 @@ setup(
     },
     python_requires='>3.8',
     install_requires=INSTALL_REQUIRES,
+    extras_require={
+        'jupyter': ['py5jupyter>=0.1.2a1'],
+    },
     description='Processing for CPython',
     long_description=README,
     long_description_content_type='text/markdown',
@@ -68,11 +71,12 @@ setup(
     author_email='jim@ixora.io',
     download_url='https://pypi.org/project/py5',
     project_urls={
-        "Bug Tracker": 'https://github.com/hx2A/py5generator/issues',
+        "Bug Tracker": 'https://github.com/py5coding/py5generator/issues',
         "Documentation": 'https://py5.ixora.io/',
-        "Source Code": 'https://github.com/hx2A/py5',
+        "Source Code": 'https://github.com/py5coding/py5',
     },
     platforms=["Windows", "Linux", "Mac OS-X"],
+    keywords=['Jupyter', 'Widgets', 'IPython', 'Processing'],
     entry_points={
         'console_scripts': [
             'run_sketch = py5_tools.tools.run_sketch:main',
@@ -96,3 +100,6 @@ setup(
         'Programming Language :: Java',
     ],
 )
+
+if __name__ == '__main__':
+    setup(**setup_args)

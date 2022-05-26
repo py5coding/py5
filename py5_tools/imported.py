@@ -27,7 +27,6 @@ import re
 import stackprinter
 
 from . import jvm
-from .py5bot import py5bot
 from . import parsing
 
 
@@ -150,6 +149,12 @@ def _run_static_code(
         exit_if_error,
         py5_options,
         sketch_args):
+    try:
+        from py5jupyter.kernels.py5bot import py5bot
+    except ImportError as e:
+        # TODO: deprecated
+        from .py5bot import py5bot
+
     py5bot_mgr = py5bot.Py5BotManager()
     success, result = py5bot.check_for_problems(code, sketch_path)
     if success:

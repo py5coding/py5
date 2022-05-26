@@ -18,21 +18,24 @@
 #
 # *****************************************************************************
 import io
+import warnings
 
 import ipywidgets as widgets
-
 import PIL
 
-from .hooks import SketchPortalHook
+try:
+    from py5jupyter.widgets import Py5SketchPortal
+except ImportError:
+    # TODO: deprecated
+    class Py5SketchPortal(widgets.Image):
+        def __init__(self, sketch, w, h):
+            super().__init__()
 
+from .hooks import SketchPortalHook
 from .. import environ as _environ
 
 
 Sketch = 'Sketch'
-
-
-class Py5SketchPortal(widgets.Image):
-    pass
 
 
 def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
@@ -64,7 +67,7 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
         throttle portal frame rate below Sketch's frame rate
 
     time_limit: float = 0.0
-        time limit in seconds for Sketch portal; set to 0 (default) for no limit
+        time limit in seconds for the Sketch Portal; set to 0 (default) for no limit
 
     Notes
     -----
@@ -77,18 +80,24 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     ``get_current_sketch()``. Use the ``sketch`` parameter to specify a different
     running Sketch, such as a Sketch created using Class mode.
 
-    The Sketch Portal cannot (currently) handle keyboard or mouse events. As an
-    alternative, consider using Jupyter Widgets for user input.
+    The Sketch Portal is a custom Jupyter Widget and can handle keyboard or mouse
+    events just like a native window. You will need to click on the portal for it to
+    gain focus and capture keyboard events. Mouse and keyboard events will be
+    observed by the browser and simulated events will be created for the Sketch.
+    Every effort has been made to make the simulated events identical to real events
+    but some small differences remain. You can also use the Jupyter-provided Widgets
+    such as sliders and text boxes for user input.
 
-    This magic is intended to be used when a real display is not available, such as
-    when using py5 through an online Jupyter notebook system such as binder. You are
-    free to execute code elsewhere in the notebook while the Sketch is running and
-    the portal is open. This function can only be used in a Jupyter Notebook. It
-    uses ZMQ to stream JPEG images from the kernel to the client front-end.
+    This function is intended to be used when a real display is not available, such
+    as when using py5 through an online Jupyter notebook system like binder
+    (mybinder.org). You are free to execute code elsewhere in the notebook while the
+    Sketch is running and the portal is open. This function can only be used in a
+    Jupyter Notebook. It uses ZMQ to stream JPEG images from the kernel to the
+    client front-end.
 
     If you are using Jupyter Lab, try right clicking in the output area of the cell
     and selecting "Create New View for Output". This will create a new panel just
-    for the Sketch portal. Creating a "New Console for Notebook" and creating a
+    for the Sketch Portal. Creating a "New Console for Notebook" and creating a
     portal there works well also.
 
     This command can be called before ``run_sketch()`` if the current Sketch is in
@@ -110,12 +119,12 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     This is important when using Processing libraries that support ``post_draw()``
     such as Camera3D or ColorBlindness.
 
-    To stop a Sketch portal, wait for the time limit to expire or call
-    ``exit_sketch()``. If you delete the cell with the ``Py5SketchPortal`` object,
-    the portal will no longer be visible but the Sketch will still be streaming
-    frames to the notebook client, wasting resources. A Sketch can only have one
-    open portal, so opening a new portal with different options will replace an
-    existing portal."""
+    To stop a Sketch Portal, wait for the time limit to expire, call
+    ``exit_sketch()``, or press the "exit_sketch()" button below the portal. If you
+    delete the cell with the ``Py5SketchPortal`` object, the portal will no longer
+    be visible but the Sketch will still be streaming frames to the notebook client,
+    wasting resources. A Sketch can only have one open portal, so opening a new
+    portal with different options will replace an existing portal."""
     environment = _environ.Environment()
     if not environment.in_ipython_session:
         raise RuntimeError(
@@ -123,6 +132,10 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     if not environment.in_jupyter_zmq_shell:
         raise RuntimeError(
             'The sketch_widget() function can only be used with ZMQInteractiveShell (such as Jupyter Lab)')
+    if issubclass(Py5SketchPortal, widgets.Image):
+        # TODO: deprecated
+        warnings.warn(
+            'Please install the py5jupyter package for interactive Py5SketchPortal functionality.')
 
     if sketch is None:
         import py5
@@ -131,6 +144,9 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     else:
         prefix = ''
 
+    if not sketch._py5_methods.has_function('draw'):
+        raise RuntimeError(
+            'This tool cannot be used on a sketch that does not have a draw() method')
     if not sketch.is_running:
         raise RuntimeError(f'The {prefix} sketch is not running')
     if throttle_frame_rate is not None and throttle_frame_rate <= 0:
@@ -146,9 +162,10 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
         raise RuntimeError('The scale parameter must be greater than zero')
 
     if portal is None:
-        portal = Py5SketchPortal()
-        portal.layout.width = f'{int(scale * sketch.width)}px'
-        portal.layout.height = f'{int(scale * sketch.height)}px'
+        w, h = int(scale * sketch.width), int(scale * sketch.height)
+        portal = Py5SketchPortal(sketch, w, h)
+        portal.layout.width = f'{w+2}px'
+        portal.layout.height = f'{h+2}px'
         portal.layout.border = '1px solid gray'
 
     def displayer(frame):
@@ -157,7 +174,8 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
             img = img.resize(tuple(int(scale * x) for x in img.size))
         b = io.BytesIO()
         img.save(b, format='JPEG', quality=quality)
-        portal.value = b.getvalue()
+        with portal.hold_sync():
+            portal.value = b.getvalue()
 
     hook = SketchPortalHook(displayer, throttle_frame_rate, time_limit)
 

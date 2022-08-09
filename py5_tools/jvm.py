@@ -87,13 +87,15 @@ def get_classpath() -> str:
     Notes
     -----
 
-    Get the Java classpath. If the JVM has not yet started, this will be the
-    classpath the JVM will use when it does start. It will also be possible to
-    change that classpath with ``py5_tools.add_classpath()`` and
+    Get the Java classpath. If the JVM has not yet started, this will list the jars
+    that have been added with ``py5_tools.add_classpath()`` and
     ``py5_tools.add_jars()``. After the JVM has started, the classpath cannot be
     changed and the aformentioned functions would throw a ``RuntimeError``. Use
     ``py5_tools.is_jvm_running()`` to first determine if the JVM is running."""
-    return jpype.getClassPath()
+    if jpype.isJVMStarted():
+        return jpype.getClassPath()
+    else:
+        return ':'.join(str(p) for p in _classpath)
 
 
 def add_classpath(classpath: Union[Path, str]) -> None:
@@ -117,7 +119,7 @@ def add_classpath(classpath: Union[Path, str]) -> None:
     _check_jvm_running()
     if not isinstance(classpath, Path):
         classpath = Path(classpath)
-    jpype.addClassPath(classpath.absolute())
+    _classpath.append(classpath.absolute())
 
 
 def add_jars(path: Union[Path, str]) -> None:
@@ -149,7 +151,7 @@ def add_jars(path: Union[Path, str]) -> None:
         path = Path(path)
     if path.exists():
         for jarfile in path.glob("**/*.[Jj][Aa][Rr]"):
-            jpype.addClassPath(jarfile.absolute())
+            _classpath.append(jarfile.absolute())
 
 
 def get_jvm_debug_info() -> dict[str, Any]:

@@ -22,6 +22,8 @@ from __future__ import annotations
 import functools
 from pathlib import Path
 from typing import overload  # noqa
+import weakref
+
 import numpy as np
 import numpy.typing as npt  # noqa
 
@@ -111,9 +113,17 @@ class Py5Shape:
     To create a new shape, use the ``create_shape()`` function. Do not use the
     syntax ``Py5Shape()``.
     """
+    _py5_object_cache = weakref.WeakSet()
 
-    def __init__(self, pshape):
-        self._instance = pshape
+    def __new__(cls, pshape):
+        for o in cls._py5_object_cache:
+            if pshape == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5Shape)
+            o._instance = pshape
+            cls._py5_object_cache.add(o)
+            return o
 
     ARC = 32
     BEZIER_VERTEX = 1
@@ -1883,10 +1893,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -1956,10 +1971,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2029,10 +2049,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2102,10 +2127,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2175,10 +2205,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2248,10 +2283,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -2321,10 +2361,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5749,10 +5794,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5819,10 +5869,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5889,10 +5944,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -5959,10 +6019,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6029,10 +6094,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6099,10 +6169,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6169,10 +6244,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6365,10 +6445,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6435,10 +6520,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6505,10 +6595,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6575,10 +6670,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6645,10 +6745,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6715,10 +6820,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -6785,10 +6895,15 @@ class Py5Shape:
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is

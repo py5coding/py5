@@ -37,18 +37,21 @@ def translate_code(
     out = StringIO()
     in_comment = False
     in_quote = None
+    in_import_line = False
     for token in tokens:
-        if token in ["'", '"'] and not in_comment:
+        if token in ("'", '"""', '"', "'''") and not in_comment:
             if not in_quote:
                 in_quote = token
             elif in_quote and token == in_quote:
                 in_quote = None
+        elif token in ('import', 'from'):
+            in_import_line = True
         elif token == '#':
             in_comment = True
         elif token == '\n':
             in_comment = False
-            in_quote = None
-        elif not (in_comment or in_quote):
+            in_import_line = False
+        elif not (in_comment or in_quote or in_import_line):
             token = translate_token(token)
 
         out.write(token)
@@ -75,7 +78,7 @@ def translate_file(translate_token: Callable,
     src = Path(src)
     dest = Path(dest)
 
-    with open(src, 'r') as f:
+    with open(src, 'r', encoding='utf8') as f:
         new_code = translate_code(
             translate_token,
             f.read(),
@@ -84,7 +87,7 @@ def translate_file(translate_token: Callable,
     if not dest.parent.exists():
         dest.parent.mkdir(parents=True)
 
-    with open(dest, "w") as f:
+    with open(dest, "w", encoding='utf8') as f:
         f.write(new_code)
 
 

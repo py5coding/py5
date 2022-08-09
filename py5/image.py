@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import functools
 from typing import overload, Union  # noqa
+import weakref
 
 from .base import Py5Base
 from .mixins import PixelPy5ImageMixin
@@ -63,8 +64,22 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     To create a new image, use the ``create_image()`` function. Do not use the
     syntax ``Py5Image()``.
     """
+    _py5_object_cache = weakref.WeakSet()
+
+    def __new__(cls, pimage):
+        for o in cls._py5_object_cache:
+            if pimage == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5Image)
+            cls._py5_object_cache.add(o)
+            return o
 
     def __init__(self, pimage):
+        if pimage == getattr(self, '_instance', None):
+            # this is a cached Py5Image object, don't re-run __init__()
+            return
+
         self._instance = pimage
         super().__init__(instance=pimage)
 
@@ -82,13 +97,11 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     DODGE = 4096
     ERODE = 17
     EXCLUSION = 64
-    GIF = 3
     GRAY = 12
     GREEN_MASK = 65280
     HARD_LIGHT = 1024
     HSB = 3
     INVERT = 13
-    JPEG = 2
     LIGHTEST = 8
     MULTIPLY = 128
     OPAQUE = 14
@@ -100,9 +113,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     SCREEN = 256
     SOFT_LIGHT = 2048
     SUBTRACT = 4
-    TARGA = 1
     THRESHOLD = 16
-    TIFF = 0
 
     def _get_height(self) -> int:
         """The height of the image in units of pixels.

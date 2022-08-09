@@ -24,8 +24,10 @@ import numpy as np
 from jpype.types import JString, JInt
 
 
-HEX_COLOR_REGEX = re.compile(r'#[0-9A-F]{6}' + chr(36))
 HEX_3DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{3}' + chr(36))
+HEX_4DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{4}' + chr(36))
+HEX_6DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{6}' + chr(36))
+HEX_8DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{8}' + chr(36))
 
 
 def _text_fix_str(f):
@@ -50,12 +52,27 @@ def _ret_str(f):
 
 
 def _hex_converter(arg):
-    if isinstance(arg, str) and HEX_COLOR_REGEX.match(arg.upper()):
-        return JInt(int("0xFF" + arg[1:], base=16))
-    elif isinstance(arg, str) and HEX_3DIGIT_COLOR_REGEX.match(arg.upper()):
-        return JInt(int("0xFF" + ''.join([c + c for c in arg[1:]]), base=16))
+    if isinstance(arg, str):
+        if arg.startswith('#'):
+            if HEX_3DIGIT_COLOR_REGEX.match(arg.upper()):
+                return JInt(
+                    int("0xFF" + ''.join([c + c for c in arg[1:]]), base=16))
+            elif HEX_4DIGIT_COLOR_REGEX.match(arg.upper()):
+                return JInt(
+                    int("0x" + ''.join([arg[i] + arg[i] for i in [4, 1, 2, 3]]), base=16))
+            elif HEX_6DIGIT_COLOR_REGEX.match(arg.upper()):
+                return JInt(int("0xFF" + arg[1:], base=16))
+            elif HEX_8DIGIT_COLOR_REGEX.match(arg.upper()):
+                return JInt(int("0x" + arg[7:] + arg[1:7], base=16))
+        else:
+            try:
+                import matplotlib.colors as mcolors
+                return JInt(int("0xFF" + mcolors.to_hex(arg)[1:], base=16))
+            except BaseException:
+                return None
     elif isinstance(arg, (int, np.integer)) and 0x7FFFFFFF < arg <= 0xFFFFFFFF:
         return JInt(arg)
+
     return None
 
 

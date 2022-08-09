@@ -19,6 +19,9 @@
 # *****************************************************************************
 from __future__ import annotations
 
+import warnings
+import traceback
+from pathlib import Path
 from typing import overload, Union, Any
 
 import numpy as np
@@ -29,6 +32,15 @@ from jpype import JClass
 _OpenSimplex2S = JClass('py5.util.OpenSimplex2S')
 
 
+def _non_py5_stacklevel():
+    f = str(Path(__file__).parent.parent)
+    for i, t in enumerate(reversed(traceback.extract_stack())):
+        if t.filename.startswith(f):
+            continue
+        else:
+            return i
+
+
 class MathMixin:
 
     def __init__(self, *args, **kwargs):
@@ -37,6 +49,35 @@ class MathMixin:
         self._rng = np.random.default_rng()
 
     # *** BEGIN METHODS ***
+
+    @classmethod
+    def hex_color(cls, color: int) -> str:
+        """Convert a color value to a hex color string.
+
+        Parameters
+        ----------
+
+        color: int
+            any color value
+
+        Notes
+        -----
+
+        Convert a color value to a hex color string. Processing and py5 store color
+        values in 32 bit integers that are inconvenient for a human to parse. To
+        interpret these values, one can use methods like ``red()``, ``green()``, and
+        ``blue()`` to extract color channel values from the 32 bit integers. This method
+        provides an alternative approach, converting the 32 bit integer into a string
+        such as ``'#0F3FF0FF'``. The hex string has 8 hexadecimal values following a
+        ``#`` character. The first two values represent the red value, the next two
+        green, the next two blue, and the last two alpha. This is similar to web colors
+        except for the addition of the alpha channel.
+
+        Conveniently, the hex color string returned by this method can also be used as
+        parameter for other methods that accept color values. Observe how this is done
+        in the example code."""
+        c = hex(np.uint32(color & 0xFFFFFFFF))[2:].zfill(8).upper()
+        return '#' + c[2:] + c[:2]
 
     @classmethod
     def sin(cls, angle: Union[float, npt.ArrayLike]
@@ -324,8 +365,14 @@ class MathMixin:
 
         In Processing this functionality is provided by ``map()`` but was renamed in py5
         because of a name conflict with a builtin Python function."""
-        return start2 + (stop2 - start2) * \
-            ((value - start1) / (stop1 - start1))
+        denom = stop1 - start1
+        if denom == 0:
+            warnings.warn(
+                f'remap({value}, {start1}, {stop1}, {start2}, {stop2}) called, which returns NaN (not a number)',
+                stacklevel=_non_py5_stacklevel())
+            return float("nan")
+        else:
+            return start2 + (stop2 - start2) * ((value - start1) / denom)
 
     @overload
     def dist(cls, x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float,
@@ -767,6 +814,41 @@ class MathMixin:
         the returned result will be numpy's Not-a-Number value, ``np.nan``."""
         return np.log(value)
 
+    def _get_np_random(self) -> np.random.Generator:
+        """Access the numpy random number generator that py5 uses to provide random number
+        functionality.
+
+        Notes
+        -----
+
+        Access the numpy random number generator that py5 uses to provide random number
+        functionality. Py5 uses a numpy random number generator to provide a breadth of
+        random number functions such as ``random_choice()``, ``random_gaussian()``, and
+        ``random_int()``. The functions py5 provides are the ones you are most likely to
+        need, but numpy is capable of much more than what py5 makes available. Access
+        this property to access all of numpy's random number functions.
+
+        All of the random numbers generated through this property can be influenced by
+        ``random_seed()``."""
+        return self._rng
+    np_random: np.random.Generator = property(
+        fget=_get_np_random,
+        doc="""Access the numpy random number generator that py5 uses to provide random number
+        functionality.
+
+        Notes
+        -----
+
+        Access the numpy random number generator that py5 uses to provide random number
+        functionality. Py5 uses a numpy random number generator to provide a breadth of
+        random number functions such as ``random_choice()``, ``random_gaussian()``, and
+        ``random_int()``. The functions py5 provides are the ones you are most likely to
+        need, but numpy is capable of much more than what py5 makes available. Access
+        this property to access all of numpy's random number functions.
+
+        All of the random numbers generated through this property can be influenced by
+        ``random_seed()``.""")
+
     def random_seed(self, seed: int) -> None:
         """Sets the seed value for py5's random functions.
 
@@ -1198,8 +1280,12 @@ class MathMixin:
         raise TypeError(
             f'No matching overloads found for Sketch.random_int({types})')
 
-    def random_choice(self, objects: list[Any]) -> Any:
-        """Select a random item from a list.
+    def random_choice(
+            self,
+            objects: list[Any],
+            size: int = 1,
+            replace: bool = True) -> Any:
+        """Select random items from a list.
 
         Parameters
         ----------
@@ -1207,14 +1293,23 @@ class MathMixin:
         objects: list[Any]
             list of objects to choose from
 
+        replace: bool=True
+            whether to select random items with or without replacement
+
+        size: int=1
+            number of random items to select
+
         Notes
         -----
 
-        Select a random item from a list. The list items can be of any type. This
-        function's randomness can be influenced by ``random_seed()``.
+        Select random items from a list. The list items can be of any type. If multiple
+        items are selected, this function will by default allow the same item to be
+        selected multiple times. Set the ``replace`` parameter to ``False`` to prevent
+        the same item from being selected multiple times.
 
-        This function makes calls to numpy to select the random items."""
-        return self._rng.choice(objects)
+        This function's randomness can be influenced by ``random_seed()``, and makes
+        calls to numpy to select the random items."""
+        return self._rng.choice(objects, size=size, replace=replace)
 
     @overload
     def random_gaussian(self) -> float:

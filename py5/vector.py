@@ -636,7 +636,7 @@ class Py5Vector(Sequence):
                               maybe_vector=True)
 
     def dist(self, other: Union[Py5Vector, np.ndarray]
-             ) -> Union[Py5Vector, np.ndarray[np.floating]]:
+             ) -> Union[float, np.ndarray[np.floating]]:
         """Calculate the distance between two vectors.
 
         Parameters
@@ -679,7 +679,7 @@ class Py5Vector(Sequence):
 
     def angle_between(self,
                       other: Union[Py5Vector,
-                                   np.ndarray]) -> Union[Py5Vector,
+                                   np.ndarray]) -> Union[float,
                                                          np.ndarray[np.floating]]:
         """Measure the angle between two vectors.
 
@@ -694,8 +694,12 @@ class Py5Vector(Sequence):
 
         Measure the angle between two vectors.
         """
-        return self._run_calc(other, lambda s, o: np.arccos(
-            ((s / np.sum(s**2)**0.5) * (o / np.sum(o**2, axis=-1)**0.5)).sum(axis=-1)), 'angle between')
+        return self._run_calc(other,
+                              lambda s,
+                              o: np.arccos(((s / np.sum(s**2)**0.5) * (o / np.sum(o**2,
+                                                                                  axis=-1,
+                                                                                  keepdims=o.ndim)**0.5)).sum(axis=-1)),
+                              'angle between')
 
     def cross(self,
               other: Union[Py5Vector,

@@ -18,6 +18,7 @@
 #
 # *****************************************************************************
 from __future__ import annotations
+from re import S
 
 import time
 import os
@@ -27,17 +28,19 @@ import warnings
 from io import BytesIO
 from pathlib import Path
 import functools
+import uuid
 from typing import overload, Any, Callable, Union  # noqa
 
 import jpype
-from jpype.types import JException, JArray, JInt  # noqa
+from jpype.types import JClass, JException, JArray, JInt  # noqa
 
 import numpy as np
 import numpy.typing as npt
 
+import py5_tools
 import py5_tools.environ as _environ
 from py5_tools.printstreams import _DefaultPrintlnStream, _DisplayPubPrintlnStream
-from .methods import Py5Methods, _extract_py5_user_function_data
+from .bridge import Py5Bridge, _extract_py5_user_function_data
 from .base import Py5Base
 from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream
 from .mixins.threads import Py5Promise  # noqa
@@ -131,18 +134,52 @@ class Sketch(
     stand-alone functions available in the local namespace in which ``run_sketch()``
     was called.
     """
-
+    _py5_object_cache = set()
     _cls = _Sketch
 
+    def __new__(cls, *args, **kwargs):
+        _instance = kwargs.get('_instance')
+
+        cls._py5_object_cache = set(
+            s for s in cls._py5_object_cache if not s.is_dead)
+        if _instance:
+            for s in cls._py5_object_cache:
+                if _instance == s._instance:
+                    return s
+            else:
+                raise RuntimeError(
+                    'Failed to locate cached Sketch class for provided py5.core.Sketch instance')
+        else:
+            s = object.__new__(cls)
+            cls._py5_object_cache.add(s)
+            return s
+
     def __init__(self, *args, **kwargs):
-        super().__init__(instance=_Sketch())
+        _instance = kwargs.get('_instance')
+        _jclassname = kwargs.get('_jclassname')
+
+        if _instance:
+            if _instance == getattr(self, '_instance', None):
+                # this is a cached Sketch object, don't re-run __init__()
+                return
+            else:
+                raise RuntimeError(
+                    'Unexpected Situation: Passed py5.core.Sketch instance does not match existing py5.core.Sketch instance. What is going on?')
+
+        Sketch._cls = JClass(_jclassname) if _jclassname else _Sketch
+        instance = Sketch._cls()
+        if not isinstance(instance, _Sketch):
+            raise RuntimeError(
+                'Java instance must inherit from py5.core.Sketch')
+
+        super().__init__(instance=instance)
         self._methods_to_profile = []
         self._pre_hooks_to_add = []
         self._post_hooks_to_add = []
         # must always keep the py5_methods reference count from hitting zero.
         # otherwise, it will be garbage collected and lead to segmentation
         # faults!
-        self._py5_methods = None
+        self._py5_bridge = None
         self._environ = None
         iconPath = Path(__file__).parent.parent / \
             'py5_tools/kernel/resources/logo-64x64.png'
@@ -150,8 +187,9 @@ class Sketch(
             self._instance.setPy5IconPath(str(iconPath))
         elif hasattr(sys, '_MEIPASS'):
             warnings.warn(
-                "py5 logo image cannot be found. You are running this Sketch with pyinstaller and the image is missing from the packaging. I'm going to nag you until you fix it :)")
-        _Sketch.setJOGLProperties(str(Path(__file__).parent))
+                "py5 logo image cannot be found. You are running this Sketch with pyinstaller and the image is missing from the packaging. I'm going to nag you about this until you fix it.",
+                stacklevel=3)
+        Sketch._cls.setJOGLProperties(str(Path(__file__).parent))
 
         # attempt to instantiate Py5Utilities
         self.utils = None
@@ -260,12 +298,12 @@ class Sketch(
         ) if self._environ.in_jupyter_zmq_shell else _DefaultPrintlnStream())
         self._init_println_stream()
 
-        self._py5_methods = Py5Methods(self)
-        self._py5_methods.add_functions(methods, method_param_counts)
-        self._py5_methods.profile_functions(self._methods_to_profile)
-        self._py5_methods.add_pre_hooks(self._pre_hooks_to_add)
-        self._py5_methods.add_post_hooks(self._post_hooks_to_add)
-        self._instance.usePy5Methods(self._py5_methods)
+        self._py5_bridge = Py5Bridge(self)
+        self._py5_bridge.add_functions(methods, method_param_counts)
+        self._py5_bridge.profile_functions(self._methods_to_profile)
+        self._py5_bridge.add_pre_hooks(self._pre_hooks_to_add)
+        self._py5_bridge.add_post_hooks(self._post_hooks_to_add)
+        self._instance.buildPy5Bridge(self._py5_bridge)
 
         if not py5_options:
             py5_options = []
@@ -287,7 +325,7 @@ class Sketch(
                 from PyObjCTools import AppHelper
 
                 def run():
-                    _Sketch.runSketch(args, self._instance)
+                    Sketch._cls.runSketch(args, self._instance)
                     if not self._environ.in_ipython_session:
                         while not self.is_dead:
                             time.sleep(0.05)
@@ -307,7 +345,7 @@ class Sketch(
                 if not self._environ.in_ipython_session:
                     AppHelper.runConsoleEventLoop()
             else:
-                _Sketch.runSketch(args, self._instance)
+                Sketch._cls.runSketch(args, self._instance)
         except Exception as e:
             self.println(
                 'Java exception thrown by Sketch.runSketch:\n' +
@@ -358,30 +396,30 @@ class Sketch(
         self._shutdown()
 
     def _add_pre_hook(self, method_name, hook_name, function):
-        if self._py5_methods is None:
+        if self._py5_bridge is None:
             self._pre_hooks_to_add.append((method_name, hook_name, function))
         else:
-            self._py5_methods.add_pre_hook(method_name, hook_name, function)
+            self._py5_bridge.add_pre_hook(method_name, hook_name, function)
 
     def _remove_pre_hook(self, method_name, hook_name):
-        if self._py5_methods is None:
+        if self._py5_bridge is None:
             self._pre_hooks_to_add = [
                 x for x in self._pre_hooks_to_add if x[0] != method_name and x[1] != hook_name]
         else:
-            self._py5_methods.remove_pre_hook(method_name, hook_name)
+            self._py5_bridge.remove_pre_hook(method_name, hook_name)
 
     def _add_post_hook(self, method_name, hook_name, function):
-        if self._py5_methods is None:
+        if self._py5_bridge is None:
             self._post_hooks_to_add.append((method_name, hook_name, function))
         else:
-            self._py5_methods.add_post_hook(method_name, hook_name, function)
+            self._py5_bridge.add_post_hook(method_name, hook_name, function)
 
     def _remove_post_hook(self, method_name, hook_name):
-        if self._py5_methods is None:
+        if self._py5_bridge is None:
             self._post_hooks_to_add = [
                 x for x in self._post_hooks_to_add if x[0] != method_name and x[1] != hook_name]
         else:
-            self._py5_methods.remove_post_hook(method_name, hook_name)
+            self._py5_bridge.remove_post_hook(method_name, hook_name)
 
     # *** BEGIN METHODS ***
 
@@ -661,7 +699,7 @@ class Sketch(
         methods, method_param_counts = _extract_py5_user_function_data(
             dict(draw=draw))
         if 'draw' in methods:
-            self._py5_methods.add_functions(methods, method_param_counts)
+            self._py5_bridge.add_functions(methods, method_param_counts)
         else:
             self.println("The new draw() function must take no parameters")
 
@@ -692,10 +730,10 @@ class Sketch(
 
         To profile just the draw function, you can also use ``profile_draw()``. To see
         the results, use ``print_line_profiler_stats()``."""
-        if self._py5_methods is None:
+        if self._py5_bridge is None:
             self._methods_to_profile.extend(function_names)
         else:
-            self._py5_methods.profile_functions(function_names)
+            self._py5_bridge.profile_functions(function_names)
 
     def profile_draw(self) -> None:
         """Profile the execution times of the draw function with a line profiler.
@@ -733,7 +771,7 @@ class Sketch(
         efforts for a slow Sketch.
 
         This method can be called multiple times on a running Sketch."""
-        self._py5_methods.dump_stats()
+        self._py5_bridge.dump_stats()
 
     def _insert_frame(self, what, num=None):
         """Utility function to insert a number into a filename.
@@ -809,6 +847,151 @@ class Sketch(
             drop_alpha=drop_alpha,
             use_thread=use_thread,
             **params)
+
+    def select_folder(self, prompt: str, callback: Callable,
+                      default_folder: str = None) -> None:
+        """Opens a file chooser dialog to select a folder.
+
+        Underlying Processing method: Sketch.selectFolder
+
+        Parameters
+        ----------
+
+        callback: Callable
+            callback function after selection is made
+
+        default_folder: str = None
+            default folder
+
+        prompt: str
+            text prompt for select dialog box
+
+        Notes
+        -----
+
+        Opens a file chooser dialog to select a folder. After the selection is made, the
+        selection will be passed to the ``callback`` function. If the dialog is closed
+        or canceled, ``None`` will be sent to the function, so that the program is not
+        waiting for additional input. The callback is necessary because of how threading
+        works.
+
+        This method has some platform specific quirks. On OSX, this does not work when
+        the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
+        OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
+        box is open. This method only uses native dialog boxes on OSX."""
+        self._generic_select(
+            self._instance.py5SelectFolder,
+            'select_folder',
+            prompt,
+            callback,
+            default_folder)
+
+    def select_input(
+            self,
+            prompt: str,
+            callback: Callable,
+            default_file: str = None) -> None:
+        """Opens a file chooser dialog to select a folder.
+
+        Underlying Processing method: Sketch.selectFolder
+
+        Parameters
+        ----------
+
+        callback: Callable
+            callback function after selection is made
+
+        default_folder: str = None
+            default folder
+
+        prompt: str
+            text prompt for select dialog box
+
+        Notes
+        -----
+
+        Opens a file chooser dialog to select a folder. After the selection is made, the
+        selection will be passed to the ``callback`` function. If the dialog is closed
+        or canceled, ``None`` will be sent to the function, so that the program is not
+        waiting for additional input. The callback is necessary because of how threading
+        works.
+
+        This method has some platform specific quirks. On OSX, this does not work when
+        the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
+        OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
+        box is open. This method only uses native dialog boxes on OSX."""
+        self._generic_select(
+            self._instance.py5SelectInput,
+            'select_input',
+            prompt,
+            callback,
+            default_file)
+
+    def select_output(
+            self,
+            prompt: str,
+            callback: Callable,
+            default_file: str = None) -> None:
+        """Opens a file chooser dialog to select a folder.
+
+        Underlying Processing method: Sketch.selectFolder
+
+        Parameters
+        ----------
+
+        callback: Callable
+            callback function after selection is made
+
+        default_folder: str = None
+            default folder
+
+        prompt: str
+            text prompt for select dialog box
+
+        Notes
+        -----
+
+        Opens a file chooser dialog to select a folder. After the selection is made, the
+        selection will be passed to the ``callback`` function. If the dialog is closed
+        or canceled, ``None`` will be sent to the function, so that the program is not
+        waiting for additional input. The callback is necessary because of how threading
+        works.
+
+        This method has some platform specific quirks. On OSX, this does not work when
+        the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
+        OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
+        box is open. This method only uses native dialog boxes on OSX."""
+        self._generic_select(
+            self._instance.py5SelectOutput,
+            'select_output',
+            prompt,
+            callback,
+            default_file)
+
+    def _generic_select(
+            self,
+            py5f: Callable,
+            name: str,
+            prompt: str,
+            callback: Callable,
+            default_folder: str = None) -> None:
+        key = "_PY5_SELECT_CALLBACK_" + str(uuid.uuid4())
+        py5_tools.config.register_processing_mode_key(
+            key, callback, callback_once=True)
+
+        if platform.system() == 'Darwin':
+            if self._environ.in_ipython_session:
+                raise RuntimeError(
+                    "Sorry, py5's " +
+                    name +
+                    "() method doesn't work on OSX when the Sketch is run through Jupyter. However, there are some IPython widgets you can use instead.")
+            else:
+                def _run():
+                    py5f(key, prompt, default_folder)
+                proxy = jpype.JProxy('java.lang.Runnable', dict(run=_run))
+                jpype.JClass('java.lang.Thread')(proxy).start()
+        else:
+            py5f(key, prompt, default_folder)
 
     # *** Py5Image methods ***
 
@@ -1027,21 +1210,16 @@ class Sketch(
     BREAK = 4
     BURN = 8192
     CENTER = 3
-    CHATTER = 0
     CHORD = 2
     CLAMP = 0
     CLOSE = 2
     CODED = '\uffff'
-    COMPLAINT = 1
     CONTROL = 17
     CORNER = 0
     CORNERS = 1
     CROSS = 1
     CURVE_VERTEX = 3
-    CUSTOM = 0
     DARKEST = 16
-    DEFAULT_HEIGHT = 100
-    DEFAULT_WIDTH = 100
     DEG_TO_RAD = 0.017453292
     DELETE = '\u007f'
     DIAMETER = 3
@@ -1084,59 +1262,46 @@ class Sketch(
     EXTERNAL_MOVE = "__MOVE__"
     EXTERNAL_STOP = "__STOP__"
     FX2D = "processing.javafx.PGraphicsFX2D"
-    GIF = 3
     GRAY = 12
     GROUP = 0
     HALF_PI = 1.5707964
     HAND = 12
     HARD_LIGHT = 1024
     HIDDEN = "py5.core.graphics.HiddenPy5GraphicsJava2D"
-    HINT_COUNT = 13
     HSB = 3
     IMAGE = 2
     INVERT = 13
     JAVA2D = "processing.awt.PGraphicsJava2D"
-    JPEG = 2
-    LANDSCAPE = 2
     LEFT = 37
     LIGHTEST = 8
     LINE = 4
     LINES = 5
     LINE_LOOP = 51
     LINE_STRIP = 50
-    LINUX = 3
-    MACOS = 2
     MAX_FLOAT = 3.4028235E38
     MAX_INT = 2147483647
     MIN_FLOAT = -3.4028235E38
     MIN_INT = -2147483648
     MITER = 8
     MODEL = 4
-    MODELVIEW = 1
     MOVE = 13
     MULTIPLY = 128
     NORMAL = 1
     OPAQUE = 14
     OPEN = 1
     OPENGL = "processing.opengl.PGraphics3D"
-    ORTHOGRAPHIC = 2
-    OTHER = 0
     OVERLAY = 512
     P2D = "processing.opengl.PGraphics2D"
     P3D = "processing.opengl.PGraphics3D"
     PATH = 21
     PDF = "processing.pdf.PGraphicsPDF"
-    PERSPECTIVE = 3
     PI = 3.1415927
     PIE = 3
     POINT = 2
     POINTS = 3
     POLYGON = 20
-    PORTRAIT = 1
     POSTERIZE = 15
-    PROBLEM = 2
     PROJECT = 4
-    PROJECTION = 0
     QUAD = 16
     QUADRATIC_VERTEX = 2
     QUADS = 17
@@ -1163,12 +1328,10 @@ class Sketch(
     SUBTRACT = 4
     SVG = "processing.svg.PGraphicsSVG"
     TAB = '\t'
-    TARGA = 1
     TAU = 6.2831855
     TEXT = 2
     THIRD_PI = 1.0471976
     THRESHOLD = 16
-    TIFF = 0
     TOP = 101
     TRIANGLE = 8
     TRIANGLES = 9
@@ -1179,10 +1342,6 @@ class Sketch(
     VERTEX = 0
     WAIT = 3
     WHITESPACE = " \t\n\r\f\u00a0"
-    WINDOWS = 1
-    X = 0
-    Y = 1
-    Z = 2
 
     @_return_list_str
     def _get_pargs(self) -> list[str]:
@@ -1342,6 +1501,33 @@ class Sketch(
         displayed since the program started. Inside ``setup()`` the value is 0. Inside
         the first execution of ``draw()`` it is 1, and it will increase by 1 for every
         execution of ``draw()`` after that.""")
+
+    @_return_py5graphics
+    def _get_g(self) -> Py5Graphics:
+        """The ``Py5Graphics`` object used by the Sketch.
+
+        Underlying Processing field: Sketch.g
+
+        Notes
+        -----
+
+        The ``Py5Graphics`` object used by the Sketch. Internally, all of Processing's
+        drawing functionality comes from interaction with PGraphics objects, and this
+        will provide direct access to the PGraphics object used by the Sketch.
+        """
+        return self._instance.g
+    g: Py5Graphics = property(
+        fget=_get_g,
+        doc="""The ``Py5Graphics`` object used by the Sketch.
+
+        Underlying Processing field: Sketch.g
+
+        Notes
+        -----
+
+        The ``Py5Graphics`` object used by the Sketch. Internally, all of Processing's
+        drawing functionality comes from interaction with PGraphics objects, and this
+        will provide direct access to the PGraphics object used by the Sketch.""")
 
     def _get_height(self) -> int:
         """System variable that stores the height of the display window.
@@ -5435,9 +5621,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5513,9 +5714,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5591,9 +5807,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5669,9 +5900,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5747,9 +5993,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5825,9 +6086,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5903,9 +6179,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -5981,9 +6272,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         pass
 
@@ -6059,9 +6365,24 @@ class Sketch(
         ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
         Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-        color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-        color notations as a parameter.
+        specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+        = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+        both color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "``0x``" before the
+        values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+        eight characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
         """
         return self._instance.color(*args)
 
@@ -8733,10 +9054,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8799,10 +9125,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8865,10 +9196,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8931,10 +9267,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8997,10 +9338,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -9063,10 +9409,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -9129,10 +9480,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the "gray" parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -10054,14 +10410,14 @@ class Sketch(
 
     @_return_py5surface
     def get_surface(self) -> Py5Surface:
-        """Get the Py5Surface object used for the Sketch.
+        """Get the ``Py5Surface`` object used for the Sketch.
 
         Underlying Processing method: PApplet.getSurface
 
         Notes
         -----
 
-        Get the Py5Surface object used for the Sketch.
+        Get the ``Py5Surface`` object used for the Sketch.
         """
         return self._instance.getSurface()
 
@@ -15296,10 +15652,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15363,10 +15724,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15430,10 +15796,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15497,10 +15868,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15564,10 +15940,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15631,10 +16012,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15698,10 +16084,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17522,10 +17913,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17590,10 +17986,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17658,10 +18059,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17726,10 +18132,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17794,10 +18205,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17862,10 +18278,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17930,10 +18351,15 @@ class Sketch(
         eight characters; the first two characters define the alpha component, and the
         remainder define the red, green, and blue components.
 
-        When using web color notation to specify a color, create a four or seven
-        character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-        ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-        similar to hexadecimal notation, but without an alpha component.
+        When using web color notation to specify a color, create a string beginning with
+        the "``#``" character followed by three, four, six, or eight characters. The
+        example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+        (in that order) for the color and assume the color has no transparency. The
+        example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+        alpha values (in that order) for the color. Notice that in web color notation
+        the alpha channel is last, which is consistent with CSS colors, and in
+        hexadecimal notation the alpha channel is first, which is consistent with
+        Processing color values.
 
         The value for the gray parameter must be less than or equal to the current
         maximum value as specified by ``color_mode()``. The default maximum value is
@@ -18617,6 +19043,9 @@ class Sketch(
         Set the Sketch's window location. Calling this repeatedly from the ``draw()``
         function may result in a sluggish Sketch. Negative or invalid coordinates are
         ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
+
+        This method provides the same functionality as ``Py5Surface.set_location()`` but
+        without the need to interact directly with the ``Py5Surface`` object.
         """
         return self._instance.windowMove(x, y)
 

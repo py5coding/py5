@@ -79,7 +79,7 @@ class DataMixin:
                 else:
                     path = cwd / json_path
             if path.exists():
-                with open(path, 'r') as f:
+                with open(path, 'r', encoding='utf8') as f:
                     return json.load(f, **kwargs)
             else:
                 raise RuntimeError(

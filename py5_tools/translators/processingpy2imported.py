@@ -38,10 +38,7 @@ PY5_CLASS_LOOKUP = {
     'PVector': 'Py5Vector',
 }
 
-SNAKE_CASE_OVERRIDE = {
-    'None': 'None',
-    'True': 'True',
-    'False': 'False',
+SPECIAL_CASES = {
     'println': 'print',
 }
 
@@ -53,8 +50,10 @@ def translate_token(token):
         return token
     elif (stem := token.replace('()', '')) in PY5_CLASS_LOOKUP:
         return token.replace(stem, PY5_CLASS_LOOKUP[stem])
-    elif token in SNAKE_CASE_OVERRIDE:
-        return SNAKE_CASE_OVERRIDE[token]
+    elif token in SPECIAL_CASES:
+        return SPECIAL_CASES[token]
+    elif token[0].isupper():
+        return token
     else:
         token = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', token)
         token = re.sub('([a-z0-9])([A-Z])', r'\1_\2', token)

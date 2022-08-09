@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import functools
+import weakref
 
 from jpype.types import JInt, JChar
 
@@ -60,9 +61,17 @@ class Py5KeyEvent:
     the Sketch, making key event functions useful for capturing all of a user's
     keyboard activity.
     """
+    _py5_object_cache = weakref.WeakSet()
 
-    def __init__(self, pkeyevent):
-        self._instance = pkeyevent
+    def __new__(cls, pkeyevent):
+        for o in cls._py5_object_cache:
+            if pkeyevent == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5KeyEvent)
+            o._instance = pkeyevent
+            cls._py5_object_cache.add(o)
+            return o
 
     ALT = 8
     CTRL = 2

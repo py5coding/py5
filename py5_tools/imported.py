@@ -31,10 +31,21 @@ from . import parsing
 
 
 _imported_mode = False
+_imported_mode_locked = False
+
+
+def _lock_imported_mode():
+    global _imported_mode_locked
+    _imported_mode_locked = True
 
 
 def set_imported_mode(imported_mode: bool):
     global _imported_mode
+    if _imported_mode == imported_mode:
+        return
+    if _imported_mode_locked:
+        raise RuntimeError(
+            'Attempting to set imported mode after importing py5. This would put py5 into a confused state. Throwing an exception to prevent you from having to debug that.')
     _imported_mode = imported_mode
 
 
@@ -80,12 +91,9 @@ def setup():
         )
 """
 
-_STATIC_CODE_FRAMEWORK_OSX_EXTRA = """
-def draw():
-    pass
-"""
-
 _CODE_FRAMEWORK = """
+__file__ = "{4}"
+
 {0}
 
 run_sketch(block=True, py5_options={2}, sketch_args={3})
@@ -119,7 +127,7 @@ def run_code(
         print(f'file {sketch_path} not found')
         return
 
-    with open(sketch_path, 'r') as f:
+    with open(sketch_path, 'r', encoding='utf8') as f:
         code = f.read()
 
     if is_static_mode(code):
@@ -138,7 +146,8 @@ def run_code(
             new_process,
             exit_if_error,
             py5_options,
-            sketch_args)
+            sketch_args,
+            sketch_path)
 
 
 def _run_static_code(
@@ -164,8 +173,6 @@ def _run_static_code(
         new_sketch_code = _STATIC_CODE_FRAMEWORK.format(
             py5bot_mgr.settings_filename.as_posix(),
             py5bot_mgr.setup_filename.as_posix())
-        if sys.platform == 'darwin':
-            new_sketch_code += _STATIC_CODE_FRAMEWORK_OSX_EXTRA
         with open(new_sketch_path, 'w') as f:
             f.write(new_sketch_code)
         _run_code(
@@ -174,7 +181,8 @@ def _run_static_code(
             new_process,
             exit_if_error,
             py5_options,
-            sketch_args)
+            sketch_args,
+            sketch_path)
     else:
         print(result, file=sys.stderr)
 
@@ -185,7 +193,8 @@ def _run_code(
         new_process,
         exit_if_error,
         py5_options,
-        sketch_args):
+        sketch_args,
+        original_sketch_path):
     def _run_sketch(sketch_path, classpath, exit_if_error):
         if not jvm.is_jvm_running():
             if classpath:
@@ -203,9 +212,10 @@ def _run_code(
             [f'--{o}' for o in py5_options]) if py5_options else 'None'
         sketch_args_str = str(sketch_args)
 
-        with open(sketch_path, 'r') as f:
+        with open(sketch_path, 'r', encoding='utf8') as f:
             sketch_code = _CODE_FRAMEWORK.format(
-                f.read(), exit_if_error, py5_options_str, sketch_args_str)
+                f.read(), exit_if_error, py5_options_str, sketch_args_str, re.sub(
+                    r"""(\"|\')""", r'\\\1', str(original_sketch_path)))
 
         # does the code parse? if not, display an error message
         try:

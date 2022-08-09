@@ -29,6 +29,7 @@ from pathlib import Path
 from io import BytesIO
 import inspect
 from typing import overload, Any, Callable, Union  # noqa
+import warnings
 
 import numpy as np  # noqa
 import numpy.typing as npt  # noqa
@@ -71,7 +72,7 @@ if not py5_tools.is_jvm_running():
         print(debug_info, file=sys.stderr)
         raise RuntimeError("py5 is unable to start Java 17 Virtual Machine")
 
-from .methods import register_exception_msg  # noqa
+from .bridge import register_exception_msg  # noqa
 from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5KeyEvent, Py5MouseEvent, Py5Promise  # noqa
 from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
 from .create_font_tool import create_font_file  # noqa
@@ -87,9 +88,10 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.8.0a2'
+__version__ = '0.8.1a1'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
+py5_tools._lock_imported_mode()
 
 java_conversion.init_jpype_converters()
 
@@ -128,21 +130,16 @@ BOX = 41
 BREAK = 4
 BURN = 8192
 CENTER = 3
-CHATTER = 0
 CHORD = 2
 CLAMP = 0
 CLOSE = 2
 CODED = '\uffff'
-COMPLAINT = 1
 CONTROL = 17
 CORNER = 0
 CORNERS = 1
 CROSS = 1
 CURVE_VERTEX = 3
-CUSTOM = 0
 DARKEST = 16
-DEFAULT_HEIGHT = 100
-DEFAULT_WIDTH = 100
 DEG_TO_RAD = 0.017453292
 DELETE = '\u007f'
 DIAMETER = 3
@@ -185,59 +182,46 @@ EXCLUSION = 64
 EXTERNAL_MOVE = "__MOVE__"
 EXTERNAL_STOP = "__STOP__"
 FX2D = "processing.javafx.PGraphicsFX2D"
-GIF = 3
 GRAY = 12
 GROUP = 0
 HALF_PI = 1.5707964
 HAND = 12
 HARD_LIGHT = 1024
 HIDDEN = "py5.core.graphics.HiddenPy5GraphicsJava2D"
-HINT_COUNT = 13
 HSB = 3
 IMAGE = 2
 INVERT = 13
 JAVA2D = "processing.awt.PGraphicsJava2D"
-JPEG = 2
-LANDSCAPE = 2
 LEFT = 37
 LIGHTEST = 8
 LINE = 4
 LINES = 5
 LINE_LOOP = 51
 LINE_STRIP = 50
-LINUX = 3
-MACOS = 2
 MAX_FLOAT = 3.4028235E38
 MAX_INT = 2147483647
 MIN_FLOAT = -3.4028235E38
 MIN_INT = -2147483648
 MITER = 8
 MODEL = 4
-MODELVIEW = 1
 MOVE = 13
 MULTIPLY = 128
 NORMAL = 1
 OPAQUE = 14
 OPEN = 1
 OPENGL = "processing.opengl.PGraphics3D"
-ORTHOGRAPHIC = 2
-OTHER = 0
 OVERLAY = 512
 P2D = "processing.opengl.PGraphics2D"
 P3D = "processing.opengl.PGraphics3D"
 PATH = 21
 PDF = "processing.pdf.PGraphicsPDF"
-PERSPECTIVE = 3
 PI = 3.1415927
 PIE = 3
 POINT = 2
 POINTS = 3
 POLYGON = 20
-PORTRAIT = 1
 POSTERIZE = 15
-PROBLEM = 2
 PROJECT = 4
-PROJECTION = 0
 QUAD = 16
 QUADRATIC_VERTEX = 2
 QUADS = 17
@@ -264,12 +248,10 @@ SQUARE = 1
 SUBTRACT = 4
 SVG = "processing.svg.PGraphicsSVG"
 TAB = '\t'
-TARGA = 1
 TAU = 6.2831855
 TEXT = 2
 THIRD_PI = 1.0471976
 THRESHOLD = 16
-TIFF = 0
 TOP = 101
 TRIANGLE = 8
 TRIANGLES = 9
@@ -280,16 +262,13 @@ UP = 38
 VERTEX = 0
 WAIT = 3
 WHITESPACE = " \t\n\r\f\u00a0"
-WINDOWS = 1
-X = 0
-Y = 1
-Z = 2
 pargs: list[str] = None
 display_height: int = None
 display_width: int = None
 finished: bool = None
 focused: bool = None
 frame_count: int = None
+g: Py5Graphics = None
 height: int = None
 java_platform: int = None
 java_version_name: str = None
@@ -3631,9 +3610,24 @@ def color(fgray: float, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -3710,9 +3704,24 @@ def color(fgray: float, falpha: float, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -3789,9 +3798,24 @@ def color(v1: float, v2: float, v3: float, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -3868,9 +3892,24 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -3947,9 +3986,24 @@ def color(gray: int, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -4026,9 +4080,24 @@ def color(gray: int, alpha: int, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -4105,9 +4174,24 @@ def color(v1: int, v2: int, v3: int, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -4184,9 +4268,24 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     pass
 
@@ -4262,9 +4361,24 @@ def color(*args):
     ``RGB`` or ``HSB`` values. Adding a fourth value applies alpha transparency.
 
     Note that you can also use hexadecimal notation and web color notation to
-    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33"`` in place of ``c =
-    color(221, 204, 51)``. Additionally, the ``color()`` method can accept both
-    color notations as a parameter.
+    specify colors, as in ``c = 0xFFDDCC33`` or ``c = "#DDCC33FF"`` in place of ``c
+    = color(221, 204, 51, 255)``. Additionally, the ``color()`` method can accept
+    both color notations as a parameter.
+
+    When using hexadecimal notation to specify a color, use "``0x``" before the
+    values (e.g., ``0xFFCCFFAA``). The hexadecimal value must be specified with
+    eight characters; the first two characters define the alpha component, and the
+    remainder define the red, green, and blue components.
+
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
     """
     return _py5sketch.color(*args)
 
@@ -6983,10 +7097,15 @@ def fill(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7050,10 +7169,15 @@ def fill(gray: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7117,10 +7241,15 @@ def fill(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7184,10 +7313,15 @@ def fill(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7251,10 +7385,15 @@ def fill(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7318,10 +7457,15 @@ def fill(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -7384,10 +7528,15 @@ def fill(*args):
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the "gray" parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -8326,14 +8475,14 @@ def get_matrix(*args):
 
 
 def get_surface() -> Py5Surface:
-    """Get the Py5Surface object used for the Sketch.
+    """Get the ``Py5Surface`` object used for the Sketch.
 
     Underlying Processing method: PApplet.getSurface
 
     Notes
     -----
 
-    Get the Py5Surface object used for the Sketch.
+    Get the ``Py5Surface`` object used for the Sketch.
     """
     return _py5sketch.get_surface()
 
@@ -13666,10 +13815,15 @@ def stroke(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13734,10 +13888,15 @@ def stroke(gray: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13802,10 +13961,15 @@ def stroke(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13870,10 +14034,15 @@ def stroke(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -13938,10 +14107,15 @@ def stroke(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14006,10 +14180,15 @@ def stroke(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -14073,10 +14252,15 @@ def stroke(*args):
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15926,10 +16110,15 @@ def tint(gray: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -15995,10 +16184,15 @@ def tint(gray: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16064,10 +16258,15 @@ def tint(v1: float, v2: float, v3: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16133,10 +16332,15 @@ def tint(v1: float, v2: float, v3: float, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16202,10 +16406,15 @@ def tint(rgb: int, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16271,10 +16480,15 @@ def tint(rgb: int, alpha: float, /) -> None:
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -16339,10 +16553,15 @@ def tint(*args):
     eight characters; the first two characters define the alpha component, and the
     remainder define the red, green, and blue components.
 
-    When using web color notation to specify a color, create a four or seven
-    character string beginning with the "``#``" character (e.g., ``"#FC3"`` or
-    ``"#FFCC33"``). After the "``#``" character, the remainder of the string is
-    similar to hexadecimal notation, but without an alpha component.
+    When using web color notation to specify a color, create a string beginning with
+    the "``#``" character followed by three, four, six, or eight characters. The
+    example colors ``"#D93"`` and ``"#DD9933"`` specify red, green, and blue values
+    (in that order) for the color and assume the color has no transparency. The
+    example colors ``"#D93F"`` and ``"#DD9933FF"`` specify red, green, blue, and
+    alpha values (in that order) for the color. Notice that in web color notation
+    the alpha channel is last, which is consistent with CSS colors, and in
+    hexadecimal notation the alpha channel is first, which is consistent with
+    Processing color values.
 
     The value for the gray parameter must be less than or equal to the current
     maximum value as specified by ``color_mode()``. The default maximum value is
@@ -17040,6 +17259,9 @@ def window_move(x: int, y: int, /) -> None:
     Set the Sketch's window location. Calling this repeatedly from the ``draw()``
     function may result in a sluggish Sketch. Negative or invalid coordinates are
     ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
+
+    This method provides the same functionality as ``Py5Surface.set_location()`` but
+    without the need to interact directly with the ``Py5Surface`` object.
     """
     return _py5sketch.window_move(x, y)
 
@@ -17345,8 +17567,464 @@ def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
     return Sketch.parse_json(serialized_json, **kwargs)
 
 ##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the ``np_pixels[]`` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: npt.NDArray[np.uint8] = None
+
+
+def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = 'ARGB') -> None:
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: npt.NDArray[np.uint8]
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = 'ARGB'
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path,
+                         BytesIO],
+         *,
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = False,
+         **params) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path, BytesIO]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None) -> Py5Promise:
+    """Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
+    when the ``result`` property contains the value function ``f`` returned. Before
+    then, the ``result`` property will be ``None``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_repeating_thread(f: Callable, name: str = None, *,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: tuple = None, kwargs: dict = None) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the ``time_delay`` parameter to set the time in seconds between one call to
+    function ``f`` and the next call. Set this parameter to ``0`` if you want each
+    call to happen immediately after the previous call finishes. If the function
+    ``f`` takes longer than expected to finish, py5 will wait for it to finish
+    before making the next call. There will not be overlapping calls to function
+    ``f``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with ``list_threads()``.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The ``wait`` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
+    ``False``. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use ``launch_repeating_thread()``
+    instead.
+
+    Use ``has_thread()`` to determine if a thread of a given name exists and
+    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
+    to stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The ``wait`` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
+    If you would rather the Sketch waited for threads to exit, create an ``exiting``
+    method and make a call to ``stop_all_threads(wait=True)``.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
+
+##############################################################################
 # module functions from math.py
 ##############################################################################
+
+
+def hex_color(color: int) -> str:
+    """Convert a color value to a hex color string.
+
+    Parameters
+    ----------
+
+    color: int
+        any color value
+
+    Notes
+    -----
+
+    Convert a color value to a hex color string. Processing and py5 store color
+    values in 32 bit integers that are inconvenient for a human to parse. To
+    interpret these values, one can use methods like ``red()``, ``green()``, and
+    ``blue()`` to extract color channel values from the 32 bit integers. This method
+    provides an alternative approach, converting the 32 bit integer into a string
+    such as ``'#0F3FF0FF'``. The hex string has 8 hexadecimal values following a
+    ``#`` character. The first two values represent the red value, the next two
+    green, the next two blue, and the last two alpha. This is similar to web colors
+    except for the addition of the alpha channel.
+
+    Conveniently, the hex color string returned by this method can also be used as
+    parameter for other methods that accept color values. Observe how this is done
+    in the example code.
+    """
+    return Sketch.hex_color(color)
 
 
 def sin(angle: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
@@ -18076,6 +18754,9 @@ def log(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     return Sketch.log(value)
 
 
+np_random: np.random.Generator = None
+
+
 def random_seed(seed: int) -> None:
     """Sets the seed value for py5's random functions.
 
@@ -18495,8 +19176,11 @@ def random_int(*args: int) -> int:
     return _py5sketch.random_int(*args)
 
 
-def random_choice(objects: list[Any]) -> Any:
-    """Select a random item from a list.
+def random_choice(
+        objects: list[Any],
+        size: int = 1,
+        replace: bool = True) -> Any:
+    """Select random items from a list.
 
     Parameters
     ----------
@@ -18504,15 +19188,24 @@ def random_choice(objects: list[Any]) -> Any:
     objects: list[Any]
         list of objects to choose from
 
+    replace: bool=True
+        whether to select random items with or without replacement
+
+    size: int=1
+        number of random items to select
+
     Notes
     -----
 
-    Select a random item from a list. The list items can be of any type. This
-    function's randomness can be influenced by ``random_seed()``.
+    Select random items from a list. The list items can be of any type. If multiple
+    items are selected, this function will by default allow the same item to be
+    selected multiple times. Set the ``replace`` parameter to ``False`` to prevent
+    the same item from being selected multiple times.
 
-    This function makes calls to numpy to select the random items.
+    This function's randomness can be influenced by ``random_seed()``, and makes
+    calls to numpy to select the random items.
     """
-    return _py5sketch.random_choice(objects)
+    return _py5sketch.random_choice(objects, size=size, replace=replace)
 
 
 @overload
@@ -19417,433 +20110,6 @@ def os_noise(*args) -> Union[float, npt.NDArray]:
     return _py5sketch.os_noise(*args)
 
 ##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the ``np_pixels[]``
-    array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the ``np_pixels[]``
-    array. This method must always be called before reading from or writing to
-    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
-    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
-
-    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
-    ``load_np_pixels()`` must be called before reading from or writing to
-    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
-    writing to ``pixels[]``.
-
-    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
-    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
-    there is no need for a separate call to ``load_pixels()``. However, be aware
-    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
-    result in the updates to ``pixels[]`` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the ``np_pixels[]`` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the ``np_pixels[]`` array. Use in
-    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
-    array, there's no need to call ``update_np_pixels()`` — updating is only
-    necessary to apply changes.
-
-    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
-    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
-    ``update_pixels()`` must be called after modifying ``pixels[]``.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: npt.NDArray[np.uint8] = None
-
-
-def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = 'ARGB') -> None:
-    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: npt.NDArray[np.uint8]
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array. The size of ``array``'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    ``dtype`` must be ``np.uint8``.
-
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency, but recall that the
-    display window's pixels can never be transparent so any transparency in
-    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
-    ``array``'s third dimension is optional.
-
-    This method makes its own calls to ``load_np_pixels()`` and
-    ``update_np_pixels()`` so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
-    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path,
-                         BytesIO],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = False,
-         **params) -> None:
-    """Save the drawing surface to an image file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path, BytesIO]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = False
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save the drawing surface to an image file. This method uses the Python library
-    Pillow to write the image, so it can save images in any format that that library
-    supports.
-
-    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
-    defaults to ``True``. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The ``use_thread`` parameter will save the image in a separate Python thread.
-    This improves performance by returning before the image has actually been
-    written to the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: tuple = None,
-        kwargs: dict = None) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: tuple = None,
-        kwargs: dict = None) -> Py5Promise:
-    """Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
-
-    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
-    when the ``result`` property contains the value function ``f`` returned. Before
-    then, the ``result`` property will be ``None``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_repeating_thread(f: Callable, name: str = None, *,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: tuple = None, kwargs: dict = None) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
-
-    Notes
-    -----
-
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
-
-    Use the ``time_delay`` parameter to set the time in seconds between one call to
-    function ``f`` and the next call. Set this parameter to ``0`` if you want each
-    call to happen immediately after the previous call finishes. If the function
-    ``f`` takes longer than expected to finish, py5 will wait for it to finish
-    before making the next call. There will not be overlapping calls to function
-    ``f``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with ``list_threads()``.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The ``wait`` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
-    ``False``. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use ``launch_repeating_thread()``
-    instead.
-
-    Use ``has_thread()`` to determine if a thread of a given name exists and
-    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
-    to stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The ``wait`` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
-    If you would rather the Sketch waited for threads to exit, create an ``exiting``
-    method and make a call to ``stop_all_threads(wait=True)``.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
-
-##############################################################################
 # module functions from sketch.py
 ##############################################################################
 
@@ -20102,42 +20368,117 @@ def save_frame(filename: Union[str,
         **params)
 
 
-def create_image_from_numpy(
-        array: npt.NDArray[np.uint8], bands: str = 'ARGB', *, dst: Py5Image = None) -> Py5Image:
-    """Convert a numpy array into a Py5Image object.
+def select_folder(
+        prompt: str,
+        callback: Callable,
+        default_folder: str = None) -> None:
+    """Opens a file chooser dialog to select a folder.
+
+    Underlying Processing method: Sketch.selectFolder
 
     Parameters
     ----------
 
-    array: npt.NDArray[np.uint8]
-        numpy image array
+    callback: Callable
+        callback function after selection is made
 
-    bands: str = 'ARGB'
-        color channels in array
+    default_folder: str = None
+        default folder
 
-    dst: Py5Image = None
-        existing Py5Image object to put the image data into
+    prompt: str
+        text prompt for select dialog box
 
     Notes
     -----
 
-    Convert a numpy array into a Py5Image object. The numpy array must have 3
-    dimensions and the array's ``dtype`` must be ``np.uint8``. The size of
-    ``array``'s first and second dimensions will be the image's height and width,
-    respectively. The third dimension is for the array's color channels.
+    Opens a file chooser dialog to select a folder. After the selection is made, the
+    selection will be passed to the ``callback`` function. If the dialog is closed
+    or canceled, ``None`` will be sent to the function, so that the program is not
+    waiting for additional input. The callback is necessary because of how threading
+    works.
 
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency. If the ``bands``
-    parameter is ``'L'``, ``array``'s third dimension is optional.
-
-    The caller can optionally pass an existing Py5Image object to put the image data
-    into using the ``dst`` parameter. This can have performance benefits in code
-    that would otherwise continuously create new Py5Image objects. The array's width
-    and height must match that of the recycled Py5Image object.
+    This method has some platform specific quirks. On OSX, this does not work when
+    the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
+    OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
+    box is open. This method only uses native dialog boxes on OSX.
     """
-    return _py5sketch.create_image_from_numpy(array, bands=bands, dst=dst)
+    return _py5sketch.select_folder(
+        prompt, callback, default_folder=default_folder)
+
+
+def select_input(
+        prompt: str,
+        callback: Callable,
+        default_file: str = None) -> None:
+    """Open a file chooser dialog to select a file for input.
+
+    Underlying Processing method: Sketch.selectInput
+
+    Parameters
+    ----------
+
+    callback: Callable
+        callback function after selection is made
+
+    default_file: str = None
+        default output file
+
+    prompt: str
+        text prompt for select dialog box
+
+    Notes
+    -----
+
+    Open a file chooser dialog to select a file for input. After the selection is
+    made, the selected File will be passed to the ``callback`` function. If the
+    dialog is closed or canceled, ``None`` will be sent to the function, so that the
+    program is not waiting for additional input. The callback is necessary because
+    of how threading works.
+
+    This method has some platform specific quirks. On OSX, this does not work when
+    the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
+    OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
+    box is open. This method only uses native dialog boxes on OSX.
+    """
+    return _py5sketch.select_input(prompt, callback, default_file=default_file)
+
+
+def select_output(
+        prompt: str,
+        callback: Callable,
+        default_file: str = None) -> None:
+    """Opens a file chooser dialog to select a file for output.
+
+    Underlying Processing method: Sketch.selectOutput
+
+    Parameters
+    ----------
+
+    callback: Callable
+        callback function after selection is made
+
+    default_file: str = None
+        default output file
+
+    prompt: str
+        text prompt for select dialog box
+
+    Notes
+    -----
+
+    Opens a file chooser dialog to select a file for output. After the selection is
+    made, the selected File will be passed to the ``callback`` function. If the
+    dialog is closed or canceled, ``None`` will be sent to the function, so that the
+    program is not waiting for additional input. The callback is necessary because
+    of how threading works.
+
+    This method has some platform specific quirks. On OSX, this does not work when
+    the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
+    OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
+    box is open. This method only uses native dialog boxes on OSX.
+    """
+    return _py5sketch.select_output(
+        prompt, callback, default_file=default_file)
 
 
 def convert_image(obj: Any, *, dst: Py5Image = None) -> Py5Image:
@@ -20249,6 +20590,7 @@ def run_sketch(block: bool = None, *,
                py5_options: list[str] = None,
                sketch_args: list[str] = None,
                sketch_functions: dict[str, Callable] = None,
+               _jclassname: str = None,
                _osx_alt_run_method: bool = True) -> None:
     """Run the Sketch.
 
@@ -20322,7 +20664,7 @@ def run_sketch(block: bool = None, *,
     mixed in with the Jupyter Kernel logs."""
     caller_globals = inspect.stack()[1].frame.f_globals
     caller_locals = inspect.stack()[1].frame.f_locals
-    functions, function_param_counts = methods._extract_py5_user_function_data(
+    functions, function_param_counts = bridge._extract_py5_user_function_data(
         sketch_functions if sketch_functions else caller_locals)
     functions = _split_setup.transform(
         functions,
@@ -20332,19 +20674,21 @@ def run_sketch(block: bool = None, *,
         mode='imported' if _PY5_USE_IMPORTED_MODE else 'module')
 
     if not set(functions.keys()) & set(['settings', 'setup', 'draw']):
-        print(("Unable to find settings, setup, or draw functions. "
-               "Your sketch will be a small boring gray square. "
-               "If that isn't what you intended, you need to make sure "
-               "your implementation of those functions are available in "
-               "the local namespace that made the `run_sketch()` call."))
+        warnings.warn(
+            ("Unable to find settings, setup, or draw functions. "
+             "Your sketch will be a small boring gray square. "
+             "If that isn't what you intended, you need to make sure "
+             "your implementation of those functions are available in "
+             "the local namespace that made the `run_sketch()` call."), stacklevel=2)
 
     global _py5sketch
     if _py5sketch.is_running:
         print(
-            'Sketch is already running. To run a new sketch, exit the running sketch first.')
+            'Sketch is already running. To run a new sketch, exit the running sketch first.',
+            file=sys.stderr)
         return
-    if _py5sketch.is_dead:
-        _py5sketch = Sketch()
+    if _py5sketch.is_dead or _jclassname:
+        _py5sketch = Sketch(_jclassname=_jclassname)
 
     _prepare_dynamic_variables(caller_locals, caller_globals)
 
@@ -20371,7 +20715,7 @@ def get_current_sketch() -> Sketch:
     return _py5sketch
 
 
-def reset_py5() -> bool:
+def reset_py5(*, _jclassname: str = None, _force=False) -> bool:
     """Reset the py5 module's current ``Sketch`` instance.
 
     Notes
@@ -20390,8 +20734,8 @@ def reset_py5() -> bool:
     when the current Sketch is in the dead state, ``reset_py5()`` will replace it
     and return ``True``."""
     global _py5sketch
-    if _py5sketch.is_dead:
-        _py5sketch = Sketch()
+    if _py5sketch.is_dead or _force or _jclassname:
+        _py5sketch = Sketch(_jclassname=_jclassname)
         if _PY5_USE_IMPORTED_MODE:
             caller_locals = inspect.stack()[1].frame.f_locals
             caller_globals = inspect.stack()[1].frame.f_globals
@@ -20426,8 +20770,8 @@ def prune_tracebacks(prune: bool) -> None:
     calls to Java. By default, py5 will prune its own stack trace frames from error
     messages. Almost always this is helpful, but when investigating bugs in py5
     itself, sometimes it is helpful to turn off this feature."""
-    from . import methods
-    methods._prune_tracebacks = prune
+    from . import bridge
+    bridge._prune_tracebacks = prune
 
 
 def set_stackprinter_style(style: str) -> None:
@@ -20447,8 +20791,8 @@ def set_stackprinter_style(style: str) -> None:
     various color styles. By default py5 will use ``'plaintext'``, which does not
     use color. Alternative styles using color are ``'darkbg'``, ``'darkbg2'``,
     ``'darkbg3'``, ``'lightbg'``, ``'lightbg2'``, and ``'lightbg3'``."""
-    from . import methods
-    methods._stackprinter_style = style
+    from . import bridge
+    bridge._stackprinter_style = style
 
 
 def __getattr__(name):

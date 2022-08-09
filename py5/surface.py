@@ -19,6 +19,7 @@
 # *****************************************************************************
 import functools
 from typing import overload, Any  # noqa
+import weakref
 
 from .image import Py5Image  # noqa
 
@@ -26,8 +27,7 @@ from .image import Py5Image  # noqa
 def _return_py5surface(f):
     @functools.wraps(f)
     def decorated(self_, *args):
-        return Py5Surface(
-            f(self_, *args), getattr(self_, '_pimage_cache', None))
+        return Py5Surface(f(self_, *args))
     return decorated
 
 
@@ -43,10 +43,17 @@ class Py5Surface:
     this to interact with the window and change some of its characteristics, such as
     the window title or location.
     """
+    _py5_object_cache = weakref.WeakSet()
 
-    def __init__(self, psurface, pimage_cache):
-        self._instance = psurface
-        self._pimage_cache = pimage_cache
+    def __new__(cls, psurface):
+        for o in cls._py5_object_cache:
+            if psurface == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5Surface)
+            o._instance = psurface
+            cls._py5_object_cache.add(o)
+            return o
 
     def get_native(self) -> Any:
         """Get the Sketch's Java native window object.
@@ -183,6 +190,8 @@ class Py5Surface:
         Set the Sketch's window location. Calling this repeatedly from the ``draw()``
         function may result in a sluggish Sketch. Negative or invalid coordinates are
         ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
+
+        This method provides the same functionality as ``window_move()``.
         """
         return self._instance.setLocation(x, y)
 
@@ -206,6 +215,8 @@ class Py5Surface:
 
         Changing the window size will clear the drawing canvas. If you do this, the
         ``width`` and ``height`` variables will change.
+
+        This method provides the same functionality as ``window_resizable()``.
         """
         return self._instance.setResizable(resizable)
 
@@ -231,6 +242,8 @@ class Py5Surface:
 
         Changing the window size will clear the drawing canvas. If you do this, the
         ``width`` and ``height`` variables will change.
+
+        This method provides the same functionality as ``window_resize()``.
         """
         return self._instance.setSize(width, height)
 
@@ -250,6 +263,8 @@ class Py5Surface:
 
         Set the Sketch window's title. This will typically appear at the window's title
         bar. The default window title is "Sketch".
+
+        This method provides the same functionality as ``window_title()``.
         """
         return self._instance.setTitle(title)
 

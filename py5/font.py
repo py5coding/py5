@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import functools
 from typing import overload  # noqa
+import weakref
 
 import jpype
 from jpype import JException, JArray, JString  # noqa
@@ -82,12 +83,20 @@ class Py5Font:
     To create a new font dynamically, use the ``create_font()`` function. Do not use
     the syntax ``Py5Font()``.
     """
-
     _cls = jpype.JClass('processing.core.PFont')
     CHARSET = _cls.CHARSET
 
-    def __init__(self, pfont):
-        self._instance = pfont
+    _py5_object_cache = weakref.WeakSet()
+
+    def __new__(cls, pfont):
+        for o in cls._py5_object_cache:
+            if pfont == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5Font)
+            o._instance = pfont
+            cls._py5_object_cache.add(o)
+            return o
 
     def ascent(self) -> float:
         """Get the ascent of this font from the baseline.

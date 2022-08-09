@@ -24,14 +24,16 @@ from collections import defaultdict
 from typing import Union
 import inspect
 import line_profiler
+import traceback
 
-from jpype import JImplements, JOverride, JString
+from jpype import JClass, JImplements, JOverride, JString
 
 import stackprinter
 
 import py5_tools
 from . import reference
 from . import custom_exceptions
+# from . import java_conversion
 
 # *** stacktrace configuration ***
 # set stackprinter color style. Default is plaintext. Other choices are darkbg,
@@ -49,6 +51,16 @@ _PY5_STATIC_CODE_FILENAME_REGEX = re.compile(
 _EXCEPTION_MSGS = {
     **custom_exceptions.CUSTOM_EXCEPTION_MSGS,
 }
+
+_JAVA_RUNTIMEEXCEPTION = JClass('java.lang.RuntimeException')
+
+
+def check_run_method_callstack():
+    for t in traceback.extract_stack():
+        if t.filename == __file__ and t.name == 'run_method':
+            return True
+    else:
+        return False
 
 
 def _exception_msg(println, exc_type_name, exc_msg, py5info):
@@ -149,8 +161,8 @@ def _extract_py5_user_function_data(d: dict):
     return functions, function_param_counts
 
 
-@JImplements('py5.core.Py5Methods')
-class Py5Methods:
+@JImplements('py5.core.Py5Bridge')
+class Py5Bridge:
 
     def __init__(self, sketch):
         self._sketch = sketch
@@ -160,6 +172,9 @@ class Py5Methods:
         self._post_hooks = defaultdict(dict)
         self._profiler = line_profiler.LineProfiler()
         self._is_terminated = False
+
+        from .java_conversion import convert_to_python_types
+        self._convert_to_python_types = convert_to_python_types
 
     def set_functions(self, functions, function_param_counts):
         self._function_param_counts = dict()
@@ -233,6 +248,10 @@ class Py5Methods:
                 for name in self._functions.keys()]
 
     @JOverride
+    def terminate_sketch(self):
+        self._sketch._terminate_sketch()
+
+    @JOverride
     def run_method(self, method_name, params):
         try:
             if method_name in self._functions:
@@ -242,8 +261,8 @@ class Py5Methods:
                         hook(self._sketch)
 
                 # now run the actual method
-                from .java_conversion import convert_to_python_types
-                self._functions[method_name](*convert_to_python_types(params))
+                self._functions[method_name](
+                    *self._convert_to_python_types(params))
 
                 # finally, post-hooks
                 if method_name in self._post_hooks:
@@ -252,8 +271,46 @@ class Py5Methods:
             return True
         except Exception:
             handle_exception(self._sketch.println, *sys.exc_info())
-            self._sketch._terminate_sketch()
+            self.terminate_sketch()
             return False
+
+    @JOverride
+    def call_function(self, key, params):
+        d = py5_tools.config._PY5_PROCESSING_MODE_KEYS
+        try:
+            *str_hierarchy, c = str(key).split('.')
+
+            for s in str_hierarchy:
+                if s in d:
+                    subd = d[s]
+                    if isinstance(subd, dict):
+                        d = subd
+                    elif hasattr(subd, '__dict__'):
+                        d = subd.__dict__
+                    else:
+                        return _JAVA_RUNTIMEEXCEPTION(
+                            f'{s} in key {key} does map to dict or object with __dict__ attribute')
+                else:
+                    return _JAVA_RUNTIMEEXCEPTION(
+                        f'{s} not found with key {key}')
+
+            if c not in d or not callable(func := d[c]):
+                return _JAVA_RUNTIMEEXCEPTION(
+                    f'callable {c} not found with key {key}')
+
+            try:
+                retval = func(*self._convert_to_python_types(params))
+                if key in py5_tools.config._PY5_PROCESSING_MODE_CALLBACK_ONCE:
+                    py5_tools.config._PY5_PROCESSING_MODE_CALLBACK_ONCE.remove(
+                        key)
+                    if key in py5_tools.config._PY5_PROCESSING_MODE_KEYS:
+                        py5_tools.config._PY5_PROCESSING_MODE_KEYS.pop(key)
+                return retval
+            except Exception as e:
+                handle_exception(self._sketch.println, *sys.exc_info())
+                return _JAVA_RUNTIMEEXCEPTION(str(e))
+        except Exception as e:
+            return _JAVA_RUNTIMEEXCEPTION(str(e))
 
     @JOverride
     def py5_println(self, text, stderr):

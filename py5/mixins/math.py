@@ -70,8 +70,8 @@ class MathMixin:
         provides an alternative approach, converting the 32 bit integer into a string
         such as ``'#0F3FF0FF'``. The hex string has 8 hexadecimal values following a
         ``#`` character. The first two values represent the red value, the next two
-        green, the next two blue, and the last two alpha. This is similar to web colors
-        except for the addition of the alpha channel.
+        green, the next two blue, and the last two alpha. This is consistent with CSS 8
+        digit hex colors.
 
         Conveniently, the hex color string returned by this method can also be used as
         parameter for other methods that accept color values. Observe how this is done

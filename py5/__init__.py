@@ -47,7 +47,7 @@ if not py5_tools.is_jvm_running():
     py5_tools.add_jars(str(base_path / 'jars'))
     # if the cwd has a jars subdirectory, add that next
     py5_tools.add_jars(Path('jars'))
-    # if the PY5_CLASSPATH environment variable exists, add those jars
+    # if the PY5_JARS environment variable exists, add those jars
     if (py5_classpath := os.environ.get('PY5_JARS')):
         py5_tools.add_jars(Path(py5_classpath))
 
@@ -88,7 +88,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.8.1a1'
+__version__ = '0.8.2a1'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 py5_tools._lock_imported_mode()
@@ -672,52 +672,52 @@ def apply_matrix(n00: float, n01: float, n02: float,
     ----------
 
     n00: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 0 of the matrix
 
     n01: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 1 of the matrix
 
     n02: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 2 of the matrix
 
     n03: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 3 of the matrix
 
     n10: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 0 of the matrix
 
     n11: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 1 of the matrix
 
     n12: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 2 of the matrix
 
     n13: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 3 of the matrix
 
     n20: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 0 of the matrix
 
     n21: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 1 of the matrix
 
     n22: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 2 of the matrix
 
     n23: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 3 of the matrix
 
     n30: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 0 of the matrix
 
     n31: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 1 of the matrix
 
     n32: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 2 of the matrix
 
     n33: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 3 of the matrix
 
     source: npt.NDArray[np.floating]
         transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -769,52 +769,52 @@ def apply_matrix(
     ----------
 
     n00: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 0 of the matrix
 
     n01: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 1 of the matrix
 
     n02: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 2 of the matrix
 
     n03: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 3 of the matrix
 
     n10: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 0 of the matrix
 
     n11: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 1 of the matrix
 
     n12: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 2 of the matrix
 
     n13: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 3 of the matrix
 
     n20: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 0 of the matrix
 
     n21: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 1 of the matrix
 
     n22: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 2 of the matrix
 
     n23: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 3 of the matrix
 
     n30: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 0 of the matrix
 
     n31: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 1 of the matrix
 
     n32: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 2 of the matrix
 
     n33: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 3 of the matrix
 
     source: npt.NDArray[np.floating]
         transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -849,52 +849,52 @@ def apply_matrix(source: npt.NDArray[np.floating], /) -> None:
     ----------
 
     n00: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 0 of the matrix
 
     n01: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 1 of the matrix
 
     n02: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 2 of the matrix
 
     n03: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 3 of the matrix
 
     n10: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 0 of the matrix
 
     n11: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 1 of the matrix
 
     n12: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 2 of the matrix
 
     n13: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 3 of the matrix
 
     n20: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 0 of the matrix
 
     n21: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 1 of the matrix
 
     n22: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 2 of the matrix
 
     n23: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 3 of the matrix
 
     n30: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 0 of the matrix
 
     n31: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 1 of the matrix
 
     n32: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 2 of the matrix
 
     n33: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 3 of the matrix
 
     source: npt.NDArray[np.floating]
         transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -928,52 +928,52 @@ def apply_matrix(*args):
     ----------
 
     n00: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 0 of the matrix
 
     n01: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 1 of the matrix
 
     n02: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 2 of the matrix
 
     n03: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 0 and column 3 of the matrix
 
     n10: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 0 of the matrix
 
     n11: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 1 of the matrix
 
     n12: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 2 of the matrix
 
     n13: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 1 and column 3 of the matrix
 
     n20: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 0 of the matrix
 
     n21: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 1 of the matrix
 
     n22: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 2 of the matrix
 
     n23: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 2 and column 3 of the matrix
 
     n30: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 0 of the matrix
 
     n31: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 1 of the matrix
 
     n32: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 2 of the matrix
 
     n33: float
-        numbers which define the 4x4 matrix to be multiplied
+        numeric value in row 3 and column 3 of the matrix
 
     source: npt.NDArray[np.floating]
         transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -10907,6 +10907,9 @@ def push() -> None:
     ``push_matrix()``, ``pop_matrix()``, ``push_style()``, and ``pop_style()``. The
     difference is that ``push()`` and ``pop()`` control both the transformations
     (rotate, scale, translate) and the drawing styles at the same time.
+
+    This method can be used as a context manager to ensure that ``pop()`` always
+    gets called, as shown in the last example.
     """
     return _py5sketch.push()
 
@@ -10926,6 +10929,9 @@ def push_matrix() -> None:
     ``push_matrix()`` and ``pop_matrix()`` are used in conjuction with the other
     transformation functions and may be embedded to control the scope of the
     transformations.
+
+    This method can be used as a context manager to ensure that ``pop_matrix()``
+    always gets called, as shown in the last example.
     """
     return _py5sketch.push_matrix()
 
@@ -10953,6 +10959,9 @@ def push_style() -> None:
     ``ellipse_mode()``, ``shape_mode()``, ``color_mode()``, ``text_align()``,
     ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``,
     ``emissive()``, ``specular()``, ``shininess()``, and ``ambient()``.
+
+    This method can be used as a context manager to ensure that ``pop_style()``
+    always gets called, as shown in the last example.
     """
     return _py5sketch.push_style()
 
@@ -12890,6 +12899,14 @@ def size(width: int, height: int, /) -> None:
     * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
     is great for importing into other vector programs or using for digital
     fabrication.
+
+    When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+    must use the ``path`` parameter to specify the file to write the output to. No
+    window will open while the Sketch is running. You must also call
+    ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+    Without this call, the Sketch will not exit and the output file will be empty.
+    If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+    renderer and the strategy described in ``begin_raw()``.
     """
     pass
 
@@ -12982,6 +12999,14 @@ def size(width: int, height: int, renderer: str, /) -> None:
     * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
     is great for importing into other vector programs or using for digital
     fabrication.
+
+    When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+    must use the ``path`` parameter to specify the file to write the output to. No
+    window will open while the Sketch is running. You must also call
+    ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+    Without this call, the Sketch will not exit and the output file will be empty.
+    If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+    renderer and the strategy described in ``begin_raw()``.
     """
     pass
 
@@ -13074,6 +13099,14 @@ def size(width: int, height: int, renderer: str, path: str, /) -> None:
     * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
     is great for importing into other vector programs or using for digital
     fabrication.
+
+    When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+    must use the ``path`` parameter to specify the file to write the output to. No
+    window will open while the Sketch is running. You must also call
+    ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+    Without this call, the Sketch will not exit and the output file will be empty.
+    If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+    renderer and the strategy described in ``begin_raw()``.
     """
     pass
 
@@ -13165,6 +13198,14 @@ def size(*args):
     * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
     is great for importing into other vector programs or using for digital
     fabrication.
+
+    When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+    must use the ``path`` parameter to specify the file to write the output to. No
+    window will open while the Sketch is running. You must also call
+    ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+    Without this call, the Sketch will not exit and the output file will be empty.
+    If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+    renderer and the strategy described in ``begin_raw()``.
     """
     return _py5sketch.size(*args)
 
@@ -17405,80 +17446,6 @@ def year() -> int:
     return Sketch.year()
 
 ##############################################################################
-# module functions from print_tools.py
-##############################################################################
-
-
-def set_println_stream(println_stream: Any) -> None:
-    """Customize where the output of ``println()`` goes.
-
-    Parameters
-    ----------
-
-    println_stream: Any
-        println stream object to be used by println method
-
-    Notes
-    -----
-
-    Customize where the output of ``println()`` goes.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. The
-    ``println()`` method was created to provide users with print functionality in a
-    Sketch without having to cope with output moving from one cell to the next. Use
-    ``set_println_stream`` to change how the output is handled. The
-    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
-    shown in the example. The example demonstrates how to configure py5 to output
-    text to an IPython Widget.
-    """
-    return _py5sketch.set_println_stream(println_stream)
-
-
-def println(
-    *args,
-    sep: str = ' ',
-    end: str = '\n',
-        stderr: bool = False) -> None:
-    """Print text or other values to the screen.
-
-    Parameters
-    ----------
-
-    args
-        values to be printed
-
-    end: str = '\\n'
-        string appended after the last value, defaults to newline character
-
-    sep: str = ' '
-        string inserted between values, defaults to a space
-
-    stderr: bool = False
-        use stderr instead of stdout
-
-    Notes
-    -----
-
-    Print text or other values to the screen. For a Sketch running outside of a
-    Jupyter Notebook, this method will behave the same as the Python's builtin
-    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
-    text in the output of the cell that made the ``run_sketch()`` call.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. This
-    method was created to provide users with print functionality in a Sketch without
-    having to cope with output moving from one cell to the next.
-
-    Use ``set_println_stream()`` to customize the behavior of ``println()``.
-    """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-##############################################################################
 # module functions from data.py
 ##############################################################################
 
@@ -17567,433 +17534,6 @@ def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
     return Sketch.parse_json(serialized_json, **kwargs)
 
 ##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the ``np_pixels[]``
-    array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the ``np_pixels[]``
-    array. This method must always be called before reading from or writing to
-    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
-    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
-
-    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
-    ``load_np_pixels()`` must be called before reading from or writing to
-    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
-    writing to ``pixels[]``.
-
-    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
-    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
-    there is no need for a separate call to ``load_pixels()``. However, be aware
-    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
-    result in the updates to ``pixels[]`` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the ``np_pixels[]`` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the ``np_pixels[]`` array. Use in
-    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
-    array, there's no need to call ``update_np_pixels()`` — updating is only
-    necessary to apply changes.
-
-    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
-    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
-    ``update_pixels()`` must be called after modifying ``pixels[]``.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: npt.NDArray[np.uint8] = None
-
-
-def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = 'ARGB') -> None:
-    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: npt.NDArray[np.uint8]
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of ``np_pixels[]`` to the contents of another properly
-    sized and typed numpy array. The size of ``array``'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    ``dtype`` must be ``np.uint8``.
-
-    The ``bands`` parameter is used to interpret the ``array``'s color channel
-    dimension (the array's third dimension). It can be one of ``'L'`` (single-
-    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
-    channel, ``array`` is assumed to have no transparency, but recall that the
-    display window's pixels can never be transparent so any transparency in
-    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
-    ``array``'s third dimension is optional.
-
-    This method makes its own calls to ``load_np_pixels()`` and
-    ``update_np_pixels()`` so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
-    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path,
-                         BytesIO],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = False,
-         **params) -> None:
-    """Save the drawing surface to an image file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path, BytesIO]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = False
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save the drawing surface to an image file. This method uses the Python library
-    Pillow to write the image, so it can save images in any format that that library
-    supports.
-
-    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
-    defaults to ``True``. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The ``use_thread`` parameter will save the image in a separate Python thread.
-    This improves performance by returning before the image has actually been
-    written to the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: tuple = None,
-        kwargs: dict = None) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: tuple = None,
-        kwargs: dict = None) -> Py5Promise:
-    """Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Create a ``Py5Promise`` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
-
-    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
-    when the ``result`` property contains the value function ``f`` returned. Before
-    then, the ``result`` property will be ``None``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_repeating_thread(f: Callable, name: str = None, *,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: tuple = None, kwargs: dict = None) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
-
-    Notes
-    -----
-
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
-
-    Use the ``time_delay`` parameter to set the time in seconds between one call to
-    function ``f`` and the next call. Set this parameter to ``0`` if you want each
-    call to happen immediately after the previous call finishes. If the function
-    ``f`` takes longer than expected to finish, py5 will wait for it to finish
-    before making the next call. There will not be overlapping calls to function
-    ``f``.
-
-    The ``name`` parameter is optional but useful if you want to monitor the thread
-    with other methods such as ``has_thread()``. If the provided ``name`` is
-    identical to an already running thread, the running thread will first be stopped
-    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
-
-    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-    arguments to the function.
-
-    Use the ``daemon`` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to ``True``,
-    meaning that function execution can be interupted if the Python process exits.
-    Note that if the Python process continues running after the Sketch exits, which
-    is typically the case when using a Jupyter Notebook, this parameter won't have
-    any effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to ``False`` causes problems but it is available for
-    those who really need it. See ``stop_all_threads()`` for a better approach to
-    exit threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with ``list_threads()``.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The ``wait`` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
-    ``False``. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use ``launch_repeating_thread()``
-    instead.
-
-    Use ``has_thread()`` to determine if a thread of a given name exists and
-    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
-    to stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The ``wait`` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
-    If you would rather the Sketch waited for threads to exit, create an ``exiting``
-    method and make a call to ``stop_all_threads(wait=True)``.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
-
-##############################################################################
 # module functions from math.py
 ##############################################################################
 
@@ -18017,8 +17557,8 @@ def hex_color(color: int) -> str:
     provides an alternative approach, converting the 32 bit integer into a string
     such as ``'#0F3FF0FF'``. The hex string has 8 hexadecimal values following a
     ``#`` character. The first two values represent the red value, the next two
-    green, the next two blue, and the last two alpha. This is similar to web colors
-    except for the addition of the alpha channel.
+    green, the next two blue, and the last two alpha. This is consistent with CSS 8
+    digit hex colors.
 
     Conveniently, the hex color string returned by this method can also be used as
     parameter for other methods that accept color values. Observe how this is done
@@ -20110,6 +19650,507 @@ def os_noise(*args) -> Union[float, npt.NDArray]:
     return _py5sketch.os_noise(*args)
 
 ##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the ``np_pixels[]``
+    array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the ``np_pixels[]``
+    array. This method must always be called before reading from or writing to
+    ``np_pixels[]``. Subsequent changes to the display window will not be reflected
+    in ``np_pixels[]`` until ``load_np_pixels()`` is called again.
+
+    The ``load_np_pixels()`` method is similar to ``load_pixels()`` in that
+    ``load_np_pixels()`` must be called before reading from or writing to
+    ``np_pixels[]`` just as ``load_pixels()`` must be called before reading from or
+    writing to ``pixels[]``.
+
+    Note that ``load_np_pixels()`` will as a side effect call ``load_pixels()``, so
+    if your code needs to read ``np_pixels[]`` and ``pixels[]`` simultaneously,
+    there is no need for a separate call to ``load_pixels()``. However, be aware
+    that modifying both ``np_pixels[]`` and ``pixels[]`` simultaneously will likely
+    result in the updates to ``pixels[]`` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the ``np_pixels[]`` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the ``np_pixels[]`` array. Use in
+    conjunction with ``load_np_pixels()``. If you're only reading pixels from the
+    array, there's no need to call ``update_np_pixels()`` — updating is only
+    necessary to apply changes.
+
+    The ``update_np_pixels()`` method is similar to ``update_pixels()`` in that
+    ``update_np_pixels()`` must be called after modifying ``np_pixels[]`` just as
+    ``update_pixels()`` must be called after modifying ``pixels[]``.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: npt.NDArray[np.uint8] = None
+
+
+def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = 'ARGB') -> None:
+    """Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: npt.NDArray[np.uint8]
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = 'ARGB'
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of ``np_pixels[]`` to the contents of another properly
+    sized and typed numpy array. The size of ``array``'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    ``dtype`` must be ``np.uint8``.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency, but recall that the
+    display window's pixels can never be transparent so any transparency in
+    ``array`` will have no effect. If the ``bands`` parameter is ``'L'``,
+    ``array``'s third dimension is optional.
+
+    This method makes its own calls to ``load_np_pixels()`` and
+    ``update_np_pixels()`` so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    ``py5.np_pixels = array`` will cause an error, while the correct syntax,
+    ``py5.np_pixels[:] = array``, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+def save(filename: Union[str,
+                         Path,
+                         BytesIO],
+         *,
+         format: str = None,
+         drop_alpha: bool = True,
+         use_thread: bool = False,
+         **params) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path, BytesIO]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the ``drop_alpha`` parameter to drop the alpha channel from the image. This
+    defaults to ``True``. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The ``use_thread`` parameter will save the image in a separate Python thread.
+    This improves performance by returning before the image has actually been
+    written to the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params)
+
+##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of ``println()`` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of ``println()`` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    ``println()`` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    ``set_println_stream`` to change how the output is handled. The
+    ``println_stream`` object must provide ``init()`` and ``print()`` methods, as
+    shown in the example. The example demonstrates how to configure py5 to output
+    text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(
+    *args,
+    sep: str = ' ',
+    end: str = '\n',
+        stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = '\\n'
+        string appended after the last value, defaults to newline character
+
+    sep: str = ' '
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    ``print`` method. For Sketches running in a Jupyter Notebook, this will place
+    text in the output of the cell that made the ``run_sketch()`` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any ``print``
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use ``set_println_stream()`` to customize the behavior of ``println()``.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_promise_thread(
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None) -> Py5Promise:
+    """Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a ``Py5Promise`` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
+    when the ``result`` property contains the value function ``f`` returned. Before
+    then, the ``result`` property will be ``None``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
+
+
+def launch_repeating_thread(f: Callable, name: str = None, *,
+                            time_delay: float = 0, daemon: bool = True,
+                            args: tuple = None, kwargs: dict = None) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the ``time_delay`` parameter to set the time in seconds between one call to
+    function ``f`` and the next call. Set this parameter to ``0`` if you want each
+    call to happen immediately after the previous call finishes. If the function
+    ``f`` takes longer than expected to finish, py5 will wait for it to finish
+    before making the next call. There will not be overlapping calls to function
+    ``f``.
+
+    The ``name`` parameter is optional but useful if you want to monitor the thread
+    with other methods such as ``has_thread()``. If the provided ``name`` is
+    identical to an already running thread, the running thread will first be stopped
+    with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+
+    Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
+    arguments to the function.
+
+    Use the ``daemon`` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to ``True``,
+    meaning that function execution can be interupted if the Python process exits.
+    Note that if the Python process continues running after the Sketch exits, which
+    is typically the case when using a Jupyter Notebook, this parameter won't have
+    any effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to ``False`` causes problems but it is available for
+    those who really need it. See ``stop_all_threads()`` for a better approach to
+    exit threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs)
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with ``list_threads()``.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The ``wait`` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
+    ``False``. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use ``launch_repeating_thread()``
+    instead.
+
+    Use ``has_thread()`` to determine if a thread of a given name exists and
+    ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
+    to stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The ``wait`` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
+    If you would rather the Sketch waited for threads to exit, create an ``exiting``
+    method and make a call to ``stop_all_threads(wait=True)``.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
+
+##############################################################################
 # module functions from sketch.py
 ##############################################################################
 
@@ -20479,6 +20520,44 @@ def select_output(
     """
     return _py5sketch.select_output(
         prompt, callback, default_file=default_file)
+
+
+def create_image_from_numpy(
+        array: npt.NDArray[np.uint8], bands: str = 'ARGB', *, dst: Py5Image = None) -> Py5Image:
+    """Convert a numpy array into a Py5Image object.
+
+    Parameters
+    ----------
+
+    array: npt.NDArray[np.uint8]
+        numpy image array
+
+    bands: str = 'ARGB'
+        color channels in array
+
+    dst: Py5Image = None
+        existing Py5Image object to put the image data into
+
+    Notes
+    -----
+
+    Convert a numpy array into a Py5Image object. The numpy array must have 3
+    dimensions and the array's ``dtype`` must be ``np.uint8``. The size of
+    ``array``'s first and second dimensions will be the image's height and width,
+    respectively. The third dimension is for the array's color channels.
+
+    The ``bands`` parameter is used to interpret the ``array``'s color channel
+    dimension (the array's third dimension). It can be one of ``'L'`` (single-
+    channel grayscale), ``'ARGB'``, ``'RGB'``, or ``'RGBA'``. If there is no alpha
+    channel, ``array`` is assumed to have no transparency. If the ``bands``
+    parameter is ``'L'``, ``array``'s third dimension is optional.
+
+    The caller can optionally pass an existing Py5Image object to put the image data
+    into using the ``dst`` parameter. This can have performance benefits in code
+    that would otherwise continuously create new Py5Image objects. The array's width
+    and height must match that of the recycled Py5Image object.
+    """
+    return _py5sketch.create_image_from_numpy(array, bands=bands, dst=dst)
 
 
 def convert_image(obj: Any, *, dst: Py5Image = None) -> Py5Image:

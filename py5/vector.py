@@ -76,6 +76,7 @@ class Py5Vector(Sequence):
     the ``copy`` parameter to ``False``, such as ``v6 = py5.Py5Vector(arr,
     copy=False)``.
     """
+    _DEFAULT_DIM = 3
 
     def __new__(
             cls,
@@ -86,7 +87,8 @@ class Py5Vector(Sequence):
         kwarg_dim = dim
         kwarg_dtype = dtype
 
-        dim = 3 if dim is None else dim
+        used_default_dim = len(args) == 0 and dim is None
+        dim = Py5Vector._DEFAULT_DIM if dim is None else dim
         dtype = np.float_ if dtype is None else dtype
 
         if not isinstance(
@@ -180,6 +182,7 @@ class Py5Vector(Sequence):
             raise RuntimeError(f'Why is dim == {dim}? Please report bug')
 
         v._data = data
+        v._used_default_dim = used_default_dim
 
         return v
 
@@ -229,6 +232,16 @@ class Py5Vector(Sequence):
     def __repr__(self):
         return f'Py5Vector{self._data.size}D{repr(self._data)[5:]}'
 
+    def _check_used_default_dim(self, other):
+        if self._used_default_dim or (
+            isinstance(
+                other,
+                Py5Vector) and other._used_default_dim):
+            other_dim = self._data.size + other._data.size - Py5Vector._DEFAULT_DIM
+            return f" Note that one of the Py5Vectors was created with Py5Vector(), and is therefore by default a {Py5Vector._DEFAULT_DIM}D vector. If you wanted a {other_dim}D vector instead, use the `dim` parameter, like this: Py5Vector(dim={other_dim})."
+        else:
+            return ""
+
     def _run_op(
             self,
             op,
@@ -243,7 +256,8 @@ class Py5Vector(Sequence):
                     f"Cannot perform {opname} operation on two Py5Vectors. If you want to do {opname} on the Py5Vector's data elementwise, use the `.data` attribute to access the Py5Vector's data as a numpy array.")
             elif self._data.size != other._data.size:
                 raise RuntimeError(
-                    f"Cannot perform {opname} operation on a {self._data.size}D Py5Vector a {other._data.size}D Py5Vector. The dimensions must be the same.")
+                    f"Cannot perform {opname} operation on a {self._data.size}D Py5Vector and a {other._data.size}D Py5Vector. The dimensions must be the same." +
+                    self._check_used_default_dim(other))
             elif inplace:
                 op(self._data[:other._data.size],
                    other._data[:other._data.size])
@@ -580,7 +594,8 @@ class Py5Vector(Sequence):
                 other = other._data
             else:
                 raise RuntimeError(
-                    f'Py5Vector dimensions must be the same to calculate the {name} two Py5Vectors')
+                    f'Py5Vector dimensions must be the same to calculate the {name} two Py5Vectors.' +
+                    self._check_used_default_dim(other))
 
         if isinstance(other, np.ndarray):
             try:

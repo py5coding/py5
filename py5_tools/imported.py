@@ -91,10 +91,9 @@ def setup():
         )
 """
 
-_CODE_FRAMEWORK = """
-__file__ = "{4}"
+_CODE_FRAMEWORK = """{0}
 
-{0}
+
 
 run_sketch(block=True, py5_options={2}, sketch_args={3})
 if {1} and is_dead_from_error:
@@ -214,8 +213,7 @@ def _run_code(
 
         with open(sketch_path, 'r', encoding='utf8') as f:
             sketch_code = _CODE_FRAMEWORK.format(
-                f.read(), exit_if_error, py5_options_str, sketch_args_str, re.sub(
-                    r"""(\"|\')""", r'\\\1', str(original_sketch_path)))
+                f.read(), exit_if_error, py5_options_str, sketch_args_str)
 
         # does the code parse? if not, display an error message
         try:
@@ -253,6 +251,7 @@ def _run_code(
         sys.path.extend([str(sketch_path.absolute().parent), os.getcwd()])
         py5_ns = dict()
         py5_ns.update(py5.__dict__)
+        py5_ns['__file__'] = str(original_sketch_path)
 
         exec(sketch_compiled, py5_ns)
 

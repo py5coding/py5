@@ -25,7 +25,8 @@ import py5_tools.parsing as parsing
 
 
 COMMENT_LINE = re.compile(r'^\s*#.*' + chr(36), flags=re.MULTILINE)
-DOCSTRING = re.compile(r'^\s*"""[^"]*"""', flags=re.MULTILINE | re.DOTALL)
+DOCSTRING = re.compile(r'^\s*""".*?"""', flags=re.MULTILINE | re.DOTALL)
+SETUP_LINE = re.compile(r'^def setup[^:]*:')
 MODULE_MODE_METHOD_LINE = re.compile(r'^\s*py5\.(\w+)\([^\)]*\)')
 IMPORTED_MODE_METHOD_LINE = re.compile(r'^\s*(\w+)\([^\)]*\)')
 GLOBAL_STATEMENT_LINE = re.compile(
@@ -66,7 +67,7 @@ def find_cutoffs(code, mode, static_mode=False):
     for i, line in enumerate(code.split('\n')):
         if not line.strip():
             continue
-        if not static_mode and line == 'def setup():':
+        if not static_mode and SETUP_LINE.match(line):
             def_statement = True
             continue
 

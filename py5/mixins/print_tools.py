@@ -17,6 +17,8 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+import sys
+
 from typing import Any
 
 
@@ -96,5 +98,8 @@ class PrintlnStream:
         having to cope with output moving from one cell to the next.
 
         Use ``set_println_stream()`` to customize the behavior of ``println()``."""
-        self._println_stream.print(sep.join(str(x)
-                                   for x in args), end=end, stderr=stderr)
+        msg = sep.join(str(x) for x in args)
+        if self._println_stream is None:
+            print(msg, end=end, file=sys.stderr if stderr else sys.stdout)
+        else:
+            self._println_stream.print(msg, end=end, stderr=stderr)

@@ -18,7 +18,6 @@
 #
 # *****************************************************************************
 from __future__ import annotations
-from re import S
 
 import time
 import os
@@ -879,6 +878,14 @@ class Sketch(
         the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
         OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
         box is open. This method only uses native dialog boxes on OSX."""
+        if not isinstance(
+                prompt,
+                str) or not callable(callback) or (
+                default_folder is not None and not isinstance(
+                default_folder,
+                str)):
+            raise TypeError(
+                "This method's signature is select_folder(prompt: str, callback: Callable, default_folder: str)")
         self._generic_select(
             self._instance.py5SelectFolder,
             'select_folder',
@@ -920,6 +927,14 @@ class Sketch(
         the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
         OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
         box is open. This method only uses native dialog boxes on OSX."""
+        if not isinstance(
+                prompt,
+                str) or not callable(callback) or (
+                default_file is not None and not isinstance(
+                default_file,
+                str)):
+            raise TypeError(
+                "This method's signature is select_input(prompt: str, callback: Callable, default_file: str)")
         self._generic_select(
             self._instance.py5SelectInput,
             'select_input',
@@ -961,6 +976,14 @@ class Sketch(
         the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
         OpenGL renderers (``P2D`` or ``P3D``) will be minimized while the select dialog
         box is open. This method only uses native dialog boxes on OSX."""
+        if not isinstance(
+                prompt,
+                str) or not callable(callback) or (
+                default_file is not None and not isinstance(
+                default_file,
+                str)):
+            raise TypeError(
+                "This method's signature is select_output(prompt: str, callback: Callable, default_file: str)")
         self._generic_select(
             self._instance.py5SelectOutput,
             'select_output',
@@ -2710,52 +2733,52 @@ class Sketch(
         ----------
 
         n00: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 0 of the matrix
 
         n01: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 1 of the matrix
 
         n02: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 2 of the matrix
 
         n03: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 3 of the matrix
 
         n10: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 0 of the matrix
 
         n11: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 1 of the matrix
 
         n12: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 2 of the matrix
 
         n13: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 3 of the matrix
 
         n20: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 0 of the matrix
 
         n21: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 1 of the matrix
 
         n22: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 2 of the matrix
 
         n23: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 3 of the matrix
 
         n30: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 0 of the matrix
 
         n31: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 1 of the matrix
 
         n32: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 2 of the matrix
 
         n33: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 3 of the matrix
 
         source: npt.NDArray[np.floating]
             transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -2807,52 +2830,52 @@ class Sketch(
         ----------
 
         n00: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 0 of the matrix
 
         n01: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 1 of the matrix
 
         n02: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 2 of the matrix
 
         n03: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 3 of the matrix
 
         n10: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 0 of the matrix
 
         n11: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 1 of the matrix
 
         n12: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 2 of the matrix
 
         n13: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 3 of the matrix
 
         n20: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 0 of the matrix
 
         n21: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 1 of the matrix
 
         n22: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 2 of the matrix
 
         n23: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 3 of the matrix
 
         n30: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 0 of the matrix
 
         n31: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 1 of the matrix
 
         n32: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 2 of the matrix
 
         n33: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 3 of the matrix
 
         source: npt.NDArray[np.floating]
             transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -2886,52 +2909,52 @@ class Sketch(
         ----------
 
         n00: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 0 of the matrix
 
         n01: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 1 of the matrix
 
         n02: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 2 of the matrix
 
         n03: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 3 of the matrix
 
         n10: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 0 of the matrix
 
         n11: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 1 of the matrix
 
         n12: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 2 of the matrix
 
         n13: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 3 of the matrix
 
         n20: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 0 of the matrix
 
         n21: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 1 of the matrix
 
         n22: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 2 of the matrix
 
         n23: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 3 of the matrix
 
         n30: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 0 of the matrix
 
         n31: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 1 of the matrix
 
         n32: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 2 of the matrix
 
         n33: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 3 of the matrix
 
         source: npt.NDArray[np.floating]
             transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -2964,52 +2987,52 @@ class Sketch(
         ----------
 
         n00: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 0 of the matrix
 
         n01: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 1 of the matrix
 
         n02: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 2 of the matrix
 
         n03: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 0 and column 3 of the matrix
 
         n10: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 0 of the matrix
 
         n11: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 1 of the matrix
 
         n12: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 2 of the matrix
 
         n13: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 1 and column 3 of the matrix
 
         n20: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 0 of the matrix
 
         n21: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 1 of the matrix
 
         n22: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 2 of the matrix
 
         n23: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 2 and column 3 of the matrix
 
         n30: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 0 of the matrix
 
         n31: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 1 of the matrix
 
         n32: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 2 of the matrix
 
         n33: float
-            numbers which define the 4x4 matrix to be multiplied
+            numeric value in row 3 and column 3 of the matrix
 
         source: npt.NDArray[np.floating]
             transformation matrix with a shape of 2x3 for 2D transforms or 4x4 for 3D transforms
@@ -12789,6 +12812,9 @@ class Sketch(
         ``push_matrix()``, ``pop_matrix()``, ``push_style()``, and ``pop_style()``. The
         difference is that ``push()`` and ``pop()`` control both the transformations
         (rotate, scale, translate) and the drawing styles at the same time.
+
+        This method can be used as a context manager to ensure that ``pop()`` always
+        gets called, as shown in the last example.
         """
         return self._instance.push()
 
@@ -12808,6 +12834,9 @@ class Sketch(
         ``push_matrix()`` and ``pop_matrix()`` are used in conjuction with the other
         transformation functions and may be embedded to control the scope of the
         transformations.
+
+        This method can be used as a context manager to ensure that ``pop_matrix()``
+        always gets called, as shown in the last example.
         """
         return self._instance.pushMatrix()
 
@@ -12835,6 +12864,9 @@ class Sketch(
         ``ellipse_mode()``, ``shape_mode()``, ``color_mode()``, ``text_align()``,
         ``text_font()``, ``text_mode()``, ``text_size()``, ``text_leading()``,
         ``emissive()``, ``specular()``, ``shininess()``, and ``ambient()``.
+
+        This method can be used as a context manager to ensure that ``pop_style()``
+        always gets called, as shown in the last example.
         """
         return self._instance.pushStyle()
 
@@ -14730,6 +14762,14 @@ class Sketch(
         * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
         is great for importing into other vector programs or using for digital
         fabrication.
+
+        When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+        must use the ``path`` parameter to specify the file to write the output to. No
+        window will open while the Sketch is running. You must also call
+        ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+        Without this call, the Sketch will not exit and the output file will be empty.
+        If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+        renderer and the strategy described in ``begin_raw()``.
         """
         pass
 
@@ -14821,6 +14861,14 @@ class Sketch(
         * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
         is great for importing into other vector programs or using for digital
         fabrication.
+
+        When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+        must use the ``path`` parameter to specify the file to write the output to. No
+        window will open while the Sketch is running. You must also call
+        ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+        Without this call, the Sketch will not exit and the output file will be empty.
+        If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+        renderer and the strategy described in ``begin_raw()``.
         """
         pass
 
@@ -14913,6 +14961,14 @@ class Sketch(
         * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
         is great for importing into other vector programs or using for digital
         fabrication.
+
+        When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+        must use the ``path`` parameter to specify the file to write the output to. No
+        window will open while the Sketch is running. You must also call
+        ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+        Without this call, the Sketch will not exit and the output file will be empty.
+        If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+        renderer and the strategy described in ``begin_raw()``.
         """
         pass
 
@@ -15003,6 +15059,14 @@ class Sketch(
         * ``SVG``: The ``SVG`` renderer draws 2D graphics directly to an SVG file. This
         is great for importing into other vector programs or using for digital
         fabrication.
+
+        When using the ``PDF`` and ``SVG`` renderers with the ``size()`` method, you
+        must use the ``path`` parameter to specify the file to write the output to. No
+        window will open while the Sketch is running. You must also call
+        ``exit_sketch()`` to exit the Sketch and write the completed output to the file.
+        Without this call, the Sketch will not exit and the output file will be empty.
+        If you would like to draw 3D objects to a PDF or SVG file, use the ``P3D``
+        renderer and the strategy described in ``begin_raw()``.
         """
         return self._instance.size(*args)
 

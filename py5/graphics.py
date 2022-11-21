@@ -89,6 +89,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     """
     _py5_object_cache = weakref.WeakSet()
 
+    PI = np.pi
+    HALF_PI = np.pi / 2
+    THIRD_PI = np.pi / 3
+    QUARTER_PI = np.pi / 4
+    TWO_PI = 2 * np.pi
+    TAU = 2 * np.pi
+    RAD_TO_DEG = 180 / np.pi
+    DEG_TO_RAD = np.pi / 180
+
     def __new__(cls, pgraphics):
         for o in cls._py5_object_cache:
             if pgraphics == o._instance:
@@ -172,7 +181,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     CROSS = 1
     CURVE_VERTEX = 3
     DARKEST = 16
-    DEG_TO_RAD = 0.017453292
     DELETE = '\u007f'
     DIAMETER = 3
     DIFFERENCE = 32
@@ -215,7 +223,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     GRAY = 12
     GREEN_MASK = 65280
     GROUP = 0
-    HALF_PI = 1.5707964
     HAND = 12
     HARD_LIGHT = 1024
     HSB = 3
@@ -245,7 +252,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     P3D = "processing.opengl.PGraphics3D"
     PATH = 21
     PDF = "processing.pdf.PGraphicsPDF"
-    PI = 3.1415927
     PIE = 3
     POINT = 2
     POINTS = 3
@@ -257,9 +263,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     QUADS = 17
     QUAD_BEZIER_VERTEX = 2
     QUAD_STRIP = 18
-    QUARTER_PI = 0.7853982
     RADIUS = 2
-    RAD_TO_DEG = 57.295776
     RECT = 30
     RED_MASK = 16711680
     REPEAT = 1
@@ -279,16 +283,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     SUBTRACT = 4
     SVG = "processing.svg.PGraphicsSVG"
     TAB = '\t'
-    TAU = 6.2831855
     TEXT = 2
-    THIRD_PI = 1.0471976
     THRESHOLD = 16
     TOP = 101
     TRIANGLE = 8
     TRIANGLES = 9
     TRIANGLE_FAN = 11
     TRIANGLE_STRIP = 10
-    TWO_PI = 6.2831855
     UP = 38
     VERTEX = 0
     WAIT = 3
@@ -6922,6 +6923,22 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         object. To see example code for how it can be used, see ``apply_filter()``.
         """
         return self._instance.filter(*args)
+
+    def flush(self) -> None:
+        """Flush drawing commands to the renderer.
+
+        Underlying Processing method: PGraphics.flush
+
+        Notes
+        -----
+
+        Flush drawing commands to the renderer. For most renderers, this method does
+        absolutely nothing. There are not a lot of good reasons to use this method, but
+        if you need it, it is available for your use.
+
+        This method is the same as ``flush()`` but linked to a ``Py5Graphics`` object.
+        """
+        return self._instance.flush()
 
     def frustum(self, left: float, right: float, bottom: float,
                 top: float, near: float, far: float, /) -> None:

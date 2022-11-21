@@ -31,12 +31,12 @@ from ..parsing import TransformDynamicVariablesToCalls, Py5CodeValidation
 
 _PY5_HELP_LINKS = [
     {
-        'text': 'py5 Reference',
-        'url': 'http://py5.ixora.io/reference/'
+        'text': 'py5 Documentation',
+        'url': 'http://py5coding.org/'
     },
     {
-        'text': 'py5 Tutorials',
-        'url': 'http://py5.ixora.io/tutorials/'
+        'text': 'py5 Function Reference',
+        'url': 'http://py5coding.org/reference/sketch.html'
     },
 ]
 
@@ -80,7 +80,7 @@ class Py5Kernel(IPythonKernel):
                        *_PY5_HELP_LINKS]).tag(config=True)
 
     implementation = 'py5'
-    implementation_version = '0.8.2a1'
+    implementation_version = '0.8.3a1'
 
 
 class Py5App(IPKernelApp):

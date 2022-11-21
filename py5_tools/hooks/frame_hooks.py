@@ -23,7 +23,7 @@ import sys
 import time
 from pathlib import Path
 import tempfile
-from typing import Callable, Any
+from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
@@ -70,8 +70,8 @@ def screenshot(
     parameter to make this function run after ``post_draw()`` instead of ``draw()``.
     This is important when using Processing libraries that support ``post_draw()``
     such as Camera3D or ColorBlindness."""
+    import py5
     if sketch is None:
-        import py5
         sketch = py5.get_current_sketch()
         using_current_sketch = True
     else:
@@ -84,7 +84,7 @@ def screenshot(
         raise RuntimeError(msg)
 
     if py5.bridge.check_run_method_callstack():
-        msg = 'Calling py5_tools.screenshot() from within a py5 user function is not allowed. Please move this code to outside the Sketch.'
+        msg = 'Calling py5_tools.screenshot() from within a py5 user function is not allowed. Please move this code to outside the Sketch or consider using save_frame() instead.'
         raise RuntimeError(msg)
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -161,8 +161,8 @@ def save_frames(dirname: str, *, filename: str = 'frame_####.png',
     parameter to make this function run after ``post_draw()`` instead of ``draw()``.
     This is important when using Processing libraries that support ``post_draw()``
     such as Camera3D or ColorBlindness."""
+    import py5
     if sketch is None:
-        import py5
         sketch = py5.get_current_sketch()
         using_current_sketch = True
     else:
@@ -281,8 +281,8 @@ def offline_frame_processing(func: Callable[[npt.NDArray[np.uint8]], None], *,
     use the ``hook_post_draw`` parameter to make this function run after
     ``post_draw()`` instead of ``draw()``. This is important when using Processing
     libraries that support ``post_draw()`` such as Camera3D or ColorBlindness."""
+    import py5
     if sketch is None:
-        import py5
         sketch = py5.get_current_sketch()
         using_current_sketch = True
     else:
@@ -368,8 +368,8 @@ def animated_gif(filename: str, count: int, period: float, duration: float, *,
     parameter to make this function run after ``post_draw()`` instead of ``draw()``.
     This is important when using Processing libraries that support ``post_draw()``
     such as Camera3D or ColorBlindness."""
+    import py5
     if sketch is None:
-        import py5
         sketch = py5.get_current_sketch()
         using_current_sketch = True
     else:
@@ -463,8 +463,8 @@ def capture_frames(count: float,
     parameter to make this function run after ``post_draw()`` instead of ``draw()``.
     This is important when using Processing libraries that support ``post_draw()``
     such as Camera3D or ColorBlindness."""
+    import py5
     if sketch is None:
-        import py5
         sketch = py5.get_current_sketch()
         using_current_sketch = True
     else:

@@ -88,7 +88,7 @@ except ModuleNotFoundError:
     pass
 
 
-__version__ = '0.8.2a1'
+__version__ = '0.8.3a1'
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 py5_tools._lock_imported_mode()
@@ -140,7 +140,6 @@ CORNERS = 1
 CROSS = 1
 CURVE_VERTEX = 3
 DARKEST = 16
-DEG_TO_RAD = 0.017453292
 DELETE = '\u007f'
 DIAMETER = 3
 DIFFERENCE = 32
@@ -184,7 +183,6 @@ EXTERNAL_STOP = "__STOP__"
 FX2D = "processing.javafx.PGraphicsFX2D"
 GRAY = 12
 GROUP = 0
-HALF_PI = 1.5707964
 HAND = 12
 HARD_LIGHT = 1024
 HIDDEN = "py5.core.graphics.HiddenPy5GraphicsJava2D"
@@ -215,7 +213,6 @@ P2D = "processing.opengl.PGraphics2D"
 P3D = "processing.opengl.PGraphics3D"
 PATH = 21
 PDF = "processing.pdf.PGraphicsPDF"
-PI = 3.1415927
 PIE = 3
 POINT = 2
 POINTS = 3
@@ -227,9 +224,7 @@ QUADRATIC_VERTEX = 2
 QUADS = 17
 QUAD_BEZIER_VERTEX = 2
 QUAD_STRIP = 18
-QUARTER_PI = 0.7853982
 RADIUS = 2
-RAD_TO_DEG = 57.295776
 RECT = 30
 REPEAT = 1
 REPLACE = 0
@@ -248,16 +243,13 @@ SQUARE = 1
 SUBTRACT = 4
 SVG = "processing.svg.PGraphicsSVG"
 TAB = '\t'
-TAU = 6.2831855
 TEXT = 2
-THIRD_PI = 1.0471976
 THRESHOLD = 16
 TOP = 101
 TRIANGLE = 8
 TRIANGLES = 9
 TRIANGLE_FAN = 11
 TRIANGLE_STRIP = 10
-TWO_PI = 6.2831855
 UP = 38
 VERTEX = 0
 WAIT = 3
@@ -7764,6 +7756,21 @@ def apply_filter(*args):
     * DILATE: Increases the light areas. No parameter is used.
     """
     return _py5sketch.apply_filter(*args)
+
+
+def flush() -> None:
+    """Flush drawing commands to the renderer.
+
+    Underlying Processing method: Sketch.flush
+
+    Notes
+    -----
+
+    Flush drawing commands to the renderer. For most renderers, this method does
+    absolutely nothing. There are not a lot of good reasons to use this method, but
+    if you need it, it is available for your use.
+    """
+    return _py5sketch.flush()
 
 
 def frame_rate(fps: float, /) -> None:
@@ -17446,94 +17453,6 @@ def year() -> int:
     return Sketch.year()
 
 ##############################################################################
-# module functions from data.py
-##############################################################################
-
-
-def load_json(json_path: Union[str, Path], **kwargs: dict[str, Any]) -> Any:
-    """Load a JSON data file from a file or URL.
-
-    Parameters
-    ----------
-
-    json_path: Union[str, Path]
-        url or file path for JSON data file
-
-    kwargs: dict[str, Any]
-        keyword arguments
-
-    Notes
-    -----
-
-    Load a JSON data file from a file or URL. When loading a file, the path can be
-    in the data directory, relative to the current working directory
-    (``sketch_path()``), or an absolute path. When loading from a URL, the
-    ``json_path`` parameter must start with ``http://`` or ``https://``.
-
-    When loading JSON data from a URL, the data is retrieved using the Python
-    requests library with the ``get`` method, and the ``kwargs`` parameter is passed
-    along to that method. When loading JSON data from a file, the data is loaded
-    using the Python json library with the ``load`` method, and again the ``kwargs``
-    parameter passed along to that method.
-    """
-    return _py5sketch.load_json(json_path, **kwargs)
-
-
-def save_json(json_data: Any,
-              filename: Union[str,
-                              Path],
-              **kwargs: dict[str,
-                             Any]) -> None:
-    """Save JSON data to a file.
-
-    Parameters
-    ----------
-
-    filename: Union[str, Path]
-        filename to save JSON data object to
-
-    json_data: Any
-        json data object
-
-    kwargs: dict[str, Any]
-        keyword arguments
-
-    Notes
-    -----
-
-    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
-    saved relative to the current working directory (``sketch_path()``).
-
-    The JSON data is saved using the Python json library with the ``dump`` method,
-    and the ``kwargs`` parameter is passed along to that method.
-    """
-    return _py5sketch.save_json(json_data, filename, **kwargs)
-
-
-def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
-    """Parse serialized JSON data from a string.
-
-    Parameters
-    ----------
-
-    kwargs: dict[str, Any]
-        keyword arguments
-
-    serialized_json: Any
-        JSON data object that has been serialized as a string
-
-    Notes
-    -----
-
-    Parse serialized JSON data from a string. When reading JSON data from a file,
-    ``load_json()`` is the better choice.
-
-    The JSON data is parsed using the Python json library with the ``loads`` method,
-    and the ``kwargs`` parameter is passed along to that method.
-    """
-    return Sketch.parse_json(serialized_json, **kwargs)
-
-##############################################################################
 # module functions from math.py
 ##############################################################################
 
@@ -19866,6 +19785,273 @@ def println(
     return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
 
 ##############################################################################
+# module functions from data.py
+##############################################################################
+
+
+def load_json(json_path: Union[str, Path], **kwargs: dict[str, Any]) -> Any:
+    """Load a JSON data file from a file or URL.
+
+    Parameters
+    ----------
+
+    json_path: Union[str, Path]
+        url or file path for JSON data file
+
+    kwargs: dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Load a JSON data file from a file or URL. When loading a file, the path can be
+    in the data directory, relative to the current working directory
+    (``sketch_path()``), or an absolute path. When loading from a URL, the
+    ``json_path`` parameter must start with ``http://`` or ``https://``.
+
+    When loading JSON data from a URL, the data is retrieved using the Python
+    requests library with the ``get`` method, and any extra keyword arguments (the
+    ``kwargs`` parameter) are passed along to that method. When loading JSON data
+    from a file, the data is loaded using the Python json library with the ``load``
+    method, and again any extra keyword arguments are passed along to that method.
+    """
+    return _py5sketch.load_json(json_path, **kwargs)
+
+
+def save_json(json_data: Any,
+              filename: Union[str,
+                              Path],
+              **kwargs: dict[str,
+                             Any]) -> None:
+    """Save JSON data to a file.
+
+    Parameters
+    ----------
+
+    filename: Union[str, Path]
+        filename to save JSON data object to
+
+    json_data: Any
+        json data object
+
+    kwargs: dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Save JSON data to a file. If ``filename`` is not an absolute path, it will be
+    saved relative to the current working directory (``sketch_path()``). The saved
+    file can be reloaded with ``load_json()``.
+
+    The JSON data is saved using the Python json library with the ``dump`` method,
+    and the ``kwargs`` parameter is passed along to that method.
+    """
+    return _py5sketch.save_json(json_data, filename, **kwargs)
+
+
+def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
+    """Parse serialized JSON data from a string.
+
+    Parameters
+    ----------
+
+    kwargs: dict[str, Any]
+        keyword arguments
+
+    serialized_json: Any
+        JSON data object that has been serialized as a string
+
+    Notes
+    -----
+
+    Parse serialized JSON data from a string. When reading JSON data from a file,
+    ``load_json()`` is the better choice.
+
+    The JSON data is parsed using the Python json library with the ``loads`` method,
+    and the ``kwargs`` parameter is passed along to that method.
+    """
+    return Sketch.parse_json(serialized_json, **kwargs)
+
+
+def load_strings(string_path: Union[str, Path],
+                 **kwargs: dict[str, Any]) -> list[str]:
+    """Load a list of strings from a file or URL.
+
+    Underlying Processing method: Sketch.loadStrings
+
+    Parameters
+    ----------
+
+    kwargs: dict[str, Any]
+        keyword arguments
+
+    string_path: Union[str, Path]
+        url or file path for string data file
+
+    Notes
+    -----
+
+    Load a list of strings from a file or URL. When loading a file, the path can be
+    in the data directory, relative to the current working directory
+    (``sketch_path()``), or an absolute path. When loading from a URL, the
+    ``string_path`` parameter must start with ``http://`` or ``https://``.
+
+    When loading string data from a URL, the data is retrieved using the Python
+    requests library with the ``get`` method, and any extra keyword arguments (the
+    ``kwargs`` parameter) are passed along to that method. When loading string data
+    from a file, the ``kwargs`` parameter is not used.
+    """
+    return _py5sketch.load_strings(string_path, **kwargs)
+
+
+def save_strings(string_data: list[str],
+                 filename: Union[str,
+                                 Path],
+                 *,
+                 end: str = '\n') -> None:
+    """Save a list of strings to a file.
+
+    Underlying Processing method: Sketch.saveStrings
+
+    Parameters
+    ----------
+
+    end: str = '\\n'
+        line terminator for each string
+
+    filename: Union[str, Path]
+        filename to save string data to
+
+    string_data: list[str]
+        string data to save in a file
+
+    Notes
+    -----
+
+    Save a list of strings to a file. If ``filename`` is not an absolute path, it
+    will be saved relative to the current working directory (``sketch_path()``). If
+    the contents of the list are not already strings, it will be converted to
+    strings with the Python builtin ``str``. The saved file can be reloaded with
+    ``load_strings()``.
+
+    Use the ``end`` parameter to set the line terminator for each string in the
+    list. If items in the list of strings already have line terminators, set the
+    ``end`` parameter to ``''`` to keep the output file from being saved with a
+    blank line after each item.
+    """
+    return _py5sketch.save_strings(string_data, filename, end=end)
+
+
+def load_bytes(bytes_path: Union[str, Path], **
+               kwargs: dict[str, Any]) -> bytearray:
+    """Load byte data from a file or URL.
+
+    Underlying Processing method: Sketch.loadBytes
+
+    Parameters
+    ----------
+
+    bytes_path: Union[str, Path]
+        url or file path for bytes data file
+
+    kwargs: dict[str, Any]
+        keyword arguments
+
+    Notes
+    -----
+
+    Load byte data from a file or URL. When loading a file, the path can be in the
+    data directory, relative to the current working directory (``sketch_path()``),
+    or an absolute path. When loading from a URL, the ``bytes_path`` parameter must
+    start with ``http://`` or ``https://``.
+
+    When loading byte data from a URL, the data is retrieved using the Python
+    requests library with the ``get`` method, and any extra keyword arguments (the
+    ``kwargs`` parameter) are passed along to that method. When loading byte data
+    from a file, the ``kwargs`` parameter is not used.
+    """
+    return _py5sketch.load_bytes(bytes_path, **kwargs)
+
+
+def save_bytes(bytes_data: Union[bytes, bytearray],
+               filename: Union[str, Path]) -> None:
+    """Save byte data to a file.
+
+    Underlying Processing method: Sketch.saveBytes
+
+    Parameters
+    ----------
+
+    bytes_data: Union[bytes, bytearray]
+        byte data to save in a file
+
+    filename: Union[str, Path]
+        filename to save byte data to
+
+    Notes
+    -----
+
+    Save byte data to a file. If ``filename`` is not an absolute path, it will be
+    saved relative to the current working directory (``sketch_path()``). The saved
+    file can be reloaded with ``load_bytes()``.
+    """
+    return _py5sketch.save_bytes(bytes_data, filename)
+
+
+def load_pickle(pickle_path: Union[str, Path]) -> Any:
+    """Load a pickled Python object from a file.
+
+    Underlying Processing method: Sketch.loadPickle
+
+    Parameters
+    ----------
+
+    pickle_path: Union[str, Path]
+        file path for pickle object file
+
+    Notes
+    -----
+
+    Load a pickled Python object from a file. The path can be in the data directory,
+    relative to the current working directory (``sketch_path()``), or an absolute
+    path.
+
+    There are security risks associated with Python pickle files. A pickle file can
+    contain malicious code, so never load a pickle file from an untrusted source.
+    """
+    return _py5sketch.load_pickle(pickle_path)
+
+
+def save_pickle(obj: Any, filename: Union[str, Path]) -> None:
+    """Pickle a Python object to a file.
+
+    Underlying Processing method: Sketch.savePickle
+
+    Parameters
+    ----------
+
+    filename: Union[str, Path]
+        filename to save pickled object to
+
+    obj: Any
+        any non-py5 Python object
+
+    Notes
+    -----
+
+    Pickle a Python object to a file. If ``filename`` is not an absolute path, it
+    will be saved relative to the current working directory (``sketch_path()``). The
+    saved file can be reloaded with ``load_pickle()``.
+
+    Object "pickling" is a method for serializing objects and saving them to a file
+    for later retrieval. The recreated objects will be clones of the original
+    objects. Not all Python objects can be saved to a Python pickle file. This
+    limitation prevents any py5 object from being pickled.
+    """
+    return _py5sketch.save_pickle(obj, filename)
+
+##############################################################################
 # module functions from threads.py
 ##############################################################################
 
@@ -20083,6 +20269,36 @@ def has_thread(name: str) -> None:
     return _py5sketch.has_thread(name)
 
 
+def join_thread(name: str, *, timeout: float = None) -> bool:
+    """Join the Python thread associated with the given thread name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    timeout: float = None
+        maximum time in seconds to wait for the thread to join
+
+    Notes
+    -----
+
+    Join the Python thread associated with the given thread name. The
+    ``join_thread()`` method will wait until the named thread has finished executing
+    before returning. Use the ``timeout`` parameter to set an upper limit for the
+    number of seconds to wait. This method will return right away if the named
+    thread does not exist or the thread has already finished executing. You can get
+    the list of all currently running threads with ``list_threads()``.
+
+    This method will return ``True`` if the named thread has completed execution and
+    ``False`` if the named thread is still executing. It will only return ``False``
+    if you use the ``timeout`` parameter and the method is not able to join with the
+    thread within that time limit.
+    """
+    return _py5sketch.join_thread(name, timeout=timeout)
+
+
 def stop_thread(name: str, wait: bool = False) -> None:
     """Stop a thread of a given name.
 
@@ -20150,6 +20366,15 @@ def list_threads() -> None:
     """
     return _py5sketch.list_threads()
 
+
+PI = np.pi
+HALF_PI = np.pi / 2
+THIRD_PI = np.pi / 3
+QUARTER_PI = np.pi / 4
+TWO_PI = 2 * np.pi
+TAU = 2 * np.pi
+RAD_TO_DEG = 180 / np.pi
+DEG_TO_RAD = np.pi / 180
 ##############################################################################
 # module functions from sketch.py
 ##############################################################################
@@ -20752,10 +20977,11 @@ def run_sketch(block: bool = None, *,
         println,
         mode='imported' if _PY5_USE_IMPORTED_MODE else 'module')
 
-    if not set(functions.keys()) & set(['settings', 'setup', 'draw']):
+    if not set(functions.keys()) & set(
+            ['settings', 'setup', 'draw']) and not _jclassname:
         warnings.warn(
             ("Unable to find settings, setup, or draw functions. "
-             "Your sketch will be a small boring gray square. "
+             "Your sketch will be a small gray square. "
              "If that isn't what you intended, you need to make sure "
              "your implementation of those functions are available in "
              "the local namespace that made the `run_sketch()` call."), stacklevel=2)

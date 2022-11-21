@@ -212,11 +212,17 @@ def _run_code(
         sketch_args_str = str(sketch_args)
 
         with open(sketch_path, 'r', encoding='utf8') as f:
-            sketch_code = _CODE_FRAMEWORK.format(
-                f.read(), exit_if_error, py5_options_str, sketch_args_str)
+            user_code = f.read()
 
         # does the code parse? if not, display an error message
         try:
+            # this will make sure indentation and syntax errors are correctly
+            # attributed to the user's code and not the _CODE_FRAMEWORK
+            # template
+            ast.parse(user_code, filename=sketch_path, mode='exec')
+            # now do the real parsing
+            sketch_code = _CODE_FRAMEWORK.format(
+                user_code, exit_if_error, py5_options_str, sketch_args_str)
             sketch_ast = ast.parse(
                 sketch_code, filename=sketch_path, mode='exec')
         except IndentationError as e:

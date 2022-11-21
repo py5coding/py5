@@ -23,7 +23,7 @@ from setuptools import setup
 with open('README.md') as f:
     README = f.read()
 
-VERSION = '0.8.2a1'
+VERSION = '0.8.3a1'
 
 INSTALL_REQUIRES = [
     'autopep8>=1.5',
@@ -66,13 +66,13 @@ setup_args = dict(
     description='Processing for CPython',
     long_description=README,
     long_description_content_type='text/markdown',
-    url='https://py5.ixora.io/',
+    url='https://py5coding.org/',
     author='Jim Schmitz',
     author_email='jim@ixora.io',
     download_url='https://pypi.org/project/py5',
     project_urls={
         "Bug Tracker": 'https://github.com/py5coding/py5generator/issues',
-        "Documentation": 'https://py5.ixora.io/',
+        "Documentation": 'https://py5coding.org/',
         "Source Code": 'https://github.com/py5coding/py5',
     },
     platforms=["Windows", "Linux", "Mac OS-X"],

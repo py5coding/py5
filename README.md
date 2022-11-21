@@ -42,7 +42,7 @@ If you have Java 17 installed on your computer, you can install py5 using pip:
 pip install py5
 ```
 
-[Detailed installation instructions](https://py5.ixora.io/content/install.html) are available on the documentation website. There are some [Special Notes for Mac Users](https://py5.ixora.io/content/osx_users.html) that you should read if you use OSX.
+[Detailed installation instructions](https://py5coding.org/content/install.html) are available on the documentation website. There are some [Special Notes for Mac Users](https://py5coding.org/content/osx_users.html) that you should read if you use OSX.
 
 ## Getting Started
 
@@ -53,7 +53,7 @@ There are currently four basic ways to use py5. They are:
 * **imported mode**: simplified code that omits the `py5.` prefix. This mode is supported by the py5 Jupyter notebook kernel and the `run_sketch` command line utility.
 * **static mode**: functionless code to create static images. This mode is supported by the py5bot Jupyter notebook kernel, the `%%py5bot` IPython magic, and the `run_sketch` command line utility.
 
-The documentation website, [https://py5.ixora.io/](https://py5.ixora.io/), is a work in progress. The reference documentation is solid but the how-to's and tutorials are incomplete.
+The documentation website, [https://py5coding.org/](https://py5coding.org/), is a work in progress. The reference documentation is solid but the how-to's and tutorials are incomplete.
 
 [py5generator][py5_generator_repo] is a meta-programming project that creates the py5 library. To view the actual installed py5 library code, look at the [py5 repository][py5_repo]. All py5 library development is done through py5generator.
 
@@ -62,6 +62,7 @@ The documentation website, [https://py5.ixora.io/](https://py5.ixora.io/), is a 
 Have a comment or question? We'd love to hear from you! The best ways to reach out are:
 
 * github [discussions](https://github.com/py5coding/py5generator/discussions) and [issues](https://github.com/py5coding/py5generator/issues)
+* Mastodon <a rel="me" href="https://fosstodon.org/@py5coding">fosstodon.org/@py5coding</a>
 * twitter [@py5coding](https://twitter.com/py5coding)
 * [processing foundation discourse](https://discourse.processing.org/)
 

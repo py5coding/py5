@@ -21,11 +21,11 @@ import os
 from pathlib import Path
 
 
-PY5_UTILITIES_CLASS = """package py5.utils;
+PY5_UTILITIES_CLASS = """package py5utils;
 
 import py5.core.Sketch;
 
-class Py5Utilities {
+public class Py5Utilities {
 
   public Sketch sketch;
 
@@ -47,7 +47,7 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
   <version>0.1</version>
 
   <name>py5utilities</name>
-  <url>https://py5.ixora.io/</url>
+  <url>https://py5coding.org/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
@@ -59,21 +59,21 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-processing4</artifactId>
-      <version>0.8.2a1</version>
+      <version>0.8.3a1</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/core.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-jogl</artifactId>
-      <version>0.8.2a1</version>
+      <version>0.8.3a1</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/jogl-all.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5</artifactId>
-      <version>0.8.2a1</version>
+      <version>0.8.3a1</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/py5.jar</systemPath>
     </dependency>
@@ -137,7 +137,7 @@ def generate_utilities_framework(output_dir=None):
         f.write(POM_TEMPLATE.format(classpath=py5_classpath))
 
     utils_filename = java_dir / \
-        Path('src/main/java/py5/utils/Py5Utilities.java')
+        Path('src/main/java/py5utils/Py5Utilities.java')
     utils_filename.parent.mkdir(parents=True, exist_ok=True)
     with open(utils_filename, 'w') as f:
         f.write(PY5_UTILITIES_CLASS)

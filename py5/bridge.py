@@ -171,6 +171,7 @@ class Py5Bridge:
         self._pre_hooks = defaultdict(dict)
         self._post_hooks = defaultdict(dict)
         self._profiler = line_profiler.LineProfiler()
+        self._current_running_method = None
         self._is_terminated = False
 
         from .java_conversion import convert_to_python_types
@@ -255,6 +256,8 @@ class Py5Bridge:
     def run_method(self, method_name, params):
         try:
             if method_name in self._functions:
+                self._current_running_method = method_name
+
                 # first run the pre-hooks, if any
                 if method_name in self._pre_hooks:
                     for hook in list(self._pre_hooks[method_name].values()):
@@ -273,6 +276,12 @@ class Py5Bridge:
             handle_exception(self._sketch.println, *sys.exc_info())
             self.terminate_sketch()
             return False
+        finally:
+            self._current_running_method = None
+
+    def _get_current_running_method(self):
+        return self._current_running_method
+    current_running_method = property(fget=_get_current_running_method)
 
     @JOverride
     def call_function(self, key, params):

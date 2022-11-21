@@ -90,6 +90,21 @@ def _auto_convert_to_py5image(f):
     return decorated
 
 
+def _settings_only(name):
+    def _decorator(f):
+        @functools.wraps(f)
+        def decorated(self_, *args):
+            if self_._py5_bridge.current_running_method == 'settings':
+                return f(self_, *args)
+            else:
+                raise RuntimeError(
+                    "Cannot call the " +
+                    name +
+                    "() method here. Either move it to a settings() function or move it to closer to the start of setup().")
+        return decorated
+    return _decorator
+
+
 class Sketch(
         MathMixin,
         DataMixin,
@@ -193,7 +208,7 @@ class Sketch(
         # attempt to instantiate Py5Utilities
         self.utils = None
         try:
-            self.utils = jpype.JClass('py5.utils.Py5Utilities')(self._instance)
+            self.utils = jpype.JClass('py5utils.Py5Utilities')(self._instance)
         except Exception:
             pass
 
@@ -422,6 +437,15 @@ class Sketch(
 
     # *** BEGIN METHODS ***
 
+    PI = np.pi  # CODEBUILDER INCLUDE
+    HALF_PI = np.pi / 2  # CODEBUILDER INCLUDE
+    THIRD_PI = np.pi / 3  # CODEBUILDER INCLUDE
+    QUARTER_PI = np.pi / 4  # CODEBUILDER INCLUDE
+    TWO_PI = 2 * np.pi  # CODEBUILDER INCLUDE
+    TAU = 2 * np.pi  # CODEBUILDER INCLUDE
+    RAD_TO_DEG = 180 / np.pi  # CODEBUILDER INCLUDE
+    DEG_TO_RAD = np.pi / 180  # CODEBUILDER INCLUDE
+
     @overload
     def sketch_path(self) -> Path:
         """The Sketch's current path.
@@ -512,13 +536,20 @@ class Sketch(
         Result will be relative to Python's current working directory (``os.getcwd()``)
         unless it was specifically set to something else with the ``run_sketch()`` call
         by including a ``--sketch-path`` argument in the ``py5_options`` parameters."""
+        if not self.is_running:
+            msg = (
+                "Calling method sketch_path() when Sketch is not running. " +
+                "The returned value will not be correct on all platforms. Consider " +
+                "calling this after setup() or perhaps using the Python standard " +
+                "library methods os.getcwd() or pathlib.Path.cwd().")
+            warnings.warn(msg)
         if len(args) <= 1:
             return Path(str(self._instance.sketchPath(*args)))
         else:
             # this exception will be replaced with a more informative one by
             # the custom exception handler
             raise TypeError(
-                'The parameters are invalid for method sketch_path')
+                'The parameters are invalid for method sketch_path()')
 
     def _get_is_ready(self) -> bool:
         """Boolean value reflecting if the Sketch is in the ready state.
@@ -1243,7 +1274,6 @@ class Sketch(
     CROSS = 1
     CURVE_VERTEX = 3
     DARKEST = 16
-    DEG_TO_RAD = 0.017453292
     DELETE = '\u007f'
     DIAMETER = 3
     DIFFERENCE = 32
@@ -1287,7 +1317,6 @@ class Sketch(
     FX2D = "processing.javafx.PGraphicsFX2D"
     GRAY = 12
     GROUP = 0
-    HALF_PI = 1.5707964
     HAND = 12
     HARD_LIGHT = 1024
     HIDDEN = "py5.core.graphics.HiddenPy5GraphicsJava2D"
@@ -1318,7 +1347,6 @@ class Sketch(
     P3D = "processing.opengl.PGraphics3D"
     PATH = 21
     PDF = "processing.pdf.PGraphicsPDF"
-    PI = 3.1415927
     PIE = 3
     POINT = 2
     POINTS = 3
@@ -1330,9 +1358,7 @@ class Sketch(
     QUADS = 17
     QUAD_BEZIER_VERTEX = 2
     QUAD_STRIP = 18
-    QUARTER_PI = 0.7853982
     RADIUS = 2
-    RAD_TO_DEG = 57.295776
     RECT = 30
     REPEAT = 1
     REPLACE = 0
@@ -1351,16 +1377,13 @@ class Sketch(
     SUBTRACT = 4
     SVG = "processing.svg.PGraphicsSVG"
     TAB = '\t'
-    TAU = 6.2831855
     TEXT = 2
-    THIRD_PI = 1.0471976
     THRESHOLD = 16
     TOP = 101
     TRIANGLE = 8
     TRIANGLES = 9
     TRIANGLE_FAN = 11
     TRIANGLE_STRIP = 10
-    TWO_PI = 6.2831855
     UP = 38
     VERTEX = 0
     WAIT = 3
@@ -9736,6 +9759,20 @@ class Sketch(
         """
         return self._instance.filter(*args)
 
+    def flush(self) -> None:
+        """Flush drawing commands to the renderer.
+
+        Underlying Processing method: Sketch.flush
+
+        Notes
+        -----
+
+        Flush drawing commands to the renderer. For most renderers, this method does
+        absolutely nothing. There are not a lot of good reasons to use this method, but
+        if you need it, it is available for your use.
+        """
+        return self._instance.flush()
+
     def frame_rate(self, fps: float, /) -> None:
         """Specifies the number of frames to be displayed every second.
 
@@ -10026,6 +10063,7 @@ class Sketch(
         """
         pass
 
+    @_settings_only('full_screen')
     def full_screen(self, *args):
         """Open a Sketch using the full size of the computer's display.
 
@@ -11836,6 +11874,7 @@ class Sketch(
         """
         return self._instance.noLoop()
 
+    @_settings_only('no_smooth')
     def no_smooth(self) -> None:
         """Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.
@@ -12431,6 +12470,7 @@ class Sketch(
         """
         return self._instance.perspective(*args)
 
+    @_settings_only('pixel_density')
     def pixel_density(self, density: int, /) -> None:
         """This function makes it possible for py5 to render using all of the pixels on
         high resolutions screens like Apple Retina displays and Windows High-DPI
@@ -14972,6 +15012,7 @@ class Sketch(
         """
         pass
 
+    @_settings_only('size')
     def size(self, *args):
         """Defines the dimension of the display window width and height in units of pixels.
 
@@ -15182,6 +15223,7 @@ class Sketch(
         """
         pass
 
+    @_settings_only('smooth')
     def smooth(self, *args):
         """Draws all geometry with smooth (anti-aliased) edges.
 

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,14 +23,12 @@ from IPython.display import display
 from IPython.core.magic import Magics, magics_class, cell_magic
 from IPython.core.magic_arguments import parse_argstring, argument, magic_arguments, kwds
 
-from .. import split_setup
-from .util import CellMagicHelpFormatter, filename_check, variable_name_check
+from py5jupyter.kernels.py5bot.py5bot import Py5BotManager
 
-try:
-    from py5jupyter.kernels.py5bot.py5bot import Py5BotManager, check_for_problems
-except ImportError:
-    # TODO: deprecated
-    from ..py5bot.py5bot import Py5BotManager, check_for_problems
+from .. import split_setup
+from ..parsing import check_for_problems
+
+from .util import CellMagicHelpFormatter, filename_check, variable_name_check
 
 
 @magics_class
@@ -53,20 +51,20 @@ class Py5BotMagics(Magics):
 
         This cell magic uses the same rendering mechanism as the py5bot kernel. For
         users who are familiar with Processing and py5 programming, you can pretend the
-        code in this cell will be executed as a static Sketch with no ``draw()``
-        function and your code in the ``setup()`` function. The first line in the cell
-        should be a call to ``size()``.
+        code in this cell will be executed as a static Sketch with no `draw()` function
+        and your code in the `setup()` function. The first line in the cell should be a
+        call to `size()`.
 
-        This magic is similar to ``%%py5draw`` in that both can be used to create a
-        static Sketch. One key difference is that ``%%py5bot`` requires the user to
-        begin the code with a call to ``size()``, while ``%%py5draw`` calls ``size()``
-        for you based on the magic's arguments.
+        This magic is similar to `%%py5draw` in that both can be used to create a static
+        Sketch. One key difference is that `%%py5bot` requires the user to begin the
+        code with a call to `size()`, while `%%py5draw` calls `size()` for you based on
+        the magic's arguments.
 
-        This magic supports the default renderer and the ``P2D`` and ``P3D`` renderers.
-        Note that both of the OpenGL renderers will briefly open a window on your
-        screen. This magic is only available when using the py5 kernel and coding in
-        imported mode. The ``P2D`` and ``P3D`` renderers are not available when the py5
-        kernel is hosted on an OSX computer.
+        This magic supports the default renderer and the `P2D` and `P3D` renderers. Note
+        that both of the OpenGL renderers will briefly open a window on your screen.
+        This magic is only available when using the py5 kernel and coding in imported
+        mode. The `P2D` and `P3D` renderers are not available when the py5 kernel is
+        hosted on an OSX computer.
 
         Code used in this cell can reference functions and variables defined in other
         cells because a copy of the user namespace is provided during execution.

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -82,13 +82,21 @@ class ScreenshotHook(BaseHook):
 
 class SaveFramesHook(BaseHook):
 
-    def __init__(self, dirname, filename, period, start, limit):
+    def __init__(
+            self,
+            dirname,
+            filename,
+            period,
+            start,
+            limit,
+            display_progress):
         super().__init__('py5save_frames_hook')
         self.dirname = dirname
         self.filename = filename
         self.period = period
         self.start = start
         self.limit = limit
+        self.display_progress = display_progress
         self.num_offset = None
         self.filenames = []
         self.last_frame_time = 0
@@ -107,8 +115,9 @@ class SaveFramesHook(BaseHook):
             self.last_frame_time = time.time()
             if len(self.filenames) == self.limit:
                 self.hook_finished(sketch)
-            self.status_msg(
-                f'saving frame {len(self.filenames)}' + (f'/{self.limit}' if self.limit else ''))
+            if self.display_progress:
+                self.status_msg(
+                    f'saving frame {len(self.filenames)}' + (f'/{self.limit}' if self.limit else ''))
         except Exception as e:
             self.hook_error(sketch, e)
 

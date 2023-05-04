@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -35,6 +35,13 @@ class CreateFontTool(Sketch):
         self.pause = pause
         self.filename = filename or f'{font_name}-{font_size}.vlw'
         self.characters = characters
+
+    def __str__(self) -> str:
+        return f"CreateFontTool(font_name='" + self.font_name + \
+            "', font_size=" + str(self.font_size) + ")"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
     def settings(self):
         self.size(400, 100, self.P2D)
@@ -103,16 +110,16 @@ def create_font_file(
 
     By default it will create data files for every character available in the
     specified font. To reduce execution time and output file size, limit the
-    characters using the ``characters`` parameter. The default output filename is
-    ``{font_name}-{font_size}.vlw`` and will be saved to the current directory.
+    characters using the `characters` parameter. The default output filename is
+    `{font_name}-{font_size}.vlw` and will be saved to the current directory.
 
     This utility function opens a window that displays a short message about the
     number of glyphs written to the file. To make the window close automatically,
-    set the ``pause`` parameter to ``False``.
+    set the `pause` parameter to `False`.
 
     Get a list of font names available on your computer with Py5Font's
-    ``Py5Font.list()`` method. If you request an unavailable font, it will create
-    the data file anyway but using a default font."""
+    `Py5Font.list()` method. If you request an unavailable font, it will create the
+    data file anyway but using a default font."""
     vlw_creator = CreateFontTool(font_name, font_size,
                                  filename=filename, characters=characters,
                                  pause=pause)

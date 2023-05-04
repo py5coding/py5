@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,7 @@ import ast
 from multiprocessing import Process
 from pathlib import Path
 import re
+import tempfile
 
 import stackprinter
 
@@ -54,11 +55,11 @@ def get_imported_mode() -> bool:
 
 
 _STATIC_CODE_FRAMEWORK = """
-import ast as _PY5BOT_ast
+import ast as _PY5STATIC_ast
 
 import py5_tools
 py5_tools.set_imported_mode(True)
-import py5_tools.parsing as _PY5BOT_parsing
+import py5_tools.parsing as _PY5STATIC_parsing
 from py5 import *
 _PY5_NS_ = locals().copy()
 
@@ -67,8 +68,8 @@ def settings():
     with open('{0}', 'r') as f:
         exec(
             compile(
-                _PY5BOT_parsing.transform_py5_code(
-                    _PY5BOT_ast.parse(f.read(), filename='{0}', mode='exec'),
+                _PY5STATIC_parsing.transform_py5_code(
+                    _PY5STATIC_ast.parse(f.read(), filename='{0}', mode='exec'),
                 ),
                 filename='{0}',
                 mode='exec'
@@ -81,8 +82,8 @@ def setup():
     with open('{1}', 'r') as f:
         exec(
             compile(
-                _PY5BOT_parsing.transform_py5_code(
-                    _PY5BOT_ast.parse(f.read(), filename='{1}', mode='exec'),
+                _PY5STATIC_parsing.transform_py5_code(
+                    _PY5STATIC_ast.parse(f.read(), filename='{1}', mode='exec'),
                 ),
                 filename='{1}',
                 mode='exec'
@@ -95,7 +96,7 @@ _CODE_FRAMEWORK = """{0}
 
 
 
-run_sketch(block=True, py5_options={2}, sketch_args={3})
+run_sketch(block={4}, py5_options={2}, sketch_args={3})
 if {1} and is_dead_from_error:
     exit_sketch()
 """
@@ -116,11 +117,13 @@ def is_static_mode(code):
 
 def run_code(
         sketch_path,
+        *,
         classpath=None,
         new_process=False,
         exit_if_error=False,
         py5_options=None,
-        sketch_args=None):
+        sketch_args=None,
+        block=True):
     sketch_path = Path(sketch_path)
     if not sketch_path.exists():
         print(f'file {sketch_path} not found')
@@ -137,7 +140,8 @@ def run_code(
             new_process,
             exit_if_error,
             py5_options,
-            sketch_args)
+            sketch_args,
+            block)
     else:
         _run_code(
             sketch_path,
@@ -146,7 +150,8 @@ def run_code(
             exit_if_error,
             py5_options,
             sketch_args,
-            sketch_path)
+            sketch_path,
+            block)
 
 
 def _run_static_code(
@@ -156,24 +161,32 @@ def _run_static_code(
         new_process,
         exit_if_error,
         py5_options,
-        sketch_args):
-    try:
-        from py5jupyter.kernels.py5bot import py5bot
-    except ImportError as e:
-        # TODO: deprecated
-        from .py5bot import py5bot
-
-    py5bot_mgr = py5bot.Py5BotManager()
-    success, result = py5bot.check_for_problems(code, sketch_path)
+        sketch_args,
+        block):
+    success, result = parsing.check_for_problems(code, sketch_path)
     if success:
-        py5bot_globals, py5bot_settings, py5bot_setup = result
-        py5bot_mgr.write_code(py5bot_globals, py5bot_settings, py5bot_setup)
-        new_sketch_path = py5bot_mgr.tempdir / '_PY5_STATIC_FRAMEWORK_CODE_.py'
+        py5static_globals, py5static_settings, py5static_setup = result
+
+        tempdir = Path(tempfile.TemporaryDirectory().name)
+        tempdir.mkdir(parents=True, exist_ok=True)
+        settings_filename = tempdir / '_PY5_STATIC_SETTINGS_CODE_.py'
+        setup_filename = tempdir / '_PY5_STATIC_SETUP_CODE_.py'
+
+        with open(settings_filename, 'w') as f:
+            f.write('\n' * sum(c == '\n' for c in py5static_globals))
+            f.write(py5static_settings)
+
+        with open(setup_filename, 'w') as f:
+            f.write(py5static_globals)
+            f.write('\n' * sum(c == '\n' for c in py5static_settings))
+            f.write(py5static_setup)
+
+        new_sketch_path = tempdir / '_PY5_STATIC_FRAMEWORK_CODE_.py'
         new_sketch_code = _STATIC_CODE_FRAMEWORK.format(
-            py5bot_mgr.settings_filename.as_posix(),
-            py5bot_mgr.setup_filename.as_posix())
+            settings_filename.as_posix(), setup_filename.as_posix())
         with open(new_sketch_path, 'w') as f:
             f.write(new_sketch_code)
+
         _run_code(
             new_sketch_path,
             classpath,
@@ -181,7 +194,8 @@ def _run_static_code(
             exit_if_error,
             py5_options,
             sketch_args,
-            sketch_path)
+            sketch_path,
+            block)
     else:
         print(result, file=sys.stderr)
 
@@ -193,7 +207,8 @@ def _run_code(
         exit_if_error,
         py5_options,
         sketch_args,
-        original_sketch_path):
+        original_sketch_path,
+        block):
     def _run_sketch(sketch_path, classpath, exit_if_error):
         if not jvm.is_jvm_running():
             if classpath:
@@ -222,7 +237,7 @@ def _run_code(
             ast.parse(user_code, filename=sketch_path, mode='exec')
             # now do the real parsing
             sketch_code = _CODE_FRAMEWORK.format(
-                user_code, exit_if_error, py5_options_str, sketch_args_str)
+                user_code, exit_if_error, py5_options_str, sketch_args_str, block)
             sketch_ast = ast.parse(
                 sketch_code, filename=sketch_path, mode='exec')
         except IndentationError as e:

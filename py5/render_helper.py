@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -163,7 +163,7 @@ def render_frame(draw: Callable, width: int, height: int,
                  renderer: str = Sketch.HIDDEN, *,
                  draw_args: tuple = None, draw_kwargs: dict = None,
                  use_py5graphics=False) -> PIL.ImageFile.ImageFile:
-    """Helper function to render a single frame using the passed ``draw`` function
+    """Helper function to render a single frame using the passed `draw` function
     argument.
 
     Parameters
@@ -193,30 +193,29 @@ def render_frame(draw: Callable, width: int, height: int,
     Notes
     -----
 
-    Helper function to render a single frame using the passed ``draw`` function
-    argument. The output is returned as a ``PIL.Image`` object.
+    Helper function to render a single frame using the passed `draw` function
+    argument. The output is returned as a `PIL.Image` object.
 
-    The passed function's first parameter must be either a ``py5.Sketch`` object or
-    a ``py5.Py5Graphics`` object, depending on the parameter ``use_py5graphics``.
-    That object must be used for all of the function's py5 commands. The function
-    can have additional positional and keyword arguments. To use them, pass the
-    desired values as ``render_frame``'s ``draw_args`` and ``draw_kwargs``
-    arguments.
+    The passed function's first parameter must be either a `py5.Sketch` object or a
+    `py5.Py5Graphics` object, depending on the parameter `use_py5graphics`. That
+    object must be used for all of the function's py5 commands. The function can
+    have additional positional and keyword arguments. To use them, pass the desired
+    values as `render_frame`'s `draw_args` and `draw_kwargs` arguments.
 
     On OSX, only the default renderer is currently supported. Other platforms
     support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frame can have transparent pixels if and only if the
-    ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
-    object can create an image with transparency. There is no need to call
-    ``Py5Graphics.begin_draw()`` or ``Py5Graphics.end_draw()`` in the passed
-    function as ``render_frame()`` does that for you.
+    `use_py5graphics` parameter is `True` because only a `py5.Py5Graphics` object
+    can create an image with transparency. There is no need to call
+    `Py5Graphics.begin_draw()` or `Py5Graphics.end_draw()` in the passed function as
+    `render_frame()` does that for you.
 
     This function facilitates the creation and execution of a py5 Sketch, and as a
     result makes it easy to run a Sketch inside of another Sketch. This is
     discouraged, and may fail catastrophically.
 
-    This function is available in decorator form as ``@render()``."""
+    This function is available in decorator form as `@render()`."""
     if msg := _check_allowed_renderer(renderer):
         print(msg, file=sys.stderr)
         return None
@@ -243,8 +242,8 @@ def render_frame_sequence(draw: Callable,
                           draw_args: tuple = None,
                           draw_kwargs: dict = None,
                           use_py5graphics=False) -> list[PIL.ImageFile.ImageFile]:
-    """Helper function to render a sequence of frames using the passed ``draw``
-    function argument.
+    """Helper function to render a sequence of frames using the passed `draw` function
+    argument.
 
     Parameters
     ----------
@@ -285,37 +284,37 @@ def render_frame_sequence(draw: Callable,
     Notes
     -----
 
-    Helper function to render a sequence of frames using the passed ``draw``
-    function argument. The output is returned as a list of ``PIL.Image`` objects.
-    Use the ``limit`` keyword argument to specify the number of frames to return.
+    Helper function to render a sequence of frames using the passed `draw` function
+    argument. The output is returned as a list of `PIL.Image` objects. Use the
+    `limit` keyword argument to specify the number of frames to return.
 
-    The passed ``draw`` function's first parameter must be either a ``py5.Sketch``
-    object or a ``py5.Py5Graphics`` object, depending on the parameter
-    ``use_py5graphics``. That object must be used for all py5 commands. The function
+    The passed `draw` function's first parameter must be either a `py5.Sketch`
+    object or a `py5.Py5Graphics` object, depending on the parameter
+    `use_py5graphics`. That object must be used for all py5 commands. The function
     can have additional positional and keyword arguments. To use them, pass the
-    desired values to ``render_frame_sequence``'s ``draw_args`` and ``draw_kwargs``
+    desired values to `render_frame_sequence`'s `draw_args` and `draw_kwargs`
     arguments.
 
     On OSX, only the default renderer is currently supported. Other platforms
     support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frames can have transparent pixels if and only if the
-    ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
-    object can create an image with transparency. If you need to clear the canvas
-    between one frame and the next, use ``Py5Graphics.clear()``. There is no need to
-    call ``Py5Graphics.begin_draw()`` or ``Py5Graphics.end_draw()`` in the passed
-    ``draw`` function as ``render_frame_sequence()`` does that for you.
+    `use_py5graphics` parameter is `True` because only a `py5.Py5Graphics` object
+    can create an image with transparency. If you need to clear the canvas between
+    one frame and the next, use `Py5Graphics.clear()`. There is no need to call
+    `Py5Graphics.begin_draw()` or `Py5Graphics.end_draw()` in the passed `draw`
+    function as `render_frame_sequence()` does that for you.
 
-    Optionally the caller can pass a ``setup`` function, along with corresponding
-    ``setup_args`` and ``setup_kwargs`` arguments. This will be called once, just
-    like it would for any other py5 Sketch. The type of the first parameter must
-    also depend on the ``use_py5graphics`` parameter.
+    Optionally the caller can pass a `setup` function, along with corresponding
+    `setup_args` and `setup_kwargs` arguments. This will be called once, just like
+    it would for any other py5 Sketch. The type of the first parameter must also
+    depend on the `use_py5graphics` parameter.
 
     This function facilitates the creation and execution of a py5 Sketch, and as a
     result makes it easy to run a Sketch inside of another Sketch. This is
     discouraged, and may fail catastrophically.
 
-    This function is available in decorator form as ``@render_sequence()``."""
+    This function is available in decorator form as `@render_sequence()`."""
     if msg := _check_allowed_renderer(renderer):
         print(msg, file=sys.stderr)
         return None
@@ -333,8 +332,7 @@ def render_frame_sequence(draw: Callable,
 
 def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
            use_py5graphics=False) -> PIL.ImageFile.ImageFile:
-    """Decorator function to render a single frame using the decorated ``draw``
-    function.
+    """Decorator function to render a single frame using the decorated `draw` function.
 
     Parameters
     ----------
@@ -354,12 +352,12 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     Notes
     -----
 
-    Decorator function to render a single frame using the decorated ``draw``
-    function. The output is returned as a ``PIL.Image`` object.
+    Decorator function to render a single frame using the decorated `draw` function.
+    The output is returned as a `PIL.Image` object.
 
-    The decorated draw function's first parameter must be either a ``py5.Sketch``
-    object or a ``py5.Py5Graphics`` object, depending on the parameter
-    ``use_py5graphics``. That object must be used for all of the function's py5
+    The decorated draw function's first parameter must be either a `py5.Sketch`
+    object or a `py5.Py5Graphics` object, depending on the parameter
+    `use_py5graphics`. That object must be used for all of the function's py5
     commands. The function can have additional positional and keyword arguments. To
     use them, pass the desired values when you call the decorated function as you
     would to any other Python function.
@@ -368,16 +366,16 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frame can have transparent pixels if and only if the
-    ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
-    object can create an image with transparency. There is no need to call
-    ``Py5Graphics.begin_draw()`` or ``Py5Graphics.end_draw()`` in the decorated
-    function as ``@render()`` does that for you.
+    `use_py5graphics` parameter is `True` because only a `py5.Py5Graphics` object
+    can create an image with transparency. There is no need to call
+    `Py5Graphics.begin_draw()` or `Py5Graphics.end_draw()` in the decorated function
+    as `@render()` does that for you.
 
     This function facilitates the creation and execution of a py5 Sketch, and as a
     result makes it easy to run a Sketch inside of another Sketch. This is
     discouraged, and may fail catastrophically.
 
-    This function is available in non-decorator form as ``render_frame()``."""
+    This function is available in non-decorator form as `render_frame()`."""
     if msg := _check_allowed_renderer(renderer):
         raise RuntimeError(msg)
     renderer = _osx_renderer_check(renderer)
@@ -396,7 +394,7 @@ def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
                     limit: int = 1, setup: Callable = None,
                     setup_args: tuple = None, setup_kwargs: dict = None,
                     use_py5graphics=False) -> list[PIL.ImageFile.ImageFile]:
-    """Decorator function to render a sequence of frames using the decorated ``draw``
+    """Decorator function to render a sequence of frames using the decorated `draw`
     function.
 
     Parameters
@@ -429,36 +427,36 @@ def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     Notes
     -----
 
-    Decorator function to render a sequence of frames using the decorated ``draw``
-    function. The output is returned as a list of ``PIL.Image`` objects. Use the
-    ``limit`` keyword argument to specify the number of frames to return.
+    Decorator function to render a sequence of frames using the decorated `draw`
+    function. The output is returned as a list of `PIL.Image` objects. Use the
+    `limit` keyword argument to specify the number of frames to return.
 
-    The decorated function's first parameter must be either a ``py5.Sketch`` object
-    or a ``py5.Py5Graphics`` object, depending on the parameter ``use_py5graphics``.
-    That object must be used for all py5 commands. The function can have additional
+    The decorated function's first parameter must be either a `py5.Sketch` object or
+    a `py5.Py5Graphics` object, depending on the parameter `use_py5graphics`. That
+    object must be used for all py5 commands. The function can have additional
     positional and keyword arguments. To use them, pass the desired values when you
     call the decorated function as you would to any other Python function.
 
-    Optionally, the caller can pass the decorator a ``setup`` function, along with
-    corresponding ``setup_args`` and ``setup_kwargs`` arguments. This will be called
+    Optionally, the caller can pass the decorator a `setup` function, along with
+    corresponding `setup_args` and `setup_kwargs` arguments. This will be called
     once, just like it would for any other py5 Sketch. The type of the first
-    parameter must also depend on the ``use_py5graphics`` parameter.
+    parameter must also depend on the `use_py5graphics` parameter.
 
     On OSX, only the default renderer is currently supported. Other platforms
     support the default renderer and the OpenGL renderers (P2D and P3D).
 
     The rendered frames can have transparent pixels if and only if the
-    ``use_py5graphics`` parameter is ``True`` because only a ``py5.Py5Graphics``
-    object can create an image with transparency. If you need to clear the canvas
-    between one frame and the next, use ``Py5Graphics.clear()``. There is no need to
-    call ``Py5Graphics.begin_draw()`` or ``Py5Graphics.end_draw()`` in the decorated
-    function as ``@render_sequence()`` does that for you.
+    `use_py5graphics` parameter is `True` because only a `py5.Py5Graphics` object
+    can create an image with transparency. If you need to clear the canvas between
+    one frame and the next, use `Py5Graphics.clear()`. There is no need to call
+    `Py5Graphics.begin_draw()` or `Py5Graphics.end_draw()` in the decorated function
+    as `@render_sequence()` does that for you.
 
     This function facilitates the creation and execution of a py5 Sketch, and as a
     result makes it easy to run a Sketch inside of another Sketch. This is
     discouraged, and may fail catastrophically.
 
-    This function is available in non-decorator form as ``render_frame_sequence()``."""
+    This function is available in non-decorator form as `render_frame_sequence()`."""
     if msg := _check_allowed_renderer(renderer):
         raise RuntimeError(msg)
     renderer = _osx_renderer_check(renderer)

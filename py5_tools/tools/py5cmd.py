@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -30,11 +30,20 @@ import py5_tools.imported
 parser = argparse.ArgumentParser(description="py5 command tool")
 
 
-LIBRARY_TEMPLATE = """[{id}] Name: {name}
+SHORT_LIBRARY_TEMPLATE = """[{id}] Name: {name}
 Author: {authors}
-{sentence}
-{categories}
-{paragraph}"""
+Summary: {sentence}
+Categories: {categories}
+Description: {paragraph}"""
+
+FULL_LIBRARY_TEMPLATE = """[{id}] Name: {name}
+Author: {authors}
+Summary: {sentence}
+Categories: {categories}
+Library version: {prettyVersion}
+Project URL: {url}
+Download URL: {download}
+Description: {paragraph}"""
 
 
 class Py5Cmd(cmd.Cmd):
@@ -48,20 +57,29 @@ class Py5Cmd(cmd.Cmd):
     intro = "Welcome to the py5 command tool."
 
     def _print_library_info(self, info):
-        info = info.T.to_dict()[info.index[0]]
+        info = info[0]
 
-        return LIBRARY_TEMPLATE.format(**info)
+        return SHORT_LIBRARY_TEMPLATE.format(**info)
 
     def do_list_categories(self, line):
+        """list_categories
+        List the Processing library categories."""
         for c in self._libraries.categories:
             print(c)
 
     def do_show_category(self, line):
-        category_libraries = self._libraries.get_library_info(
-            category=line).sort_values('id')
+        """show_category [category name]
+        Show information for all of the available libraries in a given category."""
+        category_libraries = sorted(
+            self._libraries.get_library_info(
+                category=line),
+            key=lambda x: x.get('name'))
 
-        for _, info in category_libraries.iterrows():
-            print(LIBRARY_TEMPLATE.format(**info).strip() + '\n')
+        if category_libraries:
+            for info in category_libraries:
+                print(SHORT_LIBRARY_TEMPLATE.format(**info).strip() + '\n')
+        else:
+            print('No libraries found in category ' + line)
 
     def complete_show_category(self, text, line, begidx, endidx):
         if not text:
@@ -73,6 +91,8 @@ class Py5Cmd(cmd.Cmd):
         return completions
 
     def do_run_sketch(self, line):
+        """run_sketch [path]
+        Run the imported mode Sketch found at the given path."""
         if line:
             try:
                 new_process = platform.system() != 'Windows'
@@ -91,6 +111,8 @@ class Py5Cmd(cmd.Cmd):
         return completions
 
     def do_get_library(self, line):
+        """get_library [library name]
+        Download a library and unzip it into a jars subdirectory."""
         try:
             self._libraries.download_zip('jars', library_name=line)
         except Exception as e:
@@ -105,22 +127,53 @@ class Py5Cmd(cmd.Cmd):
 
         return completions
 
+    def do_library_info(self, line):
+        """library_info [library name]
+        Show information for the given library."""
+        info = self._libraries.get_library_info(library_name=line)
+
+        if len(info) == 0:
+            print('There are no libraries named ' + line)
+        elif len(info) == 1:
+            print(FULL_LIBRARY_TEMPLATE.format(**info[0]).strip() + '\n')
+        else:
+            print('Multiple libraries found named ' + line)
+
+    def complete_library_info(self, text, line, begidx, endidx):
+        if not text:
+            completions = self._libraries.names
+        else:
+            completions = [
+                n for n in self._libraries.names if n.startswith(text)]
+
+        return completions
+
     def emptyline(self):
         return None
 
-    def do_exit(self, line):
-        return True
-
-    def do_EOF(self, line):
+    def shutdown(self):
         for p in self._running_sketches:
             p.terminate()
             p.join()
 
+    def do_exit(self, line):
+        """exit
+        Quit the py5 command tool."""
+        self.shutdown()
         return True
+
+    def do_EOF(self, line):
+        """exit
+        Quit the py5 command tool."""
+        self.shutdown()
+        return True
+
+    def postloop(self):
+        print()
 
 
 def main():
-    # args = parser.parse_args()
+    args = parser.parse_args()
     py5cmd = Py5Cmd()
     py5cmd.cmdloop()
 

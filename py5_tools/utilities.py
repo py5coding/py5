@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -18,6 +18,7 @@
 #
 # *****************************************************************************
 import os
+import sys
 from pathlib import Path
 
 
@@ -27,9 +28,11 @@ import py5.core.Sketch;
 
 public class Py5Utilities {
 
-  public Sketch sketch;
+  protected Sketch sketch;
 
   public Py5Utilities(Sketch sketch) {
+    // This constructor is called before the sketch starts running. DO NOT use
+    // Processing methods here, as they may not work correctly.
     this.sketch = sketch;
   }
 
@@ -59,21 +62,21 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-processing4</artifactId>
-      <version>0.8.3a1</version>
+      <version>0.9.0a0</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/core.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-jogl</artifactId>
-      <version>0.8.3a1</version>
+      <version>0.9.0a0</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/jogl-all.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5</artifactId>
-      <version>0.8.3a1</version>
+      <version>0.9.0a0</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/py5.jar</systemPath>
     </dependency>
@@ -133,14 +136,23 @@ def generate_utilities_framework(output_dir=None):
     java_dir.mkdir(parents=True, exist_ok=True)
     jars_dir.mkdir(exist_ok=True)
 
-    with open(java_dir / 'pom.xml', 'w') as f:
-        f.write(POM_TEMPLATE.format(classpath=py5_classpath))
+    pom_filename = java_dir / 'pom.xml'
+    if pom_filename.exists():
+        print(f"Skipping {pom_filename}: file already exists", file=sys.stderr)
+    else:
+        with open(pom_filename, 'w') as f:
+            f.write(POM_TEMPLATE.format(classpath=py5_classpath))
 
     utils_filename = java_dir / \
         Path('src/main/java/py5utils/Py5Utilities.java')
-    utils_filename.parent.mkdir(parents=True, exist_ok=True)
-    with open(utils_filename, 'w') as f:
-        f.write(PY5_UTILITIES_CLASS)
+    if utils_filename.exists():
+        print(
+            f"Skipping {utils_filename}: file already exists",
+            file=sys.stderr)
+    else:
+        utils_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(utils_filename, 'w') as f:
+            f.write(PY5_UTILITIES_CLASS)
 
 
 __all__ = ['generate_utilities_framework']

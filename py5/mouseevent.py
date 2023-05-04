@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,8 @@ from __future__ import annotations
 
 import weakref
 
+from . import spelling
+
 
 class Py5MouseEvent:
     """Datatype for providing information about mouse events.
@@ -33,11 +35,11 @@ class Py5MouseEvent:
     Datatype for providing information about mouse events. An instance of this class
     will be passed to user-defined mouse event functions if py5 detects those
     functions accept 1 (positional) argument, as demonstrated in the example code.
-    The mouse event functions can be any of ``mouse_clicked()``,
-    ``mouse_dragged()``, ``mouse_moved()``, ``mouse_entered()``, ``mouse_exited()``,
-    ``mouse_pressed()``, ``mouse_released()``, or ``mouse_wheel()``. Mouse events
-    can be generated faster than the frame rate of the Sketch, making mouse event
-    functions useful for capturing all of a user's mouse activity.
+    The mouse event functions can be any of `mouse_clicked()`, `mouse_dragged()`,
+    `mouse_moved()`, `mouse_entered()`, `mouse_exited()`, `mouse_pressed()`,
+    `mouse_released()`, or `mouse_wheel()`. Mouse events can be generated faster
+    than the frame rate of the Sketch, making mouse event functions useful for
+    capturing all of a user's mouse activity.
     """
     _py5_object_cache = weakref.WeakSet()
 
@@ -50,6 +52,22 @@ class Py5MouseEvent:
             o._instance = pmouseevent
             cls._py5_object_cache.add(o)
             return o
+
+    def __str__(self):
+        action = self.get_action()
+        action_str = 'UNKNOWN'
+        for k, v in Py5MouseEvent.__dict__.items():
+            if k == k.upper() and action == v:
+                action_str = k
+                break
+        return f"Py5MouseEvent(x=" + str(self.get_x()) + ", y=" + \
+            str(self.get_y()) + ", action=" + action_str + ")"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __getattr__(self, name):
+        raise AttributeError(spelling.error_msg('Py5MouseEvent', name, self))
 
     ALT = 8
     CLICK = 3
@@ -85,8 +103,8 @@ class Py5MouseEvent:
         Notes
         -----
 
-        Identify the mouse button used in the event. This can be ``LEFT``, ``CENTER``,
-        or ``RIGHT``.
+        Identify the mouse button used in the event. This can be `LEFT`, `CENTER`, or
+        `RIGHT`.
         """
         return self._instance.getButton()
 
@@ -143,8 +161,8 @@ class Py5MouseEvent:
         system the Sketch is run on. Sometimes the native object can be used to access
         functionality not otherwise available through Processing or py5.
 
-        Be aware that it is possible for the native event object to be ``None``, such as
-        when interacting with a Sketch through ``py5_tools.sketch_portal()``.
+        Be aware that it is possible for the native event object to be `None`, such as
+        when interacting with a Sketch through `py5_tools.sketch_portal()`.
         """
         return self._instance.getNative()
 
@@ -157,7 +175,7 @@ class Py5MouseEvent:
         -----
 
         Return the x position of the mouse at the time of this mouse event. This
-        information can also be obtained with ``mouse_x``.
+        information can also be obtained with `mouse_x`.
         """
         return self._instance.getX()
 
@@ -170,7 +188,7 @@ class Py5MouseEvent:
         -----
 
         Return the y position of the mouse at the time of this mouse event. This
-        information can also be obtained with ``mouse_y``.
+        information can also be obtained with `mouse_y`.
         """
         return self._instance.getY()
 

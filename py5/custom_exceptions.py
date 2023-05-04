@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -19,10 +19,14 @@
 # *****************************************************************************
 import re
 
+import py5_tools
+
 from . import reference
+from . import spelling
 
 JPYPE_TYPEERROR_REGEX = re.compile(
     r'No matching overloads found for [\w\.]*(\([^\)]*\))')
+IMPORTED_MODE_NAMEERROR_REGEX = re.compile(r"name '(\w+)' is not defined")
 
 
 def handle_typeerror(exc_type_name, exc_msg, py5info):
@@ -46,6 +50,21 @@ def handle_typeerror(exc_type_name, exc_msg, py5info):
     return exc_msg
 
 
+def handle_nameerror(exc_type_name, exc_msg, py5info):
+    if py5_tools.imported.get_imported_mode():
+        m = IMPORTED_MODE_NAMEERROR_REGEX.match(exc_msg)
+        if m:
+            fname = m.group(1)
+            exc_msg = 'The name "' + fname + '" is not defined.'
+            suggestion_list = spelling.suggestions(
+                fname, py5_tools.reference.PY5_DIR_STR)
+            if suggestion_list:
+                exc_msg += ' Did you mean ' + suggestion_list + '?'
+
+    return exc_msg
+
+
 CUSTOM_EXCEPTION_MSGS = dict(
     TypeError=handle_typeerror,
+    NameError=handle_nameerror,
 )

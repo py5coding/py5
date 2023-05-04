@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,6 @@ import PIL
 try:
     from py5jupyter.widgets import Py5SketchPortal
 except ImportError:
-    # TODO: deprecated
     class Py5SketchPortal(widgets.Image):
         def __init__(self, sketch, w, h):
             super().__init__()
@@ -77,7 +76,7 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     new frame replacing the previous frame.
 
     By default the Sketch will be the currently running Sketch, as returned by
-    ``get_current_sketch()``. Use the ``sketch`` parameter to specify a different
+    `get_current_sketch()`. Use the `sketch` parameter to specify a different
     running Sketch, such as a Sketch created using Class mode.
 
     The Sketch Portal is a custom Jupyter Widget and can handle keyboard or mouse
@@ -100,29 +99,29 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
     for the Sketch Portal. Creating a "New Console for Notebook" and creating a
     portal there works well also.
 
-    This command can be called before ``run_sketch()`` if the current Sketch is in
-    the ``is_ready`` state.
+    This command can be called before `run_sketch()` if the current Sketch is in the
+    `is_ready` state.
 
-    Use the ``time_limit`` parameter to set a time limit (seconds). Use
-    ``throttle_frame_rate`` to throttle the stream's frame rate (frames per second)
-    to a slower pace than the Sketch's actual draw frame rate. By default,
-    ``throttle_frame_rate`` is set to 30, which is half of the Sketch's default draw
-    frame rate of 60 frames per second. Set this parameter to ``None`` to disable
-    throttling. The ``scale`` parameter is a scaling factor that can adjust the
-    portal height and width. The ``quality`` parameter sets the JPEG quality factor
-    (default 75) for the stream, which must be between 1 (worst) and 100 (best). If
-    the portal causes the Sketch's frame rate to drop, try adjusting the portal's
+    Use the `time_limit` parameter to set a time limit (seconds). Use
+    `throttle_frame_rate` to throttle the stream's frame rate (frames per second) to
+    a slower pace than the Sketch's actual draw frame rate. By default,
+    `throttle_frame_rate` is set to 30, which is half of the Sketch's default draw
+    frame rate of 60 frames per second. Set this parameter to `None` to disable
+    throttling. The `scale` parameter is a scaling factor that can adjust the portal
+    height and width. The `quality` parameter sets the JPEG quality factor (default
+    75) for the stream, which must be between 1 (worst) and 100 (best). If the
+    portal causes the Sketch's frame rate to drop, try adjusting the portal's
     throttle frame rate, quality, and scale.
 
-    If your Sketch has a ``post_draw()`` method, use the ``hook_post_draw``
-    parameter to make this function run after ``post_draw()`` instead of ``draw()``.
-    This is important when using Processing libraries that support ``post_draw()``
-    such as Camera3D or ColorBlindness.
+    If your Sketch has a `post_draw()` method, use the `hook_post_draw` parameter to
+    make this function run after `post_draw()` instead of `draw()`. This is
+    important when using Processing libraries that support `post_draw()` such as
+    Camera3D or ColorBlindness.
 
     To stop a Sketch Portal, wait for the time limit to expire, call
-    ``exit_sketch()``, or press the "exit_sketch()" button below the portal. If you
-    delete the cell with the ``Py5SketchPortal`` object, the portal will no longer
-    be visible but the Sketch will still be streaming frames to the notebook client,
+    `exit_sketch()`, or press the "exit_sketch()" button below the portal. If you
+    delete the cell with the `Py5SketchPortal` object, the portal will no longer be
+    visible but the Sketch will still be streaming frames to the notebook client,
     wasting resources. A Sketch can only have one open portal, so opening a new
     portal with different options will replace an existing portal."""
     environment = _environ.Environment()
@@ -133,7 +132,6 @@ def sketch_portal(*, time_limit: float = 0.0, throttle_frame_rate: float = 30,
         raise RuntimeError(
             'The sketch_widget() function can only be used with ZMQInteractiveShell (such as Jupyter Lab)')
     if issubclass(Py5SketchPortal, widgets.Image):
-        # TODO: deprecated
         warnings.warn(
             'Please install the py5jupyter package for interactive Py5SketchPortal functionality.')
 

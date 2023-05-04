@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -31,6 +31,7 @@ from .image import Py5Image  # noqa
 from jpype.types import JException, JArray, JBoolean, JInt, JFloat  # noqa
 from .pmath import _py5vector_to_pvector, _numpy_to_pvector, _numpy_to_pmatrix2d, _numpy_to_pmatrix3d  # noqa
 from .vector import Py5Vector
+from . import spelling
 
 
 def _return_py5shader(f):
@@ -92,9 +93,9 @@ class Py5Shader:
     -----
 
     This class encapsulates a GLSL shader program, including a vertex and a fragment
-    shader. It's compatible with the ``P2D`` and ``P3D`` renderers, but not with the
-    default renderer. Use the ``load_shader()`` function to load your shader code
-    and create ``Py5Shader`` objects.
+    shader. It's compatible with the `P2D` and `P3D` renderers, but not with the
+    default renderer. Use the `load_shader()` function to load your shader code and
+    create `Py5Shader` objects.
     """
     _py5_object_cache = weakref.WeakSet()
 
@@ -107,6 +108,15 @@ class Py5Shader:
             o._instance = pshader
             cls._py5_object_cache.add(o)
             return o
+
+    def __str__(self) -> str:
+        return f"Py5Shader(id=" + str(id(self)) + ")"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __getattr__(self, name):
+        raise AttributeError(spelling.error_msg('Py5Shader', name, self))
 
     @overload
     def set(self, name: str, x: bool, /) -> None:

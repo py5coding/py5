@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,12 @@
 # *****************************************************************************
 import sys
 import ast
+import re
+
+import stackprinter
 
 from . import reference as ref
+from . import split_setup
 
 try:
     from IPython.core.error import InputRejected
@@ -132,3 +136,71 @@ def check_reserved_words(code, code_ast):
 def transform_py5_code(code_ast: ast.Module):
     transformer = TransformDynamicVariablesToCalls()
     return ast.fix_missing_locations(transformer.visit(code_ast))
+
+
+def check_for_problems(code, filename, *, tool=None):
+    # if the code contains a setup() or a draw() function, the user could be
+    # confused about static mode
+    if (ms := re.findall(
+            r"^def (setup|draw)\([^\)]*\):", code, flags=re.MULTILINE)):
+        msg = 'Your code contains ' + \
+            (f'a {ms[0]}() function.' if len(ms) == 1 else 'setup() and draw() functions.')
+        if tool:
+            msg += f' When using {tool}, your code is written in static mode, without defining a setup() function or a draw() function.'
+        else:
+            msg += 'When coding in static mode, your code should not define a setup() function or  draw() function.'
+        return False, msg
+
+    # does the code parse? if not, return an error message
+    try:
+        sketch_ast = ast.parse(code, filename=filename, mode='exec')
+    except IndentationError as e:
+        msg = f'There is an indentation problem with your code on line {e.lineno}:\n'
+        arrow_msg = f'--> {e.lineno}    '
+        msg += f'{arrow_msg}{e.text}'
+        msg += ' ' * (len(arrow_msg) + e.offset) + '^'
+        return False, msg
+    except Exception as e:
+        msg = stackprinter.format(e)
+        m = re.search(r'^SyntaxError:', msg, flags=re.MULTILINE)
+        if m:
+            msg = msg[m.start(0):]
+        msg = 'There is a problem with your code:\n' + msg
+        return False, msg
+
+    # check for assignments to or deletions of reserved words
+    problems = check_reserved_words(code, sketch_ast)
+    if problems:
+        msg = 'There ' + ('is a problem' if len(problems) ==
+                          1 else f'are {len(problems)} problems') + ' with your code.\n'
+        msg += '=' * len(msg) + '\n' + '\n'.join(problems)
+        return False, msg
+
+    cutoff1, cutoff2 = split_setup.find_cutoffs(
+        code, 'imported', static_mode=True)
+    lines = code.splitlines(keepends=True)
+    py5static_globals = ''.join(lines[:cutoff1])
+    py5static_settings = ''.join(lines[cutoff1:cutoff2])
+    py5static_setup = ''.join(lines[cutoff2:])
+
+    # check for calls to size, etc, that were not at the beginning of the code
+    problems = split_setup.check_for_special_functions(
+        py5static_setup, 'imported')
+    if problems:
+        msg = 'There ' + ('is a problem' if len(problems) ==
+                          1 else f'are {len(problems)} problems') + ' with your code.\n'
+        msg += 'The function ' + \
+            ('call' if len(problems) == 1 else 'calls') + ' to '
+        problems = [
+            f'{name} (on line {i + cutoff2 + 1})' for i,
+            name in problems]
+        if len(problems) == 1:
+            msg += problems[0]
+        elif len(problems) == 2:
+            msg += f'{problems[0]} and {problems[1]}'
+        else:
+            msg += ', and '.join(', '.join(problems).rsplit(', ', maxsplit=1))
+        msg += ' must be moved to the beginning of your code, before any other code.'
+        return False, msg
+
+    return True, (py5static_globals, py5static_settings, py5static_setup)

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -177,23 +177,23 @@ class ThreadsMixin:
         This can be useful for executing non-py5 code that would otherwise slow down the
         animation thread and reduce the Sketch's frame rate.
 
-        The ``name`` parameter is optional but useful if you want to monitor the thread
-        with other methods such as ``has_thread()``. If the provided ``name`` is
-        identical to an already running thread, the running thread will first be stopped
-        with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+        The `name` parameter is optional but useful if you want to monitor the thread
+        with other methods such as `has_thread()`. If the provided `name` is identical
+        to an already running thread, the running thread will first be stopped with a
+        call to `stop_thread()` with the `wait` parameter equal to `True`.
 
-        Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-        arguments to the function.
+        Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+        to the function.
 
-        Use the ``daemon`` parameter to make the launched thread a daemon that will run
-        without blocking Python from exiting. This parameter defaults to ``True``,
-        meaning that function execution can be interupted if the Python process exits.
-        Note that if the Python process continues running after the Sketch exits, which
-        is typically the case when using a Jupyter Notebook, this parameter won't have
-        any effect unless if you try to restart the Notebook kernel. Generally speaking,
-        setting this parameter to ``False`` causes problems but it is available for
-        those who really need it. See ``stop_all_threads()`` for a better approach to
-        exit threads.
+        Use the `daemon` parameter to make the launched thread a daemon that will run
+        without blocking Python from exiting. This parameter defaults to `True`, meaning
+        that function execution can be interupted if the Python process exits. Note that
+        if the Python process continues running after the Sketch exits, which is
+        typically the case when using a Jupyter Notebook, this parameter won't have any
+        effect unless if you try to restart the Notebook kernel. Generally speaking,
+        setting this parameter to `False` causes problems but it is available for those
+        who really need it. See `stop_all_threads()` for a better approach to exit
+        threads.
 
         The new thread is a Python thread, so all the usual caveats about the Global
         Interpreter Lock (GIL) apply here."""
@@ -210,7 +210,7 @@ class ThreadsMixin:
             daemon: bool = True,
             args: tuple = None,
             kwargs: dict = None) -> Py5Promise:
-        """Create a ``Py5Promise`` object that will store the returned result of a function
+        """Create a `Py5Promise` object that will store the returned result of a function
         when that function completes.
 
         Parameters
@@ -234,32 +234,32 @@ class ThreadsMixin:
         Notes
         -----
 
-        Create a ``Py5Promise`` object that will store the returned result of a function
+        Create a `Py5Promise` object that will store the returned result of a function
         when that function completes. This can be useful for executing non-py5 code that
         would otherwise slow down the animation thread and reduce the Sketch's frame
         rate.
 
-        The ``Py5Promise`` object has an ``is_ready`` property that will be ``True``
-        when the ``result`` property contains the value function ``f`` returned. Before
-        then, the ``result`` property will be ``None``.
+        The `Py5Promise` object has an `is_ready` property that will be `True` when the
+        `result` property contains the value function `f` returned. Before then, the
+        `result` property will be `None`.
 
-        The ``name`` parameter is optional but useful if you want to monitor the thread
-        with other methods such as ``has_thread()``. If the provided ``name`` is
-        identical to an already running thread, the running thread will first be stopped
-        with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+        The `name` parameter is optional but useful if you want to monitor the thread
+        with other methods such as `has_thread()`. If the provided `name` is identical
+        to an already running thread, the running thread will first be stopped with a
+        call to `stop_thread()` with the `wait` parameter equal to `True`.
 
-        Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-        arguments to the function.
+        Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+        to the function.
 
-        Use the ``daemon`` parameter to make the launched thread a daemon that will run
-        without blocking Python from exiting. This parameter defaults to ``True``,
-        meaning that function execution can be interupted if the Python process exits.
-        Note that if the Python process continues running after the Sketch exits, which
-        is typically the case when using a Jupyter Notebook, this parameter won't have
-        any effect unless if you try to restart the Notebook kernel. Generally speaking,
-        setting this parameter to ``False`` causes problems but it is available for
-        those who really need it. See ``stop_all_threads()`` for a better approach to
-        exit threads.
+        Use the `daemon` parameter to make the launched thread a daemon that will run
+        without blocking Python from exiting. This parameter defaults to `True`, meaning
+        that function execution can be interupted if the Python process exits. Note that
+        if the Python process continues running after the Sketch exits, which is
+        typically the case when using a Jupyter Notebook, this parameter won't have any
+        effect unless if you try to restart the Notebook kernel. Generally speaking,
+        setting this parameter to `False` causes problems but it is available for those
+        who really need it. See `stop_all_threads()` for a better approach to exit
+        threads.
 
         The new thread is a Python thread, so all the usual caveats about the Global
         Interpreter Lock (GIL) apply here."""
@@ -310,30 +310,29 @@ class ThreadsMixin:
         your Sketch code. This can be useful for executing non-py5 code that would
         otherwise slow down the animation thread and reduce the Sketch's frame rate.
 
-        Use the ``time_delay`` parameter to set the time in seconds between one call to
-        function ``f`` and the next call. Set this parameter to ``0`` if you want each
-        call to happen immediately after the previous call finishes. If the function
-        ``f`` takes longer than expected to finish, py5 will wait for it to finish
-        before making the next call. There will not be overlapping calls to function
-        ``f``.
+        Use the `time_delay` parameter to set the time in seconds between one call to
+        function `f` and the next call. Set this parameter to `0` if you want each call
+        to happen immediately after the previous call finishes. If the function `f`
+        takes longer than expected to finish, py5 will wait for it to finish before
+        making the next call. There will not be overlapping calls to function `f`.
 
-        The ``name`` parameter is optional but useful if you want to monitor the thread
-        with other methods such as ``has_thread()``. If the provided ``name`` is
-        identical to an already running thread, the running thread will first be stopped
-        with a call to ``stop_thread()`` with the ``wait`` parameter equal to ``True``.
+        The `name` parameter is optional but useful if you want to monitor the thread
+        with other methods such as `has_thread()`. If the provided `name` is identical
+        to an already running thread, the running thread will first be stopped with a
+        call to `stop_thread()` with the `wait` parameter equal to `True`.
 
-        Use the ``args`` and ``kwargs`` parameters to pass positional and keyword
-        arguments to the function.
+        Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+        to the function.
 
-        Use the ``daemon`` parameter to make the launched thread a daemon that will run
-        without blocking Python from exiting. This parameter defaults to ``True``,
-        meaning that function execution can be interupted if the Python process exits.
-        Note that if the Python process continues running after the Sketch exits, which
-        is typically the case when using a Jupyter Notebook, this parameter won't have
-        any effect unless if you try to restart the Notebook kernel. Generally speaking,
-        setting this parameter to ``False`` causes problems but it is available for
-        those who really need it. See ``stop_all_threads()`` for a better approach to
-        exit threads.
+        Use the `daemon` parameter to make the launched thread a daemon that will run
+        without blocking Python from exiting. This parameter defaults to `True`, meaning
+        that function execution can be interupted if the Python process exits. Note that
+        if the Python process continues running after the Sketch exits, which is
+        typically the case when using a Jupyter Notebook, this parameter won't have any
+        effect unless if you try to restart the Notebook kernel. Generally speaking,
+        setting this parameter to `False` causes problems but it is available for those
+        who really need it. See `stop_all_threads()` for a better approach to exit
+        threads.
 
         The new thread is a Python thread, so all the usual caveats about the Global
         Interpreter Lock (GIL) apply here."""
@@ -361,7 +360,7 @@ class ThreadsMixin:
         -----
 
         Determine if a thread of a given name exists and is currently running. You can
-        get the list of all currently running threads with ``list_threads()``."""
+        get the list of all currently running threads with `list_threads()`."""
         self._remove_dead_threads()
         return name in self._py5threads
 
@@ -381,15 +380,15 @@ class ThreadsMixin:
         -----
 
         Join the Python thread associated with the given thread name. The
-        ``join_thread()`` method will wait until the named thread has finished executing
-        before returning. Use the ``timeout`` parameter to set an upper limit for the
+        `join_thread()` method will wait until the named thread has finished executing
+        before returning. Use the `timeout` parameter to set an upper limit for the
         number of seconds to wait. This method will return right away if the named
         thread does not exist or the thread has already finished executing. You can get
-        the list of all currently running threads with ``list_threads()``.
+        the list of all currently running threads with `list_threads()`.
 
-        This method will return ``True`` if the named thread has completed execution and
-        ``False`` if the named thread is still executing. It will only return ``False``
-        if you use the ``timeout`` parameter and the method is not able to join with the
+        This method will return `True` if the named thread has completed execution and
+        `False` if the named thread is still executing. It will only return `False` if
+        you use the `timeout` parameter and the method is not able to join with the
         thread within that time limit."""
         self._remove_dead_threads()
         if name in self._py5threads:
@@ -411,21 +410,20 @@ class ThreadsMixin:
         Notes
         -----
 
-        Stop a thread of a given name. The ``wait`` parameter determines if the method
+        Stop a thread of a given name. The `wait` parameter determines if the method
         call will return right away or wait for the thread to exit.
 
         This won't do anything useful if the thread was launched with either
-        ``launch_thread()`` or ``launch_promise_thread()`` and the ``wait`` parameter is
-        ``False``. Non-repeating threads are executed once and will stop when they
-        complete execution. Setting the ``wait`` parameter to ``True`` will merely block
+        `launch_thread()` or `launch_promise_thread()` and the `wait` parameter is
+        `False`. Non-repeating threads are executed once and will stop when they
+        complete execution. Setting the `wait` parameter to `True` will merely block
         until the thread exits on its own. Killing off a running thread in Python is
         complicated and py5 cannot do that for you. If you want a thread to perform some
-        action repeatedly and be interuptable, use ``launch_repeating_thread()``
-        instead.
+        action repeatedly and be interuptable, use `launch_repeating_thread()` instead.
 
-        Use ``has_thread()`` to determine if a thread of a given name exists and
-        ``list_threads()`` to get a list of all thread names. Use ``stop_all_threads()``
-        to stop all threads."""
+        Use `has_thread()` to determine if a thread of a given name exists and
+        `list_threads()` to get a list of all thread names. Use `stop_all_threads()` to
+        stop all threads."""
         if name in self._py5threads:
             t, py5thread = self._py5threads[name]
             py5thread.stop()
@@ -444,12 +442,12 @@ class ThreadsMixin:
         Notes
         -----
 
-        Stop all running threads. The ``wait`` parameter determines if the method call
+        Stop all running threads. The `wait` parameter determines if the method call
         will return right away or wait for the threads to exit.
 
-        When the Sketch shuts down, ``stop_all_threads(wait=False)`` is called for you.
-        If you would rather the Sketch waited for threads to exit, create an ``exiting``
-        method and make a call to ``stop_all_threads(wait=True)``."""
+        When the Sketch shuts down, `stop_all_threads(wait=False)` is called for you. If
+        you would rather the Sketch waited for threads to exit, create an `exiting`
+        method and make a call to `stop_all_threads(wait=True)`."""
         current_thread_name = threading.current_thread().name
         for name in self.list_threads():
             if name == current_thread_name:

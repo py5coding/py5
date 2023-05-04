@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -57,7 +57,7 @@ def _numpy_to_pmatrix3d(array):
 
 
 # the next three functions are only used for the jpype conversion customizer
-# they are registered in java_conversion.py
+# they are registered in object_conversion.py
 def _numpy_to_pvector_converter(jcls, array):
     return _numpy_to_pvector(array)
 

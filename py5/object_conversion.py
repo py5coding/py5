@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -17,11 +17,13 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
+import pathlib
+
 import numpy as np
 from jpype import JClass, JArray, _jcustomizer
 
 from .sketch import _Sketch, Sketch, Py5Graphics, Py5Image, Py5Font, Py5Shape, Py5Shader, Py5KeyEvent, Py5MouseEvent
-from .pmath import _py5vector_to_pvector_converter, _numpy_to_pvector_converter, _numpy_to_pmatrix_converter
+from .pmath import _py5vector_to_pvector_converter, _numpy_to_pvector_converter, _numpy_to_pmatrix_converter, _PVector, _PMatrix2D, _PMatrix3D, _pvector_to_py5vector, _pmatrix_to_numpy
 from .vector import Py5Vector
 
 
@@ -48,6 +50,9 @@ PROCESSING_TO_PY5_CLASS_MAP = [
     (JClass("processing.opengl.PShader"), Py5Shader),
     (JClass("processing.event.KeyEvent"), Py5KeyEvent),
     (JClass("processing.event.MouseEvent"), Py5MouseEvent),
+    (_PVector, _pvector_to_py5vector),
+    (_PMatrix2D, _pmatrix_to_numpy),
+    (_PMatrix3D, _pmatrix_to_numpy),
 ]
 
 _String = JClass("java.lang.String")
@@ -70,20 +75,44 @@ def init_jpype_converters():
     _jcustomizer.JConversion(
         'processing.core.PMatrix',
         np.ndarray)(_numpy_to_pmatrix_converter)
+    _jcustomizer.JConversion(
+        'java.lang.String',
+        pathlib.Path)(
+        lambda jcls,
+        path: _String(
+            path.as_posix()))
+
+
+def convert_to_java_type(obj):
+    for _, py5class in JCONVERSION_CLASS_MAP:
+        if isinstance(obj, py5class):
+            return obj._instance
+
+    if isinstance(obj, Py5Vector):
+        if obj.dim == 4:
+            return obj._data
+        else:
+            return _py5vector_to_pvector_converter(obj)
+    elif isinstance(obj, pathlib.Path):
+        return _String(obj.as_posix())
+    elif isinstance(obj, np.ndarray):
+        return JArray.of(obj)
+    else:
+        return obj
+
+
+def convert_to_python_type(obj):
+    for jclass, py5class in PROCESSING_TO_PY5_CLASS_MAP:
+        if isinstance(obj, jclass):
+            return py5class(obj)
+
+    if isinstance(obj, _String):
+        return str(obj)
+    elif isinstance(obj, _Sketch):
+        return Sketch(_instance=obj)
+    else:
+        return obj
 
 
 def convert_to_python_types(params):
-    for p in params:
-        for jclass, py5class in PROCESSING_TO_PY5_CLASS_MAP:
-            if isinstance(p, jclass):
-                yield py5class(p)
-                break
-        else:
-            if isinstance(p, _String):
-                yield str(p)
-            elif isinstance(p, _Sketch):
-                yield Sketch(_instance=p)
-            elif isinstance(p, JArray):
-                yield np.asarray(p)
-            else:
-                yield p
+    return [convert_to_python_type(p) for p in params]

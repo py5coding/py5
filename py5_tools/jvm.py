@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -44,12 +44,12 @@ def is_jvm_running() -> bool:
     -----
 
     Determine if the Java Virtual Machine (JVM) is or is not running. When the py5
-    library is imported it will start the JVM.  Therefore this will be ``False``
-    before ``import py5`` is executed and ``True`` afterwards. It should continue to
-    always be ``True`` unless somewhere there is some Java code that calls
-    ``System.exit()``. Calling ``System.exit()`` is not recommended. If for some
-    reason the JVM crashes (perhaps through a segmentation fault), the JVM will no
-    longer be running, but that crash will most likely also terminate the Python
+    library is imported it will start the JVM.  Therefore this will be `False`
+    before `import py5` is executed and `True` afterwards. It should continue to
+    always be `True` unless somewhere there is some Java code that calls
+    `System.exit()`. Calling `System.exit()` is not recommended. If for some reason
+    the JVM crashes (perhaps through a segmentation fault), the JVM will no longer
+    be running, but that crash will most likely also terminate the Python
     interpreter."""
     return jpype.isJVMStarted()
 
@@ -75,8 +75,8 @@ def add_options(*options: list[str]) -> None:
     memory size, for example.
 
     After the JVM has started, new options cannot be added. This function will throw
-    a ``RuntimeError`` if it is called after the JVM has already started. Use
-    ``py5_tools.is_jvm_running()`` to first determine if the JVM is running."""
+    a `RuntimeError` if it is called after the JVM has already started. Use
+    `py5_tools.is_jvm_running()` to first determine if the JVM is running."""
     _check_jvm_running()
     _options.extend(options)
 
@@ -88,10 +88,10 @@ def get_classpath() -> str:
     -----
 
     Get the Java classpath. If the JVM has not yet started, this will list the jars
-    that have been added with ``py5_tools.add_classpath()`` and
-    ``py5_tools.add_jars()``. After the JVM has started, the classpath cannot be
-    changed and the aformentioned functions would throw a ``RuntimeError``. Use
-    ``py5_tools.is_jvm_running()`` to first determine if the JVM is running."""
+    that have been added with `py5_tools.add_classpath()` and
+    `py5_tools.add_jars()`. After the JVM has started, the classpath cannot be
+    changed and the aformentioned functions would throw a `RuntimeError`. Use
+    `py5_tools.is_jvm_running()` to first determine if the JVM is running."""
     if jpype.isJVMStarted():
         return jpype.getClassPath()
     else:
@@ -114,8 +114,8 @@ def add_classpath(classpath: Union[Path, str]) -> None:
     relative.
 
     After the JVM has started, the classpath cannot be changed. This function will
-    throw a ``RuntimeError`` if it is called after the JVM has already started. Use
-    ``py5_tools.is_jvm_running()`` to first determine if the JVM is running."""
+    throw a `RuntimeError` if it is called after the JVM has already started. Use
+    `py5_tools.is_jvm_running()` to first determine if the JVM is running."""
     _check_jvm_running()
     if not isinstance(classpath, Path):
         classpath = Path(classpath)
@@ -139,13 +139,13 @@ def add_jars(path: Union[Path, str]) -> None:
     the classpath. The path can be absolute or relative. If the directory does does
     not exist, it will be ignored.
 
-    When ``import py5`` is executed, ``add_jars('jars')`` is called for you to
+    When `import py5` is executed, `add_jars('jars')` is called for you to
     automatically add jar files contained in a subdirectory called jars. This is
     similar to functionality provided by the Processing IDE.
 
     After the JVM has started, the classpath cannot be changed. This function will
-    throw a ``RuntimeError`` if it is called after the JVM has already started. Use
-    ``py5_tools.is_jvm_running()`` to first determine if the JVM is running."""
+    throw a `RuntimeError` if it is called after the JVM has already started. Use
+    `py5_tools.is_jvm_running()` to first determine if the JVM is running."""
     _check_jvm_running()
     if not isinstance(path, Path):
         path = Path(path)
@@ -161,9 +161,8 @@ def get_jvm_debug_info() -> dict[str, Any]:
     -----
 
     Get Java Virtual Machine debug information. The py5 library requires Java 17 or
-    greater to be installed and the ``$JAVA_HOME`` environment variable to be
-    properly set. If one or both of these conditions are not true, py5 will not
-    work.
+    greater to be installed and the `$JAVA_HOME` environment variable to be properly
+    set. If one or both of these conditions are not true, py5 will not work.
 
     If the Java Virtual Machine cannot start, py5 will include this debug
     information in the error message. If that doesn't help the user figure out the

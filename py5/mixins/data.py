@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -51,14 +51,14 @@ class DataMixin:
 
         Load a JSON data file from a file or URL. When loading a file, the path can be
         in the data directory, relative to the current working directory
-        (``sketch_path()``), or an absolute path. When loading from a URL, the
-        ``json_path`` parameter must start with ``http://`` or ``https://``.
+        (`sketch_path()`), or an absolute path. When loading from a URL, the `json_path`
+        parameter must start with `http://` or `https://`.
 
         When loading JSON data from a URL, the data is retrieved using the Python
-        requests library with the ``get`` method, and any extra keyword arguments (the
-        ``kwargs`` parameter) are passed along to that method. When loading JSON data
-        from a file, the data is loaded using the Python json library with the ``load``
-        method, and again any extra keyword arguments are passed along to that method."""
+        requests library with the `get` method, and any extra keyword arguments (the
+        `kwargs` parameter) are passed along to that method. When loading JSON data from
+        a file, the data is loaded using the Python json library with the `load` method,
+        and again any extra keyword arguments are passed along to that method."""
         if isinstance(
                 json_path,
                 str) and re.match(
@@ -109,12 +109,12 @@ class DataMixin:
         Notes
         -----
 
-        Save JSON data to a file. If ``filename`` is not an absolute path, it will be
-        saved relative to the current working directory (``sketch_path()``). The saved
-        file can be reloaded with ``load_json()``.
+        Save JSON data to a file. If `filename` is not an absolute path, it will be
+        saved relative to the current working directory (`sketch_path()`). The saved
+        file can be reloaded with `load_json()`.
 
-        The JSON data is saved using the Python json library with the ``dump`` method,
-        and the ``kwargs`` parameter is passed along to that method."""
+        The JSON data is saved using the Python json library with the `dump` method, and
+        the `kwargs` parameter is passed along to that method."""
         path = Path(filename)
         if not path.is_absolute():
             cwd = self.sketch_path()
@@ -141,10 +141,10 @@ class DataMixin:
         -----
 
         Parse serialized JSON data from a string. When reading JSON data from a file,
-        ``load_json()`` is the better choice.
+        `load_json()` is the better choice.
 
-        The JSON data is parsed using the Python json library with the ``loads`` method,
-        and the ``kwargs`` parameter is passed along to that method."""
+        The JSON data is parsed using the Python json library with the `loads` method,
+        and the `kwargs` parameter is passed along to that method."""
         return json.loads(serialized_json, **kwargs)
 
     def load_strings(
@@ -167,13 +167,13 @@ class DataMixin:
 
         Load a list of strings from a file or URL. When loading a file, the path can be
         in the data directory, relative to the current working directory
-        (``sketch_path()``), or an absolute path. When loading from a URL, the
-        ``string_path`` parameter must start with ``http://`` or ``https://``.
+        (`sketch_path()`), or an absolute path. When loading from a URL, the
+        `string_path` parameter must start with `http://` or `https://`.
 
         When loading string data from a URL, the data is retrieved using the Python
-        requests library with the ``get`` method, and any extra keyword arguments (the
-        ``kwargs`` parameter) are passed along to that method. When loading string data
-        from a file, the ``kwargs`` parameter is not used."""
+        requests library with the `get` method, and any extra keyword arguments (the
+        `kwargs` parameter) are passed along to that method. When loading string data
+        from a file, the `kwargs` parameter is not used."""
         if isinstance(
                 string_path,
                 str) and re.match(
@@ -225,16 +225,16 @@ class DataMixin:
         Notes
         -----
 
-        Save a list of strings to a file. If ``filename`` is not an absolute path, it
-        will be saved relative to the current working directory (``sketch_path()``). If
-        the contents of the list are not already strings, it will be converted to
-        strings with the Python builtin ``str``. The saved file can be reloaded with
-        ``load_strings()``.
+        Save a list of strings to a file. If `filename` is not an absolute path, it will
+        be saved relative to the current working directory (`sketch_path()`). If the
+        contents of the list are not already strings, it will be converted to strings
+        with the Python builtin `str`. The saved file can be reloaded with
+        `load_strings()`.
 
-        Use the ``end`` parameter to set the line terminator for each string in the
-        list. If items in the list of strings already have line terminators, set the
-        ``end`` parameter to ``''`` to keep the output file from being saved with a
-        blank line after each item."""
+        Use the `end` parameter to set the line terminator for each string in the list.
+        If items in the list of strings already have line terminators, set the `end`
+        parameter to `''` to keep the output file from being saved with a blank line
+        after each item."""
         path = Path(filename)
         if not path.is_absolute():
             path = self.sketch_path() / filename
@@ -262,14 +262,14 @@ class DataMixin:
         -----
 
         Load byte data from a file or URL. When loading a file, the path can be in the
-        data directory, relative to the current working directory (``sketch_path()``),
-        or an absolute path. When loading from a URL, the ``bytes_path`` parameter must
-        start with ``http://`` or ``https://``.
+        data directory, relative to the current working directory (`sketch_path()`), or
+        an absolute path. When loading from a URL, the `bytes_path` parameter must start
+        with `http://` or `https://`.
 
         When loading byte data from a URL, the data is retrieved using the Python
-        requests library with the ``get`` method, and any extra keyword arguments (the
-        ``kwargs`` parameter) are passed along to that method. When loading byte data
-        from a file, the ``kwargs`` parameter is not used."""
+        requests library with the `get` method, and any extra keyword arguments (the
+        `kwargs` parameter) are passed along to that method. When loading byte data from
+        a file, the `kwargs` parameter is not used."""
         if isinstance(
                 bytes_path,
                 str) and re.match(
@@ -317,9 +317,9 @@ class DataMixin:
         Notes
         -----
 
-        Save byte data to a file. If ``filename`` is not an absolute path, it will be
-        saved relative to the current working directory (``sketch_path()``). The saved
-        file can be reloaded with ``load_bytes()``."""
+        Save byte data to a file. If `filename` is not an absolute path, it will be
+        saved relative to the current working directory (`sketch_path()`). The saved
+        file can be reloaded with `load_bytes()`."""
         path = Path(filename)
         if not path.is_absolute():
             path = self.sketch_path() / filename
@@ -343,7 +343,7 @@ class DataMixin:
         -----
 
         Load a pickled Python object from a file. The path can be in the data directory,
-        relative to the current working directory (``sketch_path()``), or an absolute
+        relative to the current working directory (`sketch_path()`), or an absolute
         path.
 
         There are security risks associated with Python pickle files. A pickle file can
@@ -378,9 +378,9 @@ class DataMixin:
         Notes
         -----
 
-        Pickle a Python object to a file. If ``filename`` is not an absolute path, it
-        will be saved relative to the current working directory (``sketch_path()``). The
-        saved file can be reloaded with ``load_pickle()``.
+        Pickle a Python object to a file. If `filename` is not an absolute path, it will
+        be saved relative to the current working directory (`sketch_path()`). The saved
+        file can be reloaded with `load_pickle()`.
 
         Object "pickling" is a method for serializing objects and saving them to a file
         for later retrieval. The recreated objects will be clones of the original

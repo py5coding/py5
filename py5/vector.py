@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,9 +23,12 @@ from typing import Union
 import operator
 from collections.abc import Sequence, Iterable
 import re
+import warnings
 
 import numpy as np
 import numpy.typing as npt
+
+from . import spelling
 
 
 class Py5Vector(Sequence):
@@ -36,12 +39,12 @@ class Py5Vector(Sequence):
 
     Class to describe a 2D, 3D, or 4D vector. A vector is an entity that has both a
     magnitude and a direction. This datatype stores the components of the vector as
-    a set of coordinates. A 3D vector, for example, has ``Py5Vector.x``,
-    ``Py5Vector.y``, and ``Py5Vector.z`` values that quantify the vector along the 3
+    a set of coordinates. A 3D vector, for example, has `Py5Vector.x`,
+    `Py5Vector.y`, and `Py5Vector.z` values that quantify the vector along the 3
     dimensions X, Y, and Z. The magnitude and direction can be accessed via the
-    properties ``Py5Vector.mag`` and ``Py5Vector.heading``.
+    properties `Py5Vector.mag` and `Py5Vector.heading`.
 
-    In many of the py5 examples, you will see ``Py5Vector`` used to describe a
+    In many of the py5 examples, you will see `Py5Vector` used to describe a
     position, velocity, or acceleration. For example, if you consider a rectangle
     moving across the screen, at any given instant it has a position (a vector that
     points from the origin to its location), a velocity (the rate at which the
@@ -49,32 +52,30 @@ class Py5Vector(Sequence):
     acceleration (the rate at which the object's velocity changes per time unit,
     expressed as a vector).
 
-    The ``Py5Vector`` class works well with numpy and in most cases you will be able
+    The `Py5Vector` class works well with numpy and in most cases you will be able
     to do math operations that combine vectors and numpy arrays.
 
-    To create a vector, you can write code like ``v = Py5Vector(1, 2, 3)``, which
+    To create a vector, you can write code like `v = Py5Vector(1, 2, 3)`, which
     would create a 3D vector with the x, y, and z values equal to 1, 2, and 3. To
     create a vector of zeros, omit the vector values and specify the desired
-    dimension with the ``dim`` parameter, such as ``v = Py5Vector(dim=4)``.
+    dimension with the `dim` parameter, such as `v = Py5Vector(dim=4)`.
 
     Internally, Py5Vector stores the vector values in a numpy array. By default, the
     data type (dtype) of that numpy array is the default float size for your
-    computer, which is typically a 64 bit float, or ``np.float64``. To create a
-    vector with a different float size, pass your desired numpy float dtype to the
-    ``dtype`` parameter, like ``v3 = py5.Py5Vector(1 / 3, 1 / 7,
-    dtype=np.float16)``.
+    computer, which is typically a 64 bit float, or `np.float64`. To create a vector
+    with a different float size, pass your desired numpy float dtype to the `dtype`
+    parameter, like `v3 = py5.Py5Vector(1 / 3, 1 / 7, dtype=np.float16)`.
 
     When creating a new Py5Vector, the initial vector values need not be discrete
     values. You can provide a list of numbers, a numpy array, or another Py5Vector.
-    For example, ``v4 = py5.Py5Vector([1, 2, 3])`` creates a Py5Vector from a list,
-    and ``v5 = py5.Py5Vector(v4, 0)`` creates a 4D Py5Vector from a 3D Py5Vector and
-    a constant value.
+    For example, `v4 = py5.Py5Vector([1, 2, 3])` creates a Py5Vector from a list,
+    and `v5 = py5.Py5Vector(v4, 0)` creates a 4D Py5Vector from a 3D Py5Vector and a
+    constant value.
 
     When creating a new Py5Vector from a single numpy array, py5 will by default
     create its own copy of the numpy array for the Py5Vector to use. To instruct py5
     to instead use the same numpy array and share its data with provided array, set
-    the ``copy`` parameter to ``False``, such as ``v6 = py5.Py5Vector(arr,
-    copy=False)``.
+    the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`.
     """
     _DEFAULT_DIM = 3
 
@@ -196,8 +197,7 @@ class Py5Vector(Sequence):
                 raise RuntimeError(
                     'Invalid swizzle: length must be between 2 and 4 characters')
         else:
-            raise AttributeError(
-                f"'Py5Vector' object has no attribute '{name}'")
+            raise AttributeError(spelling.error_msg('Py5Vector', name, self))
 
     def __setattr__(self, name, val):
         if name.startswith('_') or not (hasattr(self, '_data') and not (
@@ -448,8 +448,7 @@ class Py5Vector(Sequence):
         -----
 
         Create a new Py5Vector instance with a specified numpy dtype. Only floating
-        types (``np.float16``, ``np.float32``, ``np.float64``, and ``np.float128``) are
-        allowed.
+        types (`np.float16`, `np.float32`, `np.float64`, and `np.float128`) are allowed.
         """
         return Py5Vector(self._data, dtype=dtype, copy=True)
 
@@ -540,8 +539,8 @@ class Py5Vector(Sequence):
         Notes
         -----
 
-        Vector data type. This will be one of ``np.float16``, ``np.float32``,
-        ``np.float64``, or ``np.float128``.
+        Vector data type. This will be one of `np.float16`, `np.float32`, `np.float64`,
+        or `np.float128`.
         """
         return self._data.dtype
 
@@ -583,8 +582,8 @@ class Py5Vector(Sequence):
         Notes
         -----
 
-        Vector data type. This will be one of ``np.float16``, ``np.float32``,
-        ``np.float64``, or ``np.float128``.""")
+        Vector data type. This will be one of `np.float16`, `np.float32`, `np.float64`,
+        or `np.float128`.""")
 
     def _run_calc(self, other, calc, name, maybe_vector=False):
         other_type = 'numpy array' if isinstance(
@@ -635,14 +634,14 @@ class Py5Vector(Sequence):
         -----
 
         Calculates a vector between two vectors at a specific increment. The two vectors
-        must have the same dimension. The ``amt`` parameter is the amount to interpolate
+        must have the same dimension. The `amt` parameter is the amount to interpolate
         between the two values where 0.0 equal to the first point, 0.1 is very near the
-        first point, 0.5 is half-way in between, etc. If the ``amt`` parameter is
-        greater than 1.0 or less than 0.0, the interpolated vector will be outside of
-        the range specified by the two vectors.
+        first point, 0.5 is half-way in between, etc. If the `amt` parameter is greater
+        than 1.0 or less than 0.0, the interpolated vector will be outside of the range
+        specified by the two vectors.
 
-        This method is similar to ``lerp()`` and ``lerp_color()``, but for vectors
-        instead of numbers or colors.
+        This method is similar to `lerp()` and `lerp_color()`, but for vectors instead
+        of numbers or colors.
         """
         return self._run_calc(other,
                               lambda s,
@@ -780,13 +779,12 @@ class Py5Vector(Sequence):
         adjust the vector's magnitude to that value. Negative values will result in an
         error.
         """
-        if mag < 0:
-            raise RuntimeError('Cannot set magnitude to a negative number')
-        elif mag == 0:
+        if mag == 0:
             self._data[:] = 0
         else:
             self.normalize()
             self._data *= mag
+
         return self
 
     def _get_mag_sq(self) -> float:
@@ -836,7 +834,9 @@ class Py5Vector(Sequence):
             self._data /= mag
             return self
         else:
-            raise RuntimeError('Cannot normalize Py5Vector of zeros')
+            warnings.warn(
+                'Using normalize on a zero vector has no effect',
+                stacklevel=2)
 
     def _get_norm(self) -> Py5Vector:
         """Normalized copy of the vector.
@@ -891,9 +891,9 @@ class Py5Vector(Sequence):
         -----
 
         Constrain the vector's magnitude to a specified value. If the vector's magnitude
-        is already less than or equal to ``max_mag``, this method will have no effect.
-        If the vector's magnitude is larger, it will be set to ``max_mag``. The
-        ``max_mag`` parameter cannot be a negative number.
+        is already less than or equal to `max_mag`, this method will have no effect. If
+        the vector's magnitude is larger, it will be set to `max_mag`. The `max_mag`
+        parameter cannot be a negative number.
         """
         if max_mag < 0:
             raise RuntimeError('Cannot set limit to a negative number')
@@ -921,7 +921,7 @@ class Py5Vector(Sequence):
         coordinates. The first heading value, inclination, is the angle relative to the
         positive z axis. The second heading value, azimuth, is the counter clockwise
         rotation of the vector around the z axis relative to the positive x axis. Note
-        that this is slightly different from p5's ``fromAngles()`` function, which also
+        that this is slightly different from p5's `fromAngles()` function, which also
         follows the ISO convention but measures angles relative to the top of the screen
         (negative y axis).
 
@@ -965,7 +965,7 @@ class Py5Vector(Sequence):
         coordinates. The first heading value, inclination, is the angle relative to the
         positive z axis. The second heading value, azimuth, is the counter clockwise
         rotation of the vector around the z axis relative to the positive x axis. Note
-        that this is slightly different from p5's ``fromAngles()`` function, which also
+        that this is slightly different from p5's `fromAngles()` function, which also
         follows the ISO convention but measures angles relative to the top of the screen
         (negative y axis).
 
@@ -1024,7 +1024,7 @@ class Py5Vector(Sequence):
         coordinates. The first heading value, inclination, is the angle relative to the
         positive z axis. The second heading value, azimuth, is the counter clockwise
         rotation of the vector around the z axis relative to the positive x axis. Note
-        that this is slightly different from p5's ``fromAngles()`` function, which also
+        that this is slightly different from p5's `fromAngles()` function, which also
         follows the ISO convention but measures angles relative to the top of the screen
         (negative y axis).
 
@@ -1061,7 +1061,7 @@ class Py5Vector(Sequence):
         coordinates. The first heading value, inclination, is the angle relative to the
         positive z axis. The second heading value, azimuth, is the counter clockwise
         rotation of the vector around the z axis relative to the positive x axis. Note
-        that this is slightly different from p5's ``fromAngles()`` function, which also
+        that this is slightly different from p5's `fromAngles()` function, which also
         follows the ISO convention but measures angles relative to the top of the screen
         (negative y axis).
 
@@ -1101,19 +1101,19 @@ class Py5Vector(Sequence):
         Notes
         -----
 
-        Create a new vector with random values. Use the ``dim`` parameter to specify if
+        Create a new vector with random values. Use the `dim` parameter to specify if
         the vector should have 2, 3, or 4 dimensions.
 
         The new vector will have a magnitude of 1 and a heading that is uniformly
         distributed across all possible headings for a vector with the given dimension.
 
-        When used as a ``Py5Vector`` class method, the ``dim`` parameter is required to
+        When used as a `Py5Vector` class method, the `dim` parameter is required to
         specify what the new vector's dimension should be. When used as a class method
-        for the ``Py5Vector2D``, ``Py5Vector3D``, or ``Py5Vector4D`` child classes, the
-        ``dim`` parameter is optional and will default to the dimension implied by the
-        specific class. When used as a method on a vector instance, the ``dim``
-        parameter is also optional and will default to the vector instance's dimension.
-        See the example code for examples of all of these use cases.
+        for the `Py5Vector2D`, `Py5Vector3D`, or `Py5Vector4D` child classes, the `dim`
+        parameter is optional and will default to the dimension implied by the specific
+        class. When used as a method on a vector instance, the `dim` parameter is also
+        optional and will default to the vector instance's dimension. See the example
+        code for examples of all of these use cases.
         """
         if dim == 2:
             return Py5Vector(
@@ -1144,12 +1144,12 @@ class Py5Vector2D(Py5Vector):
 
     Class to describe a 2D, 3D, or 4D vector. A vector is an entity that has both a
     magnitude and a direction. This datatype stores the components of the vector as
-    a set of coordinates. A 3D vector, for example, has ``Py5Vector.x``,
-    ``Py5Vector.y``, and ``Py5Vector.z`` values that quantify the vector along the 3
+    a set of coordinates. A 3D vector, for example, has `Py5Vector.x`,
+    `Py5Vector.y`, and `Py5Vector.z` values that quantify the vector along the 3
     dimensions X, Y, and Z. The magnitude and direction can be accessed via the
-    properties ``Py5Vector.mag`` and ``Py5Vector.heading``.
+    properties `Py5Vector.mag` and `Py5Vector.heading`.
 
-    In many of the py5 examples, you will see ``Py5Vector`` used to describe a
+    In many of the py5 examples, you will see `Py5Vector` used to describe a
     position, velocity, or acceleration. For example, if you consider a rectangle
     moving across the screen, at any given instant it has a position (a vector that
     points from the origin to its location), a velocity (the rate at which the
@@ -1157,32 +1157,30 @@ class Py5Vector2D(Py5Vector):
     acceleration (the rate at which the object's velocity changes per time unit,
     expressed as a vector).
 
-    The ``Py5Vector`` class works well with numpy and in most cases you will be able
+    The `Py5Vector` class works well with numpy and in most cases you will be able
     to do math operations that combine vectors and numpy arrays.
 
-    To create a vector, you can write code like ``v = Py5Vector(1, 2, 3)``, which
+    To create a vector, you can write code like `v = Py5Vector(1, 2, 3)`, which
     would create a 3D vector with the x, y, and z values equal to 1, 2, and 3. To
     create a vector of zeros, omit the vector values and specify the desired
-    dimension with the ``dim`` parameter, such as ``v = Py5Vector(dim=4)``.
+    dimension with the `dim` parameter, such as `v = Py5Vector(dim=4)`.
 
     Internally, Py5Vector stores the vector values in a numpy array. By default, the
     data type (dtype) of that numpy array is the default float size for your
-    computer, which is typically a 64 bit float, or ``np.float64``. To create a
-    vector with a different float size, pass your desired numpy float dtype to the
-    ``dtype`` parameter, like ``v3 = py5.Py5Vector(1 / 3, 1 / 7,
-    dtype=np.float16)``.
+    computer, which is typically a 64 bit float, or `np.float64`. To create a vector
+    with a different float size, pass your desired numpy float dtype to the `dtype`
+    parameter, like `v3 = py5.Py5Vector(1 / 3, 1 / 7, dtype=np.float16)`.
 
     When creating a new Py5Vector, the initial vector values need not be discrete
     values. You can provide a list of numbers, a numpy array, or another Py5Vector.
-    For example, ``v4 = py5.Py5Vector([1, 2, 3])`` creates a Py5Vector from a list,
-    and ``v5 = py5.Py5Vector(v4, 0)`` creates a 4D Py5Vector from a 3D Py5Vector and
-    a constant value.
+    For example, `v4 = py5.Py5Vector([1, 2, 3])` creates a Py5Vector from a list,
+    and `v5 = py5.Py5Vector(v4, 0)` creates a 4D Py5Vector from a 3D Py5Vector and a
+    constant value.
 
     When creating a new Py5Vector from a single numpy array, py5 will by default
     create its own copy of the numpy array for the Py5Vector to use. To instruct py5
     to instead use the same numpy array and share its data with provided array, set
-    the ``copy`` parameter to ``False``, such as ``v6 = py5.Py5Vector(arr,
-    copy=False)``.
+    the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`.
     """
 
     def __new__(cls, *args, dtype: type = np.float_):
@@ -1214,17 +1212,17 @@ class Py5Vector2D(Py5Vector):
         -----
 
         Rotate vector by a specified angle. This method is only applicable to 2D and 3D
-        vectors. Use the ``angle`` parameter to specify the rotation angle. To rotate 3D
-        vectors, you must use the ``dim`` parameter to specify which dimension to rotate
+        vectors. Use the `angle` parameter to specify the rotation angle. To rotate 3D
+        vectors, you must use the `dim` parameter to specify which dimension to rotate
         around. The dimension can be specified with the values 1, 2, or 3, or by using
-        the strings ``'x'``, ``'y'``, or ``'z'``.
+        the strings `'x'`, `'y'`, or `'z'`.
 
         A 2D vector will be rotated in the counter-clockwise direction for positive
-        ``angle`` values and in the clockwise direction for negative ``angle`` values.
+        `angle` values and in the clockwise direction for negative `angle` values.
 
         A 3D vector's rotation will follow the right-hand rule. Using your right hand,
         point your thumb in the direction of the axis to rotate around. Your fingers
-        will curl in the direction of rotation when the ``angle`` parameter is positive.
+        will curl in the direction of rotation when the `angle` parameter is positive.
         """
         sin_angle = np.sin(angle)
         cos_angle = np.cos(angle)
@@ -1250,19 +1248,19 @@ class Py5Vector2D(Py5Vector):
         Notes
         -----
 
-        Create a new vector with random values. Use the ``dim`` parameter to specify if
+        Create a new vector with random values. Use the `dim` parameter to specify if
         the vector should have 2, 3, or 4 dimensions.
 
         The new vector will have a magnitude of 1 and a heading that is uniformly
         distributed across all possible headings for a vector with the given dimension.
 
-        When used as a ``Py5Vector`` class method, the ``dim`` parameter is required to
+        When used as a `Py5Vector` class method, the `dim` parameter is required to
         specify what the new vector's dimension should be. When used as a class method
-        for the ``Py5Vector2D``, ``Py5Vector3D``, or ``Py5Vector4D`` child classes, the
-        ``dim`` parameter is optional and will default to the dimension implied by the
-        specific class. When used as a method on a vector instance, the ``dim``
-        parameter is also optional and will default to the vector instance's dimension.
-        See the example code for examples of all of these use cases.
+        for the `Py5Vector2D`, `Py5Vector3D`, or `Py5Vector4D` child classes, the `dim`
+        parameter is optional and will default to the dimension implied by the specific
+        class. When used as a method on a vector instance, the `dim` parameter is also
+        optional and will default to the vector instance's dimension. See the example
+        code for examples of all of these use cases.
         """
         return super().random(dim, dtype=dtype)
 
@@ -1275,12 +1273,12 @@ class Py5Vector3D(Py5Vector):
 
     Class to describe a 2D, 3D, or 4D vector. A vector is an entity that has both a
     magnitude and a direction. This datatype stores the components of the vector as
-    a set of coordinates. A 3D vector, for example, has ``Py5Vector.x``,
-    ``Py5Vector.y``, and ``Py5Vector.z`` values that quantify the vector along the 3
+    a set of coordinates. A 3D vector, for example, has `Py5Vector.x`,
+    `Py5Vector.y`, and `Py5Vector.z` values that quantify the vector along the 3
     dimensions X, Y, and Z. The magnitude and direction can be accessed via the
-    properties ``Py5Vector.mag`` and ``Py5Vector.heading``.
+    properties `Py5Vector.mag` and `Py5Vector.heading`.
 
-    In many of the py5 examples, you will see ``Py5Vector`` used to describe a
+    In many of the py5 examples, you will see `Py5Vector` used to describe a
     position, velocity, or acceleration. For example, if you consider a rectangle
     moving across the screen, at any given instant it has a position (a vector that
     points from the origin to its location), a velocity (the rate at which the
@@ -1288,32 +1286,30 @@ class Py5Vector3D(Py5Vector):
     acceleration (the rate at which the object's velocity changes per time unit,
     expressed as a vector).
 
-    The ``Py5Vector`` class works well with numpy and in most cases you will be able
+    The `Py5Vector` class works well with numpy and in most cases you will be able
     to do math operations that combine vectors and numpy arrays.
 
-    To create a vector, you can write code like ``v = Py5Vector(1, 2, 3)``, which
+    To create a vector, you can write code like `v = Py5Vector(1, 2, 3)`, which
     would create a 3D vector with the x, y, and z values equal to 1, 2, and 3. To
     create a vector of zeros, omit the vector values and specify the desired
-    dimension with the ``dim`` parameter, such as ``v = Py5Vector(dim=4)``.
+    dimension with the `dim` parameter, such as `v = Py5Vector(dim=4)`.
 
     Internally, Py5Vector stores the vector values in a numpy array. By default, the
     data type (dtype) of that numpy array is the default float size for your
-    computer, which is typically a 64 bit float, or ``np.float64``. To create a
-    vector with a different float size, pass your desired numpy float dtype to the
-    ``dtype`` parameter, like ``v3 = py5.Py5Vector(1 / 3, 1 / 7,
-    dtype=np.float16)``.
+    computer, which is typically a 64 bit float, or `np.float64`. To create a vector
+    with a different float size, pass your desired numpy float dtype to the `dtype`
+    parameter, like `v3 = py5.Py5Vector(1 / 3, 1 / 7, dtype=np.float16)`.
 
     When creating a new Py5Vector, the initial vector values need not be discrete
     values. You can provide a list of numbers, a numpy array, or another Py5Vector.
-    For example, ``v4 = py5.Py5Vector([1, 2, 3])`` creates a Py5Vector from a list,
-    and ``v5 = py5.Py5Vector(v4, 0)`` creates a 4D Py5Vector from a 3D Py5Vector and
-    a constant value.
+    For example, `v4 = py5.Py5Vector([1, 2, 3])` creates a Py5Vector from a list,
+    and `v5 = py5.Py5Vector(v4, 0)` creates a 4D Py5Vector from a 3D Py5Vector and a
+    constant value.
 
     When creating a new Py5Vector from a single numpy array, py5 will by default
     create its own copy of the numpy array for the Py5Vector to use. To instruct py5
     to instead use the same numpy array and share its data with provided array, set
-    the ``copy`` parameter to ``False``, such as ``v6 = py5.Py5Vector(arr,
-    copy=False)``.
+    the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`.
     """
 
     def __new__(cls, *args, dtype: type = np.float_):
@@ -1375,17 +1371,17 @@ class Py5Vector3D(Py5Vector):
         -----
 
         Rotate vector by a specified angle. This method is only applicable to 2D and 3D
-        vectors. Use the ``angle`` parameter to specify the rotation angle. To rotate 3D
-        vectors, you must use the ``dim`` parameter to specify which dimension to rotate
+        vectors. Use the `angle` parameter to specify the rotation angle. To rotate 3D
+        vectors, you must use the `dim` parameter to specify which dimension to rotate
         around. The dimension can be specified with the values 1, 2, or 3, or by using
-        the strings ``'x'``, ``'y'``, or ``'z'``.
+        the strings `'x'`, `'y'`, or `'z'`.
 
         A 2D vector will be rotated in the counter-clockwise direction for positive
-        ``angle`` values and in the clockwise direction for negative ``angle`` values.
+        `angle` values and in the clockwise direction for negative `angle` values.
 
         A 3D vector's rotation will follow the right-hand rule. Using your right hand,
         point your thumb in the direction of the axis to rotate around. Your fingers
-        will curl in the direction of rotation when the ``angle`` parameter is positive.
+        will curl in the direction of rotation when the `angle` parameter is positive.
         """
         sin_angle = np.sin(angle)
         cos_angle = np.cos(angle)
@@ -1420,14 +1416,14 @@ class Py5Vector3D(Py5Vector):
         -----
 
         Rotate around an arbitrary 3D vector. This method is only applicable to 3D
-        vectors. Use the ``angle`` parameter to specify the rotation angle and the ``v``
-        parameter to specify the vector to rotate around. The ``v`` vector does not need
+        vectors. Use the `angle` parameter to specify the rotation angle and the `v`
+        parameter to specify the vector to rotate around. The `v` vector does not need
         to be aligned to any axis or normalized, but it must be a 3D vector and it
         cannot be a vector of zeros.
 
         The vector's rotation will follow the right-hand rule. Using your right hand,
         point your thumb in the direction of the vector to rotate around. Your fingers
-        will curl in the direction of rotation when the ``angle`` parameter is positive.
+        will curl in the direction of rotation when the `angle` parameter is positive.
         """
         if not isinstance(v, Py5Vector3D):
             raise RuntimeError('Can only rotate around another 3D Py5Vector')
@@ -1492,19 +1488,19 @@ class Py5Vector3D(Py5Vector):
         Notes
         -----
 
-        Create a new vector with random values. Use the ``dim`` parameter to specify if
+        Create a new vector with random values. Use the `dim` parameter to specify if
         the vector should have 2, 3, or 4 dimensions.
 
         The new vector will have a magnitude of 1 and a heading that is uniformly
         distributed across all possible headings for a vector with the given dimension.
 
-        When used as a ``Py5Vector`` class method, the ``dim`` parameter is required to
+        When used as a `Py5Vector` class method, the `dim` parameter is required to
         specify what the new vector's dimension should be. When used as a class method
-        for the ``Py5Vector2D``, ``Py5Vector3D``, or ``Py5Vector4D`` child classes, the
-        ``dim`` parameter is optional and will default to the dimension implied by the
-        specific class. When used as a method on a vector instance, the ``dim``
-        parameter is also optional and will default to the vector instance's dimension.
-        See the example code for examples of all of these use cases.
+        for the `Py5Vector2D`, `Py5Vector3D`, or `Py5Vector4D` child classes, the `dim`
+        parameter is optional and will default to the dimension implied by the specific
+        class. When used as a method on a vector instance, the `dim` parameter is also
+        optional and will default to the vector instance's dimension. See the example
+        code for examples of all of these use cases.
         """
         return super().random(dim, dtype=dtype)
 
@@ -1517,12 +1513,12 @@ class Py5Vector4D(Py5Vector):
 
     Class to describe a 2D, 3D, or 4D vector. A vector is an entity that has both a
     magnitude and a direction. This datatype stores the components of the vector as
-    a set of coordinates. A 3D vector, for example, has ``Py5Vector.x``,
-    ``Py5Vector.y``, and ``Py5Vector.z`` values that quantify the vector along the 3
+    a set of coordinates. A 3D vector, for example, has `Py5Vector.x`,
+    `Py5Vector.y`, and `Py5Vector.z` values that quantify the vector along the 3
     dimensions X, Y, and Z. The magnitude and direction can be accessed via the
-    properties ``Py5Vector.mag`` and ``Py5Vector.heading``.
+    properties `Py5Vector.mag` and `Py5Vector.heading`.
 
-    In many of the py5 examples, you will see ``Py5Vector`` used to describe a
+    In many of the py5 examples, you will see `Py5Vector` used to describe a
     position, velocity, or acceleration. For example, if you consider a rectangle
     moving across the screen, at any given instant it has a position (a vector that
     points from the origin to its location), a velocity (the rate at which the
@@ -1530,32 +1526,30 @@ class Py5Vector4D(Py5Vector):
     acceleration (the rate at which the object's velocity changes per time unit,
     expressed as a vector).
 
-    The ``Py5Vector`` class works well with numpy and in most cases you will be able
+    The `Py5Vector` class works well with numpy and in most cases you will be able
     to do math operations that combine vectors and numpy arrays.
 
-    To create a vector, you can write code like ``v = Py5Vector(1, 2, 3)``, which
+    To create a vector, you can write code like `v = Py5Vector(1, 2, 3)`, which
     would create a 3D vector with the x, y, and z values equal to 1, 2, and 3. To
     create a vector of zeros, omit the vector values and specify the desired
-    dimension with the ``dim`` parameter, such as ``v = Py5Vector(dim=4)``.
+    dimension with the `dim` parameter, such as `v = Py5Vector(dim=4)`.
 
     Internally, Py5Vector stores the vector values in a numpy array. By default, the
     data type (dtype) of that numpy array is the default float size for your
-    computer, which is typically a 64 bit float, or ``np.float64``. To create a
-    vector with a different float size, pass your desired numpy float dtype to the
-    ``dtype`` parameter, like ``v3 = py5.Py5Vector(1 / 3, 1 / 7,
-    dtype=np.float16)``.
+    computer, which is typically a 64 bit float, or `np.float64`. To create a vector
+    with a different float size, pass your desired numpy float dtype to the `dtype`
+    parameter, like `v3 = py5.Py5Vector(1 / 3, 1 / 7, dtype=np.float16)`.
 
     When creating a new Py5Vector, the initial vector values need not be discrete
     values. You can provide a list of numbers, a numpy array, or another Py5Vector.
-    For example, ``v4 = py5.Py5Vector([1, 2, 3])`` creates a Py5Vector from a list,
-    and ``v5 = py5.Py5Vector(v4, 0)`` creates a 4D Py5Vector from a 3D Py5Vector and
-    a constant value.
+    For example, `v4 = py5.Py5Vector([1, 2, 3])` creates a Py5Vector from a list,
+    and `v5 = py5.Py5Vector(v4, 0)` creates a 4D Py5Vector from a 3D Py5Vector and a
+    constant value.
 
     When creating a new Py5Vector from a single numpy array, py5 will by default
     create its own copy of the numpy array for the Py5Vector to use. To instruct py5
     to instead use the same numpy array and share its data with provided array, set
-    the ``copy`` parameter to ``False``, such as ``v6 = py5.Py5Vector(arr,
-    copy=False)``.
+    the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`.
     """
 
     def __new__(cls, *args, dtype: type = np.float_):
@@ -1636,18 +1630,18 @@ class Py5Vector4D(Py5Vector):
         Notes
         -----
 
-        Create a new vector with random values. Use the ``dim`` parameter to specify if
+        Create a new vector with random values. Use the `dim` parameter to specify if
         the vector should have 2, 3, or 4 dimensions.
 
         The new vector will have a magnitude of 1 and a heading that is uniformly
         distributed across all possible headings for a vector with the given dimension.
 
-        When used as a ``Py5Vector`` class method, the ``dim`` parameter is required to
+        When used as a `Py5Vector` class method, the `dim` parameter is required to
         specify what the new vector's dimension should be. When used as a class method
-        for the ``Py5Vector2D``, ``Py5Vector3D``, or ``Py5Vector4D`` child classes, the
-        ``dim`` parameter is optional and will default to the dimension implied by the
-        specific class. When used as a method on a vector instance, the ``dim``
-        parameter is also optional and will default to the vector instance's dimension.
-        See the example code for examples of all of these use cases.
+        for the `Py5Vector2D`, `Py5Vector3D`, or `Py5Vector4D` child classes, the `dim`
+        parameter is optional and will default to the dimension implied by the specific
+        class. When used as a method on a vector instance, the `dim` parameter is also
+        optional and will default to the vector instance's dimension. See the example
+        code for examples of all of these use cases.
         """
         return super().random(dim, dtype=dtype)

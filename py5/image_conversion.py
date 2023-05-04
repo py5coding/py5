@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -52,7 +52,7 @@ def _convert(obj):
 def register_image_conversion(
         precondition: Callable,
         convert_function: Callable) -> None:
-    """Register new image conversion functionality to be used by ``convert_image()``.
+    """Register new image conversion functionality to be used by `convert_image()`.
 
     Parameters
     ----------
@@ -66,18 +66,18 @@ def register_image_conversion(
     Notes
     -----
 
-    Register new image conversion functionality to be used by ``convert_image()``.
+    Register new image conversion functionality to be used by `convert_image()`.
     This will allow users to extend py5's capabilities and compatability within the
     Python ecosystem.
 
-    The ``precondition`` parameter must be function that accepts an object as a
-    parameter and returns ``True`` if and only if the ``convert_function`` can
+    The `precondition` parameter must be function that accepts an object as a
+    parameter and returns `True` if and only if the `convert_function` can
     successfully convert the object.
 
-    The ``convert_function`` parameter must be a function that accepts an object as
-    a parameter and returns either a filename that can be read by ``load_image()``,
-    a ``py5.NumpyImageArray`` object, or a ``Py5Image`` object. View py5's source
-    code for detailed information about ``py5.NumpyImageArray`` objects."""
+    The `convert_function` parameter must be a function that accepts an object as a
+    parameter and returns either a filename that can be read by `load_image()`, a
+    `py5.NumpyImageArray` object, or a `Py5Image` object. View py5's source code for
+    detailed information about `py5.NumpyImageArray` objects."""
     pimage_functions.append((precondition, convert_function))
 
 

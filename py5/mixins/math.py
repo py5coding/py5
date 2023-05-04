@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,7 @@ from __future__ import annotations
 import warnings
 import traceback
 from pathlib import Path
+import types
 from typing import overload, Union, Any
 
 import numpy as np
@@ -65,13 +66,13 @@ class MathMixin:
 
         Convert a color value to a hex color string. Processing and py5 store color
         values in 32 bit integers that are inconvenient for a human to parse. To
-        interpret these values, one can use methods like ``red()``, ``green()``, and
-        ``blue()`` to extract color channel values from the 32 bit integers. This method
+        interpret these values, one can use methods like `red()`, `green()`, and
+        `blue()` to extract color channel values from the 32 bit integers. This method
         provides an alternative approach, converting the 32 bit integer into a string
-        such as ``'#0F3FF0FF'``. The hex string has 8 hexadecimal values following a
-        ``#`` character. The first two values represent the red value, the next two
-        green, the next two blue, and the last two alpha. This is consistent with CSS 8
-        digit hex colors.
+        such as `'#0F3FF0FF'`. The hex string has 8 hexadecimal values following a `#`
+        character. The first two values represent the red value, the next two green, the
+        next two blue, and the last two alpha. This is consistent with CSS 8 digit hex
+        colors.
 
         Conveniently, the hex color string returned by this method can also be used as
         parameter for other methods that accept color values. Observe how this is done
@@ -94,10 +95,10 @@ class MathMixin:
         -----
 
         Calculates the sine of an angle. This function expects the values of the angle
-        parameter to be provided in radians (values from ``0`` to ``TWO_PI``). Values
-        are returned in the range -1 to 1.
+        parameter to be provided in radians (values from `0` to `TWO_PI`). Values are
+        returned in the range -1 to 1.
 
-        This function makes a call to the numpy ``sin()`` function."""
+        This function makes a call to the numpy `sin()` function."""
         return np.sin(angle)
 
     @classmethod
@@ -115,10 +116,10 @@ class MathMixin:
         -----
 
         Calculates the cosine of an angle. This function expects the values of the angle
-        parameter to be provided in radians (values from ``0`` to ``TWO_PI``). Values
-        are returned in the range -1 to 1.
+        parameter to be provided in radians (values from `0` to `TWO_PI`). Values are
+        returned in the range -1 to 1.
 
-        This function makes a call to the numpy ``cos()`` function."""
+        This function makes a call to the numpy `cos()` function."""
         return np.cos(angle)
 
     @classmethod
@@ -136,16 +137,16 @@ class MathMixin:
         -----
 
         Calculates the ratio of the sine and cosine of an angle. This function expects
-        the values of the angle parameter to be provided in radians (values from ``0``
-        to ``TWO_PI``). Values are returned in the range infinity to -infinity.
+        the values of the angle parameter to be provided in radians (values from `0` to
+        `TWO_PI`). Values are returned in the range infinity to -infinity.
 
-        This function makes a call to the numpy ``tan()`` function."""
+        This function makes a call to the numpy `tan()` function."""
         return np.tan(angle)
 
     @classmethod
     def asin(cls, value: Union[float, npt.ArrayLike]
              ) -> Union[float, npt.NDArray]:
-        """The inverse of ``sin()``, returns the arc sine of a value.
+        """The inverse of `sin()`, returns the arc sine of a value.
 
         Parameters
         ----------
@@ -156,17 +157,17 @@ class MathMixin:
         Notes
         -----
 
-        The inverse of ``sin()``, returns the arc sine of a value. This function expects
+        The inverse of `sin()`, returns the arc sine of a value. This function expects
         the values in the range of -1 to 1 and values are returned in the range
-        ``-HALF_PI`` to ``HALF_PI``.
+        `-HALF_PI` to `HALF_PI`.
 
-        This function makes a call to the numpy ``asin()`` function."""
+        This function makes a call to the numpy `asin()` function."""
         return np.arcsin(value)
 
     @classmethod
     def acos(cls, value: Union[float, npt.ArrayLike]
              ) -> Union[float, npt.NDArray]:
-        """The inverse of ``cos()``, returns the arc cosine of a value.
+        """The inverse of `cos()`, returns the arc cosine of a value.
 
         Parameters
         ----------
@@ -177,17 +178,17 @@ class MathMixin:
         Notes
         -----
 
-        The inverse of ``cos()``, returns the arc cosine of a value. This function
-        expects the values in the range of -1 to 1 and values are returned in the range
-        ``0`` to ``PI``.
+        The inverse of `cos()`, returns the arc cosine of a value. This function expects
+        the values in the range of -1 to 1 and values are returned in the range `0` to
+        `PI`.
 
-        This function makes a call to the numpy ``acos()`` function."""
+        This function makes a call to the numpy `acos()` function."""
         return np.arccos(value)
 
     @classmethod
     def atan(cls, value: Union[float, npt.ArrayLike]
              ) -> Union[float, npt.NDArray]:
-        """The inverse of ``tan()``, returns the arc tangent of a value.
+        """The inverse of `tan()`, returns the arc tangent of a value.
 
         Parameters
         ----------
@@ -198,11 +199,11 @@ class MathMixin:
         Notes
         -----
 
-        The inverse of ``tan()``, returns the arc tangent of a value. This function
+        The inverse of `tan()`, returns the arc tangent of a value. This function
         expects the values in the range of -Infinity to Infinity and values are returned
-        in the range ``-HALF_PI`` to ``HALF_PI``.
+        in the range `-HALF_PI` to `HALF_PI`.
 
-        This function makes a call to the numpy ``atan()`` function."""
+        This function makes a call to the numpy `atan()` function."""
         return np.arctan(value)
 
     @classmethod
@@ -229,12 +230,12 @@ class MathMixin:
 
         Calculates the angle (in radians) from a specified point to the coordinate
         origin as measured from the positive x-axis. Values are returned as a float in
-        the range from ``PI`` to ``-PI``. The ``atan2()`` function is most often used
-        for orienting geometry to the position of the cursor. Note: The y-coordinate of
-        the point is the first parameter, and the x-coordinate is the second parameter,
-        due the the structure of calculating the tangent.
+        the range from `PI` to `-PI`. The `atan2()` function is most often used for
+        orienting geometry to the position of the cursor. Note: The y-coordinate of the
+        point is the first parameter, and the x-coordinate is the second parameter, due
+        the the structure of calculating the tangent.
 
-        This function makes a call to the numpy ``atan2()`` function."""
+        This function makes a call to the numpy `atan2()` function."""
         return np.arctan2(y, x)
 
     @classmethod
@@ -255,11 +256,11 @@ class MathMixin:
 
         Converts a radian measurement to its corresponding value in degrees. Radians and
         degrees are two ways of measuring the same thing. There are 360 degrees in a
-        circle and ``2*PI`` radians in a circle. For example, ``90° = PI/2 =
-        1.5707964``. All trigonometric functions in py5 require their parameters to be
-        specified in radians.
+        circle and `2*PI` radians in a circle. For example, `90° = PI/2 = 1.5707964`.
+        All trigonometric functions in py5 require their parameters to be specified in
+        radians.
 
-        This function makes a call to the numpy ``degrees()`` function."""
+        This function makes a call to the numpy `degrees()` function."""
         return np.degrees(radians)
 
     @classmethod
@@ -280,11 +281,11 @@ class MathMixin:
 
         Converts a degree measurement to its corresponding value in radians. Radians and
         degrees are two ways of measuring the same thing. There are 360 degrees in a
-        circle and ``2*PI`` radians in a circle. For example, ``90° = PI/2 =
-        1.5707964``. All trigonometric functions in py5 require their parameters to be
-        specified in radians.
+        circle and `2*PI` radians in a circle. For example, `90° = PI/2 = 1.5707964`.
+        All trigonometric functions in py5 require their parameters to be specified in
+        radians.
 
-        This function makes a call to the numpy ``radians()`` function."""
+        This function makes a call to the numpy `radians()` function."""
         return np.radians(degrees)
 
     @classmethod
@@ -356,14 +357,14 @@ class MathMixin:
 
         In the first example, the number 0.5 is converted from a value in the range of 0
         to 1 into a value that ranges from the left edge of the window (0) to the right
-        edge (``width``).
+        edge (`width`).
 
         As shown in the second example, numbers outside of the range are not clamped to
         the minimum and maximum parameters values, because out-of-range values are often
         intentional and useful. If that isn't what you want, try pairing this function
-        with ``constrain()``.
+        with `constrain()`.
 
-        In Processing this functionality is provided by ``map()`` but was renamed in py5
+        In Processing this functionality is provided by `map()` but was renamed in py5
         because of a name conflict with a builtin Python function."""
         denom = stop1 - start1
         if denom == 0:
@@ -537,13 +538,13 @@ class MathMixin:
         Notes
         -----
 
-        Calculates a number between two numbers at a specific increment. The ``amt``
+        Calculates a number between two numbers at a specific increment. The `amt`
         parameter is the amount to interpolate between the two values where 0.0 equal to
         the first point, 0.1 is very near the first point, 0.5 is half-way in between,
         etc. The lerp function is convenient for creating motion along a straight path
-        and for drawing dotted lines. If the ``amt`` parameter is greater than 1.0 or
-        less than 0.0, the interpolated value will be outside of the range specified by
-        the ``start`` and ``stop`` parameter values."""
+        and for drawing dotted lines. If the `amt` parameter is greater than 1.0 or less
+        than 0.0, the interpolated value will be outside of the range specified by the
+        `start` and `stop` parameter values."""
         return amt * (stop - start) + start
 
     @overload
@@ -577,8 +578,8 @@ class MathMixin:
         Calculates the magnitude (or length) of a vector. A vector is a direction in
         space commonly used in computer graphics and linear algebra. Because it has no
         "start" position, the magnitude of a vector can be thought of as the distance
-        from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
-        a shortcut for writing ``dist(0, 0, x, y)``."""
+        from the coordinate `(0, 0)` to its `(x, y)` value. Therefore, `mag()` is a
+        shortcut for writing `dist(0, 0, x, y)`."""
         pass
 
     @overload
@@ -612,8 +613,8 @@ class MathMixin:
         Calculates the magnitude (or length) of a vector. A vector is a direction in
         space commonly used in computer graphics and linear algebra. Because it has no
         "start" position, the magnitude of a vector can be thought of as the distance
-        from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
-        a shortcut for writing ``dist(0, 0, x, y)``."""
+        from the coordinate `(0, 0)` to its `(x, y)` value. Therefore, `mag()` is a
+        shortcut for writing `dist(0, 0, x, y)`."""
         pass
 
     @classmethod
@@ -646,8 +647,8 @@ class MathMixin:
         Calculates the magnitude (or length) of a vector. A vector is a direction in
         space commonly used in computer graphics and linear algebra. Because it has no
         "start" position, the magnitude of a vector can be thought of as the distance
-        from the coordinate ``(0, 0)`` to its ``(x, y)`` value. Therefore, ``mag()`` is
-        a shortcut for writing ``dist(0, 0, x, y)``."""
+        from the coordinate `(0, 0)` to its `(x, y)` value. Therefore, `mag()` is a
+        shortcut for writing `dist(0, 0, x, y)`."""
         return sum([x * x for x in args])**0.5
 
     @classmethod
@@ -677,11 +678,11 @@ class MathMixin:
         -----
 
         Normalizes a number from another range into a value between 0 and 1. Identical
-        to ``remap(value, low, high, 0, 1)``.
+        to `remap(value, low, high, 0, 1)`.
 
         Numbers outside of the range are not clamped to 0 and 1, because out-of-range
         values are often intentional and useful. (See the second example.) If that isn't
-        what you want, try pairing this function with ``constrain()``."""
+        what you want, try pairing this function with `constrain()`."""
         return (value - start) / (stop - start)
 
     @classmethod
@@ -699,7 +700,7 @@ class MathMixin:
 
         Squares a number (multiplies a number by itself). The result is always a
         positive number, as multiplying two negative numbers always yields a positive
-        result. For example, ``-1 * -1 = 1``."""
+        result. For example, `-1 * -1 = 1`."""
         return value * value
 
     @classmethod
@@ -718,14 +719,14 @@ class MathMixin:
 
         Calculates the square root of a number. The square root of a positive number is
         always positive, even though there may be a valid negative root. The square root
-        of a negative number is a complex number. In either case, the square root ``s``
-        of number ``a`` is such that ``s*s = a``. It is the opposite of squaring.
+        of a negative number is a complex number. In either case, the square root `s` of
+        number `a` is such that `s*s = a`. It is the opposite of squaring.
 
         Python supports complex numbers, but such values cannot be passed to py5 drawing
-        functions. When using the ``sqrt()`` function, you should check if the result is
+        functions. When using the `sqrt()` function, you should check if the result is
         complex before using the value. You can also extract the real and imaginary
-        components of the complex value with ``.real`` and ``.imag``. See the second
-        example to learn how to do both of these things."""
+        components of the complex value with `.real` and `.imag`. See the second example
+        to learn how to do both of these things."""
         return value**0.5
 
     @classmethod
@@ -746,7 +747,7 @@ class MathMixin:
         Calculates the closest int value that is less than or equal to the value of the
         parameter.
 
-        This function makes a call to the numpy ``floor()`` function."""
+        This function makes a call to the numpy `floor()` function."""
         return np.floor(value).astype(np.int_)
 
     @classmethod
@@ -767,14 +768,13 @@ class MathMixin:
         Calculates the closest int value that is greater than or equal to the value of
         the parameter.
 
-        This function makes a call to the numpy ``ceil()`` function."""
+        This function makes a call to the numpy `ceil()` function."""
         return np.ceil(value).astype(np.int_)
 
     @classmethod
     def exp(cls, value: Union[float, npt.ArrayLike]
             ) -> Union[float, npt.NDArray]:
-        """Returns Euler's number e (2.71828...) raised to the power of the ``n``
-        parameter.
+        """Returns Euler's number e (2.71828...) raised to the power of the `n` parameter.
 
         Parameters
         ----------
@@ -785,10 +785,10 @@ class MathMixin:
         Notes
         -----
 
-        Returns Euler's number e (2.71828...) raised to the power of the ``n``
-        parameter. This function is the compliment to ``log()``.
+        Returns Euler's number e (2.71828...) raised to the power of the `n` parameter.
+        This function is the compliment to `log()`.
 
-        This function makes a call to the numpy ``exp()`` function."""
+        This function makes a call to the numpy `exp()` function."""
         return np.exp(value)
 
     @classmethod
@@ -806,12 +806,12 @@ class MathMixin:
         -----
 
         Calculates the natural logarithm (the base-e logarithm) of a number. This
-        function expects the ``n`` parameter to be a value greater than 0.0. This
-        function is the compliment to ``exp()``.
+        function expects the `n` parameter to be a value greater than 0.0. This function
+        is the compliment to `exp()`.
 
-        This function makes a call to the numpy ``log()`` function. If the ``n``
-        parameter is less than or equal to 0.0, you will see a ``RuntimeWarning`` and
-        the returned result will be numpy's Not-a-Number value, ``np.nan``."""
+        This function makes a call to the numpy `log()` function. If the `n` parameter
+        is less than or equal to 0.0, you will see a `RuntimeWarning` and the returned
+        result will be numpy's Not-a-Number value, `np.nan`."""
         return np.log(value)
 
     def _get_np_random(self) -> np.random.Generator:
@@ -823,13 +823,13 @@ class MathMixin:
 
         Access the numpy random number generator that py5 uses to provide random number
         functionality. Py5 uses a numpy random number generator to provide a breadth of
-        random number functions such as ``random_choice()``, ``random_gaussian()``, and
-        ``random_int()``. The functions py5 provides are the ones you are most likely to
+        random number functions such as `random_choice()`, `random_gaussian()`, and
+        `random_int()`. The functions py5 provides are the ones you are most likely to
         need, but numpy is capable of much more than what py5 makes available. Access
         this property to access all of numpy's random number functions.
 
         All of the random numbers generated through this property can be influenced by
-        ``random_seed()``."""
+        `random_seed()`."""
         return self._rng
     np_random: np.random.Generator = property(
         fget=_get_np_random,
@@ -841,13 +841,13 @@ class MathMixin:
 
         Access the numpy random number generator that py5 uses to provide random number
         functionality. Py5 uses a numpy random number generator to provide a breadth of
-        random number functions such as ``random_choice()``, ``random_gaussian()``, and
-        ``random_int()``. The functions py5 provides are the ones you are most likely to
+        random number functions such as `random_choice()`, `random_gaussian()`, and
+        `random_int()`. The functions py5 provides are the ones you are most likely to
         need, but numpy is capable of much more than what py5 makes available. Access
         this property to access all of numpy's random number functions.
 
         All of the random numbers generated through this property can be influenced by
-        ``random_seed()``.""")
+        `random_seed()`.""")
 
     def random_seed(self, seed: int) -> None:
         """Sets the seed value for py5's random functions.
@@ -861,11 +861,11 @@ class MathMixin:
         Notes
         -----
 
-        Sets the seed value for py5's random functions. This includes ``random()``,
-        ``random_int()``, ``random_choice()``, and ``random_gaussian()``. By default,
-        all of these functions would produce different results each time a program is
-        run. Set the seed parameter to a constant value to return the same pseudo-random
-        numbers each time the software is run."""
+        Sets the seed value for py5's random functions. This includes `random()`,
+        `random_int()`, `random_choice()`, and `random_gaussian()`. By default, all of
+        these functions would produce different results each time a program is run. Set
+        the seed parameter to a constant value to return the same pseudo-random numbers
+        each time the software is run."""
         self._rng = np.random.default_rng(seed)
 
     @overload
@@ -893,22 +893,22 @@ class MathMixin:
         Notes
         -----
 
-        Generates random numbers. Each time the ``random()`` function is called, it
+        Generates random numbers. Each time the `random()` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
 
         If only one parameter is passed to the function, it will return a float between
-        zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+        zero and the value of the `high` parameter. For example, `random(5)` returns
         values between 0 and 5 (starting at zero, and up to, but not including, 5).
 
         If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function, or alternatively,
-        consider using ``random_int()``.
+        between the two values. For example, `random(-5, 10.2)` returns values starting
+        at -5 and up to (but not including) 10.2. To convert a floating-point random
+        number to an integer, use the `int()` function, or alternatively, consider using
+        `random_int()`.
 
         This function makes calls to numpy to generate the random values."""
         pass
@@ -938,22 +938,22 @@ class MathMixin:
         Notes
         -----
 
-        Generates random numbers. Each time the ``random()`` function is called, it
+        Generates random numbers. Each time the `random()` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
 
         If only one parameter is passed to the function, it will return a float between
-        zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+        zero and the value of the `high` parameter. For example, `random(5)` returns
         values between 0 and 5 (starting at zero, and up to, but not including, 5).
 
         If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function, or alternatively,
-        consider using ``random_int()``.
+        between the two values. For example, `random(-5, 10.2)` returns values starting
+        at -5 and up to (but not including) 10.2. To convert a floating-point random
+        number to an integer, use the `int()` function, or alternatively, consider using
+        `random_int()`.
 
         This function makes calls to numpy to generate the random values."""
         pass
@@ -983,22 +983,22 @@ class MathMixin:
         Notes
         -----
 
-        Generates random numbers. Each time the ``random()`` function is called, it
+        Generates random numbers. Each time the `random()` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
 
         If only one parameter is passed to the function, it will return a float between
-        zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+        zero and the value of the `high` parameter. For example, `random(5)` returns
         values between 0 and 5 (starting at zero, and up to, but not including, 5).
 
         If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function, or alternatively,
-        consider using ``random_int()``.
+        between the two values. For example, `random(-5, 10.2)` returns values starting
+        at -5 and up to (but not including) 10.2. To convert a floating-point random
+        number to an integer, use the `int()` function, or alternatively, consider using
+        `random_int()`.
 
         This function makes calls to numpy to generate the random values."""
         pass
@@ -1027,22 +1027,22 @@ class MathMixin:
         Notes
         -----
 
-        Generates random numbers. Each time the ``random()`` function is called, it
+        Generates random numbers. Each time the `random()` function is called, it
         returns an unexpected value within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return a float between zero
         and one.
 
         If only one parameter is passed to the function, it will return a float between
-        zero and the value of the ``high`` parameter. For example, ``random(5)`` returns
+        zero and the value of the `high` parameter. For example, `random(5)` returns
         values between 0 and 5 (starting at zero, and up to, but not including, 5).
 
         If two parameters are specified, the function will return a float with a value
-        between the two values. For example, ``random(-5, 10.2)`` returns values
-        starting at -5 and up to (but not including) 10.2. To convert a floating-point
-        random number to an integer, use the ``int()`` function, or alternatively,
-        consider using ``random_int()``.
+        between the two values. For example, `random(-5, 10.2)` returns values starting
+        at -5 and up to (but not including) 10.2. To convert a floating-point random
+        number to an integer, use the `int()` function, or alternatively, consider using
+        `random_int()`.
 
         This function makes calls to numpy to generate the random values."""
         if len(args) == 0:
@@ -1087,28 +1087,28 @@ class MathMixin:
         Notes
         -----
 
-        Generates random integers. Each time the ``random_int()`` function is called, it
+        Generates random integers. Each time the `random_int()` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return either 0 or 1.
-        Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-        evaluates to ``True``. This is equivalent to a coin toss.
+        Recall that in a Python boolean expression, 0 evaluates to `False` and 1
+        evaluates to `True`. This is equivalent to a coin toss.
 
         If only one parameter is passed to the function, it will return an integer
-        between zero and the value of the ``high`` parameter, inclusive. For example,
-        ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+        between zero and the value of the `high` parameter, inclusive. For example,
+        `random(5)` returns one of 0, 1, 2, 3, 4, or 5.
 
         If two parameters are specified, the function will return an integer with a
-        value between the two values, inclusive. For example, ``random(2, 5)`` returns
-        one of 2, 3, 4, or 5.
+        value between the two values, inclusive. For example, `random(2, 5)` returns one
+        of 2, 3, 4, or 5.
 
         If you want to pick a random object from a list, recall that Python uses zero-
         indexing, so the first index value is 0 and the final index value is one less
         than the list length. Therefore, to pick a random index to use in the list
-        ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-        will (occasionally) result in an index out of range error. Alternatively, you
-        can also use ``random_choice()`` to pick a random object from a list.
+        `words`, your code should be `random_int(len(words)-1)`. Omitting the `-1` will
+        (occasionally) result in an index out of range error. Alternatively, you can
+        also use `random_choice()` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         pass
@@ -1138,28 +1138,28 @@ class MathMixin:
         Notes
         -----
 
-        Generates random integers. Each time the ``random_int()`` function is called, it
+        Generates random integers. Each time the `random_int()` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return either 0 or 1.
-        Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-        evaluates to ``True``. This is equivalent to a coin toss.
+        Recall that in a Python boolean expression, 0 evaluates to `False` and 1
+        evaluates to `True`. This is equivalent to a coin toss.
 
         If only one parameter is passed to the function, it will return an integer
-        between zero and the value of the ``high`` parameter, inclusive. For example,
-        ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+        between zero and the value of the `high` parameter, inclusive. For example,
+        `random(5)` returns one of 0, 1, 2, 3, 4, or 5.
 
         If two parameters are specified, the function will return an integer with a
-        value between the two values, inclusive. For example, ``random(2, 5)`` returns
-        one of 2, 3, 4, or 5.
+        value between the two values, inclusive. For example, `random(2, 5)` returns one
+        of 2, 3, 4, or 5.
 
         If you want to pick a random object from a list, recall that Python uses zero-
         indexing, so the first index value is 0 and the final index value is one less
         than the list length. Therefore, to pick a random index to use in the list
-        ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-        will (occasionally) result in an index out of range error. Alternatively, you
-        can also use ``random_choice()`` to pick a random object from a list.
+        `words`, your code should be `random_int(len(words)-1)`. Omitting the `-1` will
+        (occasionally) result in an index out of range error. Alternatively, you can
+        also use `random_choice()` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         pass
@@ -1189,28 +1189,28 @@ class MathMixin:
         Notes
         -----
 
-        Generates random integers. Each time the ``random_int()`` function is called, it
+        Generates random integers. Each time the `random_int()` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return either 0 or 1.
-        Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-        evaluates to ``True``. This is equivalent to a coin toss.
+        Recall that in a Python boolean expression, 0 evaluates to `False` and 1
+        evaluates to `True`. This is equivalent to a coin toss.
 
         If only one parameter is passed to the function, it will return an integer
-        between zero and the value of the ``high`` parameter, inclusive. For example,
-        ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+        between zero and the value of the `high` parameter, inclusive. For example,
+        `random(5)` returns one of 0, 1, 2, 3, 4, or 5.
 
         If two parameters are specified, the function will return an integer with a
-        value between the two values, inclusive. For example, ``random(2, 5)`` returns
-        one of 2, 3, 4, or 5.
+        value between the two values, inclusive. For example, `random(2, 5)` returns one
+        of 2, 3, 4, or 5.
 
         If you want to pick a random object from a list, recall that Python uses zero-
         indexing, so the first index value is 0 and the final index value is one less
         than the list length. Therefore, to pick a random index to use in the list
-        ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-        will (occasionally) result in an index out of range error. Alternatively, you
-        can also use ``random_choice()`` to pick a random object from a list.
+        `words`, your code should be `random_int(len(words)-1)`. Omitting the `-1` will
+        (occasionally) result in an index out of range error. Alternatively, you can
+        also use `random_choice()` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         pass
@@ -1239,28 +1239,28 @@ class MathMixin:
         Notes
         -----
 
-        Generates random integers. Each time the ``random_int()`` function is called, it
+        Generates random integers. Each time the `random_int()` function is called, it
         returns an unexpected integer within the specified range. This function's
-        randomness can be influenced by ``random_seed()``.
+        randomness can be influenced by `random_seed()`.
 
         If no parameters are passed to the function, it will return either 0 or 1.
-        Recall that in a Python boolean expression, 0 evaluates to ``False`` and 1
-        evaluates to ``True``. This is equivalent to a coin toss.
+        Recall that in a Python boolean expression, 0 evaluates to `False` and 1
+        evaluates to `True`. This is equivalent to a coin toss.
 
         If only one parameter is passed to the function, it will return an integer
-        between zero and the value of the ``high`` parameter, inclusive. For example,
-        ``random(5)`` returns one of 0, 1, 2, 3, 4, or 5.
+        between zero and the value of the `high` parameter, inclusive. For example,
+        `random(5)` returns one of 0, 1, 2, 3, 4, or 5.
 
         If two parameters are specified, the function will return an integer with a
-        value between the two values, inclusive. For example, ``random(2, 5)`` returns
-        one of 2, 3, 4, or 5.
+        value between the two values, inclusive. For example, `random(2, 5)` returns one
+        of 2, 3, 4, or 5.
 
         If you want to pick a random object from a list, recall that Python uses zero-
         indexing, so the first index value is 0 and the final index value is one less
         than the list length. Therefore, to pick a random index to use in the list
-        ``words``, your code should be ``random_int(len(words)-1)``. Omitting the ``-1``
-        will (occasionally) result in an index out of range error. Alternatively, you
-        can also use ``random_choice()`` to pick a random object from a list.
+        `words`, your code should be `random_int(len(words)-1)`. Omitting the `-1` will
+        (occasionally) result in an index out of range error. Alternatively, you can
+        also use `random_choice()` to pick a random object from a list.
 
         This function makes calls to numpy to generate the random integers."""
         if len(args) == 0:
@@ -1280,11 +1280,33 @@ class MathMixin:
         raise TypeError(
             f'No matching overloads found for Sketch.random_int({types})')
 
-    def random_choice(
+    def random_choice(self, objects: list[Any]) -> Any:
+        """Select a random item from a list.
+
+        Parameters
+        ----------
+
+        objects: list[Any]
+            list of objects to choose from
+
+        Notes
+        -----
+
+        Select a random item from a list. The list items can be of any type. If the list
+        of objects is empty, `None` will be returned.
+
+        This function's randomness can be influenced by `random_seed()`, and makes calls
+        to numpy to select the random items."""
+        if len(objects):
+            return objects[self._rng.integers(0, len(objects))]
+        else:
+            return None
+
+    def random_sample(
             self,
             objects: list[Any],
             size: int = 1,
-            replace: bool = True) -> Any:
+            replace: bool = True) -> list[Any]:
         """Select random items from a list.
 
         Parameters
@@ -1304,12 +1326,32 @@ class MathMixin:
 
         Select random items from a list. The list items can be of any type. If multiple
         items are selected, this function will by default allow the same item to be
-        selected multiple times. Set the ``replace`` parameter to ``False`` to prevent
-        the same item from being selected multiple times.
+        selected multiple times. Set the `replace` parameter to `False` to prevent the
+        same item from being selected multiple times.
 
-        This function's randomness can be influenced by ``random_seed()``, and makes
-        calls to numpy to select the random items."""
-        return self._rng.choice(objects, size=size, replace=replace)
+        The returned value will always be a sequence such as a list or numpy array, even
+        if only one item is sampled. If you only want to sample one item, consider using
+        `random_choice()` instead. If the list of objects is empty, an empty list will
+        be returned.
+
+        This function's randomness can be influenced by `random_seed()`, and makes calls
+        to numpy to select the random items."""
+        if len(objects):
+            if isinstance(objects, types.GeneratorType):
+                objects = list(objects)
+            indices = self._rng.choice(
+                range(
+                    len(objects)),
+                size=size,
+                replace=replace)
+            if not isinstance(objects, list):
+                try:
+                    return objects[indices]
+                except BaseException:
+                    pass
+            return [objects[idx] for idx in indices]
+        else:
+            return []
 
     @overload
     def random_gaussian(self) -> float:
@@ -1336,10 +1378,10 @@ class MathMixin:
         Notes
         -----
 
-        Generates random gaussian values. Each time the ``random_gaussian()`` function
-        is called, it returns an unexpected float with a probability distribution set by
+        Generates random gaussian values. Each time the `random_gaussian()` function is
+        called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        ``random_seed()``.
+        `random_seed()`.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1380,10 +1422,10 @@ class MathMixin:
         Notes
         -----
 
-        Generates random gaussian values. Each time the ``random_gaussian()`` function
-        is called, it returns an unexpected float with a probability distribution set by
+        Generates random gaussian values. Each time the `random_gaussian()` function is
+        called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        ``random_seed()``.
+        `random_seed()`.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1424,10 +1466,10 @@ class MathMixin:
         Notes
         -----
 
-        Generates random gaussian values. Each time the ``random_gaussian()`` function
-        is called, it returns an unexpected float with a probability distribution set by
+        Generates random gaussian values. Each time the `random_gaussian()` function is
+        called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        ``random_seed()``.
+        `random_seed()`.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1467,10 +1509,10 @@ class MathMixin:
         Notes
         -----
 
-        Generates random gaussian values. Each time the ``random_gaussian()`` function
-        is called, it returns an unexpected float with a probability distribution set by
+        Generates random gaussian values. Each time the `random_gaussian()` function is
+        called, it returns an unexpected float with a probability distribution set by
         the parameters.  This function's randomness can be influenced by
-        ``random_seed()``.
+        `random_seed()`.
 
         If no parameters are passed to the function, returned values will have an
         average of 0 and a standard deviation of 1. Although there is theoretically no
@@ -1535,20 +1577,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm. Noise functions are random sequence generators that produce a
-        more natural, harmonic succession of numbers compared to the ``random()``
-        method.
+        more natural, harmonic succession of numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
-        is done in a few of the examples.
+        pass the `noise()` method the `frame_count` divided by a scaling factor, as is
+        done in a few of the examples.
 
         The generated noise values for this method will typically be between 0 and 1,
         and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
-        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        `os_noise()` method, which generates noise using the OpenSimplex 2 algorithm
         (smooth version / SuperSimplex). That algorithm generates noise values between
         -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
         these differences when modifying your code to switch from one to the other.
@@ -1561,8 +1602,8 @@ class MathMixin:
         both noise algorithms are computed over several octaves which are added together
         for the final result.
 
-        The nature of the noise values returned can be adjusted with ``noise_seed()``
-        and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with `noise_seed()` and
+        `noise_detail()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -1572,9 +1613,9 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        Py5's `noise()` method can also accept numpy arrays as parameters. It will use
         broadcasting when needed and calculate the values efficiently. Using numpy array
-        parameters will be much faster and efficient than calling the ``noise()`` method
+        parameters will be much faster and efficient than calling the `noise()` method
         repeatedly in a loop. See the examples to see how this can be done.
 
         Noise generation is a rich and complex topic, and there are many noise
@@ -1625,20 +1666,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm. Noise functions are random sequence generators that produce a
-        more natural, harmonic succession of numbers compared to the ``random()``
-        method.
+        more natural, harmonic succession of numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
-        is done in a few of the examples.
+        pass the `noise()` method the `frame_count` divided by a scaling factor, as is
+        done in a few of the examples.
 
         The generated noise values for this method will typically be between 0 and 1,
         and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
-        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        `os_noise()` method, which generates noise using the OpenSimplex 2 algorithm
         (smooth version / SuperSimplex). That algorithm generates noise values between
         -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
         these differences when modifying your code to switch from one to the other.
@@ -1651,8 +1691,8 @@ class MathMixin:
         both noise algorithms are computed over several octaves which are added together
         for the final result.
 
-        The nature of the noise values returned can be adjusted with ``noise_seed()``
-        and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with `noise_seed()` and
+        `noise_detail()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -1662,9 +1702,9 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        Py5's `noise()` method can also accept numpy arrays as parameters. It will use
         broadcasting when needed and calculate the values efficiently. Using numpy array
-        parameters will be much faster and efficient than calling the ``noise()`` method
+        parameters will be much faster and efficient than calling the `noise()` method
         repeatedly in a loop. See the examples to see how this can be done.
 
         Noise generation is a rich and complex topic, and there are many noise
@@ -1715,20 +1755,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm. Noise functions are random sequence generators that produce a
-        more natural, harmonic succession of numbers compared to the ``random()``
-        method.
+        more natural, harmonic succession of numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
-        is done in a few of the examples.
+        pass the `noise()` method the `frame_count` divided by a scaling factor, as is
+        done in a few of the examples.
 
         The generated noise values for this method will typically be between 0 and 1,
         and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
-        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        `os_noise()` method, which generates noise using the OpenSimplex 2 algorithm
         (smooth version / SuperSimplex). That algorithm generates noise values between
         -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
         these differences when modifying your code to switch from one to the other.
@@ -1741,8 +1780,8 @@ class MathMixin:
         both noise algorithms are computed over several octaves which are added together
         for the final result.
 
-        The nature of the noise values returned can be adjusted with ``noise_seed()``
-        and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with `noise_seed()` and
+        `noise_detail()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -1752,9 +1791,9 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        Py5's `noise()` method can also accept numpy arrays as parameters. It will use
         broadcasting when needed and calculate the values efficiently. Using numpy array
-        parameters will be much faster and efficient than calling the ``noise()`` method
+        parameters will be much faster and efficient than calling the `noise()` method
         repeatedly in a loop. See the examples to see how this can be done.
 
         Noise generation is a rich and complex topic, and there are many noise
@@ -1803,20 +1842,19 @@ class MathMixin:
 
         Generate pseudo-random noise values for specific coodinates using Processing's
         noise algorithm. Noise functions are random sequence generators that produce a
-        more natural, harmonic succession of numbers compared to the ``random()``
-        method.
+        more natural, harmonic succession of numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``noise()`` method the ``frame_count`` divided by a scaling factor, as
-        is done in a few of the examples.
+        pass the `noise()` method the `frame_count` divided by a scaling factor, as is
+        done in a few of the examples.
 
         The generated noise values for this method will typically be between 0 and 1,
         and can be generated in 1, 2, or 3 dimensions. Py5 also provides the
-        ``os_noise()`` method, which generates noise using the OpenSimplex 2 algorithm
+        `os_noise()` method, which generates noise using the OpenSimplex 2 algorithm
         (smooth version / SuperSimplex). That algorithm generates noise values between
         -1 and 1, and can be generated in 2, 3, or 4 dimensions. Be aware of both of
         these differences when modifying your code to switch from one to the other.
@@ -1829,8 +1867,8 @@ class MathMixin:
         both noise algorithms are computed over several octaves which are added together
         for the final result.
 
-        The nature of the noise values returned can be adjusted with ``noise_seed()``
-        and ``noise_detail()``.
+        The nature of the noise values returned can be adjusted with `noise_seed()` and
+        `noise_detail()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -1840,9 +1878,9 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``noise()`` method can also accept numpy arrays as parameters. It will use
+        Py5's `noise()` method can also accept numpy arrays as parameters. It will use
         broadcasting when needed and calculate the values efficiently. Using numpy array
-        parameters will be much faster and efficient than calling the ``noise()`` method
+        parameters will be much faster and efficient than calling the `noise()` method
         repeatedly in a loop. See the examples to see how this can be done.
 
         Noise generation is a rich and complex topic, and there are many noise
@@ -1900,28 +1938,27 @@ class MathMixin:
         Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` method.
+        numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
-        as is done in a few of the examples.
+        pass the `os_noise()` method the `frame_count` divided by a scaling factor, as
+        is done in a few of the examples.
 
         The generated noise values for this method will be between -1 and 1, and can be
         generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
         constant value as an extra parameter, as shown in a few examples. Py5 also
-        provides the ``noise()`` method, which generates noise using Processing's noise
+        provides the `noise()` method, which generates noise using Processing's noise
         algorithm. That algorithm typically generates noise values between 0 and 1, and
         can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
         when modifying your code to switch from one to the other. There are other
         differences in the character of the noise values generated by both methods, so
         you'll need to do some experimentation to get the results you want.
 
-        The nature of the noise values returned can be adjusted with
-        ``os_noise_seed()``.
+        The nature of the noise values returned can be adjusted with `os_noise_seed()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -1931,11 +1968,11 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        Py5's `os_noise()` method can also accept numpy arrays as parameters. It will
         use broadcasting when needed and calculate the values efficiently. Using numpy
-        array parameters will be much faster and efficient than calling the
-        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
-        be done. The noise algorithm for this method is implemented in Java.
+        array parameters will be much faster and efficient than calling the `os_noise()`
+        method repeatedly in a loop. See the examples to see how this can be done. The
+        noise algorithm for this method is implemented in Java.
 
         Noise generation is a rich and complex topic, and there are many noise
         algorithms and libraries available that are worth learning about. Early versions
@@ -1987,28 +2024,27 @@ class MathMixin:
         Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` method.
+        numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
-        as is done in a few of the examples.
+        pass the `os_noise()` method the `frame_count` divided by a scaling factor, as
+        is done in a few of the examples.
 
         The generated noise values for this method will be between -1 and 1, and can be
         generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
         constant value as an extra parameter, as shown in a few examples. Py5 also
-        provides the ``noise()`` method, which generates noise using Processing's noise
+        provides the `noise()` method, which generates noise using Processing's noise
         algorithm. That algorithm typically generates noise values between 0 and 1, and
         can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
         when modifying your code to switch from one to the other. There are other
         differences in the character of the noise values generated by both methods, so
         you'll need to do some experimentation to get the results you want.
 
-        The nature of the noise values returned can be adjusted with
-        ``os_noise_seed()``.
+        The nature of the noise values returned can be adjusted with `os_noise_seed()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -2018,11 +2054,11 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        Py5's `os_noise()` method can also accept numpy arrays as parameters. It will
         use broadcasting when needed and calculate the values efficiently. Using numpy
-        array parameters will be much faster and efficient than calling the
-        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
-        be done. The noise algorithm for this method is implemented in Java.
+        array parameters will be much faster and efficient than calling the `os_noise()`
+        method repeatedly in a loop. See the examples to see how this can be done. The
+        noise algorithm for this method is implemented in Java.
 
         Noise generation is a rich and complex topic, and there are many noise
         algorithms and libraries available that are worth learning about. Early versions
@@ -2083,28 +2119,27 @@ class MathMixin:
         Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` method.
+        numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
-        as is done in a few of the examples.
+        pass the `os_noise()` method the `frame_count` divided by a scaling factor, as
+        is done in a few of the examples.
 
         The generated noise values for this method will be between -1 and 1, and can be
         generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
         constant value as an extra parameter, as shown in a few examples. Py5 also
-        provides the ``noise()`` method, which generates noise using Processing's noise
+        provides the `noise()` method, which generates noise using Processing's noise
         algorithm. That algorithm typically generates noise values between 0 and 1, and
         can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
         when modifying your code to switch from one to the other. There are other
         differences in the character of the noise values generated by both methods, so
         you'll need to do some experimentation to get the results you want.
 
-        The nature of the noise values returned can be adjusted with
-        ``os_noise_seed()``.
+        The nature of the noise values returned can be adjusted with `os_noise_seed()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -2114,11 +2149,11 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        Py5's `os_noise()` method can also accept numpy arrays as parameters. It will
         use broadcasting when needed and calculate the values efficiently. Using numpy
-        array parameters will be much faster and efficient than calling the
-        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
-        be done. The noise algorithm for this method is implemented in Java.
+        array parameters will be much faster and efficient than calling the `os_noise()`
+        method repeatedly in a loop. See the examples to see how this can be done. The
+        noise algorithm for this method is implemented in Java.
 
         Noise generation is a rich and complex topic, and there are many noise
         algorithms and libraries available that are worth learning about. Early versions
@@ -2168,28 +2203,27 @@ class MathMixin:
         Generate pseudo-random noise values for specific coodinates using the
         OpenSimplex 2 algorithm (smooth version / SuperSimplex). Noise functions are
         random sequence generators that produce a more natural, harmonic succession of
-        numbers compared to the ``random()`` method.
+        numbers compared to the `random()` method.
 
-        In contrast to the ``random()`` method, noise is defined in an n-dimensional
+        In contrast to the `random()` method, noise is defined in an n-dimensional
         space, in which each coordinate corresponds to a fixed pseudo-random value
         (fixed only for the lifespan of the program). The noise value can be animated by
         moving through the noise space, as demonstrated in the examples. Any dimension
         can also be interpreted as time. An easy way to animate the noise value is to
-        pass the ``os_noise()`` method the ``frame_count`` divided by a scaling factor,
-        as is done in a few of the examples.
+        pass the `os_noise()` method the `frame_count` divided by a scaling factor, as
+        is done in a few of the examples.
 
         The generated noise values for this method will be between -1 and 1, and can be
         generated in 2, 3, or 4 dimensions. To generate noise in 1 dimension, add a
         constant value as an extra parameter, as shown in a few examples. Py5 also
-        provides the ``noise()`` method, which generates noise using Processing's noise
+        provides the `noise()` method, which generates noise using Processing's noise
         algorithm. That algorithm typically generates noise values between 0 and 1, and
         can be generated in 1, 2, or 3 dimensions. Be aware of both of these differences
         when modifying your code to switch from one to the other. There are other
         differences in the character of the noise values generated by both methods, so
         you'll need to do some experimentation to get the results you want.
 
-        The nature of the noise values returned can be adjusted with
-        ``os_noise_seed()``.
+        The nature of the noise values returned can be adjusted with `os_noise_seed()`.
 
         Another way to adjust the character of the resulting sequence is the scale of
         the input coordinates. As the method works within an infinite space, the value
@@ -2199,11 +2233,11 @@ class MathMixin:
         best for most applications, but this will differ depending on the use case and
         the noise settings.
 
-        Py5's ``os_noise()`` method can also accept numpy arrays as parameters. It will
+        Py5's `os_noise()` method can also accept numpy arrays as parameters. It will
         use broadcasting when needed and calculate the values efficiently. Using numpy
-        array parameters will be much faster and efficient than calling the
-        ``os_noise()`` method repeatedly in a loop. See the examples to see how this can
-        be done. The noise algorithm for this method is implemented in Java.
+        array parameters will be much faster and efficient than calling the `os_noise()`
+        method repeatedly in a loop. See the examples to see how this can be done. The
+        noise algorithm for this method is implemented in Java.
 
         Noise generation is a rich and complex topic, and there are many noise
         algorithms and libraries available that are worth learning about. Early versions

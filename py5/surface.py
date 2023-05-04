@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,7 @@ from typing import overload, Any  # noqa
 import weakref
 
 from .image import Py5Image  # noqa
+from . import spelling
 
 
 def _return_py5surface(f):
@@ -55,6 +56,15 @@ class Py5Surface:
             cls._py5_object_cache.add(o)
             return o
 
+    def __str__(self) -> str:
+        return f"Py5Surface(id=" + str(id(self)) + ")"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __getattr__(self, name):
+        raise AttributeError(spelling.error_msg('Py5Surface', name, self))
+
     def get_native(self) -> Any:
         """Get the Sketch's Java native window object.
 
@@ -83,14 +93,14 @@ class Py5Surface:
         -----
 
         Determine if the surface is currently running an animation. A Sketch that has
-        called ``no_loop()`` or has no ``draw()`` function is not animating, and will
-        result in this method returning ``True``. If there is a ``draw()`` function and
-        ``no_loop()`` has not been called, this will return ``False``. Calling
-        Py5Surface's ``Py5Surface.stop_thread()`` will make all future calls to
-        ``is_stopped()`` return ``True``.
+        called `no_loop()` or has no `draw()` function is not animating, and will result
+        in this method returning `True`. If there is a `draw()` function and `no_loop()`
+        has not been called, this will return `False`. Calling Py5Surface's
+        `Py5Surface.stop_thread()` will make all future calls to `is_stopped()` return
+        `True`.
 
-        The output of this method is independent of ``Py5Surface.pause_thread()`` and
-        ``Py5Surface.resume_thread()``.
+        The output of this method is independent of `Py5Surface.pause_thread()` and
+        `Py5Surface.resume_thread()`.
         """
         return self._instance.isStopped()
 
@@ -103,12 +113,12 @@ class Py5Surface:
         -----
 
         Pause a running Sketch. The Sketch window will be static and unresponsive. You
-        can resume the Sketch with ``Py5Surface.resume_thread()``.
+        can resume the Sketch with `Py5Surface.resume_thread()`.
 
-        The ``frame_count`` will not increment while the Sketch is paused.
+        The `frame_count` will not increment while the Sketch is paused.
 
         Pausing a Sketch is not the same as stopping a Sketch, so this method will not
-        change the results of ``Py5Surface.is_stopped()``.
+        change the results of `Py5Surface.is_stopped()`.
         """
         return self._instance.pauseThread()
 
@@ -121,9 +131,9 @@ class Py5Surface:
         -----
 
         Resume a paused Sketch. The Sketch window will resume operating as it did before
-        ``Py5Surface.pause_thread()`` was called.
+        `Py5Surface.pause_thread()` was called.
 
-        The ``frame_count`` will continue incrementing after the Sketch is resumed.
+        The `frame_count` will continue incrementing after the Sketch is resumed.
         """
         return self._instance.resumeThread()
 
@@ -142,8 +152,8 @@ class Py5Surface:
         -----
 
         Set the Sketch window to always be on top of other windows. By default, the
-        Sketch window can be covered by other windows. Setting this to ``True`` will
-        keep that from happening.
+        Sketch window can be covered by other windows. Setting this to `True` will keep
+        that from happening.
         """
         return self._instance.setAlwaysOnTop(always)
 
@@ -164,9 +174,9 @@ class Py5Surface:
         Set the Sketch window icon. This will typically appear in the window's title
         bar. The default window icon is the same as Processing's.
 
-        This method will not work for the ``P2D`` or ``P3D`` renderers. Setting the icon
-        for those renderers is a bit tricky; the icon must be a PNG file and it must be
-        done in ``settings()``. See the second example to learn how to do that.
+        This method will not work for the `P2D` or `P3D` renderers. Setting the icon for
+        those renderers is a bit tricky; the icon must be a PNG file and it must be done
+        in `settings()`. See the second example to learn how to do that.
         """
         return self._instance.setIcon(icon)
 
@@ -187,11 +197,11 @@ class Py5Surface:
         Notes
         -----
 
-        Set the Sketch's window location. Calling this repeatedly from the ``draw()``
+        Set the Sketch's window location. Calling this repeatedly from the `draw()`
         function may result in a sluggish Sketch. Negative or invalid coordinates are
-        ignored. To hide a Sketch window, use ``Py5Surface.set_visible()``.
+        ignored. To hide a Sketch window, use `Py5Surface.set_visible()`.
 
-        This method provides the same functionality as ``window_move()``.
+        This method provides the same functionality as `window_move()`.
         """
         return self._instance.setLocation(x, y)
 
@@ -214,9 +224,9 @@ class Py5Surface:
         By default, the Sketch window is not resizable.
 
         Changing the window size will clear the drawing canvas. If you do this, the
-        ``width`` and ``height`` variables will change.
+        `width` and `height` variables will change.
 
-        This method provides the same functionality as ``window_resizable()``.
+        This method provides the same functionality as `window_resizable()`.
         """
         return self._instance.setResizable(resizable)
 
@@ -238,12 +248,12 @@ class Py5Surface:
         -----
 
         Set a new width and height for the Sketch window. You do not need to call
-        ``Py5Surface.set_resizable()`` before calling this.
+        `Py5Surface.set_resizable()` before calling this.
 
         Changing the window size will clear the drawing canvas. If you do this, the
-        ``width`` and ``height`` variables will change.
+        `width` and `height` variables will change.
 
-        This method provides the same functionality as ``window_resize()``.
+        This method provides the same functionality as `window_resize()`.
         """
         return self._instance.setSize(width, height)
 
@@ -264,7 +274,7 @@ class Py5Surface:
         Set the Sketch window's title. This will typically appear at the window's title
         bar. The default window title is "Sketch".
 
-        This method provides the same functionality as ``window_title()``.
+        This method provides the same functionality as `window_title()`.
         """
         return self._instance.setTitle(title)
 
@@ -296,11 +306,11 @@ class Py5Surface:
         -----
 
         Stop the animation thread. The Sketch window will remain open but will be static
-        and unresponsive. Use ``Py5Surface.is_stopped()`` to determine if a Sketch has
+        and unresponsive. Use `Py5Surface.is_stopped()` to determine if a Sketch has
         been stopped or not.
 
-        This method is different from ``Py5Surface.pause_thread()`` in that it will
-        irreversably stop the animation. Use ``Py5Surface.pause_thread()`` and
-        ``Py5Surface.resume_thread()`` if you want to pause and resume a running Sketch.
+        This method is different from `Py5Surface.pause_thread()` in that it will
+        irreversably stop the animation. Use `Py5Surface.pause_thread()` and
+        `Py5Surface.resume_thread()` if you want to pause and resume a running Sketch.
         """
         return self._instance.stopThread()

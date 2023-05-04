@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -189,11 +189,11 @@ PY5_DIR_STR = [
     'full_screen',
     'FX2D',
     'g',
-    'get',
     'get_current_sketch',
     'get_frame_rate',
     'get_graphics',
     'get_matrix',
+    'get_pixels',
     'get_surface',
     'GRAY',
     'green',
@@ -363,6 +363,7 @@ PY5_DIR_STR = [
     'random_choice',
     'random_gaussian',
     'random_int',
+    'random_sample',
     'random_seed',
     'ratio_left',
     'ratio_scale',
@@ -416,6 +417,7 @@ PY5_DIR_STR = [
     'select_output',
     'set_matrix',
     'set_np_pixels',
+    'set_pixels',
     'set_println_stream',
     'set_stackprinter_style',
     'shader',
@@ -657,11 +659,11 @@ PY5_ALL_STR = [
     'frustum',
     'full_screen',
     'FX2D',
-    'get',
     'get_current_sketch',
     'get_frame_rate',
     'get_graphics',
     'get_matrix',
+    'get_pixels',
     'get_surface',
     'GRAY',
     'green',
@@ -810,6 +812,7 @@ PY5_ALL_STR = [
     'random_choice',
     'random_gaussian',
     'random_int',
+    'random_sample',
     'random_seed',
     'RECT',
     'rect',
@@ -856,6 +859,7 @@ PY5_ALL_STR = [
     'select_output',
     'set_matrix',
     'set_np_pixels',
+    'set_pixels',
     'set_println_stream',
     'set_stackprinter_style',
     'shader',

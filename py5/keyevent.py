@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,8 @@ import functools
 import weakref
 
 from jpype.types import JInt, JChar
+
+from . import spelling
 
 
 def _convert_jchar_to_chr(f):
@@ -56,10 +58,10 @@ class Py5KeyEvent:
     Datatype for providing information about key events. An instance of this class
     will be passed to user-defined key event functions if py5 detects those
     functions accept 1 (positional) argument, as demonstrated in the example code.
-    The key event functions can be any of ``key_pressed()``, ``key_typed()``, or
-    ``key_released()``. Key events can be generated faster than the frame rate of
-    the Sketch, making key event functions useful for capturing all of a user's
-    keyboard activity.
+    The key event functions can be any of `key_pressed()`, `key_typed()`, or
+    `key_released()`. Key events can be generated faster than the frame rate of the
+    Sketch, making key event functions useful for capturing all of a user's keyboard
+    activity.
     """
     _py5_object_cache = weakref.WeakSet()
 
@@ -72,6 +74,27 @@ class Py5KeyEvent:
             o._instance = pkeyevent
             cls._py5_object_cache.add(o)
             return o
+
+    def __str__(self):
+        key = self.get_key()
+        action = self.get_action()
+
+        action_str = 'UNKNOWN'
+        for k, v in Py5KeyEvent.__dict__.items():
+            if k == k.upper() and action == v:
+                action_str = k
+                break
+
+        if key == '\uffff':  # py5.CODED
+            key = 'CODED'
+
+        return f"Py5KeyEvent(key=" + key + ", action=" + action_str + ")"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __getattr__(self, name):
+        raise AttributeError(spelling.error_msg('Py5KeyEvent', name, self))
 
     ALT = 8
     CTRL = 2
@@ -103,9 +126,9 @@ class Py5KeyEvent:
         Notes
         -----
 
-        Return the key for the key event. If the value is ``CODED``, use
-        ``Py5KeyEvent.get_key_code()`` instead. This information can also be obtained
-        with ``key``.
+        Return the key for the key event. If the value is `CODED`, use
+        `Py5KeyEvent.get_key_code()` instead. This information can also be obtained with
+        `key`.
         """
         return self._instance.getKey()
 
@@ -120,7 +143,7 @@ class Py5KeyEvent:
 
         Return the key code for the key event. This method is important for key events
         involving coded keys such as the arrow or modifier keys. This information can
-        also be obtained with ``key_code``.
+        also be obtained with `key_code`.
         """
         return self._instance.getKeyCode()
 
@@ -164,8 +187,8 @@ class Py5KeyEvent:
         system the Sketch is run on. Sometimes the native object can be used to access
         functionality not otherwise available through Processing or py5.
 
-        Be aware that it is possible for the native event object to be ``None``, such as
-        when interacting with a Sketch through ``py5_tools.sketch_portal()``.
+        Be aware that it is possible for the native event object to be `None`, such as
+        when interacting with a Sketch through `py5_tools.sketch_portal()`.
         """
         return self._instance.getNative()
 

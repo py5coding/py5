@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -25,6 +25,7 @@ import weakref
 
 from .base import Py5Base
 from .mixins import PixelPy5ImageMixin
+from . import spelling
 
 
 def _return_py5image(f):
@@ -46,23 +47,22 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     Notes
     -----
 
-    Datatype for storing images. Py5 can load ``.gif``, ``.jpg``, ``.tga``, and
-    ``.png`` images using the ``load_image()`` function. Py5 can also convert common
-    Python image objects using the ``convert_image()`` function. Images may be
-    displayed in 2D and 3D space. The ``Py5Image`` class contains fields for the
-    ``Py5Image.width`` and ``Py5Image.height`` of the image, as well as arrays
-    called ``Py5Image.pixels[]`` and ``Py5Image.np_pixels[]`` that contain the
-    values for every pixel in the image. The methods described below allow easy
-    access to the image's pixels and alpha channel and simplify the process of
-    compositing.
+    Datatype for storing images. Py5 can load `.gif`, `.jpg`, `.tga`, and `.png`
+    images using the `load_image()` function. Py5 can also convert common Python
+    image objects using the `convert_image()` function. Images may be displayed in
+    2D and 3D space. The `Py5Image` class contains fields for the `Py5Image.width`
+    and `Py5Image.height` of the image, as well as arrays called `Py5Image.pixels[]`
+    and `Py5Image.np_pixels[]` that contain the values for every pixel in the image.
+    The methods described below allow easy access to the image's pixels and alpha
+    channel and simplify the process of compositing.
 
-    Before using the ``Py5Image.pixels[]`` array, be sure to use the
-    ``Py5Image.load_pixels()`` method on the image to make sure that the pixel data
-    is properly loaded. Similarly, be sure to use the ``Py5Image.load_np_pixels()``
-    method on the image before using the ``Py5Image.np_pixels[]`` array.
+    Before using the `Py5Image.pixels[]` array, be sure to use the
+    `Py5Image.load_pixels()` method on the image to make sure that the pixel data is
+    properly loaded. Similarly, be sure to use the `Py5Image.load_np_pixels()`
+    method on the image before using the `Py5Image.np_pixels[]` array.
 
-    To create a new image, use the ``create_image()`` function. Do not use the
-    syntax ``Py5Image()``.
+    To create a new image, use the `create_image()` function. Do not use the syntax
+    `Py5Image()`.
     """
     _py5_object_cache = weakref.WeakSet()
 
@@ -82,6 +82,16 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         self._instance = pimage
         super().__init__(instance=pimage)
+
+    def __str__(self) -> str:
+        return f"Py5Image(width=" + str(self._get_width()) + \
+            ", height=" + str(self._get_height()) + ")"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __getattr__(self, name):
+        raise AttributeError(spelling.error_msg('Py5Image', name, self))
 
     ADD = 2
     ALPHA = 4
@@ -146,7 +156,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Pixel density of the Py5Image object. This will always be equal to 1, even if
-        the Sketch used ``pixel_density()`` to set the pixel density to a value greater
+        the Sketch used `pixel_density()` to set the pixel density to a value greater
         than 1.
         """
         return self._instance.pixelDensity
@@ -160,7 +170,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Pixel density of the Py5Image object. This will always be equal to 1, even if
-        the Sketch used ``pixel_density()`` to set the pixel density to a value greater
+        the Sketch used `pixel_density()` to set the pixel density to a value greater
         than 1.""")
 
     def _get_pixel_height(self) -> int:
@@ -172,8 +182,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Height of the Py5Image object in pixels. This will be the same as
-        ``Py5Image.height``, even if the Sketch used ``pixel_density()`` to set the
-        pixel density to a value greater than 1.
+        `Py5Image.height`, even if the Sketch used `pixel_density()` to set the pixel
+        density to a value greater than 1.
         """
         return self._instance.pixelHeight
     pixel_height: int = property(
@@ -186,8 +196,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Height of the Py5Image object in pixels. This will be the same as
-        ``Py5Image.height``, even if the Sketch used ``pixel_density()`` to set the
-        pixel density to a value greater than 1.""")
+        `Py5Image.height`, even if the Sketch used `pixel_density()` to set the pixel
+        density to a value greater than 1.""")
 
     def _get_pixel_width(self) -> int:
         """Width of the Py5Image object in pixels.
@@ -198,7 +208,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Width of the Py5Image object in pixels. This will be the same as
-        ``Py5Image.width``, even if the Sketch used ``pixel_density()`` to set the pixel
+        `Py5Image.width`, even if the Sketch used `pixel_density()` to set the pixel
         density to a value greater than 1.
         """
         return self._instance.pixelWidth
@@ -212,7 +222,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Width of the Py5Image object in pixels. This will be the same as
-        ``Py5Image.width``, even if the Sketch used ``pixel_density()`` to set the pixel
+        `Py5Image.width`, even if the Sketch used `pixel_density()` to set the pixel
         density to a value greater than 1.""")
 
     def _get_width(self) -> int:
@@ -240,7 +250,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     @overload
     def blend(self, sx: int, sy: int, sw: int, sh: int, dx: int,
               dy: int, dw: int, dh: int, mode: int, /) -> None:
-        """Blends a region of pixels into the image specified by the ``img`` parameter.
+        """Blends a region of pixels into the image specified by the `img` parameter.
 
         Underlying Processing method: PImage.blend
 
@@ -288,16 +298,16 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        Blends a region of pixels into the image specified by the ``img`` parameter.
-        These copies utilize full alpha channel support and a choice of the following
-        modes to blend the colors of source pixels (A) with the ones of pixels in the
-        destination image (B):
+        Blends a region of pixels into the image specified by the `img` parameter. These
+        copies utilize full alpha channel support and a choice of the following modes to
+        blend the colors of source pixels (A) with the ones of pixels in the destination
+        image (B):
 
-        * BLEND: linear interpolation of colours: ``C = A*factor + B``
-        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
-        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
-        * DARKEST: only the darkest colour succeeds: ``C = min(A*factor, B)``
-        * LIGHTEST: only the lightest colour succeeds: ``C = max(A*factor, B)``
+        * BLEND: linear interpolation of colours: `C = A*factor + B`
+        * ADD: additive blending with white clip: `C = min(A*factor + B, 255)`
+        * SUBTRACT: subtractive blending with black clip: `C = max(B - A*factor, 0)`
+        * DARKEST: only the darkest colour succeeds: `C = min(A*factor, B)`
+        * LIGHTEST: only the lightest colour succeeds: `C = max(A*factor, B)`
         * DIFFERENCE: subtract colors from underlying image.
         * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
@@ -314,17 +324,17 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
-        image will be automatically resized to match the destination size. If the
-        ``src`` parameter is not used, the display window is used as the source image.
+        image will be automatically resized to match the destination size. If the `src`
+        parameter is not used, the display window is used as the source image.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         pass
 
     @overload
     def blend(self, src: Py5Image, sx: int, sy: int, sw: int, sh: int,
               dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None:
-        """Blends a region of pixels into the image specified by the ``img`` parameter.
+        """Blends a region of pixels into the image specified by the `img` parameter.
 
         Underlying Processing method: PImage.blend
 
@@ -372,16 +382,16 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        Blends a region of pixels into the image specified by the ``img`` parameter.
-        These copies utilize full alpha channel support and a choice of the following
-        modes to blend the colors of source pixels (A) with the ones of pixels in the
-        destination image (B):
+        Blends a region of pixels into the image specified by the `img` parameter. These
+        copies utilize full alpha channel support and a choice of the following modes to
+        blend the colors of source pixels (A) with the ones of pixels in the destination
+        image (B):
 
-        * BLEND: linear interpolation of colours: ``C = A*factor + B``
-        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
-        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
-        * DARKEST: only the darkest colour succeeds: ``C = min(A*factor, B)``
-        * LIGHTEST: only the lightest colour succeeds: ``C = max(A*factor, B)``
+        * BLEND: linear interpolation of colours: `C = A*factor + B`
+        * ADD: additive blending with white clip: `C = min(A*factor + B, 255)`
+        * SUBTRACT: subtractive blending with black clip: `C = max(B - A*factor, 0)`
+        * DARKEST: only the darkest colour succeeds: `C = min(A*factor, B)`
+        * LIGHTEST: only the lightest colour succeeds: `C = max(A*factor, B)`
         * DIFFERENCE: subtract colors from underlying image.
         * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
@@ -398,15 +408,15 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
-        image will be automatically resized to match the destination size. If the
-        ``src`` parameter is not used, the display window is used as the source image.
+        image will be automatically resized to match the destination size. If the `src`
+        parameter is not used, the display window is used as the source image.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         pass
 
     def blend(self, *args):
-        """Blends a region of pixels into the image specified by the ``img`` parameter.
+        """Blends a region of pixels into the image specified by the `img` parameter.
 
         Underlying Processing method: PImage.blend
 
@@ -454,16 +464,16 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        Blends a region of pixels into the image specified by the ``img`` parameter.
-        These copies utilize full alpha channel support and a choice of the following
-        modes to blend the colors of source pixels (A) with the ones of pixels in the
-        destination image (B):
+        Blends a region of pixels into the image specified by the `img` parameter. These
+        copies utilize full alpha channel support and a choice of the following modes to
+        blend the colors of source pixels (A) with the ones of pixels in the destination
+        image (B):
 
-        * BLEND: linear interpolation of colours: ``C = A*factor + B``
-        * ADD: additive blending with white clip: ``C = min(A*factor + B, 255)``
-        * SUBTRACT: subtractive blending with black clip: ``C = max(B - A*factor, 0)``
-        * DARKEST: only the darkest colour succeeds: ``C = min(A*factor, B)``
-        * LIGHTEST: only the lightest colour succeeds: ``C = max(A*factor, B)``
+        * BLEND: linear interpolation of colours: `C = A*factor + B`
+        * ADD: additive blending with white clip: `C = min(A*factor + B, 255)`
+        * SUBTRACT: subtractive blending with black clip: `C = max(B - A*factor, 0)`
+        * DARKEST: only the darkest colour succeeds: `C = min(A*factor, B)`
+        * LIGHTEST: only the lightest colour succeeds: `C = max(A*factor, B)`
         * DIFFERENCE: subtract colors from underlying image.
         * EXCLUSION: similar to DIFFERENCE, but less extreme.
         * MULTIPLY: Multiply the colors, result will always be darker.
@@ -480,10 +490,10 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         All modes use the alpha information (highest byte) of source image pixels as the
         blending factor. If the source and destination regions are different sizes, the
-        image will be automatically resized to match the destination size. If the
-        ``src`` parameter is not used, the display window is used as the source image.
+        image will be automatically resized to match the destination size. If the `src`
+        parameter is not used, the display window is used as the source image.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         return self._instance.blend(*args)
 
@@ -541,7 +551,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         pass
 
@@ -600,7 +610,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         pass
 
@@ -659,7 +669,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         pass
 
@@ -716,7 +726,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         process, however if the source image has an alpha channel set, it will be copied
         as well.
 
-        This function ignores ``image_mode()``.
+        This function ignores `image_mode()`.
         """
         return self._instance.copy(*args)
 
@@ -864,7 +874,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         return self._instance.filter(*args)
 
     @overload
-    def get(self) -> Py5Image:
+    def get_pixels(self) -> Py5Image:
         """Reads the color of any pixel or grabs a section of an image.
 
         Underlying Processing method: PImage.get
@@ -874,9 +884,9 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get() -> Py5Image
-         * get(x: int, y: int, /) -> int
-         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
+         * get_pixels() -> Py5Image
+         * get_pixels(x: int, y: int, /) -> int
+         * get_pixels(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -897,27 +907,27 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
-        are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the image by specifying
-        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the
-        returned image, regardless of the current ``image_mode()``.
+        are specified, the entire image is returned. Use the `x` and `y` parameters to
+        get the value of one pixel. Get a section of the image by specifying additional
+        `w` and `h` parameters. When getting an image, the `x` and `y` parameters define
+        the coordinates for the upper-left corner of the returned image, regardless of
+        the current `image_mode()`.
 
         If the pixel requested is outside of the image, black is returned. The numbers
-        returned are scaled according to the current color ranges, but only ``RGB``
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
-        format.
+        returned are scaled according to the current color ranges, but only `RGB` values
+        are returned by this function. For example, even though you may have drawn a
+        shape with `color_mode(HSB)`, the numbers returned will be in `RGB` format.
 
-        Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
-        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
-        See the reference for ``Py5Image.pixels[]`` for more information.
+        Getting the color of a single pixel with `get_pixels(x, y)` is easy, but not as
+        fast as grabbing the data directly from `Py5Image.pixels[]`. The equivalent
+        statement to `get_pixels(x, y)` using `Py5Image.pixels[]` is
+        `pixels[y*width+x]`. See the reference for `Py5Image.pixels[]` for more
+        information.
         """
         pass
 
     @overload
-    def get(self, x: int, y: int, /) -> int:
+    def get_pixels(self, x: int, y: int, /) -> int:
         """Reads the color of any pixel or grabs a section of an image.
 
         Underlying Processing method: PImage.get
@@ -927,9 +937,9 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get() -> Py5Image
-         * get(x: int, y: int, /) -> int
-         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
+         * get_pixels() -> Py5Image
+         * get_pixels(x: int, y: int, /) -> int
+         * get_pixels(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -950,27 +960,27 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
-        are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the image by specifying
-        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the
-        returned image, regardless of the current ``image_mode()``.
+        are specified, the entire image is returned. Use the `x` and `y` parameters to
+        get the value of one pixel. Get a section of the image by specifying additional
+        `w` and `h` parameters. When getting an image, the `x` and `y` parameters define
+        the coordinates for the upper-left corner of the returned image, regardless of
+        the current `image_mode()`.
 
         If the pixel requested is outside of the image, black is returned. The numbers
-        returned are scaled according to the current color ranges, but only ``RGB``
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
-        format.
+        returned are scaled according to the current color ranges, but only `RGB` values
+        are returned by this function. For example, even though you may have drawn a
+        shape with `color_mode(HSB)`, the numbers returned will be in `RGB` format.
 
-        Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
-        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
-        See the reference for ``Py5Image.pixels[]`` for more information.
+        Getting the color of a single pixel with `get_pixels(x, y)` is easy, but not as
+        fast as grabbing the data directly from `Py5Image.pixels[]`. The equivalent
+        statement to `get_pixels(x, y)` using `Py5Image.pixels[]` is
+        `pixels[y*width+x]`. See the reference for `Py5Image.pixels[]` for more
+        information.
         """
         pass
 
     @overload
-    def get(self, x: int, y: int, w: int, h: int, /) -> Py5Image:
+    def get_pixels(self, x: int, y: int, w: int, h: int, /) -> Py5Image:
         """Reads the color of any pixel or grabs a section of an image.
 
         Underlying Processing method: PImage.get
@@ -980,9 +990,9 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get() -> Py5Image
-         * get(x: int, y: int, /) -> int
-         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
+         * get_pixels() -> Py5Image
+         * get_pixels(x: int, y: int, /) -> int
+         * get_pixels(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -1003,26 +1013,26 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
-        are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the image by specifying
-        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the
-        returned image, regardless of the current ``image_mode()``.
+        are specified, the entire image is returned. Use the `x` and `y` parameters to
+        get the value of one pixel. Get a section of the image by specifying additional
+        `w` and `h` parameters. When getting an image, the `x` and `y` parameters define
+        the coordinates for the upper-left corner of the returned image, regardless of
+        the current `image_mode()`.
 
         If the pixel requested is outside of the image, black is returned. The numbers
-        returned are scaled according to the current color ranges, but only ``RGB``
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
-        format.
+        returned are scaled according to the current color ranges, but only `RGB` values
+        are returned by this function. For example, even though you may have drawn a
+        shape with `color_mode(HSB)`, the numbers returned will be in `RGB` format.
 
-        Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
-        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
-        See the reference for ``Py5Image.pixels[]`` for more information.
+        Getting the color of a single pixel with `get_pixels(x, y)` is easy, but not as
+        fast as grabbing the data directly from `Py5Image.pixels[]`. The equivalent
+        statement to `get_pixels(x, y)` using `Py5Image.pixels[]` is
+        `pixels[y*width+x]`. See the reference for `Py5Image.pixels[]` for more
+        information.
         """
         pass
 
-    def get(self, *args):
+    def get_pixels(self, *args):
         """Reads the color of any pixel or grabs a section of an image.
 
         Underlying Processing method: PImage.get
@@ -1032,9 +1042,9 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * get() -> Py5Image
-         * get(x: int, y: int, /) -> int
-         * get(x: int, y: int, w: int, h: int, /) -> Py5Image
+         * get_pixels() -> Py5Image
+         * get_pixels(x: int, y: int, /) -> int
+         * get_pixels(x: int, y: int, w: int, h: int, /) -> Py5Image
 
         Parameters
         ----------
@@ -1055,36 +1065,36 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         -----
 
         Reads the color of any pixel or grabs a section of an image. If no parameters
-        are specified, the entire image is returned. Use the ``x`` and ``y`` parameters
-        to get the value of one pixel. Get a section of the image by specifying
-        additional ``w`` and ``h`` parameters. When getting an image, the ``x`` and
-        ``y`` parameters define the coordinates for the upper-left corner of the
-        returned image, regardless of the current ``image_mode()``.
+        are specified, the entire image is returned. Use the `x` and `y` parameters to
+        get the value of one pixel. Get a section of the image by specifying additional
+        `w` and `h` parameters. When getting an image, the `x` and `y` parameters define
+        the coordinates for the upper-left corner of the returned image, regardless of
+        the current `image_mode()`.
 
         If the pixel requested is outside of the image, black is returned. The numbers
-        returned are scaled according to the current color ranges, but only ``RGB``
-        values are returned by this function. For example, even though you may have
-        drawn a shape with ``color_mode(HSB)``, the numbers returned will be in ``RGB``
-        format.
+        returned are scaled according to the current color ranges, but only `RGB` values
+        are returned by this function. For example, even though you may have drawn a
+        shape with `color_mode(HSB)`, the numbers returned will be in `RGB` format.
 
-        Getting the color of a single pixel with ``get(x, y)`` is easy, but not as fast
-        as grabbing the data directly from ``Py5Image.pixels[]``. The equivalent
-        statement to ``get(x, y)`` using ``Py5Image.pixels[]`` is ``pixels[y*width+x]``.
-        See the reference for ``Py5Image.pixels[]`` for more information.
+        Getting the color of a single pixel with `get_pixels(x, y)` is easy, but not as
+        fast as grabbing the data directly from `Py5Image.pixels[]`. The equivalent
+        statement to `get_pixels(x, y)` using `Py5Image.pixels[]` is
+        `pixels[y*width+x]`. See the reference for `Py5Image.pixels[]` for more
+        information.
         """
         return self._instance.get(*args)
 
     def load_pixels(self) -> None:
-        """Loads the pixel data for the image into its ``Py5Image.pixels[]`` array.
+        """Loads the pixel data for the image into its `Py5Image.pixels[]` array.
 
         Underlying Processing method: PImage.loadPixels
 
         Notes
         -----
 
-        Loads the pixel data for the image into its ``Py5Image.pixels[]`` array. This
+        Loads the pixel data for the image into its `Py5Image.pixels[]` array. This
         function must always be called before reading from or writing to
-        ``Py5Image.pixels[]``.
+        `Py5Image.pixels[]`.
         """
         return self._instance.loadPixels()
 
@@ -1208,8 +1218,157 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         return self._instance.mask(*args)
 
     @overload
+    def set_pixels(self, x: int, y: int, c: int, /) -> None:
+        """Changes the color of any pixel or writes an image directly into the Py5Image
+        object.
+
+        Underlying Processing method: PImage.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set_pixels(x: int, y: int, c: int, /) -> None
+         * set_pixels(x: int, y: int, img: Py5Image, /) -> None
+
+        Parameters
+        ----------
+
+        c: int
+            any color value
+
+        img: Py5Image
+            image to copy into the Py5Image object
+
+        x: int
+            x-coordinate of the pixel
+
+        y: int
+            y-coordinate of the pixel
+
+        Notes
+        -----
+
+        Changes the color of any pixel or writes an image directly into the Py5Image
+        object.
+
+        The `x` and `y` parameters specify the pixel to change and the color parameter
+        specifies the color value. The color parameter `c` is affected by the current
+        color mode (the default is RGB values from 0 to 255). When setting an image, the
+        `x` and `y` parameters define the coordinates for the upper-left corner of the
+        image, regardless of the current `image_mode()`.
+
+        Setting the color of a single pixel with `set_pixels(x, y)` is easy, but not as
+        fast as putting the data directly into `Py5Image.pixels[]`. The equivalent
+        statement to `set_pixels(x, y, 0)` using `Py5Image.pixels[]` is
+        `pixels[y*py5.width+x] = 0`. See the reference for `Py5Image.pixels[]` for more
+        information.
+        """
+        pass
+
+    @overload
+    def set_pixels(self, x: int, y: int, img: Py5Image, /) -> None:
+        """Changes the color of any pixel or writes an image directly into the Py5Image
+        object.
+
+        Underlying Processing method: PImage.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set_pixels(x: int, y: int, c: int, /) -> None
+         * set_pixels(x: int, y: int, img: Py5Image, /) -> None
+
+        Parameters
+        ----------
+
+        c: int
+            any color value
+
+        img: Py5Image
+            image to copy into the Py5Image object
+
+        x: int
+            x-coordinate of the pixel
+
+        y: int
+            y-coordinate of the pixel
+
+        Notes
+        -----
+
+        Changes the color of any pixel or writes an image directly into the Py5Image
+        object.
+
+        The `x` and `y` parameters specify the pixel to change and the color parameter
+        specifies the color value. The color parameter `c` is affected by the current
+        color mode (the default is RGB values from 0 to 255). When setting an image, the
+        `x` and `y` parameters define the coordinates for the upper-left corner of the
+        image, regardless of the current `image_mode()`.
+
+        Setting the color of a single pixel with `set_pixels(x, y)` is easy, but not as
+        fast as putting the data directly into `Py5Image.pixels[]`. The equivalent
+        statement to `set_pixels(x, y, 0)` using `Py5Image.pixels[]` is
+        `pixels[y*py5.width+x] = 0`. See the reference for `Py5Image.pixels[]` for more
+        information.
+        """
+        pass
+
+    def set_pixels(self, *args):
+        """Changes the color of any pixel or writes an image directly into the Py5Image
+        object.
+
+        Underlying Processing method: PImage.set
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * set_pixels(x: int, y: int, c: int, /) -> None
+         * set_pixels(x: int, y: int, img: Py5Image, /) -> None
+
+        Parameters
+        ----------
+
+        c: int
+            any color value
+
+        img: Py5Image
+            image to copy into the Py5Image object
+
+        x: int
+            x-coordinate of the pixel
+
+        y: int
+            y-coordinate of the pixel
+
+        Notes
+        -----
+
+        Changes the color of any pixel or writes an image directly into the Py5Image
+        object.
+
+        The `x` and `y` parameters specify the pixel to change and the color parameter
+        specifies the color value. The color parameter `c` is affected by the current
+        color mode (the default is RGB values from 0 to 255). When setting an image, the
+        `x` and `y` parameters define the coordinates for the upper-left corner of the
+        image, regardless of the current `image_mode()`.
+
+        Setting the color of a single pixel with `set_pixels(x, y)` is easy, but not as
+        fast as putting the data directly into `Py5Image.pixels[]`. The equivalent
+        statement to `set_pixels(x, y, 0)` using `Py5Image.pixels[]` is
+        `pixels[y*py5.width+x] = 0`. See the reference for `Py5Image.pixels[]` for more
+        information.
+        """
+        return self._instance.set(*args)
+
+    @overload
     def update_pixels(self) -> None:
-        """Updates the image with the data in its ``Py5Image.pixels[]`` array.
+        """Updates the image with the data in its `Py5Image.pixels[]` array.
 
         Underlying Processing method: PImage.updatePixels
 
@@ -1239,15 +1398,15 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its ``Py5Image.pixels[]`` array. Use in
-        conjunction with ``Py5Image.load_pixels()``. If you're only reading pixels from
-        the array, there's no need to call ``update_pixels()``.
+        Updates the image with the data in its `Py5Image.pixels[]` array. Use in
+        conjunction with `Py5Image.load_pixels()`. If you're only reading pixels from
+        the array, there's no need to call `update_pixels()`.
         """
         pass
 
     @overload
     def update_pixels(self, x: int, y: int, w: int, h: int, /) -> None:
-        """Updates the image with the data in its ``Py5Image.pixels[]`` array.
+        """Updates the image with the data in its `Py5Image.pixels[]` array.
 
         Underlying Processing method: PImage.updatePixels
 
@@ -1277,14 +1436,14 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its ``Py5Image.pixels[]`` array. Use in
-        conjunction with ``Py5Image.load_pixels()``. If you're only reading pixels from
-        the array, there's no need to call ``update_pixels()``.
+        Updates the image with the data in its `Py5Image.pixels[]` array. Use in
+        conjunction with `Py5Image.load_pixels()`. If you're only reading pixels from
+        the array, there's no need to call `update_pixels()`.
         """
         pass
 
     def update_pixels(self, *args):
-        """Updates the image with the data in its ``Py5Image.pixels[]`` array.
+        """Updates the image with the data in its `Py5Image.pixels[]` array.
 
         Underlying Processing method: PImage.updatePixels
 
@@ -1314,8 +1473,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        Updates the image with the data in its ``Py5Image.pixels[]`` array. Use in
-        conjunction with ``Py5Image.load_pixels()``. If you're only reading pixels from
-        the array, there's no need to call ``update_pixels()``.
+        Updates the image with the data in its `Py5Image.pixels[]` array. Use in
+        conjunction with `Py5Image.load_pixels()`. If you're only reading pixels from
+        the array, there's no need to call `update_pixels()`.
         """
         return self._instance.updatePixels(*args)

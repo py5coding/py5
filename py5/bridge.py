@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2022 Jim Schmitz
+#   Copyright (C) 2020-2023 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -33,11 +33,7 @@ import stackprinter
 import py5_tools
 from . import reference
 from . import custom_exceptions
-# from . import java_conversion
 
-# *** stacktrace configuration ***
-# set stackprinter color style. Default is plaintext. Other choices are darkbg,
-# darkbg2, darkbg3, lightbg, lightbg2, lightbg3.
 _stackprinter_style = 'plaintext'
 # prune tracebacks to only show only show stack levels in the user's py5 code.
 _prune_tracebacks = True
@@ -95,12 +91,13 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
             tb = exc_tb.tb_next
             while hasattr(tb, 'tb_next') and hasattr(tb, 'tb_frame'):
                 f_code = tb.tb_frame.f_code
-                if f_code.co_filename.startswith(_MODULE_INSTALL_DIR):
+                if f_code.co_filename.startswith(
+                        _MODULE_INSTALL_DIR) and not f_code.co_name.endswith('py5_no_prune'):
                     py5info.append((Path(f_code.co_filename[(len(_MODULE_INSTALL_DIR) + 1):]).parts,
                                     f_code.co_name))
                     if trim_tb is None:
                         trim_tb = prev_tb
-                elif f_code.co_filename.startswith(_PY5TOOLS_MODULE_INSTALL_DIR):
+                elif f_code.co_filename.startswith(_PY5TOOLS_MODULE_INSTALL_DIR) and not f_code.co_name.endswith('py5_no_prune'):
                     py5info.append((Path(f_code.co_filename[(
                         len(_PY5TOOLS_MODULE_INSTALL_DIR) + 1):]).parts, f_code.co_name))
                     if trim_tb is None:
@@ -134,7 +131,7 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
         while m := _PY5_STATIC_CODE_FILENAME_REGEX.search(errmsg):
             errmsg = errmsg[m.span()[1]:]
         else:
-            errmsg = "py5 encountered an error in your code:" + errmsg
+            errmsg = "py5 encountered an error in your code:\n\n" + errmsg
 
     println(errmsg, stderr=True)
 
@@ -174,8 +171,9 @@ class Py5Bridge:
         self._current_running_method = None
         self._is_terminated = False
 
-        from .java_conversion import convert_to_python_types
+        from .object_conversion import convert_to_python_types, convert_to_java_type
         self._convert_to_python_types = convert_to_python_types
+        self._convert_to_java_type = convert_to_java_type
 
     def set_functions(self, functions, function_param_counts):
         self._function_param_counts = dict()
@@ -294,11 +292,11 @@ class Py5Bridge:
                     subd = d[s]
                     if isinstance(subd, dict):
                         d = subd
-                    elif hasattr(subd, '__dict__'):
-                        d = subd.__dict__
+                    elif hasattr(subd, '__dir__') or hasattr(subd, '__dict__'):
+                        d = {k: getattr(subd, k) for k in dir(subd)}
                     else:
                         return _JAVA_RUNTIMEEXCEPTION(
-                            f'{s} in key {key} does map to dict or object with __dict__ attribute')
+                            f'{s} in key {key} does not map to a dict or an object that can be inspected with dir()')
                 else:
                     return _JAVA_RUNTIMEEXCEPTION(
                         f'{s} not found with key {key}')
@@ -314,7 +312,7 @@ class Py5Bridge:
                         key)
                     if key in py5_tools.config._PY5_PROCESSING_MODE_KEYS:
                         py5_tools.config._PY5_PROCESSING_MODE_KEYS.pop(key)
-                return retval
+                return self._convert_to_java_type(retval)
             except Exception as e:
                 handle_exception(self._sketch.println, *sys.exc_info())
                 return _JAVA_RUNTIMEEXCEPTION(str(e))

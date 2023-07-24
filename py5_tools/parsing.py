@@ -94,6 +94,16 @@ class Py5CodeValidation(ast.NodeTransformer):
         self.generic_visit(node)
         return node
 
+    def visit_FunctionDef(self, node: ast.FunctionDef):
+        if node.name in self._reserved_words:
+            problem = self._format_problem_message(node)
+            if self._report_immediately:
+                # raise Py5InputRejected(problem)
+                sys.stdout.write(problem + '\n')
+            self._problems.append(problem)
+        self.generic_visit(node)
+        return node
+
     def visit_Import(self, node: ast.Import):
         for alias in node.names:
             if alias.name == 'py5':
@@ -118,6 +128,9 @@ class Py5CodeValidation(ast.NodeTransformer):
         elif isinstance(node, ast.Import):
             out.append(
                 f'"import py5" found on line {node.lineno}. Do not import the py5 library, as this has already been done for you. Your code should be written without any "py5." prefixes.')
+        elif isinstance(node, ast.FunctionDef):
+            out.append(
+                f'Defining a function named after py5 reserved word "{node.name}" on line {node.lineno} is discouraged and may causes errors in your sketch.')
 
         if self._code:
             lines = self._code.splitlines()
@@ -142,13 +155,13 @@ def check_for_problems(code, filename, *, tool=None):
     # if the code contains a setup() or a draw() function, the user could be
     # confused about static mode
     if (ms := re.findall(
-            r"^def (setup|draw)\([^\)]*\):", code, flags=re.MULTILINE)):
+            r'^def (setup|draw)[^:]*:', code, flags=re.MULTILINE)):
         msg = 'Your code contains ' + \
             (f'a {ms[0]}() function.' if len(ms) == 1 else 'setup() and draw() functions.')
         if tool:
             msg += f' When using {tool}, your code is written in static mode, without defining a setup() function or a draw() function.'
         else:
-            msg += 'When coding in static mode, your code should not define a setup() function or  draw() function.'
+            msg += ' When coding in static mode, your code should not define a setup() function or  draw() function.'
         return False, msg
 
     # does the code parse? if not, return an error message

@@ -163,6 +163,8 @@ class Py5Bridge:
 
     def __init__(self, sketch):
         self._sketch = sketch
+        self._caller_locals = dict()
+        self._caller_globals = dict()
         self._functions = dict()
         self._function_param_counts = dict()
         self._pre_hooks = defaultdict(dict)
@@ -174,6 +176,10 @@ class Py5Bridge:
         from .object_conversion import convert_to_python_types, convert_to_java_type
         self._convert_to_python_types = convert_to_python_types
         self._convert_to_java_type = convert_to_java_type
+
+    def set_caller_locals_globals(self, locals, globals):
+        self._caller_locals = locals
+        self._caller_globals = globals
 
     def set_functions(self, functions, function_param_counts):
         self._function_param_counts = dict()
@@ -283,9 +289,20 @@ class Py5Bridge:
 
     @JOverride
     def call_function(self, key, params):
-        d = py5_tools.config._PY5_PROCESSING_MODE_KEYS
         try:
-            *str_hierarchy, c = str(key).split('.')
+            key = str(key)
+            *str_hierarchy, c = key.split('.')
+            key_start = key.split('.')[0]
+
+            if key_start in py5_tools.config._PY5_PROCESSING_MODE_KEYS:
+                d = py5_tools.config._PY5_PROCESSING_MODE_KEYS
+            elif key_start in self._caller_locals:
+                d = self._caller_locals
+            elif key_start in self._caller_globals:
+                d = self._caller_globals
+            else:
+                return _JAVA_RUNTIMEEXCEPTION(
+                    f'callable {c} not found with key {key}')
 
             for s in str_hierarchy:
                 if s in d:

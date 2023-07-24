@@ -23,11 +23,12 @@ import functools
 from pathlib import Path
 from typing import overload  # noqa
 import weakref
+import types
 
 import numpy as np
 import numpy.typing as npt  # noqa
 
-from jpype import JException
+from jpype import JClass, JException
 from jpype.types import JBoolean, JInt, JFloat
 
 from .pmath import _get_pvector_wrapper  # noqa
@@ -90,6 +91,9 @@ def _return_numpy_array(f):
     return decorated
 
 
+_Py5ShapeHelper = JClass('py5.core.Py5ShapeHelper')
+
+
 class Py5Shape:
     """Datatype for storing shapes.
 
@@ -136,7 +140,126 @@ class Py5Shape:
     def __getattr__(self, name):
         raise AttributeError(spelling.error_msg('Py5Shape', name, self))
 
+    # *** BEGIN METHODS ***
+
+    def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of vertices. The purpose of this method is to provide an
+        alternative to repeatedly calling `Py5Shape.vertex()` in a loop. For a large
+        number of vertices, the performance of `vertices()` will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each
+        vertex. There should be two or three columns for 2D or 3D points, respectively."""
+        if isinstance(coordinates, types.GeneratorType):
+            coordinates = list(coordinates)
+        _Py5ShapeHelper.vertices(self._instance, coordinates)
+
+    def bezier_vertices(
+            self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of bezier vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of bezier vertices. The purpose of this method is to provide
+        an alternative to repeatedly calling `Py5Shape.bezier_vertex()` in a loop. For a
+        large number of bezier vertices, the performance of `bezier_vertices()` will be
+        much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each bezier
+        vertex. The first few columns are for the first control point, the next few
+        columns are for the second control point, and the final few columns are for the
+        anchor point. There should be six or nine columns for 2D or 3D points,
+        respectively.
+
+        Drawing 2D bezier curves requires using the `P2D` renderer and drawing 3D bezier
+        curves requires using the `P3D` renderer. When drawing directly with `Py5Shape`
+        objects, bezier curves do not work at all using the default renderer.
+
+        This method can only be used within a `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` pair."""
+        if isinstance(coordinates, types.GeneratorType):
+            coordinates = list(coordinates)
+        _Py5ShapeHelper.bezierVertices(self._instance, coordinates)
+
+    def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of curve vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of curve vertices. The purpose of this method is to provide
+        an alternative to repeatedly calling `Py5Shape.curve_vertex()` in a loop. For a
+        large number of curve vertices, the performance of `curve_vertices()` will be
+        much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each curve
+        vertex.  There should be two or three columns for 2D or 3D points, respectively.
+
+        Drawing 2D curves requires using the `P2D` renderer and drawing 3D curves
+        requires using the `P3D` renderer. When drawing directly with `Py5Shape`
+        objects, curves do not work at all using the default renderer.
+
+        This method can only be used within a `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` pair."""
+        if isinstance(coordinates, types.GeneratorType):
+            coordinates = list(coordinates)
+        _Py5ShapeHelper.curveVertices(self._instance, coordinates)
+
+    def quadratic_vertices(
+            self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of quadratic vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of quadratic vertices. The purpose of this method is to
+        provide an alternative to repeatedly calling `Py5Shape.quadratic_vertex()` in a
+        loop. For a large number of quadratic vertices, the performance of
+        `quadratic_vertices()` will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each
+        quadratic vertex. The first few columns are for the control point and the next
+        few columns are for the anchor point. There should be four or six columns for 2D
+        or 3D points, respectively.
+
+        Drawing 2D bezier curves requires using the `P2D` renderer and drawing 3D bezier
+        curves requires using the `P3D` renderer. When drawing directly with `Py5Shape`
+        objects, bezier curves do not work at all using the default renderer."""
+        if isinstance(coordinates, types.GeneratorType):
+            coordinates = list(coordinates)
+        _Py5ShapeHelper.quadraticVertices(self._instance, coordinates)
+
     ARC = 32
+    BEVEL = 32
     BEZIER_VERTEX = 1
     BOX = 41
     BREAK = 4
@@ -145,21 +268,28 @@ class Py5Shape:
     ELLIPSE = 31
     GEOMETRY = 103
     GROUP = 0
+    HSB = 3
     LINE = 4
     LINES = 5
     LINE_LOOP = 51
     LINE_STRIP = 50
+    MITER = 8
     PATH = 102
     POINT = 2
     POINTS = 3
     POLYGON = 20
     PRIMITIVE = 101
+    PROJECT = 4
     QUAD = 16
     QUADRATIC_VERTEX = 2
     QUADS = 17
+    QUAD_BEZIER_VERTEX = 2
     QUAD_STRIP = 18
     RECT = 30
+    RGB = 1
+    ROUND = 2
     SPHERE = 40
+    SQUARE = 1
     TRIANGLE = 8
     TRIANGLES = 9
     TRIANGLE_FAN = 11
@@ -1279,6 +1409,297 @@ class Py5Shape:
         """
         return self._instance.bezierVertex(*args)
 
+    @overload
+    def color_mode(self, mode: int, /) -> None:
+        """Changes the way a `Py5Shape` object interprets color data.
+
+        Underlying Processing method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_x: float
+            range for the red or hue depending on the current color mode
+
+        max_y: float
+            range for the green or saturation depending on the current color mode
+
+        max_z: float
+            range for the blue or brightness depending on the current color mode
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way a `Py5Shape` object interprets color data. By default, the
+        parameters for `Py5Shape.fill()` and `Py5Shape.stroke()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max_x`, `max_y`, `max_z`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`.
+        """
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max: float, /) -> None:
+        """Changes the way a `Py5Shape` object interprets color data.
+
+        Underlying Processing method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_x: float
+            range for the red or hue depending on the current color mode
+
+        max_y: float
+            range for the green or saturation depending on the current color mode
+
+        max_z: float
+            range for the blue or brightness depending on the current color mode
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way a `Py5Shape` object interprets color data. By default, the
+        parameters for `Py5Shape.fill()` and `Py5Shape.stroke()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max_x`, `max_y`, `max_z`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`.
+        """
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max_x: float,
+                   max_y: float, max_z: float, /) -> None:
+        """Changes the way a `Py5Shape` object interprets color data.
+
+        Underlying Processing method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_x: float
+            range for the red or hue depending on the current color mode
+
+        max_y: float
+            range for the green or saturation depending on the current color mode
+
+        max_z: float
+            range for the blue or brightness depending on the current color mode
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way a `Py5Shape` object interprets color data. By default, the
+        parameters for `Py5Shape.fill()` and `Py5Shape.stroke()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max_x`, `max_y`, `max_z`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`.
+        """
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max_x: float, max_y: float,
+                   max_z: float, max_a: float, /) -> None:
+        """Changes the way a `Py5Shape` object interprets color data.
+
+        Underlying Processing method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_x: float
+            range for the red or hue depending on the current color mode
+
+        max_y: float
+            range for the green or saturation depending on the current color mode
+
+        max_z: float
+            range for the blue or brightness depending on the current color mode
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way a `Py5Shape` object interprets color data. By default, the
+        parameters for `Py5Shape.fill()` and `Py5Shape.stroke()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max_x`, `max_y`, `max_z`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`.
+        """
+        pass
+
+    def color_mode(self, *args):
+        """Changes the way a `Py5Shape` object interprets color data.
+
+        Underlying Processing method: PShape.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, /) -> None
+         * color_mode(mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /) -> None
+
+        Parameters
+        ----------
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_x: float
+            range for the red or hue depending on the current color mode
+
+        max_y: float
+            range for the green or saturation depending on the current color mode
+
+        max_z: float
+            range for the blue or brightness depending on the current color mode
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way a `Py5Shape` object interprets color data. By default, the
+        parameters for `Py5Shape.fill()` and `Py5Shape.stroke()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max_x`, `max_y`, `max_z`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`.
+        """
+        return self._instance.colorMode(*args)
+
     def contains(self, x: float, y: float, /) -> bool:
         """Boolean value reflecting if the given coordinates are or are not contained
         within the `Py5Shape` object.
@@ -1409,9 +1830,6 @@ class Py5Shape:
         Drawing 2D curves requires using the `P2D` renderer and drawing 3D curves
         requires using the `P3D` renderer. When drawing directly with `Py5Shape`
         objects, curves do not work at all using the default renderer.
-
-        This method can only be used within a `Py5Shape.begin_shape()` and
-        `Py5Shape.end_shape()` pair.
         """
         pass
 
@@ -1456,9 +1874,6 @@ class Py5Shape:
         Drawing 2D curves requires using the `P2D` renderer and drawing 3D curves
         requires using the `P3D` renderer. When drawing directly with `Py5Shape`
         objects, curves do not work at all using the default renderer.
-
-        This method can only be used within a `Py5Shape.begin_shape()` and
-        `Py5Shape.end_shape()` pair.
         """
         pass
 
@@ -1502,9 +1917,6 @@ class Py5Shape:
         Drawing 2D curves requires using the `P2D` renderer and drawing 3D curves
         requires using the `P3D` renderer. When drawing directly with `Py5Shape`
         objects, curves do not work at all using the default renderer.
-
-        This method can only be used within a `Py5Shape.begin_shape()` and
-        `Py5Shape.end_shape()` pair.
         """
         return self._instance.curveVertex(*args)
 

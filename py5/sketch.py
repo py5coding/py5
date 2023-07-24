@@ -82,6 +82,17 @@ _PY5_LAST_WINDOW_X = None
 _PY5_LAST_WINDOW_Y = None
 
 
+def _deprecated_g(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        warnings.warn(
+            "Accessing the primary Py5Graphics object with `g` is deprecated. Please use `get_graphics()` instead.",
+            category=DeprecationWarning,
+            stacklevel=3 if py5_tools.imported.get_imported_mode() else 4)
+        return f(self_, *args)
+    return decorated
+
+
 def _auto_convert_to_py5image(argnum):
     def _decorator(f):
         @functools.wraps(f)
@@ -210,7 +221,7 @@ class Sketch(
         self._methods_to_profile = []
         self._pre_hooks_to_add = []
         self._post_hooks_to_add = []
-        # must always keep the py5_methods reference count from hitting zero.
+        # must always keep the _py5_bridge reference count from hitting zero.
         # otherwise, it will be garbage collected and lead to segmentation
         # faults!
         self._py5_bridge = None
@@ -321,20 +332,26 @@ class Sketch(
 
         methods, method_param_counts = _extract_py5_user_function_data(dict(
             [(e, getattr(self, e)) for e in reference.METHODS.keys() if hasattr(self, e)]))
-        self._run_sketch(
-            methods,
-            method_param_counts,
-            block,
-            py5_options,
-            sketch_args,
-            _osx_alt_run_method)
+
+        caller_locals = inspect.stack()[1].frame.f_locals
+        caller_globals = inspect.stack()[1].frame.f_globals
+
+        self._run_sketch(methods, method_param_counts, block,
+                         py5_options=py5_options,
+                         sketch_args=sketch_args,
+                         _caller_locals=caller_locals,
+                         _caller_globals=caller_globals,
+                         _osx_alt_run_method=_osx_alt_run_method)
 
     def _run_sketch(self,
                     methods: dict[str, Callable],
                     method_param_counts: dict[str, int],
                     block: bool,
+                    *,
                     py5_options: list[str] = None,
                     sketch_args: list[str] = None,
+                    _caller_locals: dict[str, Any] = None,
+                    _caller_globals: dict[str, Any] = None,
                     _osx_alt_run_method: bool = True) -> None:
         self._environ = _environ.Environment()
         self.set_println_stream(_DisplayPubPrintlnStream(
@@ -342,6 +359,8 @@ class Sketch(
         self._init_println_stream()
 
         self._py5_bridge = Py5Bridge(self)
+        self._py5_bridge.set_caller_locals_globals(
+            _caller_locals, _caller_globals)
         self._py5_bridge.add_functions(methods, method_param_counts)
         self._py5_bridge.profile_functions(self._methods_to_profile)
         self._py5_bridge.add_pre_hooks(self._pre_hooks_to_add)
@@ -1589,6 +1608,7 @@ class Sketch(
         execution of `draw()` after that.""")
 
     @_return_py5graphics
+    @_deprecated_g
     def _get_g(self) -> Py5Graphics:
         """The `Py5Graphics` object used by the Sketch.
 
@@ -1600,6 +1620,9 @@ class Sketch(
         The `Py5Graphics` object used by the Sketch. Internally, all of Processing's
         drawing functionality comes from interaction with PGraphics objects, and this
         will provide direct access to the PGraphics object used by the Sketch.
+
+        Use of `g` is deprecated as of version 0.9.1. Please use `get_graphics()`
+        instead.
         """
         return self._instance.g
     g: Py5Graphics = property(
@@ -1613,7 +1636,10 @@ class Sketch(
 
         The `Py5Graphics` object used by the Sketch. Internally, all of Processing's
         drawing functionality comes from interaction with PGraphics objects, and this
-        will provide direct access to the PGraphics object used by the Sketch.""")
+        will provide direct access to the PGraphics object used by the Sketch.
+
+        Use of `g` is deprecated as of version 0.9.1. Please use `get_graphics()`
+        instead.""")
 
     def _get_height(self) -> int:
         """System variable that stores the height of the display window.
@@ -4885,8 +4911,6 @@ class Sketch(
     def bezier_vertices(
             self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of bezier vertices.
-
-        Underlying Processing method: PApplet.bezierVertices
 
         Parameters
         ----------
@@ -8457,8 +8481,6 @@ class Sketch(
     def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of curve vertices.
 
-        Underlying Processing method: PApplet.curveVertices
-
         Parameters
         ----------
 
@@ -11280,8 +11302,6 @@ class Sketch(
     def lines(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Draw a collection of lines to the screen.
 
-        Underlying Processing method: PApplet.lines
-
         Parameters
         ----------
 
@@ -12684,8 +12704,6 @@ class Sketch(
         """Draw a collection of points, each a coordinate in space at the dimension of one
         pixel.
 
-        Underlying Processing method: PApplet.points
-
         Parameters
         ----------
 
@@ -13084,8 +13102,6 @@ class Sketch(
     def quadratic_vertices(
             self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of quadratic vertices.
-
-        Underlying Processing method: PApplet.quadraticVertices
 
         Parameters
         ----------
@@ -19208,8 +19224,6 @@ class Sketch(
     @_generator_to_list
     def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of vertices.
-
-        Underlying Processing method: PApplet.vertices
 
         Parameters
         ----------

@@ -29,6 +29,7 @@ import stackprinter
 
 from . import jvm
 from . import parsing
+from . import import_hook
 
 
 _imported_mode = False
@@ -48,6 +49,7 @@ def set_imported_mode(imported_mode: bool):
         raise RuntimeError(
             'Attempting to set imported mode after importing py5. This would put py5 into a confused state. Throwing an exception to prevent you from having to debug that.')
     _imported_mode = imported_mode
+    import_hook.activate_py5_import_hook()
 
 
 def get_imported_mode() -> bool:
@@ -102,9 +104,9 @@ if {1} and is_dead_from_error:
 """
 
 
-SETTINGS_REGEX = re.compile(r'^def settings\(\):', flags=re.MULTILINE)
-SETUP_REGEX = re.compile(r'^def setup\(\):', flags=re.MULTILINE)
-DRAW_REGEX = re.compile(r'^def draw\(\):', flags=re.MULTILINE)
+SETTINGS_REGEX = re.compile(r'^def settings[^:]*:', flags=re.MULTILINE)
+SETUP_REGEX = re.compile(r'^def setup[^:]*:', flags=re.MULTILINE)
+DRAW_REGEX = re.compile(r'^def draw[^:]*:', flags=re.MULTILINE)
 
 
 def is_static_mode(code):
@@ -219,7 +221,8 @@ def _run_code(
         import py5
         if (py5.is_running() if callable(py5.is_running) else py5.is_running):
             print(
-                'You must exit the currently running sketch before running another sketch.')
+                'You must exit the currently running sketch before running another sketch.',
+                file=sys.stderr)
             return None
 
         py5_options_str = str(
@@ -245,7 +248,7 @@ def _run_code(
             arrow_msg = f'--> {e.lineno}    '
             msg += f'{arrow_msg}{e.text}'
             msg += ' ' * (len(arrow_msg) + e.offset) + '^'
-            print(msg)
+            print(msg, file=sys.stderr)
             return
         except Exception as e:
             msg = stackprinter.format(e)
@@ -253,7 +256,7 @@ def _run_code(
             if m:
                 msg = msg[m.start(0):]
             msg = 'There is a problem with your code:\n' + msg
-            print(msg)
+            print(msg, file=sys.stderr)
             return
 
         problems = parsing.check_reserved_words(sketch_code, sketch_ast)
@@ -261,7 +264,7 @@ def _run_code(
             msg = 'There ' + ('is a problem' if len(problems) ==
                               1 else f'are {len(problems)} problems') + ' with your Sketch code'
             msg += '\n' + '=' * len(msg) + '\n' + '\n'.join(problems)
-            print(msg)
+            print(msg, file=sys.stderr)
             return
 
         sketch_compiled = compile(
@@ -274,7 +277,10 @@ def _run_code(
         py5_ns.update(py5.__dict__)
         py5_ns['__file__'] = str(original_sketch_path)
 
-        exec(sketch_compiled, py5_ns)
+        try:
+            exec(sketch_compiled, py5_ns)
+        except import_hook.Py5ImportError as e:
+            print(e.msg, file=sys.stderr)
 
     if new_process:
         p = Process(

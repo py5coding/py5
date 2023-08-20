@@ -17,7 +17,7 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-Sketch = 'Sketch'
+Sketch = "Sketch"
 
 
 class Py5SketchPortal:
@@ -31,7 +31,8 @@ def sketch_portal(
     scale: float = 1.0,
     quality: int = 75,
     portal_widget: Py5SketchPortal = None,
-        sketch: Sketch = None) -> None:
+    sketch: Sketch = None
+) -> None:
     """Creates a portal widget to continuously stream frames from a running Sketch into
     a Jupyter notebook.
 
@@ -116,7 +117,8 @@ def sketch_portal(
     wasting resources. A Sketch can only have one open portal, so opening a new
     portal with different options will replace an existing portal."""
     raise RuntimeError(
-        'The sketch_widget() function can only be used with IPython and ZMQInteractiveShell (such as Jupyter Lab)')
+        "The sketch_widget() function can only be used with IPython and ZMQInteractiveShell (such as Jupyter Lab)"
+    )
 
 
-__all__ = ['sketch_portal']
+__all__ = ["sketch_portal"]

@@ -18,12 +18,10 @@
 #
 # *****************************************************************************
 import sys
-
 from typing import Any
 
 
 class PrintlnStream:
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._println_stream = None
@@ -55,15 +53,13 @@ class PrintlnStream:
         Sketch without having to cope with output moving from one cell to the next. Use
         `set_println_stream` to change how the output is handled. The `println_stream`
         object must provide `init()` and `print()` methods, as shown in the example. The
-        example demonstrates how to configure py5 to output text to an IPython Widget."""
+        example demonstrates how to configure py5 to output text to an IPython Widget.
+        """
         self._println_stream = println_stream
 
     def println(
-            self,
-            *args,
-            sep: str = ' ',
-            end: str = '\n',
-            stderr: bool = False) -> None:
+        self, *args, sep: str = " ", end: str = "\n", stderr: bool = False
+    ) -> None:
         """Print text or other values to the screen.
 
         Parameters
@@ -72,10 +68,10 @@ class PrintlnStream:
         args
             values to be printed
 
-        end: str = '\\n'
+        end: str = "\\n"
             string appended after the last value, defaults to newline character
 
-        sep: str = ' '
+        sep: str = " "
             string inserted between values, defaults to a space
 
         stderr: bool = False

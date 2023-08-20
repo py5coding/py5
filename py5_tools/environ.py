@@ -18,16 +18,18 @@
 #
 # *****************************************************************************
 
-class Environment:
 
+class Environment:
     def __init__(self):
         try:
             __IPYTHON__  # type: ignore
             from ipykernel.zmqshell import ZMQInteractiveShell
+
             self.in_ipython_session = True
             self.ipython_shell = get_ipython()  # type: ignore
             self.in_jupyter_zmq_shell = isinstance(
-                self.ipython_shell, ZMQInteractiveShell)
+                self.ipython_shell, ZMQInteractiveShell
+            )
         except Exception:
             self.in_ipython_session = False
             self.ipython_shell = None

@@ -17,17 +17,16 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-import re
 import functools
+import re
 
 import numpy as np
-from jpype.types import JString, JInt
+from jpype.types import JInt, JString
 
-
-HEX_3DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{3}' + chr(36))
-HEX_4DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{4}' + chr(36))
-HEX_6DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{6}' + chr(36))
-HEX_8DIGIT_COLOR_REGEX = re.compile(r'#[0-9A-F]{8}' + chr(36))
+HEX_3DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{3}" + chr(36))
+HEX_4DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{4}" + chr(36))
+HEX_6DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{6}" + chr(36))
+HEX_8DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{8}" + chr(36))
 
 
 def _text_fix_str(f):
@@ -53,13 +52,15 @@ def _ret_str(f):
 
 def _hex_converter(arg):
     if isinstance(arg, str):
-        if arg.startswith('#'):
+        if arg.startswith("#"):
             if HEX_3DIGIT_COLOR_REGEX.match(arg.upper()):
-                return JInt(
-                    int("0xFF" + ''.join([c + c for c in arg[1:]]), base=16))
+                return JInt(int("0xFF" + "".join([c + c for c in arg[1:]]), base=16))
             elif HEX_4DIGIT_COLOR_REGEX.match(arg.upper()):
                 return JInt(
-                    int("0x" + ''.join([arg[i] + arg[i] for i in [4, 1, 2, 3]]), base=16))
+                    int(
+                        "0x" + "".join([arg[i] + arg[i] for i in [4, 1, 2, 3]]), base=16
+                    )
+                )
             elif HEX_6DIGIT_COLOR_REGEX.match(arg.upper()):
                 return JInt(int("0xFF" + arg[1:], base=16))
             elif HEX_8DIGIT_COLOR_REGEX.match(arg.upper()):
@@ -67,8 +68,9 @@ def _hex_converter(arg):
         else:
             try:
                 import matplotlib.colors as mcolors
+
                 return JInt(int("0xFF" + mcolors.to_hex(arg)[1:], base=16))
-            except BaseException:
+            except:
                 return None
     elif isinstance(arg, (int, np.integer)) and 0x7FFFFFFF < arg <= 0xFFFFFFFF:
         return JInt(arg)
@@ -85,7 +87,9 @@ def _convert_hex_color(indices=[0]):
                 if (new_arg := _hex_converter(arg)) is not None:
                     args[i] = new_arg
             return f(self_, *args)
+
         return decorated
+
     return _hex_color
 
 
@@ -98,11 +102,11 @@ def _convert_hex_color2(f):
         elif len(args) == 2 and (new_arg := _hex_converter(args[1])):
             args[1] = new_arg
         return f(self_, *args)
+
     return decorated
 
 
 class _Py5ContextManager:
-
     def __init__(self, exit_function, exit_args=()):
         self._exit_function = exit_function
         self._exit_args = exit_args
@@ -123,8 +127,10 @@ def _context_wrapper(exit_function_name, exit_attr_args=()):
             out = f(self_, *args)
             if out is None:
                 return _Py5ContextManager(exit_function, exit_args=exit_args)
-            elif hasattr(out, '_activate_context_manager'):
+            elif hasattr(out, "_activate_context_manager"):
                 out._activate_context_manager(exit_function, exit_args)
             return out
+
         return decorated
+
     return _decorator

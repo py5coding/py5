@@ -23,55 +23,51 @@ from . import environ as _environ
 
 
 class _DefaultPrintlnStream:
-
     def init(self):
         return self
 
-    def print(self, text, end='\n', stderr=False):
+    def print(self, text, end="\n", stderr=False):
         print(text, end=end, file=sys.stderr if stderr else sys.stdout)
 
 
 class _DisplayPubPrintlnStream:
-
     def init(self):
         try:
             self.display_pub = _environ.Environment().ipython_shell.display_pub
             self.parent_header = self.display_pub.parent_header
-        except BaseException:
+        except:
             self.display_pub = None
             self.parent_header = None
 
         return self
 
-    def print(self, text, end='\n', stderr=False):
+    def print(self, text, end="\n", stderr=False):
         if self.display_pub is None or self.parent_header is None:
             print(text, end=end, file=sys.stderr if stderr else sys.stdout)
         else:
-            content = dict(
-                name='stderr' if stderr else 'stdout',
-                text=text + end)
+            content = dict(name="stderr" if stderr else "stdout", text=text + end)
             msg = self.display_pub.session.msg(
-                'stream', content, parent=self.parent_header)
+                "stream", content, parent=self.parent_header
+            )
             self.display_pub.session.send(
-                self.display_pub.pub_socket, msg, ident=b'stream')
+                self.display_pub.pub_socket, msg, ident=b"stream"
+            )
 
 
 class _WidgetPrintlnStream:
-
     def init(self):
         try:
             import ipywidgets as widgets
             from IPython.display import display
 
-            self.out = widgets.Output(layout=dict(
-                max_height='200px', overflow='auto'))
+            self.out = widgets.Output(layout=dict(max_height="200px", overflow="auto"))
             display(self.out)
-        except BaseException:
+        except:
             self.out = None
 
         return self
 
-    def print(self, text, end='\n', stderr=False):
+    def print(self, text, end="\n", stderr=False):
         if self.out is None:
             print(text, end=end, file=sys.stderr if stderr else sys.stdout)
         else:

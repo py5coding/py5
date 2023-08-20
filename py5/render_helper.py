@@ -19,33 +19,32 @@
 # *****************************************************************************
 from __future__ import annotations
 
-import sys
 import functools
+import sys
 from typing import Callable
 
 import numpy as np
-
-import PIL
-import PIL.ImageFile
 from PIL import Image
+from PIL.Image import Image as PIL_Image
 
 from .sketch import Sketch
 
 
 class RenderHelperSketch(Sketch):
     def __init__(
-            self,
-            setup,
-            draw,
-            width,
-            height,
-            renderer,
-            *,
-            limit=1,
-            setup_args=None,
-            setup_kwargs=None,
-            draw_args=None,
-            draw_kwargs=None):
+        self,
+        setup,
+        draw,
+        width,
+        height,
+        renderer,
+        *,
+        limit=1,
+        setup_args=None,
+        setup_kwargs=None,
+        draw_args=None,
+        draw_kwargs=None,
+    ):
         super().__init__()
         self._setup = setup
         self._draw = draw
@@ -76,18 +75,19 @@ class RenderHelperSketch(Sketch):
 
 class RenderHelperGraphicsCanvas(Sketch):
     def __init__(
-            self,
-            setup,
-            draw,
-            width,
-            height,
-            renderer,
-            *,
-            limit=1,
-            setup_args=None,
-            setup_kwargs=None,
-            draw_args=None,
-            draw_kwargs=None):
+        self,
+        setup,
+        draw,
+        width,
+        height,
+        renderer,
+        *,
+        limit=1,
+        setup_args=None,
+        setup_kwargs=None,
+        draw_args=None,
+        draw_kwargs=None,
+    ):
         super().__init__()
         self._setup = setup
         self._draw = draw
@@ -107,8 +107,7 @@ class RenderHelperGraphicsCanvas(Sketch):
 
     def setup(self):
         self.frame_rate(1000)  # performance boost :)
-        self._g = self.create_graphics(
-            self._width, self._height, self._renderer)
+        self._g = self.create_graphics(self._width, self._height, self._renderer)
         # this begin/end draw pair is necessary when using the opengl renderers
         self._g.begin_draw()
         self._g.end_draw()
@@ -121,8 +120,7 @@ class RenderHelperGraphicsCanvas(Sketch):
         self._draw(self._g, *self._draw_args, **self._draw_kwargs)
         self._g.end_draw()
         self._g.load_np_pixels()
-        g_pixels = np.dstack(
-            (self._g.np_pixels[:, :, 1:], self._g.np_pixels[:, :, 0]))
+        g_pixels = np.dstack((self._g.np_pixels[:, :, 1:], self._g.np_pixels[:, :, 0]))
         self.output.append(Image.fromarray(g_pixels))
         if self.frame_count >= self._limit:
             self.exit_sketch()
@@ -130,39 +128,46 @@ class RenderHelperGraphicsCanvas(Sketch):
 
 def _check_allowed_renderer(renderer):
     renderer_name = {
-        Sketch.SVG: 'SVG',
-        Sketch.PDF: 'PDF',
-        Sketch.DXF: 'DXF',
-        Sketch.P2D: 'P2D',
-        Sketch.P3D: 'P3D'}.get(
-        renderer,
-        renderer)
-    renderers = [
-        Sketch.HIDDEN,
-        Sketch.JAVA2D] if sys.platform == 'darwin' else [
-        Sketch.HIDDEN,
-        Sketch.JAVA2D,
-        Sketch.P2D,
-        Sketch.P3D]
+        Sketch.SVG: "SVG",
+        Sketch.PDF: "PDF",
+        Sketch.DXF: "DXF",
+        Sketch.P2D: "P2D",
+        Sketch.P3D: "P3D",
+    }.get(renderer, renderer)
+    renderers = (
+        [Sketch.HIDDEN, Sketch.JAVA2D]
+        if sys.platform == "darwin"
+        else [Sketch.HIDDEN, Sketch.JAVA2D, Sketch.P2D, Sketch.P3D]
+    )
     if renderer not in renderers:
-        return f'Sorry, the render helper tools do not support the {renderer_name} renderer' + (
-            ' on OSX.' if sys.platform == 'darwin' else '.')
+        return (
+            f"Sorry, the render helper tools do not support the {renderer_name} renderer"
+            + (" on OSX." if sys.platform == "darwin" else ".")
+        )
     else:
         return None
 
 
 def _osx_renderer_check(renderer):
-    if sys.platform == 'darwin' and renderer == Sketch.JAVA2D:
-        print('The render helper tools do not support the JAVA2D renderer on OSX. Switching to the default option instead.')
+    if sys.platform == "darwin" and renderer == Sketch.JAVA2D:
+        print(
+            "The render helper tools do not support the JAVA2D renderer on OSX. Switching to the default option instead."
+        )
         return Sketch.HIDDEN
     else:
         return renderer
 
 
-def render_frame(draw: Callable, width: int, height: int,
-                 renderer: str = Sketch.HIDDEN, *,
-                 draw_args: tuple = None, draw_kwargs: dict = None,
-                 use_py5graphics=False) -> PIL.ImageFile.ImageFile:
+def render_frame(
+    draw: Callable,
+    width: int,
+    height: int,
+    renderer: str = Sketch.HIDDEN,
+    *,
+    draw_args: tuple = None,
+    draw_kwargs: dict = None,
+    use_py5graphics=False,
+) -> PIL_Image:
     """Helper function to render a single frame using the passed `draw` function
     argument.
 
@@ -222,26 +227,35 @@ def render_frame(draw: Callable, width: int, height: int,
     renderer = _osx_renderer_check(renderer)
 
     HelperClass = RenderHelperGraphicsCanvas if use_py5graphics else RenderHelperSketch
-    ahs = HelperClass(None, draw, width, height, renderer,
-                      draw_args=draw_args, draw_kwargs=draw_kwargs)
+    ahs = HelperClass(
+        None,
+        draw,
+        width,
+        height,
+        renderer,
+        draw_args=draw_args,
+        draw_kwargs=draw_kwargs,
+    )
     ahs.run_sketch(block=True, _osx_alt_run_method=False)
 
     if not ahs.is_dead_from_error and ahs.output:
         return ahs.output[0]
 
 
-def render_frame_sequence(draw: Callable,
-                          width: int,
-                          height: int,
-                          renderer: str = Sketch.HIDDEN,
-                          *,
-                          limit: int = 1,
-                          setup: Callable = None,
-                          setup_args: tuple = None,
-                          setup_kwargs: dict = None,
-                          draw_args: tuple = None,
-                          draw_kwargs: dict = None,
-                          use_py5graphics=False) -> list[PIL.ImageFile.ImageFile]:
+def render_frame_sequence(
+    draw: Callable,
+    width: int,
+    height: int,
+    renderer: str = Sketch.HIDDEN,
+    *,
+    limit: int = 1,
+    setup: Callable = None,
+    setup_args: tuple = None,
+    setup_kwargs: dict = None,
+    draw_args: tuple = None,
+    draw_kwargs: dict = None,
+    use_py5graphics=False,
+) -> list[PIL_Image]:
     """Helper function to render a sequence of frames using the passed `draw` function
     argument.
 
@@ -321,17 +335,27 @@ def render_frame_sequence(draw: Callable,
     renderer = _osx_renderer_check(renderer)
 
     HelperClass = RenderHelperGraphicsCanvas if use_py5graphics else RenderHelperSketch
-    ahs = HelperClass(setup, draw, width, height, renderer, limit=limit,
-                      setup_args=setup_args, setup_kwargs=setup_kwargs,
-                      draw_args=draw_args, draw_kwargs=draw_kwargs)
+    ahs = HelperClass(
+        setup,
+        draw,
+        width,
+        height,
+        renderer,
+        limit=limit,
+        setup_args=setup_args,
+        setup_kwargs=setup_kwargs,
+        draw_args=draw_args,
+        draw_kwargs=draw_kwargs,
+    )
     ahs.run_sketch(block=True, _osx_alt_run_method=False)
 
     if not ahs.is_dead_from_error:
         return ahs.output
 
 
-def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
-           use_py5graphics=False) -> PIL.ImageFile.ImageFile:
+def render(
+    width: int, height: int, renderer: str = Sketch.HIDDEN, *, use_py5graphics=False
+) -> PIL_Image:
     """Decorator function to render a single frame using the decorated `draw` function.
 
     Parameters
@@ -383,17 +407,32 @@ def render(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
     def decorator(draw):
         @functools.wraps(draw)
         def run_render_frame(*draw_args, **draw_kwargs):
-            return render_frame(draw, width, height, renderer,
-                                draw_args=draw_args, draw_kwargs=draw_kwargs,
-                                use_py5graphics=use_py5graphics)
+            return render_frame(
+                draw,
+                width,
+                height,
+                renderer,
+                draw_args=draw_args,
+                draw_kwargs=draw_kwargs,
+                use_py5graphics=use_py5graphics,
+            )
+
         return run_render_frame
+
     return decorator
 
 
-def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
-                    limit: int = 1, setup: Callable = None,
-                    setup_args: tuple = None, setup_kwargs: dict = None,
-                    use_py5graphics=False) -> list[PIL.ImageFile.ImageFile]:
+def render_sequence(
+    width: int,
+    height: int,
+    renderer: str = Sketch.HIDDEN,
+    *,
+    limit: int = 1,
+    setup: Callable = None,
+    setup_args: tuple = None,
+    setup_kwargs: dict = None,
+    use_py5graphics=False,
+) -> list[PIL_Image]:
     """Decorator function to render a sequence of frames using the decorated `draw`
     function.
 
@@ -475,6 +514,9 @@ def render_sequence(width: int, height: int, renderer: str = Sketch.HIDDEN, *,
                 setup_kwargs=setup_kwargs,
                 draw_args=draw_args,
                 draw_kwargs=draw_kwargs,
-                use_py5graphics=use_py5graphics)
+                use_py5graphics=use_py5graphics,
+            )
+
         return run_render_frames
+
     return decorator

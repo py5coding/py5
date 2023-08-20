@@ -20,26 +20,31 @@
 from __future__ import annotations
 
 import functools
+import types
+import weakref
 from pathlib import Path
 from typing import overload  # noqa
-import weakref
-import types
 
 import numpy as np
 import numpy.typing as npt  # noqa
-
 from jpype import JClass, JException
-from jpype.types import JBoolean, JInt, JFloat
+from jpype.types import JBoolean, JFloat, JInt
 
-from .pmath import _get_pvector_wrapper  # noqa
-from .decorators import _ret_str, _convert_hex_color, _convert_hex_color2, _context_wrapper  # noqa
 from . import spelling
+from .decorators import (
+    _context_wrapper,
+    _convert_hex_color,  # noqa
+    _convert_hex_color2,
+    _ret_str,
+)
+from .pmath import _get_pvector_wrapper  # noqa
 
 
 def _return_list_py5shapes(f):
     @functools.wraps(f)
     def decorated(self_, *args):
         return [Py5Shape(s) for s in f(self_, *args)]
+
     return decorated
 
 
@@ -49,6 +54,7 @@ def _return_py5shape(f):
         result = f(self_, *args)
         if result:
             return Py5Shape(result)
+
     return decorated
 
 
@@ -64,8 +70,10 @@ def _py5shape_type_fixer(f):
                 return JFloat(arg)
             else:
                 return arg
+
         args = [fix_type(a) for a in args]
         return f(self_, *args)
+
     return decorated
 
 
@@ -76,10 +84,12 @@ def _load_py5shape(f):
             return Py5Shape(f(self_, *args))
         except JException as e:
             msg = e.message()
-            if msg == 'None':
-                msg = 'shape file cannot be found'
-        raise RuntimeError('cannot load shape ' +
-                           str(args[0]) + '. error message: ' + msg)
+            if msg == "None":
+                msg = "shape file cannot be found"
+        raise RuntimeError(
+            "cannot load shape " + str(args[0]) + ". error message: " + msg
+        )
+
     return decorated
 
 
@@ -88,10 +98,11 @@ def _return_numpy_array(f):
     def decorated(self_, *args):
         result = f(self_, *args)
         return np.array(result) if result is not None else None
+
     return decorated
 
 
-_Py5ShapeHelper = JClass('py5.core.Py5ShapeHelper')
+_Py5ShapeHelper = JClass("py5.core.Py5ShapeHelper")
 
 
 class Py5Shape:
@@ -116,8 +127,8 @@ class Py5Shape:
     data.
 
     To create a new shape, use the `create_shape()` function. Do not use the syntax
-    `Py5Shape()`.
-    """
+    `Py5Shape()`."""
+
     _py5_object_cache = weakref.WeakSet()
 
     def __new__(cls, pshape):
@@ -138,7 +149,7 @@ class Py5Shape:
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Py5Shape', name, self))
+        raise AttributeError(spelling.error_msg("Py5Shape", name, self))
 
     # *** BEGIN METHODS ***
 
@@ -159,13 +170,13 @@ class Py5Shape:
         number of vertices, the performance of `vertices()` will be much faster.
 
         The `coordinates` parameter should be a numpy array with one row for each
-        vertex. There should be two or three columns for 2D or 3D points, respectively."""
+        vertex. There should be two or three columns for 2D or 3D points, respectively.
+        """
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5ShapeHelper.vertices(self._instance, coordinates)
 
-    def bezier_vertices(
-            self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def bezier_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of bezier vertices.
 
         Parameters
@@ -228,8 +239,7 @@ class Py5Shape:
             coordinates = list(coordinates)
         _Py5ShapeHelper.curveVertices(self._instance, coordinates)
 
-    def quadratic_vertices(
-            self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def quadratic_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of quadratic vertices.
 
         Parameters
@@ -595,8 +605,9 @@ class Py5Shape:
         return self._instance.ambient(*args)
 
     @overload
-    def apply_matrix(self, n00: float, n01: float, n02: float,
-                     n10: float, n11: float, n12: float, /) -> None:
+    def apply_matrix(
+        self, n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /
+    ) -> None:
         """Apply a transformation matrix to a `Py5Shape` object.
 
         Underlying Processing method: PShape.applyMatrix
@@ -681,24 +692,25 @@ class Py5Shape:
 
     @overload
     def apply_matrix(
-            self,
-            n00: float,
-            n01: float,
-            n02: float,
-            n03: float,
-            n10: float,
-            n11: float,
-            n12: float,
-            n13: float,
-            n20: float,
-            n21: float,
-            n22: float,
-            n23: float,
-            n30: float,
-            n31: float,
-            n32: float,
-            n33: float,
-            /) -> None:
+        self,
+        n00: float,
+        n01: float,
+        n02: float,
+        n03: float,
+        n10: float,
+        n11: float,
+        n12: float,
+        n13: float,
+        n20: float,
+        n21: float,
+        n22: float,
+        n23: float,
+        n30: float,
+        n31: float,
+        n32: float,
+        n33: float,
+        /,
+    ) -> None:
         """Apply a transformation matrix to a `Py5Shape` object.
 
         Underlying Processing method: PShape.applyMatrix
@@ -948,7 +960,7 @@ class Py5Shape:
         """
         return self._instance.applyMatrix(*args)
 
-    @_context_wrapper('end_contour')
+    @_context_wrapper("end_contour")
     def begin_contour(self) -> None:
         """Use the `begin_contour()` and `Py5Shape.end_contour()` methods to create
         negative shapes within a `Py5Shape` object such as the center of the letter 'O'.
@@ -1047,7 +1059,7 @@ class Py5Shape:
         """
         pass
 
-    @_context_wrapper('end_shape')
+    @_context_wrapper("end_shape")
     def begin_shape(self, *args):
         """This method is used to start a custom shape created with the `create_shape()`
         function.
@@ -1158,7 +1170,7 @@ class Py5Shape:
         """
         pass
 
-    @_context_wrapper('end_shape', exit_attr_args=('CLOSE',))
+    @_context_wrapper("end_shape", exit_attr_args=("CLOSE",))
     def begin_closed_shape(self, *args):
         """This method is used to start a custom closed shape created with the
         `create_shape()` function.
@@ -1223,8 +1235,9 @@ class Py5Shape:
         return self._instance.bezierDetail(detail)
 
     @overload
-    def bezier_vertex(self, x2: float, y2: float, x3: float,
-                      y3: float, x4: float, y4: float, /) -> None:
+    def bezier_vertex(
+        self, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /
+    ) -> None:
         """Specifies a `Py5Shape` object's vertex coordinates for Bezier curves.
 
         Underlying Processing method: PShape.bezierVertex
@@ -1286,8 +1299,19 @@ class Py5Shape:
         pass
 
     @overload
-    def bezier_vertex(self, x2: float, y2: float, z2: float, x3: float,
-                      y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def bezier_vertex(
+        self,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Specifies a `Py5Shape` object's vertex coordinates for Bezier curves.
 
         Underlying Processing method: PShape.bezierVertex
@@ -1526,8 +1550,9 @@ class Py5Shape:
         pass
 
     @overload
-    def color_mode(self, mode: int, max_x: float,
-                   max_y: float, max_z: float, /) -> None:
+    def color_mode(
+        self, mode: int, max_x: float, max_y: float, max_z: float, /
+    ) -> None:
         """Changes the way a `Py5Shape` object interprets color data.
 
         Underlying Processing method: PShape.colorMode
@@ -1585,8 +1610,9 @@ class Py5Shape:
         pass
 
     @overload
-    def color_mode(self, mode: int, max_x: float, max_y: float,
-                   max_z: float, max_a: float, /) -> None:
+    def color_mode(
+        self, mode: int, max_x: float, max_y: float, max_z: float, max_a: float, /
+    ) -> None:
         """Changes the way a `Py5Shape` object interprets color data.
 
         Underlying Processing method: PShape.colorMode
@@ -3827,8 +3853,7 @@ class Py5Shape:
         return self._instance.normal(nx, ny, nz)
 
     @overload
-    def quadratic_vertex(self, cx: float, cy: float,
-                         x3: float, y3: float, /) -> None:
+    def quadratic_vertex(self, cx: float, cy: float, x3: float, y3: float, /) -> None:
         """Specifies a `Py5Shape` object's vertex coordinates for quadratic Bezier curves.
 
         Underlying Processing method: PShape.quadraticVertex
@@ -3881,8 +3906,9 @@ class Py5Shape:
         pass
 
     @overload
-    def quadratic_vertex(self, cx: float, cy: float, cz: float,
-                         x3: float, y3: float, z3: float, /) -> None:
+    def quadratic_vertex(
+        self, cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /
+    ) -> None:
         """Specifies a `Py5Shape` object's vertex coordinates for quadratic Bezier curves.
 
         Underlying Processing method: PShape.quadraticVertex
@@ -4854,8 +4880,7 @@ class Py5Shape:
         """
         return self._instance.setName(name)
 
-    def set_path(self, vcount: int,
-                 verts: npt.NDArray[np.floating], /) -> None:
+    def set_path(self, vcount: int, verts: npt.NDArray[np.floating], /) -> None:
         """Set many vertex points at the same time, using a numpy array.
 
         Underlying Processing method: PShape.setPath
@@ -7567,8 +7592,7 @@ class Py5Shape:
         pass
 
     @overload
-    def vertex(self, x: float, y: float, z: float,
-               u: float, v: float, /) -> None:
+    def vertex(self, x: float, y: float, z: float, u: float, v: float, /) -> None:
         """Add a new vertex to a `Py5Shape` object.
 
         Underlying Processing method: PShape.vertex

@@ -20,29 +20,29 @@
 from __future__ import annotations
 
 import sys
+import tempfile
 import time
 from pathlib import Path
-import tempfile
 from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
-
 import PIL
-import PIL.ImageFile
+from PIL.Image import Image as PIL_Image
 
-from .hooks import ScreenshotHook, SaveFramesHook, GrabFramesHook, QueuedBatchProcessingHook
 from .. import environ as _environ
 from .. import imported as _imported
+from .hooks import (
+    GrabFramesHook,
+    QueuedBatchProcessingHook,
+    SaveFramesHook,
+    ScreenshotHook,
+)
+
+Sketch = "Sketch"
 
 
-Sketch = 'Sketch'
-
-
-def screenshot(
-    *,
-    sketch: Sketch = None,
-        hook_post_draw: bool = False) -> PIL.ImageFile.ImageFile:
+def screenshot(*, sketch: Sketch = None, hook_post_draw: bool = False) -> PIL_Image:
     """Take a screenshot of a running Sketch.
 
     Parameters
@@ -71,6 +71,7 @@ def screenshot(
     important when using Processing libraries that support `post_draw()` such as
     Camera3D or ColorBlindness."""
     import py5
+
     if sketch is None:
         sketch = py5.get_current_sketch()
         using_current_sketch = True
@@ -84,16 +85,15 @@ def screenshot(
         raise RuntimeError(msg)
 
     if py5.bridge.check_run_method_callstack():
-        msg = 'Calling py5_tools.screenshot() from within a py5 user function is not allowed. Please move this code to outside the Sketch or consider using save_frame() instead.'
+        msg = "Calling py5_tools.screenshot() from within a py5 user function is not allowed. Please move this code to outside the Sketch or consider using save_frame() instead."
         raise RuntimeError(msg)
 
     with tempfile.TemporaryDirectory() as tempdir:
-        temp_png = Path(tempdir) / 'output.png'
+        temp_png = Path(tempdir) / "output.png"
         hook = ScreenshotHook(temp_png)
         sketch._add_post_hook(
-            'post_draw' if hook_post_draw else 'draw',
-            hook.hook_name,
-            hook)
+            "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
+        )
 
         while not hook.is_ready and not hook.is_terminated:
             time.sleep(0.005)
@@ -101,13 +101,21 @@ def screenshot(
         if hook.is_ready:
             return PIL.Image.open(temp_png)
         elif hook.is_terminated and hook.exception:
-            raise RuntimeError('error running magic: ' + str(hook.exception))
+            raise RuntimeError("error running magic: " + str(hook.exception))
 
 
-def save_frames(dirname: str, *, filename: str = 'frame_####.png',
-                period: float = 0.0, start: int = None, limit: int = 0,
-                sketch: Sketch = None, hook_post_draw: bool = False,
-                block: bool = False, display_progress: bool = True) -> None:
+def save_frames(
+    dirname: str,
+    *,
+    filename: str = "frame_####.png",
+    period: float = 0.0,
+    start: int = None,
+    limit: int = 0,
+    sketch: Sketch = None,
+    hook_post_draw: bool = False,
+    block: bool = False,
+    display_progress: bool = True,
+) -> None:
     """Save a running Sketch's frames to a directory.
 
     Parameters
@@ -122,7 +130,7 @@ def save_frames(dirname: str, *, filename: str = 'frame_####.png',
     display_progress: bool = True
         display progress as frames are saved
 
-    filename: str = 'frame_####.png'
+    filename: str = "frame_####.png"
         filename template to use for saved frames
 
     hook_post_draw: bool = False
@@ -170,6 +178,7 @@ def save_frames(dirname: str, *, filename: str = 'frame_####.png',
     important when using Processing libraries that support `post_draw()` such as
     Camera3D or ColorBlindness."""
     import py5
+
     if sketch is None:
         sketch = py5.get_current_sketch()
         using_current_sketch = True
@@ -182,41 +191,40 @@ def save_frames(dirname: str, *, filename: str = 'frame_####.png',
             msg += f' Call {"" if _imported.get_imported_mode() else "py5."}reset_py5() to reset py5 to the ready state.'
         raise RuntimeError(msg)
 
-    if block and sys.platform == 'darwin' and _environ.Environment().in_ipython_session:
-        raise RuntimeError(
-            'Blocking is not allowed on OSX when run from IPython')
+    if block and sys.platform == "darwin" and _environ.Environment().in_ipython_session:
+        raise RuntimeError("Blocking is not allowed on OSX when run from IPython")
 
     if block and py5.bridge.check_run_method_callstack():
-        msg = 'Calling py5_tools.save_frames() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`.'
+        msg = "Calling py5_tools.save_frames() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
         raise RuntimeError(msg)
 
     dirname = Path(dirname)
     if not dirname.exists():
         dirname.mkdir(parents=True)
 
-    hook = SaveFramesHook(
-        dirname,
-        filename,
-        period,
-        start,
-        limit,
-        display_progress)
+    hook = SaveFramesHook(dirname, filename, period, start, limit, display_progress)
     sketch._add_post_hook(
-        'post_draw' if hook_post_draw else 'draw',
-        hook.hook_name,
-        hook)
+        "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
+    )
 
     if block:
         while not hook.is_ready and not hook.is_terminated:
             time.sleep(0.1)
 
 
-def offline_frame_processing(func: Callable[[npt.NDArray[np.uint8]], None], *,
-                             limit: int = 0, period: float = 0.0, batch_size: int = 1,
-                             complete_func: Callable[[], None] = None,
-                             stop_processing_func: Callable[[], bool] = None,
-                             sketch: Sketch = None, hook_post_draw: bool = False,
-                             queue_limit: int = None, block: bool = None) -> None:
+def offline_frame_processing(
+    func: Callable[[npt.NDArray[np.uint8]], None],
+    *,
+    limit: int = 0,
+    period: float = 0.0,
+    batch_size: int = 1,
+    complete_func: Callable[[], None] = None,
+    stop_processing_func: Callable[[], bool] = None,
+    sketch: Sketch = None,
+    hook_post_draw: bool = False,
+    queue_limit: int = None,
+    block: bool = None,
+) -> None:
     """Process Sketch frames in a separate thread that will minimize the performance
     impact on the Sketch's main animation thread.
 
@@ -295,6 +303,7 @@ def offline_frame_processing(func: Callable[[npt.NDArray[np.uint8]], None], *,
     instead of `draw()`. This is important when using Processing libraries that
     support `post_draw()` such as Camera3D or ColorBlindness."""
     import py5
+
     if sketch is None:
         sketch = py5.get_current_sketch()
         using_current_sketch = True
@@ -308,26 +317,39 @@ def offline_frame_processing(func: Callable[[npt.NDArray[np.uint8]], None], *,
         raise RuntimeError(msg)
 
     if block and py5.bridge.check_run_method_callstack():
-        msg = 'Calling py5_tools.offline_frame_processing() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`.'
+        msg = "Calling py5_tools.offline_frame_processing() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
         raise RuntimeError(msg)
 
-    hook = QueuedBatchProcessingHook(period, limit, batch_size, func,
-                                     complete_func=complete_func,
-                                     stop_processing_func=stop_processing_func,
-                                     queue_limit=queue_limit)
+    hook = QueuedBatchProcessingHook(
+        period,
+        limit,
+        batch_size,
+        func,
+        complete_func=complete_func,
+        stop_processing_func=stop_processing_func,
+        queue_limit=queue_limit,
+    )
     sketch._add_post_hook(
-        'post_draw' if hook_post_draw else 'draw',
-        hook.hook_name,
-        hook)
+        "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
+    )
 
     if block:
         while not hook.is_ready and not hook.is_terminated:
             time.sleep(0.1)
 
 
-def animated_gif(filename: str, count: int, period: float, duration: float, *,
-                 loop: int = 0, optimize: bool = True, sketch: Sketch = None,
-                 hook_post_draw: bool = False, block: bool = False) -> None:
+def animated_gif(
+    filename: str,
+    count: int,
+    period: float,
+    duration: float,
+    *,
+    loop: int = 0,
+    optimize: bool = True,
+    sketch: Sketch = None,
+    hook_post_draw: bool = False,
+    block: bool = False,
+) -> None:
     """Create an animated GIF using a running Sketch.
 
     Parameters
@@ -382,6 +404,7 @@ def animated_gif(filename: str, count: int, period: float, duration: float, *,
     important when using Processing libraries that support `post_draw()` such as
     Camera3D or ColorBlindness."""
     import py5
+
     if sketch is None:
         sketch = py5.get_current_sketch()
         using_current_sketch = True
@@ -394,12 +417,11 @@ def animated_gif(filename: str, count: int, period: float, duration: float, *,
             msg += f' Call {"" if _imported.get_imported_mode() else "py5."}reset_py5() to reset py5 to the ready state.'
         raise RuntimeError(msg)
 
-    if block and sys.platform == 'darwin' and _environ.Environment().in_ipython_session:
-        raise RuntimeError(
-            'Blocking is not allowed on OSX when run from IPython')
+    if block and sys.platform == "darwin" and _environ.Environment().in_ipython_session:
+        raise RuntimeError("Blocking is not allowed on OSX when run from IPython")
 
     if block and py5.bridge.check_run_method_callstack():
-        msg = 'Calling py5_tools.animated_gif() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`.'
+        msg = "Calling py5_tools.animated_gif() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
         raise RuntimeError(msg)
 
     filename = Path(filename)
@@ -408,31 +430,37 @@ def animated_gif(filename: str, count: int, period: float, duration: float, *,
         if not filename.parent.exists():
             filename.parent.mkdir(parents=True)
 
-        img1 = PIL.Image.fromarray(hook.frames[0], mode='RGB')
-        imgs = [PIL.Image.fromarray(arr, mode='RGB')
-                for arr in hook.frames[1:]]
-        img1.save(filename, save_all=True, duration=1000 * duration,
-                  loop=loop, optimize=optimize, append_images=imgs)
+        img1 = PIL.Image.fromarray(hook.frames[0], mode="RGB")
+        imgs = [PIL.Image.fromarray(arr, mode="RGB") for arr in hook.frames[1:]]
+        img1.save(
+            filename,
+            save_all=True,
+            duration=1000 * duration,
+            loop=loop,
+            optimize=optimize,
+            append_images=imgs,
+        )
 
-        hook.status_msg('animated gif written to ' + str(filename))
+        hook.status_msg("animated gif written to " + str(filename))
 
     hook = GrabFramesHook(period, count, complete_func)
     sketch._add_post_hook(
-        'post_draw' if hook_post_draw else 'draw',
-        hook.hook_name,
-        hook)
+        "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
+    )
 
     if block:
         while not hook.is_ready and not hook.is_terminated:
             time.sleep(0.1)
 
 
-def capture_frames(count: float,
-                   *,
-                   period: float = 0.0,
-                   sketch: Sketch = None,
-                   hook_post_draw: bool = False,
-                   block: bool = False) -> list[PIL.ImageFile.ImageFile]:
+def capture_frames(
+    count: float,
+    *,
+    period: float = 0.0,
+    sketch: Sketch = None,
+    hook_post_draw: bool = False,
+    block: bool = False,
+) -> list[PIL_Image]:
     """Capture frames from a running Sketch.
 
     Parameters
@@ -477,6 +505,7 @@ def capture_frames(count: float,
     important when using Processing libraries that support `post_draw()` such as
     Camera3D or ColorBlindness."""
     import py5
+
     if sketch is None:
         sketch = py5.get_current_sketch()
         using_current_sketch = True
@@ -489,26 +518,23 @@ def capture_frames(count: float,
             msg += f' Call {"" if _imported.get_imported_mode() else "py5."}reset_py5() to reset py5 to the ready state.'
         raise RuntimeError(msg)
 
-    if block and sys.platform == 'darwin' and _environ.Environment().in_ipython_session:
-        raise RuntimeError(
-            'Blocking is not allowed on OSX when run from IPython')
+    if block and sys.platform == "darwin" and _environ.Environment().in_ipython_session:
+        raise RuntimeError("Blocking is not allowed on OSX when run from IPython")
 
     if block and py5.bridge.check_run_method_callstack():
-        msg = 'Calling py5_tools.capture_frames() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`.'
+        msg = "Calling py5_tools.capture_frames() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
         raise RuntimeError(msg)
 
     results = []
 
     def complete_func(hook):
-        results.extend([PIL.Image.fromarray(arr, mode='RGB')
-                       for arr in hook.frames])
-        hook.status_msg(f'captured {count} frames')
+        results.extend([PIL.Image.fromarray(arr, mode="RGB") for arr in hook.frames])
+        hook.status_msg(f"captured {count} frames")
 
     hook = GrabFramesHook(period, count, complete_func)
     sketch._add_post_hook(
-        'post_draw' if hook_post_draw else 'draw',
-        hook.hook_name,
-        hook)
+        "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
+    )
 
     if block:
         while not hook.is_ready and not hook.is_terminated:
@@ -518,8 +544,9 @@ def capture_frames(count: float,
 
 
 __all__ = [
-    'screenshot',
-    'save_frames',
-    'offline_frame_processing',
-    'animated_gif',
-    'capture_frames']
+    "screenshot",
+    "save_frames",
+    "offline_frame_processing",
+    "animated_gif",
+    "capture_frames",
+]

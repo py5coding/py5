@@ -24,8 +24,7 @@
 
 
 
-PY5_DIR_STR = [
-    '__version__',
+PY5_DIR_STR = ['__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -193,6 +192,7 @@ PY5_DIR_STR = [
     'get_frame_rate',
     'get_graphics',
     'get_matrix',
+    'get_np_pixels',
     'get_pixels',
     'get_surface',
     'GRAY',
@@ -472,6 +472,7 @@ PY5_DIR_STR = [
     'THIRD_PI',
     'THRESHOLD',
     'tint',
+    'to_pil',
     'TOP',
     'translate',
     'TRIANGLE',
@@ -497,11 +498,9 @@ PY5_DIR_STR = [
     'window_title',
     'window_x',
     'window_y',
-    'year'
-]
+    'year']
 
-PY5_ALL_STR = [
-    '__version__',
+PY5_ALL_STR = ['__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -663,6 +662,7 @@ PY5_ALL_STR = [
     'get_frame_rate',
     'get_graphics',
     'get_matrix',
+    'get_np_pixels',
     'get_pixels',
     'get_surface',
     'GRAY',
@@ -914,6 +914,7 @@ PY5_ALL_STR = [
     'THIRD_PI',
     'THRESHOLD',
     'tint',
+    'to_pil',
     'TOP',
     'translate',
     'TRIANGLE',
@@ -936,11 +937,9 @@ PY5_ALL_STR = [
     'window_resizable',
     'window_resize',
     'window_title',
-    'year'
-]
+    'year']
 
-PY5_DYNAMIC_VARIABLES = [
-    'display_height',
+PY5_DYNAMIC_VARIABLES = ['display_height',
     'display_width',
     'finished',
     'focused',
@@ -976,9 +975,6 @@ PY5_DYNAMIC_VARIABLES = [
     'rwidth',
     'width',
     'window_x',
-    'window_y'
-]
+    'window_y']
 
-PY5_PYTHON_DYNAMIC_VARIABLES = [
-    'pixels'
-]
+PY5_PYTHON_DYNAMIC_VARIABLES = ['pixels']

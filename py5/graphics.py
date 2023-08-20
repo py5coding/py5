@@ -20,24 +20,23 @@
 from __future__ import annotations
 
 import functools
-from typing import overload  # noqa
-import weakref
 import types
+import weakref
+from typing import overload  # noqa
 
 import numpy as np  # noqa
 import numpy.typing as npt  # noqa
-
 from jpype import JClass
 
-from .base import Py5Base
-from .mixins import PixelPy5GraphicsMixin
-from .font import Py5Font  # noqa
-from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
-from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
-from .image import Py5Image, _return_py5image  # noqa
-from .decorators import _text_fix_str, _convert_hex_color, _context_wrapper  # noqa
-from .pmath import _get_matrix_wrapper  # noqa
 from . import spelling
+from .base import Py5Base
+from .decorators import _context_wrapper, _convert_hex_color, _text_fix_str  # noqa
+from .font import Py5Font  # noqa
+from .image import Py5Image, _return_py5image  # noqa
+from .mixins import PixelPy5GraphicsMixin
+from .pmath import _get_matrix_wrapper  # noqa
+from .shader import Py5Shader, _load_py5shader, _return_py5shader  # noqa
+from .shape import Py5Shape, _load_py5shape, _return_py5shape  # noqa
 
 
 def _return_py5graphics(f):
@@ -46,6 +45,7 @@ def _return_py5graphics(f):
         ret = f(self_, *args)
         if ret is not None:
             return Py5Graphics(ret)
+
     return decorated
 
 
@@ -53,16 +53,14 @@ def _name_renderer(renderer_name, clsname):
     def _decorator(f):
         @functools.wraps(f)
         def decorated(self_, *args):
-            return f(
-                self_,
-                *args,
-                _renderer_name=renderer_name,
-                _clsname=clsname)
+            return f(self_, *args, _renderer_name=renderer_name, _clsname=clsname)
+
         return decorated
+
     return _decorator
 
 
-_Py5GraphicsHelper = JClass('py5.core.Py5GraphicsHelper')
+_Py5GraphicsHelper = JClass("py5.core.Py5GraphicsHelper")
 
 
 class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
@@ -87,8 +85,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     Java exception.
 
     To create a new graphics context, use the `create_graphics()` function. Do not
-    use the syntax `Py5Graphics()`.
-    """
+    use the syntax `Py5Graphics()`."""
+
     _py5_object_cache = weakref.WeakSet()
 
     PI = np.pi
@@ -110,7 +108,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             return o
 
     def __init__(self, pgraphics):
-        if pgraphics == getattr(self, '_instance', None):
+        if pgraphics == getattr(self, "_instance", None):
             # this is a cached Py5Graphics object, don't re-run __init__()
             return
 
@@ -118,14 +116,19 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         super().__init__(instance=pgraphics)
 
     def __str__(self) -> str:
-        return f"Py5Graphics(width=" + str(self._get_width()) + \
-            ", height=" + str(self._get_height()) + ")"
+        return (
+            f"Py5Graphics(width="
+            + str(self._get_width())
+            + ", height="
+            + str(self._get_height())
+            + ")"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Py5Graphics', name, self))
+        raise AttributeError(spelling.error_msg("Py5Graphics", name, self))
 
     def _activate_context_manager(self, exit_function, exit_args):
         self._context_manager_exit_function = exit_function
@@ -133,13 +136,12 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     def __enter__(self):
         if not (
-            hasattr(
-                self,
-                '_context_manager_exit_function') and hasattr(
-                self,
-                '_context_manager_exit_args')):
+            hasattr(self, "_context_manager_exit_function")
+            and hasattr(self, "_context_manager_exit_args")
+        ):
             raise RuntimeError(
-                'Cannot use this Py5Graphics object as a context manager')
+                "Cannot use this Py5Graphics object as a context manager"
+            )
         return self
 
     def __exit__(self, *exc):
@@ -227,8 +229,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.vertices(self._instance, coordinates)
 
-    def bezier_vertices(
-            self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def bezier_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of bezier vertices.
 
         Parameters
@@ -283,8 +284,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.curveVertices(self._instance, coordinates)
 
-    def quadratic_vertices(
-            self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def quadratic_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of quadratic vertices.
 
         Parameters
@@ -307,7 +307,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         or 3D points, respectively.
 
         This method is the same as `quadratic_vertices()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `quadratic_vertices()`."""
+        object. To see example code for how it can be used, see `quadratic_vertices()`.
+        """
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.quadraticVertices(self._instance, coordinates)
@@ -556,7 +557,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     ARC = 32
     ARGB = 2
     ARROW = 0
-    BACKSPACE = '\b'
+    BACKSPACE = "\b"
     BASELINE = 0
     BEVEL = 32
     BEZIER_VERTEX = 1
@@ -571,14 +572,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     CHORD = 2
     CLAMP = 0
     CLOSE = 2
-    CODED = '\uffff'
+    CODED = "\uffff"
     CONTROL = 17
     CORNER = 0
     CORNERS = 1
     CROSS = 1
     CURVE_VERTEX = 3
     DARKEST = 16
-    DELETE = '\u007f'
+    DELETE = "\u007f"
     DIAMETER = 3
     DIFFERENCE = 32
     DILATE = 18
@@ -611,10 +612,10 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     ENABLE_STROKE_PERSPECTIVE = 7
     ENABLE_STROKE_PURE = 9
     ENABLE_TEXTURE_MIPMAPS = -8
-    ENTER = '\n'
-    EPSILON = 1.0E-4
+    ENTER = "\n"
+    EPSILON = 1.0e-4
     ERODE = 17
-    ESC = '\u001b'
+    ESC = "\u001b"
     EXCLUSION = 64
     FX2D = "processing.javafx.PGraphicsFX2D"
     GRAY = 12
@@ -632,9 +633,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     LINES = 5
     LINE_LOOP = 51
     LINE_STRIP = 50
-    MAX_FLOAT = 3.4028235E38
+    MAX_FLOAT = 3.4028235e38
     MAX_INT = 2147483647
-    MIN_FLOAT = -3.4028235E38
+    MIN_FLOAT = -3.4028235e38
     MIN_INT = -2147483648
     MITER = 8
     MODEL = 4
@@ -665,7 +666,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     RED_MASK = 16711680
     REPEAT = 1
     REPLACE = 0
-    RETURN = '\r'
+    RETURN = "\r"
     RGB = 1
     RIGHT = 39
     ROUND = 2
@@ -679,7 +680,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     SQUARE = 1
     SUBTRACT = 4
     SVG = "processing.svg.PGraphicsSVG"
-    TAB = '\t'
+    TAB = "\t"
     TEXT = 2
     THRESHOLD = 16
     TOP = 101
@@ -709,6 +710,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         example code for how it can be used, see `height`.
         """
         return self._instance.height
+
     height: int = property(
         fget=_get_height,
         doc="""System variable that stores the height of the Py5Graphics drawing surface.
@@ -724,7 +726,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         the value 240.
 
         This field is the same as `height` but linked to a `Py5Graphics` object. To see
-        example code for how it can be used, see `height`.""")
+        example code for how it can be used, see `height`.""",
+    )
 
     def _get_pixel_density(self) -> int:
         """Get the pixel density of the Py5Graphics drawing surface.
@@ -745,6 +748,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         for more information.
         """
         return self._instance.pixelDensity
+
     pixel_density: int = property(
         fget=_get_pixel_density,
         doc="""Get the pixel density of the Py5Graphics drawing surface.
@@ -762,7 +766,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.set_pixels()`, `Py5Graphics.blend()`, `Py5Graphics.copy()`,
         `Py5Graphics.update_pixels()`, and `Py5Graphics.update_np_pixels()` all work.
         See the reference for `Py5Graphics.pixel_width` and `Py5Graphics.pixel_height`
-        for more information.""")
+        for more information.""",
+    )
 
     def _get_pixel_height(self) -> int:
         """Height of the Py5Graphics drawing surface in pixels.
@@ -789,6 +794,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         To see example code for how it can be used, see `pixel_height`.
         """
         return self._instance.pixelHeight
+
     pixel_height: int = property(
         fget=_get_pixel_height,
         doc="""Height of the Py5Graphics drawing surface in pixels.
@@ -812,7 +818,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         not `width*height`.
 
         This field is the same as `pixel_height` but linked to a `Py5Graphics` object.
-        To see example code for how it can be used, see `pixel_height`.""")
+        To see example code for how it can be used, see `pixel_height`.""",
+    )
 
     def _get_pixel_width(self) -> int:
         """Width of the Py5Graphics drawing surface in pixels.
@@ -839,6 +846,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         see example code for how it can be used, see `pixel_width`.
         """
         return self._instance.pixelWidth
+
     pixel_width: int = property(
         fget=_get_pixel_width,
         doc="""Width of the Py5Graphics drawing surface in pixels.
@@ -862,7 +870,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         not `width*height`.
 
         This field is the same as `pixel_width` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `pixel_width`.""")
+        see example code for how it can be used, see `pixel_width`.""",
+    )
 
     def _get_width(self) -> int:
         """System variable that stores the width of the Py5Graphics drawing surface.
@@ -881,6 +890,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         example code for how it can be used, see `width`.
         """
         return self._instance.width
+
     width: int = property(
         fget=_get_width,
         doc="""System variable that stores the width of the Py5Graphics drawing surface.
@@ -896,7 +906,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         the value 320.
 
         This field is the same as `width` but linked to a `Py5Graphics` object. To see
-        example code for how it can be used, see `width`.""")
+        example code for how it can be used, see `width`.""",
+    )
 
     @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
@@ -1175,8 +1186,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def ambient_light(self, v1: float, v2: float, v3: float,
-                      x: float, y: float, z: float, /) -> None:
+    def ambient_light(
+        self, v1: float, v2: float, v3: float, x: float, y: float, z: float, /
+    ) -> None:
         """Adds an ambient light.
 
         Underlying Processing method: PGraphics.ambientLight
@@ -1273,8 +1285,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.ambientLight(*args)
 
     @overload
-    def apply_matrix(self, n00: float, n01: float, n02: float,
-                     n10: float, n11: float, n12: float, /) -> None:
+    def apply_matrix(
+        self, n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /
+    ) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
         Underlying Processing method: PGraphics.applyMatrix
@@ -1357,24 +1370,25 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def apply_matrix(
-            self,
-            n00: float,
-            n01: float,
-            n02: float,
-            n03: float,
-            n10: float,
-            n11: float,
-            n12: float,
-            n13: float,
-            n20: float,
-            n21: float,
-            n22: float,
-            n23: float,
-            n30: float,
-            n31: float,
-            n32: float,
-            n33: float,
-            /) -> None:
+        self,
+        n00: float,
+        n01: float,
+        n02: float,
+        n03: float,
+        n10: float,
+        n11: float,
+        n12: float,
+        n13: float,
+        n20: float,
+        n21: float,
+        n22: float,
+        n23: float,
+        n30: float,
+        n31: float,
+        n32: float,
+        n33: float,
+        /,
+    ) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
         Underlying Processing method: PGraphics.applyMatrix
@@ -1619,8 +1633,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.applyMatrix(*args)
 
     @overload
-    def arc(self, a: float, b: float, c: float, d: float,
-            start: float, stop: float, /) -> None:
+    def arc(
+        self, a: float, b: float, c: float, d: float, start: float, stop: float, /
+    ) -> None:
         """Draws an arc to the screen.
 
         Underlying Processing method: PGraphics.arc
@@ -1682,8 +1697,17 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def arc(self, a: float, b: float, c: float, d: float,
-            start: float, stop: float, mode: int, /) -> None:
+    def arc(
+        self,
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        start: float,
+        stop: float,
+        mode: int,
+        /,
+    ) -> None:
         """Draws an arc to the screen.
 
         Underlying Processing method: PGraphics.arc
@@ -1989,8 +2013,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def background(self, v1: float, v2: float,
-                   v3: float, alpha: float, /) -> None:
+    def background(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """The `background()` function sets the color used for the background of the
         `Py5Graphics` object.
 
@@ -2294,7 +2317,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.background(*args)
 
-    @_context_wrapper('end_camera')
+    @_context_wrapper("end_camera")
     def begin_camera(self) -> None:
         """The `begin_camera()` and `Py5Graphics.end_camera()` functions enable advanced
         customization of the camera space.
@@ -2330,7 +2353,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.beginCamera()
 
-    @_context_wrapper('end_contour')
+    @_context_wrapper("end_contour")
     def begin_contour(self) -> None:
         """Use the `begin_contour()` and `Py5Graphics.end_contour()` methods to create
         negative shapes within shapes such as the center of the letter 'O'.
@@ -2363,7 +2386,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.beginContour()
 
-    @_context_wrapper('end_draw')
+    @_context_wrapper("end_draw")
     def begin_draw(self) -> None:
         """Sets the default properties for a `Py5Graphics` object.
 
@@ -2381,7 +2404,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.beginDraw()
 
-    @_context_wrapper('end_raw')
+    @_context_wrapper("end_raw")
     def begin_raw(self, raw_graphics: Py5Graphics, /) -> None:
         """To create vectors from 3D data, use the `begin_raw()` and
         `Py5Graphics.end_raw()` commands.
@@ -2547,7 +2570,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
-    @_context_wrapper('end_shape')
+    @_context_wrapper("end_shape")
     def begin_shape(self, *args):
         """Using the `begin_shape()` and `Py5Graphics.end_shape()` functions allow creating
         more complex forms.
@@ -2683,7 +2706,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
-    @_context_wrapper('end_shape', exit_attr_args=('CLOSE',))
+    @_context_wrapper("end_shape", exit_attr_args=("CLOSE",))
     def begin_closed_shape(self, *args):
         """This method is used to start a custom closed shape.
 
@@ -2722,8 +2745,18 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.beginShape(*args)
 
     @overload
-    def bezier(self, x1: float, y1: float, x2: float, y2: float,
-               x3: float, y3: float, x4: float, y4: float, /) -> None:
+    def bezier(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        x3: float,
+        y3: float,
+        x4: float,
+        y4: float,
+        /,
+    ) -> None:
         """Draws a Bezier curve on the `Py5Graphics` object.
 
         Underlying Processing method: PGraphics.bezier
@@ -2791,8 +2824,22 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def bezier(self, x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
-               x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def bezier(
+        self,
+        x1: float,
+        y1: float,
+        z1: float,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Draws a Bezier curve on the `Py5Graphics` object.
 
         Underlying Processing method: PGraphics.bezier
@@ -2949,8 +2996,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.bezierDetail(detail)
 
-    def bezier_point(self, a: float, b: float, c: float,
-                     d: float, t: float, /) -> float:
+    def bezier_point(
+        self, a: float, b: float, c: float, d: float, t: float, /
+    ) -> float:
         """Evaluates the Bezier at point t for points a, b, c, d.
 
         Underlying Processing method: PGraphics.bezierPoint
@@ -2986,8 +3034,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.bezierPoint(a, b, c, d, t)
 
-    def bezier_tangent(self, a: float, b: float, c: float,
-                       d: float, t: float, /) -> float:
+    def bezier_tangent(
+        self, a: float, b: float, c: float, d: float, t: float, /
+    ) -> float:
         """Calculates the tangent of a point on a Bezier curve.
 
         Underlying Processing method: PGraphics.bezierTangent
@@ -3022,8 +3071,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.bezierTangent(a, b, c, d, t)
 
     @overload
-    def bezier_vertex(self, x2: float, y2: float, x3: float,
-                      y3: float, x4: float, y4: float, /) -> None:
+    def bezier_vertex(
+        self, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /
+    ) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
         Underlying Processing method: PGraphics.bezierVertex
@@ -3084,8 +3134,19 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def bezier_vertex(self, x2: float, y2: float, z2: float, x3: float,
-                      y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def bezier_vertex(
+        self,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
         Underlying Processing method: PGraphics.bezierVertex
@@ -3206,8 +3267,19 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.bezierVertex(*args)
 
     @overload
-    def blend(self, sx: int, sy: int, sw: int, sh: int, dx: int,
-              dy: int, dw: int, dh: int, mode: int, /) -> None:
+    def blend(
+        self,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        mode: int,
+        /,
+    ) -> None:
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
@@ -3294,8 +3366,20 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def blend(self, src: Py5Image, sx: int, sy: int, sw: int, sh: int,
-              dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None:
+    def blend(
+        self,
+        src: Py5Image,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        mode: int,
+        /,
+    ) -> None:
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
@@ -3749,17 +3833,18 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def camera(
-            self,
-            eye_x: float,
-            eye_y: float,
-            eye_z: float,
-            center_x: float,
-            center_y: float,
-            center_z: float,
-            up_x: float,
-            up_y: float,
-            up_z: float,
-            /) -> None:
+        self,
+        eye_x: float,
+        eye_y: float,
+        eye_z: float,
+        center_x: float,
+        center_y: float,
+        center_z: float,
+        up_x: float,
+        up_y: float,
+        up_z: float,
+        /,
+    ) -> None:
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
@@ -4914,8 +4999,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def color_mode(self, mode: int, max1: float,
-                   max2: float, max3: float, /) -> None:
+    def color_mode(self, mode: int, max1: float, max2: float, max3: float, /) -> None:
         """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
@@ -4977,8 +5061,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def color_mode(self, mode: int, max1: float, max2: float,
-                   max3: float, max_a: float, /) -> None:
+    def color_mode(
+        self, mode: int, max1: float, max2: float, max3: float, max_a: float, /
+    ) -> None:
         """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
@@ -5165,8 +5250,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def copy(self, sx: int, sy: int, sw: int, sh: int,
-             dx: int, dy: int, dw: int, dh: int, /) -> None:
+    def copy(
+        self, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /
+    ) -> None:
         """Copies a region of pixels from the `Py5Graphics` object to another area of the
         canvas and copies a region of pixels from an image used as the `src_img`
         parameter into the `Py5Graphics` object.
@@ -5230,8 +5316,19 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def copy(self, src: Py5Image, sx: int, sy: int, sw: int,
-             sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None:
+    def copy(
+        self,
+        src: Py5Image,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        /,
+    ) -> None:
         """Copies a region of pixels from the `Py5Graphics` object to another area of the
         canvas and copies a region of pixels from an image used as the `src_img`
         parameter into the `Py5Graphics` object.
@@ -5359,8 +5456,18 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.copy(*args)
 
     @overload
-    def curve(self, x1: float, y1: float, x2: float, y2: float,
-              x3: float, y3: float, x4: float, y4: float, /) -> None:
+    def curve(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        x3: float,
+        y3: float,
+        x4: float,
+        y4: float,
+        /,
+    ) -> None:
         """Draws a curved line on the `Py5Graphics` object.
 
         Underlying Processing method: PGraphics.curve
@@ -5430,8 +5537,22 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def curve(self, x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
-              x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def curve(
+        self,
+        x1: float,
+        y1: float,
+        z1: float,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Draws a curved line on the `Py5Graphics` object.
 
         Underlying Processing method: PGraphics.curve
@@ -5592,8 +5713,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.curveDetail(detail)
 
-    def curve_point(self, a: float, b: float, c: float,
-                    d: float, t: float, /) -> float:
+    def curve_point(self, a: float, b: float, c: float, d: float, t: float, /) -> float:
         """Evaluates the curve at point `t` for points `a`, `b`, `c`, `d`.
 
         Underlying Processing method: PGraphics.curvePoint
@@ -5630,8 +5750,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.curvePoint(a, b, c, d, t)
 
-    def curve_tangent(self, a: float, b: float, c: float,
-                      d: float, t: float, /) -> float:
+    def curve_tangent(
+        self, a: float, b: float, c: float, d: float, t: float, /
+    ) -> float:
         """Calculates the tangent of a point on a curve.
 
         Underlying Processing method: PGraphics.curveTangent
@@ -5824,8 +5945,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.curveVertex(*args)
 
-    def directional_light(self, v1: float, v2: float, v3: float,
-                          nx: float, ny: float, nz: float, /) -> None:
+    def directional_light(
+        self, v1: float, v2: float, v3: float, nx: float, ny: float, nz: float, /
+    ) -> None:
         """Adds a directional light.
 
         Underlying Processing method: PGraphics.directionalLight
@@ -7082,8 +7204,16 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.flush()
 
-    def frustum(self, left: float, right: float, bottom: float,
-                top: float, near: float, far: float, /) -> None:
+    def frustum(
+        self,
+        left: float,
+        right: float,
+        bottom: float,
+        top: float,
+        near: float,
+        far: float,
+        /,
+    ) -> None:
         """Sets a perspective matrix as defined by the parameters.
 
         Underlying Processing method: PGraphics.frustum
@@ -7426,7 +7556,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def get_matrix(
-            self, target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]:
+        self, target: npt.NDArray[np.floating], /
+    ) -> npt.NDArray[np.floating]:
         """Get the current matrix as a numpy array.
 
         Underlying Processing method: PGraphics.getMatrix
@@ -7456,7 +7587,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         pass
 
-    @ _get_matrix_wrapper
+    @_get_matrix_wrapper
     def get_matrix(self, *args):
         """Get the current matrix as a numpy array.
 
@@ -7700,8 +7831,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def image(self, img: Py5Image, a: float, b: float,
-              c: float, d: float, /) -> None:
+    def image(self, img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
         """The `image()` function draws an image to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.image
@@ -7771,8 +7901,19 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def image(self, img: Py5Image, a: float, b: float, c: float,
-              d: float, u1: int, v1: int, u2: int, v2: int, /) -> None:
+    def image(
+        self,
+        img: Py5Image,
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        u1: int,
+        v1: int,
+        u2: int,
+        v2: int,
+        /,
+    ) -> None:
         """The `image()` function draws an image to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.image
@@ -8087,8 +8228,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.lerpColor(*args)
 
-    def light_falloff(self, constant: float, linear: float,
-                      quadratic: float, /) -> None:
+    def light_falloff(
+        self, constant: float, linear: float, quadratic: float, /
+    ) -> None:
         """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
         Underlying Processing method: PGraphics.lightFalloff
@@ -8229,8 +8371,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def line(self, x1: float, y1: float, z1: float,
-             x2: float, y2: float, z2: float, /) -> None:
+    def line(
+        self, x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /
+    ) -> None:
         """Draws a line (a direct path between two points) to the Py5Graphics drawing
         surface.
 
@@ -8399,8 +8542,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def load_shader(self, frag_filename: str,
-                    vert_filename: str, /) -> Py5Shader:
+    def load_shader(self, frag_filename: str, vert_filename: str, /) -> Py5Shader:
         """Loads a shader into a `Py5Shader` object.
 
         Underlying Processing method: PGraphics.loadShader
@@ -9048,8 +9190,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def ortho(self, left: float, right: float,
-              bottom: float, top: float, /) -> None:
+    def ortho(self, left: float, right: float, bottom: float, top: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
         Underlying Processing method: PGraphics.ortho
@@ -9101,8 +9242,16 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def ortho(self, left: float, right: float, bottom: float,
-              top: float, near: float, far: float, /) -> None:
+    def ortho(
+        self,
+        left: float,
+        right: float,
+        bottom: float,
+        top: float,
+        near: float,
+        far: float,
+        /,
+    ) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
         Underlying Processing method: PGraphics.ortho
@@ -9253,8 +9402,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def perspective(self, fovy: float, aspect: float,
-                    z_near: float, z_far: float, /) -> None:
+    def perspective(
+        self, fovy: float, aspect: float, z_near: float, z_far: float, /
+    ) -> None:
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
@@ -9497,8 +9647,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.point(*args)
 
-    def point_light(self, v1: float, v2: float, v3: float,
-                    x: float, y: float, z: float, /) -> None:
+    def point_light(
+        self, v1: float, v2: float, v3: float, x: float, y: float, z: float, /
+    ) -> None:
         """Adds a point light.
 
         Underlying Processing method: PGraphics.pointLight
@@ -9662,7 +9813,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.printProjection()
 
-    @_context_wrapper('pop')
+    @_context_wrapper("pop")
     def push(self) -> None:
         """The `push()` function saves the current drawing style settings and
         transformations, while `Py5Graphics.pop()` restores these settings.
@@ -9703,7 +9854,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.push()
 
-    @_context_wrapper('pop_matrix')
+    @_context_wrapper("pop_matrix")
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
@@ -9728,7 +9879,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.pushMatrix()
 
-    @_context_wrapper('pop_style')
+    @_context_wrapper("pop_style")
     def push_style(self) -> None:
         """The `push_style()` function saves the current style settings and
         `Py5Graphics.pop_style()` restores the prior settings.
@@ -9766,8 +9917,18 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.pushStyle()
 
-    def quad(self, x1: float, y1: float, x2: float, y2: float,
-             x3: float, y3: float, x4: float, y4: float, /) -> None:
+    def quad(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        x3: float,
+        y3: float,
+        x4: float,
+        y4: float,
+        /,
+    ) -> None:
         """A quad is a quadrilateral, a four sided polygon.
 
         Underlying Processing method: PGraphics.quad
@@ -9813,8 +9974,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.quad(x1, y1, x2, y2, x3, y3, x4, y4)
 
     @overload
-    def quadratic_vertex(self, cx: float, cy: float,
-                         x3: float, y3: float, /) -> None:
+    def quadratic_vertex(self, cx: float, cy: float, x3: float, y3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
         Underlying Processing method: PGraphics.quadraticVertex
@@ -9867,8 +10027,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def quadratic_vertex(self, cx: float, cy: float, cz: float,
-                         x3: float, y3: float, z3: float, /) -> None:
+    def quadratic_vertex(
+        self, cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /
+    ) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
         Underlying Processing method: PGraphics.quadraticVertex
@@ -10040,8 +10201,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def rect(self, a: float, b: float, c: float,
-             d: float, r: float, /) -> None:
+    def rect(self, a: float, b: float, c: float, d: float, r: float, /) -> None:
         """Draws a rectangle to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.rect
@@ -10108,8 +10268,18 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def rect(self, a: float, b: float, c: float, d: float,
-             tl: float, tr: float, br: float, bl: float, /) -> None:
+    def rect(
+        self,
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        tl: float,
+        tr: float,
+        br: float,
+        bl: float,
+        /,
+    ) -> None:
         """Draws a rectangle to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.rect
@@ -11570,8 +11740,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def shape(self, shape: Py5Shape, a: float,
-              b: float, c: float, d: float, /) -> None:
+    def shape(self, shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
         """Draws shapes to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.shape
@@ -12289,19 +12458,20 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.sphereDetail(*args)
 
     def spot_light(
-            self,
-            v1: float,
-            v2: float,
-            v3: float,
-            x: float,
-            y: float,
-            z: float,
-            nx: float,
-            ny: float,
-            nz: float,
-            angle: float,
-            concentration: float,
-            /) -> None:
+        self,
+        v1: float,
+        v2: float,
+        v3: float,
+        x: float,
+        y: float,
+        z: float,
+        nx: float,
+        ny: float,
+        nz: float,
+        angle: float,
+        concentration: float,
+        /,
+    ) -> None:
         """Adds a spot light.
 
         Underlying Processing method: PGraphics.spotLight
@@ -12356,7 +12526,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         To see example code for how it can be used, see `spot_light()`.
         """
         return self._instance.spotLight(
-            v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
+            v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration
+        )
 
     def square(self, x: float, y: float, extent: float, /) -> None:
         """Draws a square to the Py5Graphics drawing surface.
@@ -13181,8 +13352,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text(self, chars: list[chr], start: int,
-             stop: int, x: float, y: float, /) -> None:
+    def text(
+        self, chars: list[chr], start: int, stop: int, x: float, y: float, /
+    ) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.text
@@ -13276,8 +13448,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text(self, chars: list[chr], start: int,
-             stop: int, x: float, y: float, z: float, /) -> None:
+    def text(
+        self, chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /
+    ) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.text
@@ -13935,8 +14108,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text(self, str: str, x1: float, y1: float,
-             x2: float, y2: float, /) -> None:
+    def text(self, str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
         Underlying Processing method: PGraphics.text
@@ -14574,8 +14746,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text_width(self, chars: list[chr],
-                   start: int, length: int, /) -> float:
+    def text_width(self, chars: list[chr], start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
         Underlying Processing method: PGraphics.textWidth
@@ -15451,8 +15622,9 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.translate(*args)
 
-    def triangle(self, x1: float, y1: float, x2: float,
-                 y2: float, x3: float, y3: float, /) -> None:
+    def triangle(
+        self, x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, /
+    ) -> None:
         """A triangle is a plane created by connecting three points.
 
         Underlying Processing method: PGraphics.triangle
@@ -15811,8 +15983,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def vertex(self, x: float, y: float, z: float,
-               u: float, v: float, /) -> None:
+    def vertex(self, x: float, y: float, z: float, u: float, v: float, /) -> None:
         """Add a new vertex to a shape.
 
         Underlying Processing method: PGraphics.vertex
@@ -15990,7 +16161,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.vertex(*args)
 
-    @_name_renderer('PDF', 'processing.pdf.PGraphicsPDF')
+    @_name_renderer("PDF", "processing.pdf.PGraphicsPDF")
     def next_page(self, *, _renderer_name=None, _clsname=None) -> None:
         """Move to the next page in a PDF document.
 
@@ -16005,13 +16176,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         try:
             _JClass = JClass(_clsname)
-        except BaseException:
+        except:
             _JClass = None
 
         if _JClass and isinstance(self._instance, _JClass):
             return self._instance.nextPage()
         else:
             raise AttributeError(
-                "The 'next_page()' method is only available when using the " +
-                _renderer_name +
-                " renderer. Read this method's documentation for more information.")
+                "The 'next_page()' method is only available when using the "
+                + _renderer_name
+                + " renderer. Read this method's documentation for more information."
+            )

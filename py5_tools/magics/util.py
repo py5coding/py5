@@ -17,29 +17,21 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-import time
 import re
+import time
 from pathlib import Path
 
 from IPython.core.magic_arguments import MagicHelpFormatter
 
 
 class CellMagicHelpFormatter(MagicHelpFormatter):
-
     def add_usage(self, usage, actions, groups, prefix="::\n\n  %%"):
-        super(
-            MagicHelpFormatter,
-            self).add_usage(
-            usage,
-            actions,
-            groups,
-            prefix)
+        super(MagicHelpFormatter, self).add_usage(usage, actions, groups, prefix)
 
 
 def fix_triple_quote_str(code):
-    for m in re.finditer(r'\"\"\"[^\"]*\"\"\"', code):
-        code = code.replace(
-            m.group(), m.group().replace('\n    ', '\n'))
+    for m in re.finditer(r"\"\"\"[^\"]*\"\"\"", code):
+        code = code.replace(m.group(), m.group().replace("\n    ", "\n"))
     return code
 
 
@@ -57,12 +49,13 @@ def filename_check(filename):
 
 
 def variable_name_check(varname):
-    return re.match('^[a-zA-Z_]\\w*' + chr(36), varname)
+    return re.match("^[a-zA-Z_]\w*" + chr(36), varname)
 
 
 __all__ = [
-    'CellMagicHelpFormatter',
-    'fix_triple_quote_str',
-    'wait',
-    'filename_check',
-    'variable_name_check']
+    "CellMagicHelpFormatter",
+    "fix_triple_quote_str",
+    "wait",
+    "filename_check",
+    "variable_name_check",
+]

@@ -23,65 +23,82 @@ py5 is a version of Processing for Python 3.8+. It makes the Processing Java lib
 """
 from __future__ import annotations
 
+import inspect
 import os
 import sys
-from pathlib import Path
-from io import BytesIO
-import inspect
-from typing import overload, Any, Callable, Union  # noqa
 import warnings
+from io import BytesIO
+from pathlib import Path
+from typing import Any, Callable, Union, overload  # noqa
 
+import jpype.imports  # noqa
 import numpy as np  # noqa
 import numpy.typing as npt  # noqa
-from PIL import Image  # noqa
-from jpype import JClass  # noqa
-import jpype.imports  # noqa
-from jpype.types import JArray, JString, JFloat, JInt, JChar  # noqa
-
 import py5_tools
+from jpype import JClass  # noqa
+from jpype.types import JArray, JChar, JFloat, JInt, JString  # noqa
+from PIL import Image  # noqa
 
 if not py5_tools.is_jvm_running():
-    base_path = Path(getattr(sys, '_MEIPASS')) / 'py5' if hasattr(sys,
-                                                                  '_MEIPASS') else Path(__file__).absolute().parent
+    base_path = (
+        Path(getattr(sys, "_MEIPASS")) / "py5"
+        if hasattr(sys, "_MEIPASS")
+        else Path(__file__).absolute().parent
+    )
     # add py5 jars to the classpath first
-    py5_tools.add_jars(str(base_path / 'jars'))
+    py5_tools.add_jars(str(base_path / "jars"))
     # if the cwd has a jars subdirectory, add that next
-    py5_tools.add_jars(Path('jars'))
+    py5_tools.add_jars(Path("jars"))
     # if the PY5_JARS environment variable exists, add those jars
-    if (py5_classpath := os.environ.get('PY5_JARS')):
+    if py5_classpath := os.environ.get("PY5_JARS"):
         py5_tools.add_jars(Path(py5_classpath))
 
     try:
         py5_tools.jvm._start_jvm()
         started_jvm = True
-    except BaseException:
+    except:
         started_jvm = False
 
     debug_info = py5_tools.get_jvm_debug_info()
-    java_version = debug_info['jvm version'][0]
+    java_version = debug_info["jvm version"][0]
     if not started_jvm or java_version < 17:
-        print(
-            "py5 is unable to start a Java 17 Virtual Machine.",
-            file=sys.stderr)
+        print("py5 is unable to start a Java 17 Virtual Machine.", file=sys.stderr)
         print(
             "This library requires Java 17 to be installed and a properly set JAVA_HOME environment variable.",
-            file=sys.stderr)
+            file=sys.stderr,
+        )
         print(
             "Here is some debug info about your installation that might help you identify the source of this problem.",
-            file=sys.stderr)
+            file=sys.stderr,
+        )
         print(debug_info, file=sys.stderr)
         raise RuntimeError("py5 is unable to start Java 17 Virtual Machine")
 
-from .bridge import register_exception_msg  # noqa
-from .sketch import Sketch, Py5Surface, Py5Graphics, Py5Image, Py5Shader, Py5Shape, Py5Font, Py5KeyEvent, Py5MouseEvent, Py5Promise  # noqa
-from .render_helper import render_frame, render_frame_sequence, render, render_sequence  # noqa
-from .create_font_tool import create_font_file  # noqa
-from .image_conversion import register_image_conversion, NumpyImageArray  # noqa
-from .vector import Py5Vector, Py5Vector2D, Py5Vector3D, Py5Vector4D  # noqa
 from py5_tools import split_setup as _split_setup
-from . import reference
+
 from . import object_conversion  # noqa
+from . import reference
 from . import spelling as _spelling
+from .bridge import register_exception_msg  # noqa
+from .create_font_tool import create_font_file  # noqa
+from .image_conversion import NumpyImageArray  # noqa
+from .image_conversion import register_image_conversion
+from .render_helper import render_frame  # noqa
+from .render_helper import render, render_frame_sequence, render_sequence
+from .sketch import Py5KeyEvent  # noqa
+from .sketch import (
+    Py5Font,
+    Py5Graphics,
+    Py5Image,
+    Py5MouseEvent,
+    Py5Promise,
+    Py5Shader,
+    Py5Shape,
+    Py5Surface,
+    Sketch,
+)
+from .vector import Py5Vector, Py5Vector2D, Py5Vector3D, Py5Vector4D  # noqa
+
 try:
     from py5_tools.magics import load_ipython_extension  # noqa
 except ImportError:
@@ -89,7 +106,7 @@ except ImportError:
     pass
 
 
-__version__ = '0.9.1a1'
+__version__ = "0.9.2.dev0"
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 py5_tools._lock_imported_mode()
@@ -122,7 +139,7 @@ ARGS_STOP_COLOR = "--stop-color"
 ARGS_UI_SCALE = "--ui-scale"
 ARGS_WINDOW_COLOR = "--window-color"
 ARROW = 0
-BACKSPACE = '\b'
+BACKSPACE = "\b"
 BASELINE = 0
 BEVEL = 32
 BEZIER_VERTEX = 1
@@ -136,14 +153,14 @@ CENTER = 3
 CHORD = 2
 CLAMP = 0
 CLOSE = 2
-CODED = '\uffff'
+CODED = "\uffff"
 CONTROL = 17
 CORNER = 0
 CORNERS = 1
 CROSS = 1
 CURVE_VERTEX = 3
 DARKEST = 16
-DELETE = '\u007f'
+DELETE = "\u007f"
 DIAMETER = 3
 DIFFERENCE = 32
 DILATE = 18
@@ -176,10 +193,10 @@ ENABLE_OPTIMIZED_STROKE = -6
 ENABLE_STROKE_PERSPECTIVE = 7
 ENABLE_STROKE_PURE = 9
 ENABLE_TEXTURE_MIPMAPS = -8
-ENTER = '\n'
-EPSILON = 1.0E-4
+ENTER = "\n"
+EPSILON = 1.0e-4
 ERODE = 17
-ESC = '\u001b'
+ESC = "\u001b"
 EXCLUSION = 64
 EXTERNAL_MOVE = "__MOVE__"
 EXTERNAL_STOP = "__STOP__"
@@ -199,9 +216,9 @@ LINE = 4
 LINES = 5
 LINE_LOOP = 51
 LINE_STRIP = 50
-MAX_FLOAT = 3.4028235E38
+MAX_FLOAT = 3.4028235e38
 MAX_INT = 2147483647
-MIN_FLOAT = -3.4028235E38
+MIN_FLOAT = -3.4028235e38
 MIN_INT = -2147483648
 MITER = 8
 MODEL = 4
@@ -231,7 +248,7 @@ RADIUS = 2
 RECT = 30
 REPEAT = 1
 REPLACE = 0
-RETURN = '\r'
+RETURN = "\r"
 RGB = 1
 RIGHT = 39
 ROUND = 2
@@ -245,7 +262,7 @@ SPOT = 3
 SQUARE = 1
 SUBTRACT = 4
 SVG = "processing.svg.PGraphicsSVG"
-TAB = '\t'
+TAB = "\t"
 TEXT = 2
 THRESHOLD = 16
 TOP = 101
@@ -548,8 +565,9 @@ def ambient_light(v1: float, v2: float, v3: float, /) -> None:
 
 
 @overload
-def ambient_light(v1: float, v2: float, v3: float,
-                  x: float, y: float, z: float, /) -> None:
+def ambient_light(
+    v1: float, v2: float, v3: float, x: float, y: float, z: float, /
+) -> None:
     """Adds an ambient light.
 
     Underlying Processing method: PApplet.ambientLight
@@ -648,8 +666,9 @@ def ambient_light(*args):
 
 
 @overload
-def apply_matrix(n00: float, n01: float, n02: float,
-                 n10: float, n11: float, n12: float, /) -> None:
+def apply_matrix(
+    n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /
+) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
     Underlying Processing method: PApplet.applyMatrix
@@ -730,23 +749,24 @@ def apply_matrix(n00: float, n01: float, n02: float,
 
 @overload
 def apply_matrix(
-        n00: float,
-        n01: float,
-        n02: float,
-        n03: float,
-        n10: float,
-        n11: float,
-        n12: float,
-        n13: float,
-        n20: float,
-        n21: float,
-        n22: float,
-        n23: float,
-        n30: float,
-        n31: float,
-        n32: float,
-        n33: float,
-        /) -> None:
+    n00: float,
+    n01: float,
+    n02: float,
+    n03: float,
+    n10: float,
+    n11: float,
+    n12: float,
+    n13: float,
+    n20: float,
+    n21: float,
+    n22: float,
+    n23: float,
+    n30: float,
+    n31: float,
+    n32: float,
+    n33: float,
+    /,
+) -> None:
     """Multiplies the current matrix by the one specified through the parameters.
 
     Underlying Processing method: PApplet.applyMatrix
@@ -985,8 +1005,7 @@ def apply_matrix(*args):
 
 
 @overload
-def arc(a: float, b: float, c: float, d: float,
-        start: float, stop: float, /) -> None:
+def arc(a: float, b: float, c: float, d: float, start: float, stop: float, /) -> None:
     """Draws an arc to the screen.
 
     Underlying Processing method: PApplet.arc
@@ -1046,8 +1065,9 @@ def arc(a: float, b: float, c: float, d: float,
 
 
 @overload
-def arc(a: float, b: float, c: float, d: float,
-        start: float, stop: float, mode: int, /) -> None:
+def arc(
+    a: float, b: float, c: float, d: float, start: float, stop: float, mode: int, /
+) -> None:
     """Draws an arc to the screen.
 
     Underlying Processing method: PApplet.arc
@@ -2321,8 +2341,17 @@ def begin_closed_shape(*args):
 
 
 @overload
-def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
-           y3: float, x4: float, y4: float, /) -> None:
+def bezier(
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+    x3: float,
+    y3: float,
+    x4: float,
+    y4: float,
+    /,
+) -> None:
     """Draws a Bezier curve on the screen.
 
     Underlying Processing method: PApplet.bezier
@@ -2388,8 +2417,21 @@ def bezier(x1: float, y1: float, x2: float, y2: float, x3: float,
 
 
 @overload
-def bezier(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
-           x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+def bezier(
+    x1: float,
+    y1: float,
+    z1: float,
+    x2: float,
+    y2: float,
+    z2: float,
+    x3: float,
+    y3: float,
+    z3: float,
+    x4: float,
+    y4: float,
+    z4: float,
+    /,
+) -> None:
     """Draws a Bezier curve on the screen.
 
     Underlying Processing method: PApplet.bezier
@@ -2574,8 +2616,7 @@ def bezier_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     return _py5sketch.bezier_point(a, b, c, d, t)
 
 
-def bezier_tangent(a: float, b: float, c: float,
-                   d: float, t: float, /) -> float:
+def bezier_tangent(a: float, b: float, c: float, d: float, t: float, /) -> float:
     """Calculates the tangent of a point on a Bezier curve.
 
     Underlying Processing method: PApplet.bezierTangent
@@ -2608,8 +2649,9 @@ def bezier_tangent(a: float, b: float, c: float,
 
 
 @overload
-def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
-                  x4: float, y4: float, /) -> None:
+def bezier_vertex(
+    x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /
+) -> None:
     """Specifies vertex coordinates for Bezier curves.
 
     Underlying Processing method: PApplet.bezierVertex
@@ -2668,8 +2710,18 @@ def bezier_vertex(x2: float, y2: float, x3: float, y3: float,
 
 
 @overload
-def bezier_vertex(x2: float, y2: float, z2: float, x3: float,
-                  y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+def bezier_vertex(
+    x2: float,
+    y2: float,
+    z2: float,
+    x3: float,
+    y3: float,
+    z3: float,
+    x4: float,
+    y4: float,
+    z4: float,
+    /,
+) -> None:
     """Specifies vertex coordinates for Bezier curves.
 
     Underlying Processing method: PApplet.bezierVertex
@@ -2812,8 +2864,9 @@ def bezier_vertices(coordinates: npt.NDArray[np.floating], /) -> None:
 
 
 @overload
-def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
-          dy: int, dw: int, dh: int, mode: int, /) -> None:
+def blend(
+    sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, mode: int, /
+) -> None:
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
@@ -2897,8 +2950,19 @@ def blend(sx: int, sy: int, sw: int, sh: int, dx: int,
 
 
 @overload
-def blend(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
-          dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None:
+def blend(
+    src: Py5Image,
+    sx: int,
+    sy: int,
+    sw: int,
+    sh: int,
+    dx: int,
+    dy: int,
+    dw: int,
+    dh: int,
+    mode: int,
+    /,
+) -> None:
     """Blends a region of pixels from one image into another (or in itself again) with
     full alpha channel support.
 
@@ -3326,8 +3390,18 @@ def camera() -> None:
 
 
 @overload
-def camera(eye_x: float, eye_y: float, eye_z: float, center_x: float, center_y: float,
-           center_z: float, up_x: float, up_y: float, up_z: float, /) -> None:
+def camera(
+    eye_x: float,
+    eye_y: float,
+    eye_z: float,
+    center_x: float,
+    center_y: float,
+    center_z: float,
+    up_x: float,
+    up_y: float,
+    up_z: float,
+    /,
+) -> None:
     """Sets the position of the camera through setting the eye position, the center of
     the scene, and which axis is facing upward.
 
@@ -4544,8 +4618,9 @@ def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
 
 
 @overload
-def color_mode(mode: int, max1: float, max2: float,
-               max3: float, max_a: float, /) -> None:
+def color_mode(
+    mode: int, max1: float, max2: float, max3: float, max_a: float, /
+) -> None:
     """Changes the way py5 interprets color data.
 
     Underlying Processing method: PApplet.colorMode
@@ -4724,8 +4799,9 @@ def copy() -> Py5Image:
 
 
 @overload
-def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
-         dy: int, dw: int, dh: int, /) -> None:
+def copy(
+    sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /
+) -> None:
     """Copies a region of pixels from the display window to another area of the display
     window and copies a region of pixels from an image used as the `src_img`
     parameter into the display window.
@@ -4787,8 +4863,18 @@ def copy(sx: int, sy: int, sw: int, sh: int, dx: int,
 
 
 @overload
-def copy(src: Py5Image, sx: int, sy: int, sw: int, sh: int,
-         dx: int, dy: int, dw: int, dh: int, /) -> None:
+def copy(
+    src: Py5Image,
+    sx: int,
+    sy: int,
+    sw: int,
+    sh: int,
+    dx: int,
+    dy: int,
+    dw: int,
+    dh: int,
+    /,
+) -> None:
     """Copies a region of pixels from the display window to another area of the display
     window and copies a region of pixels from an image used as the `src_img`
     parameter into the display window.
@@ -5037,8 +5123,7 @@ def create_font(name: str, size: float, smooth: bool, /) -> Py5Font:
 
 
 @overload
-def create_font(name: str, size: float, smooth: bool,
-                charset: list[chr], /) -> Py5Font:
+def create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font:
     """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
     inside the Sketch's "data" folder or a font that's installed elsewhere on the
     computer.
@@ -5301,8 +5386,7 @@ def create_graphics(w: int, h: int, renderer: str, /) -> Py5Graphics:
 
 
 @overload
-def create_graphics(w: int, h: int, renderer: str,
-                    path: str, /) -> Py5Graphics:
+def create_graphics(w: int, h: int, renderer: str, path: str, /) -> Py5Graphics:
     """Creates and returns a new `Py5Graphics` object.
 
     Underlying Processing method: PApplet.createGraphics
@@ -5949,8 +6033,17 @@ def cursor(*args):
 
 
 @overload
-def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
-          y3: float, x4: float, y4: float, /) -> None:
+def curve(
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+    x3: float,
+    y3: float,
+    x4: float,
+    y4: float,
+    /,
+) -> None:
     """Draws a curved line on the screen.
 
     Underlying Processing method: PApplet.curve
@@ -6018,8 +6111,21 @@ def curve(x1: float, y1: float, x2: float, y2: float, x3: float,
 
 
 @overload
-def curve(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
-          x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+def curve(
+    x1: float,
+    y1: float,
+    z1: float,
+    x2: float,
+    y2: float,
+    z2: float,
+    x3: float,
+    y3: float,
+    z3: float,
+    x4: float,
+    y4: float,
+    z4: float,
+    /,
+) -> None:
     """Draws a curved line on the screen.
 
     Underlying Processing method: PApplet.curve
@@ -6209,8 +6315,7 @@ def curve_point(a: float, b: float, c: float, d: float, t: float, /) -> float:
     return _py5sketch.curve_point(a, b, c, d, t)
 
 
-def curve_tangent(a: float, b: float, c: float,
-                  d: float, t: float, /) -> float:
+def curve_tangent(a: float, b: float, c: float, d: float, t: float, /) -> float:
     """Calculates the tangent of a point on a curve.
 
     Underlying Processing method: PApplet.curveTangent
@@ -6429,8 +6534,9 @@ def day() -> int:
     return Sketch.day()
 
 
-def directional_light(v1: float, v2: float, v3: float,
-                      nx: float, ny: float, nz: float, /) -> None:
+def directional_light(
+    v1: float, v2: float, v3: float, nx: float, ny: float, nz: float, /
+) -> None:
     """Adds a directional light.
 
     Underlying Processing method: PApplet.directionalLight
@@ -7751,8 +7857,9 @@ def frame_rate(fps: float, /) -> None:
     return _py5sketch.frame_rate(fps)
 
 
-def frustum(left: float, right: float, bottom: float,
-            top: float, near: float, far: float, /) -> None:
+def frustum(
+    left: float, right: float, bottom: float, top: float, near: float, far: float, /
+) -> None:
     """Sets a perspective matrix as defined by the parameters.
 
     Underlying Processing method: PApplet.frustum
@@ -8378,8 +8485,7 @@ def get_matrix() -> npt.NDArray[np.floating]:
 
 
 @overload
-def get_matrix(target: npt.NDArray[np.floating], /
-               ) -> npt.NDArray[np.floating]:
+def get_matrix(target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]:
     """Get the current matrix as a numpy array.
 
     Underlying Processing method: PApplet.getMatrix
@@ -8728,8 +8834,18 @@ def image(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
 
 
 @overload
-def image(img: Py5Image, a: float, b: float, c: float, d: float,
-          u1: int, v1: int, u2: int, v2: int, /) -> None:
+def image(
+    img: Py5Image,
+    a: float,
+    b: float,
+    c: float,
+    d: float,
+    u1: int,
+    v1: int,
+    u2: int,
+    v2: int,
+    /,
+) -> None:
     """The `image()` function draws an image to the display window.
 
     Underlying Processing method: PApplet.image
@@ -9165,8 +9281,7 @@ def line(x1: float, y1: float, x2: float, y2: float, /) -> None:
 
 
 @overload
-def line(x1: float, y1: float, z1: float, x2: float,
-         y2: float, z2: float, /) -> None:
+def line(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /) -> None:
     """Draws a line (a direct path between two points) to the screen.
 
     Underlying Processing method: PApplet.line
@@ -10213,8 +10328,9 @@ def ortho(left: float, right: float, bottom: float, top: float, /) -> None:
 
 
 @overload
-def ortho(left: float, right: float, bottom: float,
-          top: float, near: float, far: float, /) -> None:
+def ortho(
+    left: float, right: float, bottom: float, top: float, near: float, far: float, /
+) -> None:
     """Sets an orthographic projection and defines a parallel clipping volume.
 
     Underlying Processing method: PApplet.ortho
@@ -10378,8 +10494,7 @@ def perspective() -> None:
 
 
 @overload
-def perspective(fovy: float, aspect: float,
-                z_near: float, z_far: float, /) -> None:
+def perspective(fovy: float, aspect: float, z_near: float, z_far: float, /) -> None:
     """Sets a perspective projection applying foreshortening, making distant objects
     appear smaller than closer ones.
 
@@ -10657,8 +10772,9 @@ def point(*args):
     return _py5sketch.point(*args)
 
 
-def point_light(v1: float, v2: float, v3: float,
-                x: float, y: float, z: float, /) -> None:
+def point_light(
+    v1: float, v2: float, v3: float, x: float, y: float, z: float, /
+) -> None:
     """Adds a point light.
 
     Underlying Processing method: PApplet.pointLight
@@ -10911,8 +11027,17 @@ def push_style() -> None:
     return _py5sketch.push_style()
 
 
-def quad(x1: float, y1: float, x2: float, y2: float, x3: float,
-         y3: float, x4: float, y4: float, /) -> None:
+def quad(
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+    x3: float,
+    y3: float,
+    x4: float,
+    y4: float,
+    /,
+) -> None:
     """A quad is a quadrilateral, a four sided polygon.
 
     Underlying Processing method: PApplet.quad
@@ -11006,8 +11131,9 @@ def quadratic_vertex(cx: float, cy: float, x3: float, y3: float, /) -> None:
 
 
 @overload
-def quadratic_vertex(cx: float, cy: float, cz: float,
-                     x3: float, y3: float, z3: float, /) -> None:
+def quadratic_vertex(
+    cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /
+) -> None:
     """Specifies vertex coordinates for quadratic Bezier curves.
 
     Underlying Processing method: PApplet.quadraticVertex
@@ -11261,8 +11387,17 @@ def rect(a: float, b: float, c: float, d: float, r: float, /) -> None:
 
 
 @overload
-def rect(a: float, b: float, c: float, d: float, tl: float,
-         tr: float, br: float, bl: float, /) -> None:
+def rect(
+    a: float,
+    b: float,
+    c: float,
+    d: float,
+    tl: float,
+    tr: float,
+    br: float,
+    bl: float,
+    /,
+) -> None:
     """Draws a rectangle to the screen.
 
     Underlying Processing method: PApplet.rect
@@ -13798,8 +13933,20 @@ def sphere_detail(*args):
     return _py5sketch.sphere_detail(*args)
 
 
-def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
-               nx: float, ny: float, nz: float, angle: float, concentration: float, /) -> None:
+def spot_light(
+    v1: float,
+    v2: float,
+    v3: float,
+    x: float,
+    y: float,
+    z: float,
+    nx: float,
+    ny: float,
+    nz: float,
+    angle: float,
+    concentration: float,
+    /,
+) -> None:
     """Adds a spot light.
 
     Underlying Processing method: PApplet.spotLight
@@ -13852,8 +13999,7 @@ def spot_light(v1: float, v2: float, v3: float, x: float, y: float, z: float,
     The `angle` parameter affects angle of the spotlight cone, while `concentration`
     sets the bias of light focusing toward the center of that cone.
     """
-    return _py5sketch.spot_light(
-        v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
+    return _py5sketch.spot_light(v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
 
 
 def square(x: float, y: float, extent: float, /) -> None:
@@ -14642,8 +14788,7 @@ def text(c: chr, x: float, y: float, z: float, /) -> None:
 
 
 @overload
-def text(chars: list[chr], start: int, stop: int,
-         x: float, y: float, /) -> None:
+def text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None:
     """Draws text to the screen.
 
     Underlying Processing method: PApplet.text
@@ -14734,8 +14879,9 @@ def text(chars: list[chr], start: int, stop: int,
 
 
 @overload
-def text(chars: list[chr], start: int, stop: int,
-         x: float, y: float, z: float, /) -> None:
+def text(
+    chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /
+) -> None:
     """Draws text to the screen.
 
     Underlying Processing method: PApplet.text
@@ -16811,8 +16957,9 @@ def translate(*args):
     return _py5sketch.translate(*args)
 
 
-def triangle(x1: float, y1: float, x2: float, y2: float,
-             x3: float, y3: float, /) -> None:
+def triangle(
+    x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, /
+) -> None:
     """A triangle is a plane created by connecting three points.
 
     Underlying Processing method: PApplet.triangle
@@ -17507,6 +17654,7 @@ def year() -> int:
     """
     return Sketch.year()
 
+
 ##############################################################################
 # module functions from data.py
 ##############################################################################
@@ -17541,11 +17689,9 @@ def load_json(json_path: Union[str, Path], **kwargs: dict[str, Any]) -> Any:
     return _py5sketch.load_json(json_path, **kwargs)
 
 
-def save_json(json_data: Any,
-              filename: Union[str,
-                              Path],
-              **kwargs: dict[str,
-                             Any]) -> None:
+def save_json(
+    json_data: Any, filename: Union[str, Path], **kwargs: dict[str, Any]
+) -> None:
     """Save JSON data to a file.
 
     Parameters
@@ -17597,8 +17743,7 @@ def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
     return Sketch.parse_json(serialized_json, **kwargs)
 
 
-def load_strings(string_path: Union[str, Path],
-                 **kwargs: dict[str, Any]) -> list[str]:
+def load_strings(string_path: Union[str, Path], **kwargs: dict[str, Any]) -> list[str]:
     """Load a list of strings from a file or URL.
 
     Underlying Processing method: Sketch.loadStrings
@@ -17628,11 +17773,9 @@ def load_strings(string_path: Union[str, Path],
     return _py5sketch.load_strings(string_path, **kwargs)
 
 
-def save_strings(string_data: list[str],
-                 filename: Union[str,
-                                 Path],
-                 *,
-                 end: str = '\n') -> None:
+def save_strings(
+    string_data: list[str], filename: Union[str, Path], *, end: str = "\n"
+) -> None:
     """Save a list of strings to a file.
 
     Underlying Processing method: Sketch.saveStrings
@@ -17640,7 +17783,7 @@ def save_strings(string_data: list[str],
     Parameters
     ----------
 
-    end: str = '\\n'
+    end: str = "\\n"
         line terminator for each string
 
     filename: Union[str, Path]
@@ -17666,8 +17809,7 @@ def save_strings(string_data: list[str],
     return _py5sketch.save_strings(string_data, filename, end=end)
 
 
-def load_bytes(bytes_path: Union[str, Path], **
-               kwargs: dict[str, Any]) -> bytearray:
+def load_bytes(bytes_path: Union[str, Path], **kwargs: dict[str, Any]) -> bytearray:
     """Load byte data from a file or URL.
 
     Underlying Processing method: Sketch.loadBytes
@@ -17697,8 +17839,7 @@ def load_bytes(bytes_path: Union[str, Path], **
     return _py5sketch.load_bytes(bytes_path, **kwargs)
 
 
-def save_bytes(bytes_data: Union[bytes, bytearray],
-               filename: Union[str, Path]) -> None:
+def save_bytes(bytes_data: Union[bytes, bytearray], filename: Union[str, Path]) -> None:
     """Save byte data to a file.
 
     Underlying Processing method: Sketch.saveBytes
@@ -17774,532 +17915,6 @@ def save_pickle(obj: Any, filename: Union[str, Path]) -> None:
     """
     return _py5sketch.save_pickle(obj, filename)
 
-##############################################################################
-# module functions from print_tools.py
-##############################################################################
-
-
-def set_println_stream(println_stream: Any) -> None:
-    """Customize where the output of `println()` goes.
-
-    Parameters
-    ----------
-
-    println_stream: Any
-        println stream object to be used by println method
-
-    Notes
-    -----
-
-    Customize where the output of `println()` goes.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any `print`
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. The
-    `println()` method was created to provide users with print functionality in a
-    Sketch without having to cope with output moving from one cell to the next. Use
-    `set_println_stream` to change how the output is handled. The `println_stream`
-    object must provide `init()` and `print()` methods, as shown in the example. The
-    example demonstrates how to configure py5 to output text to an IPython Widget.
-    """
-    return _py5sketch.set_println_stream(println_stream)
-
-
-def println(
-    *args,
-    sep: str = ' ',
-    end: str = '\n',
-        stderr: bool = False) -> None:
-    """Print text or other values to the screen.
-
-    Parameters
-    ----------
-
-    args
-        values to be printed
-
-    end: str = '\\n'
-        string appended after the last value, defaults to newline character
-
-    sep: str = ' '
-        string inserted between values, defaults to a space
-
-    stderr: bool = False
-        use stderr instead of stdout
-
-    Notes
-    -----
-
-    Print text or other values to the screen. For a Sketch running outside of a
-    Jupyter Notebook, this method will behave the same as the Python's builtin
-    `print` method. For Sketches running in a Jupyter Notebook, this will place text
-    in the output of the cell that made the `run_sketch()` call.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any `print`
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. This
-    method was created to provide users with print functionality in a Sketch without
-    having to cope with output moving from one cell to the next.
-
-    Use `set_println_stream()` to customize the behavior of `println()`.
-    """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: tuple = None,
-        kwargs: dict = None) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
-
-    The `name` parameter is optional but useful if you want to monitor the thread
-    with other methods such as `has_thread()`. If the provided `name` is identical
-    to an already running thread, the running thread will first be stopped with a
-    call to `stop_thread()` with the `wait` parameter equal to `True`.
-
-    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
-    to the function.
-
-    Use the `daemon` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to `True`, meaning
-    that function execution can be interupted if the Python process exits. Note that
-    if the Python process continues running after the Sketch exits, which is
-    typically the case when using a Jupyter Notebook, this parameter won't have any
-    effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to `False` causes problems but it is available for those
-    who really need it. See `stop_all_threads()` for a better approach to exit
-    threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_promise_thread(
-        f: Callable,
-        name: str = None,
-        *,
-        daemon: bool = True,
-        args: tuple = None,
-        kwargs: dict = None) -> Py5Promise:
-    """Create a `Py5Promise` object that will store the returned result of a function
-    when that function completes.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Create a `Py5Promise` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
-
-    The `Py5Promise` object has an `is_ready` property that will be `True` when the
-    `result` property contains the value function `f` returned. Before then, the
-    `result` property will be `None`.
-
-    The `name` parameter is optional but useful if you want to monitor the thread
-    with other methods such as `has_thread()`. If the provided `name` is identical
-    to an already running thread, the running thread will first be stopped with a
-    call to `stop_thread()` with the `wait` parameter equal to `True`.
-
-    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
-    to the function.
-
-    Use the `daemon` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to `True`, meaning
-    that function execution can be interupted if the Python process exits. Note that
-    if the Python process continues running after the Sketch exits, which is
-    typically the case when using a Jupyter Notebook, this parameter won't have any
-    effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to `False` causes problems but it is available for those
-    who really need it. See `stop_all_threads()` for a better approach to exit
-    threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_promise_thread(
-        f, name=name, daemon=daemon, args=args, kwargs=kwargs)
-
-
-def launch_repeating_thread(f: Callable, name: str = None, *,
-                            time_delay: float = 0, daemon: bool = True,
-                            args: tuple = None, kwargs: dict = None) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
-
-    Notes
-    -----
-
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
-
-    Use the `time_delay` parameter to set the time in seconds between one call to
-    function `f` and the next call. Set this parameter to `0` if you want each call
-    to happen immediately after the previous call finishes. If the function `f`
-    takes longer than expected to finish, py5 will wait for it to finish before
-    making the next call. There will not be overlapping calls to function `f`.
-
-    The `name` parameter is optional but useful if you want to monitor the thread
-    with other methods such as `has_thread()`. If the provided `name` is identical
-    to an already running thread, the running thread will first be stopped with a
-    call to `stop_thread()` with the `wait` parameter equal to `True`.
-
-    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
-    to the function.
-
-    Use the `daemon` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to `True`, meaning
-    that function execution can be interupted if the Python process exits. Note that
-    if the Python process continues running after the Sketch exits, which is
-    typically the case when using a Jupyter Notebook, this parameter won't have any
-    effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to `False` causes problems but it is available for those
-    who really need it. See `stop_all_threads()` for a better approach to exit
-    threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs)
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with `list_threads()`.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def join_thread(name: str, *, timeout: float = None) -> bool:
-    """Join the Python thread associated with the given thread name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    timeout: float = None
-        maximum time in seconds to wait for the thread to join
-
-    Notes
-    -----
-
-    Join the Python thread associated with the given thread name. The
-    `join_thread()` method will wait until the named thread has finished executing
-    before returning. Use the `timeout` parameter to set an upper limit for the
-    number of seconds to wait. This method will return right away if the named
-    thread does not exist or the thread has already finished executing. You can get
-    the list of all currently running threads with `list_threads()`.
-
-    This method will return `True` if the named thread has completed execution and
-    `False` if the named thread is still executing. It will only return `False` if
-    you use the `timeout` parameter and the method is not able to join with the
-    thread within that time limit.
-    """
-    return _py5sketch.join_thread(name, timeout=timeout)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The `wait` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    `launch_thread()` or `launch_promise_thread()` and the `wait` parameter is
-    `False`. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the `wait` parameter to `True` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use `launch_repeating_thread()` instead.
-
-    Use `has_thread()` to determine if a thread of a given name exists and
-    `list_threads()` to get a list of all thread names. Use `stop_all_threads()` to
-    stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The `wait` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, `stop_all_threads(wait=False)` is called for you. If
-    you would rather the Sketch waited for threads to exit, create an `exiting`
-    method and make a call to `stop_all_threads(wait=True)`.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
-
-##############################################################################
-# module functions from pixels.py
-##############################################################################
-
-
-def load_np_pixels() -> None:
-    """Loads the pixel data of the current display window into the `np_pixels[]` array.
-
-    Notes
-    -----
-
-    Loads the pixel data of the current display window into the `np_pixels[]` array.
-    This method must always be called before reading from or writing to
-    `np_pixels[]`. Subsequent changes to the display window will not be reflected in
-    `np_pixels[]` until `load_np_pixels()` is called again.
-
-    The `load_np_pixels()` method is similar to `load_pixels()` in that
-    `load_np_pixels()` must be called before reading from or writing to
-    `np_pixels[]` just as `load_pixels()` must be called before reading from or
-    writing to `pixels[]`.
-
-    Note that `load_np_pixels()` will as a side effect call `load_pixels()`, so if
-    your code needs to read `np_pixels[]` and `pixels[]` simultaneously, there is no
-    need for a separate call to `load_pixels()`. However, be aware that modifying
-    both `np_pixels[]` and `pixels[]` simultaneously will likely result in the
-    updates to `pixels[]` being discarded.
-    """
-    return _py5sketch.load_np_pixels()
-
-
-def update_np_pixels() -> None:
-    """Updates the display window with the data in the `np_pixels[]` array.
-
-    Notes
-    -----
-
-    Updates the display window with the data in the `np_pixels[]` array. Use in
-    conjunction with `load_np_pixels()`. If you're only reading pixels from the
-    array, there's no need to call `update_np_pixels()` — updating is only necessary
-    to apply changes.
-
-    The `update_np_pixels()` method is similar to `update_pixels()` in that
-    `update_np_pixels()` must be called after modifying `np_pixels[]` just as
-    `update_pixels()` must be called after modifying `pixels[]`.
-    """
-    return _py5sketch.update_np_pixels()
-
-
-np_pixels: npt.NDArray[np.uint8] = None
-
-
-def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = 'ARGB') -> None:
-    """Set the entire contents of `np_pixels[]` to the contents of another properly
-    sized and typed numpy array.
-
-    Parameters
-    ----------
-
-    array: npt.NDArray[np.uint8]
-        properly sized numpy array to be copied to np_pixels[]
-
-    bands: str = 'ARGB'
-        color channels in the array's third dimension
-
-    Notes
-    -----
-
-    Set the entire contents of `np_pixels[]` to the contents of another properly
-    sized and typed numpy array. The size of `array`'s first and second dimensions
-    must match the height and width of the Sketch window, respectively. The array's
-    `dtype` must be `np.uint8`.
-
-    The `bands` parameter is used to interpret the `array`'s color channel dimension
-    (the array's third dimension). It can be one of `'L'` (single-channel
-    grayscale), `'ARGB'`, `'RGB'`, or `'RGBA'`. If there is no alpha channel,
-    `array` is assumed to have no transparency, but recall that the display window's
-    pixels can never be transparent so any transparency in `array` will have no
-    effect. If the `bands` parameter is `'L'`, `array`'s third dimension is
-    optional.
-
-    This method makes its own calls to `load_np_pixels()` and `update_np_pixels()`
-    so there is no need to call either explicitly.
-
-    This method exists because setting the array contents with the code
-    `py5.np_pixels = array` will cause an error, while the correct syntax,
-    `py5.np_pixels[:] = array`, might also be unintuitive for beginners.
-    """
-    return _py5sketch.set_np_pixels(array, bands=bands)
-
-
-def save(filename: Union[str,
-                         Path,
-                         BytesIO],
-         *,
-         format: str = None,
-         drop_alpha: bool = True,
-         use_thread: bool = False,
-         **params) -> None:
-    """Save the drawing surface to an image file.
-
-    Parameters
-    ----------
-
-    drop_alpha: bool = True
-        remove the alpha channel when saving the image
-
-    filename: Union[str, Path, BytesIO]
-        output filename
-
-    format: str = None
-        image format, if not determined from filename extension
-
-    params
-        keyword arguments to pass to the PIL.Image save method
-
-    use_thread: bool = False
-        write file in separate thread
-
-    Notes
-    -----
-
-    Save the drawing surface to an image file. This method uses the Python library
-    Pillow to write the image, so it can save images in any format that that library
-    supports.
-
-    Use the `drop_alpha` parameter to drop the alpha channel from the image. This
-    defaults to `True`. Some image formats such as JPG do not support alpha
-    channels, and Pillow will throw an error if you try to save an image with the
-    alpha channel in that format.
-
-    The `use_thread` parameter will save the image in a separate Python thread. This
-    improves performance by returning before the image has actually been written to
-    the file.
-    """
-    return _py5sketch.save(
-        filename,
-        format=format,
-        drop_alpha=drop_alpha,
-        use_thread=use_thread,
-        **params)
 
 ##############################################################################
 # module functions from math.py
@@ -18461,8 +18076,9 @@ def atan(value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     return Sketch.atan(value)
 
 
-def atan2(y: Union[float, npt.ArrayLike], x: Union[float,
-          npt.ArrayLike]) -> Union[float, npt.NDArray]:
+def atan2(
+    y: Union[float, npt.ArrayLike], x: Union[float, npt.ArrayLike]
+) -> Union[float, npt.NDArray]:
     """Calculates the angle (in radians) from a specified point to the coordinate
     origin as measured from the positive x-axis.
 
@@ -18536,13 +18152,11 @@ def radians(degrees: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:
     return Sketch.radians(degrees)
 
 
-def constrain(amt: Union[float,
-                         npt.NDArray],
-              low: Union[float,
-                         npt.NDArray],
-              high: Union[float,
-                          npt.NDArray]) -> Union[float,
-                                                 npt.NDArray]:
+def constrain(
+    amt: Union[float, npt.NDArray],
+    low: Union[float, npt.NDArray],
+    high: Union[float, npt.NDArray],
+) -> Union[float, npt.NDArray]:
     """Constrains a value to not exceed a maximum and minimum value.
 
     Parameters
@@ -18562,20 +18176,20 @@ def constrain(amt: Union[float,
 
     Constrains a value to not exceed a maximum and minimum value.
     """
-    return Sketch.constrain(amt, low, high)
+    return Sketch.constrain(
+        amt,
+        low,
+        high,
+    )
 
 
-def remap(value: Union[float,
-                       npt.NDArray],
-          start1: Union[float,
-                        npt.NDArray],
-          stop1: Union[float,
-                       npt.NDArray],
-          start2: Union[float,
-                        npt.NDArray],
-          stop2: Union[float,
-                       npt.NDArray]) -> Union[float,
-                                              npt.NDArray]:
+def remap(
+    value: Union[float, npt.NDArray],
+    start1: Union[float, npt.NDArray],
+    stop1: Union[float, npt.NDArray],
+    start2: Union[float, npt.NDArray],
+    stop2: Union[float, npt.NDArray],
+) -> Union[float, npt.NDArray]:
     """Re-maps a number from one range to another.
 
     Parameters
@@ -18613,12 +18227,23 @@ def remap(value: Union[float,
     In Processing this functionality is provided by `map()` but was renamed in py5
     because of a name conflict with a builtin Python function.
     """
-    return Sketch.remap(value, start1, stop1, start2, stop2)
+    return Sketch.remap(
+        value,
+        start1,
+        stop1,
+        start2,
+        stop2,
+    )
 
 
 @overload
-def dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float,
-         npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
+def dist(
+    x1: Union[float, npt.NDArray],
+    y1: Union[float, npt.NDArray],
+    x2: Union[float, npt.NDArray],
+    y2: Union[float, npt.NDArray],
+    /,
+) -> Union[float, npt.NDArray]:
     """Calculates the distance between two points.
 
     Methods
@@ -18626,8 +18251,8 @@ def dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union
 
     You can use any of the following signatures:
 
-     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -18659,20 +18284,15 @@ def dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union
 
 
 @overload
-def dist(x1: Union[float,
-                   npt.NDArray],
-         y1: Union[float,
-                   npt.NDArray],
-         z1: Union[float,
-                   npt.NDArray],
-         x2: Union[float,
-                   npt.NDArray],
-         y2: Union[float,
-                   npt.NDArray],
-         z2: Union[float,
-                   npt.NDArray],
-         /) -> Union[float,
-                     npt.NDArray]:
+def dist(
+    x1: Union[float, npt.NDArray],
+    y1: Union[float, npt.NDArray],
+    z1: Union[float, npt.NDArray],
+    x2: Union[float, npt.NDArray],
+    y2: Union[float, npt.NDArray],
+    z2: Union[float, npt.NDArray],
+    /,
+) -> Union[float, npt.NDArray]:
     """Calculates the distance between two points.
 
     Methods
@@ -18680,8 +18300,8 @@ def dist(x1: Union[float,
 
     You can use any of the following signatures:
 
-     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -18720,8 +18340,8 @@ def dist(*args: Union[float, npt.NDArray]) -> float:
 
     You can use any of the following signatures:
 
-     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * dist(x1: Union[float, npt.NDArray], y1: Union[float, npt.NDArray], z1: Union[float, npt.NDArray], x2: Union[float, npt.NDArray], y2: Union[float, npt.NDArray], z2: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -18752,13 +18372,11 @@ def dist(*args: Union[float, npt.NDArray]) -> float:
     return Sketch.dist(*args)
 
 
-def lerp(start: Union[float,
-                      npt.NDArray],
-         stop: Union[float,
-                     npt.NDArray],
-         amt: Union[float,
-                    npt.NDArray]) -> Union[float,
-                                           npt.NDArray]:
+def lerp(
+    start: Union[float, npt.NDArray],
+    stop: Union[float, npt.NDArray],
+    amt: Union[float, npt.NDArray],
+) -> Union[float, npt.NDArray]:
     """Calculates a number between two numbers at a specific increment.
 
     Parameters
@@ -18784,12 +18402,15 @@ def lerp(start: Union[float,
     than 0.0, the interpolated value will be outside of the range specified by the
     `start` and `stop` parameter values.
     """
-    return Sketch.lerp(start, stop, amt)
+    return Sketch.lerp(
+        start,
+        stop,
+        amt,
+    )
 
 
 @overload
-def mag(a: Union[float, npt.NDArray],
-        b: Union[float, npt.NDArray], /) -> float:
+def mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float:
     """Calculates the magnitude (or length) of a vector.
 
     Methods
@@ -18798,7 +18419,7 @@ def mag(a: Union[float, npt.NDArray],
     You can use any of the following signatures:
 
      * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
-     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /, ) -> float
 
     Parameters
     ----------
@@ -18825,8 +18446,12 @@ def mag(a: Union[float, npt.NDArray],
 
 
 @overload
-def mag(a: Union[float, npt.NDArray], b: Union[float,
-        npt.NDArray], c: Union[float, npt.NDArray], /) -> float:
+def mag(
+    a: Union[float, npt.NDArray],
+    b: Union[float, npt.NDArray],
+    c: Union[float, npt.NDArray],
+    /,
+) -> float:
     """Calculates the magnitude (or length) of a vector.
 
     Methods
@@ -18835,7 +18460,7 @@ def mag(a: Union[float, npt.NDArray], b: Union[float,
     You can use any of the following signatures:
 
      * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
-     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /, ) -> float
 
     Parameters
     ----------
@@ -18870,7 +18495,7 @@ def mag(*args: Union[float, npt.NDArray]) -> float:
     You can use any of the following signatures:
 
      * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], /) -> float
-     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /) -> float
+     * mag(a: Union[float, npt.NDArray], b: Union[float, npt.NDArray], c: Union[float, npt.NDArray], /, ) -> float
 
     Parameters
     ----------
@@ -18896,13 +18521,11 @@ def mag(*args: Union[float, npt.NDArray]) -> float:
     return Sketch.mag(*args)
 
 
-def norm(value: Union[float,
-                      npt.NDArray],
-         start: Union[float,
-                      npt.NDArray],
-         stop: Union[float,
-                     npt.NDArray]) -> Union[float,
-                                            npt.NDArray]:
+def norm(
+    value: Union[float, npt.NDArray],
+    start: Union[float, npt.NDArray],
+    stop: Union[float, npt.NDArray],
+) -> Union[float, npt.NDArray]:
     """Normalizes a number from another range into a value between 0 and 1.
 
     Parameters
@@ -18927,7 +18550,11 @@ def norm(value: Union[float,
     values are often intentional and useful. (See the second example.) If that isn't
     what you want, try pairing this function with `constrain()`.
     """
-    return Sketch.norm(value, start, stop)
+    return Sketch.norm(
+        value,
+        start,
+        stop,
+    )
 
 
 def sq(value: Union[float, npt.NDArray]) -> Union[float, npt.NDArray]:
@@ -18949,8 +18576,7 @@ def sq(value: Union[float, npt.NDArray]) -> Union[float, npt.NDArray]:
     return Sketch.sq(value)
 
 
-def sqrt(value: Union[float, npt.NDArray]
-         ) -> Union[float, complex, npt.NDArray]:
+def sqrt(value: Union[float, npt.NDArray]) -> Union[float, complex, npt.NDArray]:
     """Calculates the square root of a number.
 
     Parameters
@@ -19504,10 +19130,7 @@ def random_choice(objects: list[Any]) -> Any:
     return _py5sketch.random_choice(objects)
 
 
-def random_sample(
-        objects: list[Any],
-        size: int = 1,
-        replace: bool = True) -> list[Any]:
+def random_sample(objects: list[Any], size: int = 1, replace: bool = True) -> list[Any]:
     """Select random items from a list.
 
     Parameters
@@ -19516,10 +19139,10 @@ def random_sample(
     objects: list[Any]
         list of objects to choose from
 
-    replace: bool=True
+    replace: bool = True
         whether to select random items with or without replacement
 
-    size: int=1
+    size: int = 1
         number of random items to select
 
     Notes
@@ -19738,7 +19361,7 @@ def noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
 
      * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
      * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -19815,8 +19438,9 @@ def noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
 
 
 @overload
-def noise(x: Union[float, npt.NDArray], y: Union[float,
-          npt.NDArray], /) -> Union[float, npt.NDArray]:
+def noise(
+    x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /
+) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using Processing's
     noise algorithm.
 
@@ -19829,7 +19453,7 @@ def noise(x: Union[float, npt.NDArray], y: Union[float,
 
      * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
      * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -19906,8 +19530,12 @@ def noise(x: Union[float, npt.NDArray], y: Union[float,
 
 
 @overload
-def noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
-          z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
+def noise(
+    x: Union[float, npt.NDArray],
+    y: Union[float, npt.NDArray],
+    z: Union[float, npt.NDArray],
+    /,
+) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using Processing's
     noise algorithm.
 
@@ -19920,7 +19548,7 @@ def noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
 
      * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
      * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -20009,7 +19637,7 @@ def noise(*args) -> Union[float, npt.NDArray]:
 
      * noise(x: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
      * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -20086,8 +19714,9 @@ def noise(*args) -> Union[float, npt.NDArray]:
 
 
 @overload
-def os_noise(x: Union[float, npt.NDArray], y: Union[float,
-             npt.NDArray], /) -> Union[float, npt.NDArray]:
+def os_noise(
+    x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /
+) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -20097,8 +19726,8 @@ def os_noise(x: Union[float, npt.NDArray], y: Union[float,
     You can use any of the following signatures:
 
      * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -20174,8 +19803,12 @@ def os_noise(x: Union[float, npt.NDArray], y: Union[float,
 
 
 @overload
-def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
-             z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
+def os_noise(
+    x: Union[float, npt.NDArray],
+    y: Union[float, npt.NDArray],
+    z: Union[float, npt.NDArray],
+    /,
+) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -20185,8 +19818,8 @@ def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
     You can use any of the following signatures:
 
      * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -20262,8 +19895,13 @@ def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray],
 
 
 @overload
-def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float,
-             npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]:
+def os_noise(
+    x: Union[float, npt.NDArray],
+    y: Union[float, npt.NDArray],
+    z: Union[float, npt.NDArray],
+    w: Union[float, npt.NDArray],
+    /,
+) -> Union[float, npt.NDArray]:
     """Generate pseudo-random noise values for specific coodinates using the
     OpenSimplex 2 algorithm (smooth version / SuperSimplex).
 
@@ -20273,8 +19911,8 @@ def os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Unio
     You can use any of the following signatures:
 
      * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -20359,8 +19997,8 @@ def os_noise(*args) -> Union[float, npt.NDArray]:
     You can use any of the following signatures:
 
      * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
-     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
+     * os_noise(x: Union[float, npt.NDArray], y: Union[float, npt.NDArray], z: Union[float, npt.NDArray], w: Union[float, npt.NDArray], /, ) -> Union[float, npt.NDArray]
 
     Parameters
     ----------
@@ -20433,6 +20071,846 @@ def os_noise(*args) -> Union[float, npt.NDArray]:
     implementations.
     """
     return _py5sketch.os_noise(*args)
+
+
+##############################################################################
+# module functions from pixels.py
+##############################################################################
+
+
+def load_np_pixels() -> None:
+    """Loads the pixel data of the current display window into the `np_pixels[]` array.
+
+    Notes
+    -----
+
+    Loads the pixel data of the current display window into the `np_pixels[]` array.
+    This method must always be called before reading from or writing to
+    `np_pixels[]`. Subsequent changes to the display window will not be reflected in
+    `np_pixels[]` until `load_np_pixels()` is called again.
+
+    The `load_np_pixels()` method is similar to `load_pixels()` in that
+    `load_np_pixels()` must be called before reading from or writing to
+    `np_pixels[]` just as `load_pixels()` must be called before reading from or
+    writing to `pixels[]`.
+
+    Note that `load_np_pixels()` will as a side effect call `load_pixels()`, so if
+    your code needs to read `np_pixels[]` and `pixels[]` simultaneously, there is no
+    need for a separate call to `load_pixels()`. However, be aware that modifying
+    both `np_pixels[]` and `pixels[]` simultaneously will likely result in the
+    updates to `pixels[]` being discarded.
+    """
+    return _py5sketch.load_np_pixels()
+
+
+def update_np_pixels() -> None:
+    """Updates the display window with the data in the `np_pixels[]` array.
+
+    Notes
+    -----
+
+    Updates the display window with the data in the `np_pixels[]` array. Use in
+    conjunction with `load_np_pixels()`. If you're only reading pixels from the
+    array, there's no need to call `update_np_pixels()` — updating is only necessary
+    to apply changes.
+
+    The `update_np_pixels()` method is similar to `update_pixels()` in that
+    `update_np_pixels()` must be called after modifying `np_pixels[]` just as
+    `update_pixels()` must be called after modifying `pixels[]`.
+    """
+    return _py5sketch.update_np_pixels()
+
+
+np_pixels: npt.NDArray[np.uint8] = None
+
+
+def set_np_pixels(array: npt.NDArray[np.uint8], bands: str = "ARGB") -> None:
+    """Set the entire contents of `np_pixels[]` to the contents of another properly
+    sized and typed numpy array.
+
+    Parameters
+    ----------
+
+    array: npt.NDArray[np.uint8]
+        properly sized numpy array to be copied to np_pixels[]
+
+    bands: str = "ARGB"
+        color channels in the array's third dimension
+
+    Notes
+    -----
+
+    Set the entire contents of `np_pixels[]` to the contents of another properly
+    sized and typed numpy array. The size of `array`'s first and second dimensions
+    must match the height and width of the Sketch window, respectively. The array's
+    `dtype` must be `np.uint8`.
+
+    The `bands` parameter is used to interpret the `array`'s color channel dimension
+    (the array's third dimension). It can be one of `'L'` (single-channel
+    grayscale), `'ARGB'`, `'RGB'`, or `'RGBA'`. If there is no alpha channel,
+    `array` is assumed to have no transparency, but recall that the display window's
+    pixels can never be transparent so any transparency in `array` will have no
+    effect. If the `bands` parameter is `'L'`, `array`'s third dimension is
+    optional.
+
+    This method makes its own calls to `load_np_pixels()` and `update_np_pixels()`
+    so there is no need to call either explicitly.
+
+    This method exists because setting the array contents with the code
+    `py5.np_pixels = array` will cause an error, while the correct syntax,
+    `py5.np_pixels[:] = array`, might also be unintuitive for beginners.
+    """
+    return _py5sketch.set_np_pixels(array, bands=bands)
+
+
+@overload
+def get_np_pixels(
+    *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None
+) -> npt.NDArray[np.uint8]:
+    """Get the contents of `np_pixels[]` as a numpy array.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+     * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None, ) -> npt.NDArray[np.uint8]
+
+    Parameters
+    ----------
+
+    bands: str = "ARGB"
+        color channels in output array
+
+    dst: npt.NDArray[np.uint8] = None
+        destination array to copy pixel data into
+
+    h: int
+        source height
+
+    w: int
+        source width
+
+    x: int
+        x-coordinate of the source's upper left corner
+
+    y: int
+        y-coordinate of the source's upper left corner
+
+    Notes
+    -----
+
+    Get the contents of `np_pixels[]` as a numpy array. The returned numpy array can
+    be the entirety of `np_pixels[]` or a rectangular subsection. Use the `x`, `y`,
+    `h`, and `w` parameters to specify the bounds of a rectangular subsection.
+
+    The `bands` parameter is used to determine the ordering of the returned numpy
+    array's color channel. It can be one of `'L'` (single-channel grayscale),
+    `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+    array will have two dimensions, and each pixel value will be calculated as
+    `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+    ignored. For all other `bands` parameter values, the returned array will have
+    three dimensions, with the third dimension representing the different color
+    channels specified by the `bands` value.
+
+    The returned array will always be a copy of the data in `np_pixels[]` and not a
+    view into that array or any other array. Use the `dst` parameter to provide the
+    numpy array to copy the pixel data into. The provided array must be sized
+    correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+    """
+    pass
+
+
+@overload
+def get_np_pixels(
+    x: int,
+    y: int,
+    w: int,
+    h: int,
+    /,
+    *,
+    bands: str = "ARGB",
+    dst: npt.NDArray[np.uint8] = None,
+) -> npt.NDArray[np.uint8]:
+    """Get the contents of `np_pixels[]` as a numpy array.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+     * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None, ) -> npt.NDArray[np.uint8]
+
+    Parameters
+    ----------
+
+    bands: str = "ARGB"
+        color channels in output array
+
+    dst: npt.NDArray[np.uint8] = None
+        destination array to copy pixel data into
+
+    h: int
+        source height
+
+    w: int
+        source width
+
+    x: int
+        x-coordinate of the source's upper left corner
+
+    y: int
+        y-coordinate of the source's upper left corner
+
+    Notes
+    -----
+
+    Get the contents of `np_pixels[]` as a numpy array. The returned numpy array can
+    be the entirety of `np_pixels[]` or a rectangular subsection. Use the `x`, `y`,
+    `h`, and `w` parameters to specify the bounds of a rectangular subsection.
+
+    The `bands` parameter is used to determine the ordering of the returned numpy
+    array's color channel. It can be one of `'L'` (single-channel grayscale),
+    `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+    array will have two dimensions, and each pixel value will be calculated as
+    `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+    ignored. For all other `bands` parameter values, the returned array will have
+    three dimensions, with the third dimension representing the different color
+    channels specified by the `bands` value.
+
+    The returned array will always be a copy of the data in `np_pixels[]` and not a
+    view into that array or any other array. Use the `dst` parameter to provide the
+    numpy array to copy the pixel data into. The provided array must be sized
+    correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+    """
+    pass
+
+
+def get_np_pixels(*args, **kwargs) -> npt.NDArray[np.uint8]:
+    """Get the contents of `np_pixels[]` as a numpy array.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+     * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None, ) -> npt.NDArray[np.uint8]
+
+    Parameters
+    ----------
+
+    bands: str = "ARGB"
+        color channels in output array
+
+    dst: npt.NDArray[np.uint8] = None
+        destination array to copy pixel data into
+
+    h: int
+        source height
+
+    w: int
+        source width
+
+    x: int
+        x-coordinate of the source's upper left corner
+
+    y: int
+        y-coordinate of the source's upper left corner
+
+    Notes
+    -----
+
+    Get the contents of `np_pixels[]` as a numpy array. The returned numpy array can
+    be the entirety of `np_pixels[]` or a rectangular subsection. Use the `x`, `y`,
+    `h`, and `w` parameters to specify the bounds of a rectangular subsection.
+
+    The `bands` parameter is used to determine the ordering of the returned numpy
+    array's color channel. It can be one of `'L'` (single-channel grayscale),
+    `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+    array will have two dimensions, and each pixel value will be calculated as
+    `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+    ignored. For all other `bands` parameter values, the returned array will have
+    three dimensions, with the third dimension representing the different color
+    channels specified by the `bands` value.
+
+    The returned array will always be a copy of the data in `np_pixels[]` and not a
+    view into that array or any other array. Use the `dst` parameter to provide the
+    numpy array to copy the pixel data into. The provided array must be sized
+    correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+    """
+    return _py5sketch.get_np_pixels(*args, **kwargs)
+
+
+@overload
+def to_pil() -> PIL_Image:
+    """Get the Sketch drawing surface as a PIL Image object.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * to_pil() -> PIL_Image
+     * to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image
+
+    Parameters
+    ----------
+
+    h: int
+        source height
+
+    w: int
+        source width
+
+    x: int
+        x-coordinate of the source's upper left corner
+
+    y: int
+        y-coordinate of the source's upper left corner
+
+    Notes
+    -----
+
+    Get the Sketch drawing surface as a PIL Image object. The returned PIL Image
+    object can include the entirety of the Sketch drawing surface or a rectangular
+    subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+    rectangular subsection.
+    """
+    pass
+
+
+@overload
+def to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image:
+    """Get the Sketch drawing surface as a PIL Image object.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * to_pil() -> PIL_Image
+     * to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image
+
+    Parameters
+    ----------
+
+    h: int
+        source height
+
+    w: int
+        source width
+
+    x: int
+        x-coordinate of the source's upper left corner
+
+    y: int
+        y-coordinate of the source's upper left corner
+
+    Notes
+    -----
+
+    Get the Sketch drawing surface as a PIL Image object. The returned PIL Image
+    object can include the entirety of the Sketch drawing surface or a rectangular
+    subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+    rectangular subsection.
+    """
+    pass
+
+
+def to_pil(*args) -> PIL_Image:
+    """Get the Sketch drawing surface as a PIL Image object.
+
+    Methods
+    -------
+
+    You can use any of the following signatures:
+
+     * to_pil() -> PIL_Image
+     * to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image
+
+    Parameters
+    ----------
+
+    h: int
+        source height
+
+    w: int
+        source width
+
+    x: int
+        x-coordinate of the source's upper left corner
+
+    y: int
+        y-coordinate of the source's upper left corner
+
+    Notes
+    -----
+
+    Get the Sketch drawing surface as a PIL Image object. The returned PIL Image
+    object can include the entirety of the Sketch drawing surface or a rectangular
+    subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+    rectangular subsection.
+    """
+    return _py5sketch.to_pil(*args)
+
+
+def save(
+    filename: Union[str, Path, BytesIO],
+    *,
+    format: str = None,
+    drop_alpha: bool = True,
+    use_thread: bool = False,
+    **params,
+) -> None:
+    """Save the drawing surface to an image file.
+
+    Parameters
+    ----------
+
+    drop_alpha: bool = True
+        remove the alpha channel when saving the image
+
+    filename: Union[str, Path, BytesIO]
+        output filename
+
+    format: str = None
+        image format, if not determined from filename extension
+
+    params
+        keyword arguments to pass to the PIL.Image save method
+
+    use_thread: bool = False
+        write file in separate thread
+
+    Notes
+    -----
+
+    Save the drawing surface to an image file. This method uses the Python library
+    Pillow to write the image, so it can save images in any format that that library
+    supports.
+
+    Use the `drop_alpha` parameter to drop the alpha channel from the image. This
+    defaults to `True`. Some image formats such as JPG do not support alpha
+    channels, and Pillow will throw an error if you try to save an image with the
+    alpha channel in that format.
+
+    The `use_thread` parameter will save the image in a separate Python thread. This
+    improves performance by returning before the image has actually been written to
+    the file.
+    """
+    return _py5sketch.save(
+        filename,
+        format=format,
+        drop_alpha=drop_alpha,
+        use_thread=use_thread,
+        **params,
+    )
+
+
+##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of `println()` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of `println()` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any `print`
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    `println()` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    `set_println_stream` to change how the output is handled. The `println_stream`
+    object must provide `init()` and `print()` methods, as shown in the example. The
+    example demonstrates how to configure py5 to output text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(*args, sep: str = " ", end: str = "\n", stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = "\\n"
+        string appended after the last value, defaults to newline character
+
+    sep: str = " "
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    `print` method. For Sketches running in a Jupyter Notebook, this will place text
+    in the output of the cell that made the `run_sketch()` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any `print`
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use `set_println_stream()` to customize the behavior of `println()`.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+    f: Callable,
+    name: str = None,
+    *,
+    daemon: bool = True,
+    args: tuple = None,
+    kwargs: dict = None,
+) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The `name` parameter is optional but useful if you want to monitor the thread
+    with other methods such as `has_thread()`. If the provided `name` is identical
+    to an already running thread, the running thread will first be stopped with a
+    call to `stop_thread()` with the `wait` parameter equal to `True`.
+
+    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+    to the function.
+
+    Use the `daemon` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to `True`, meaning
+    that function execution can be interupted if the Python process exits. Note that
+    if the Python process continues running after the Sketch exits, which is
+    typically the case when using a Jupyter Notebook, this parameter won't have any
+    effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to `False` causes problems but it is available for those
+    who really need it. See `stop_all_threads()` for a better approach to exit
+    threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f,
+        name=name,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs,
+    )
+
+
+def launch_promise_thread(
+    f: Callable,
+    name: str = None,
+    *,
+    daemon: bool = True,
+    args: tuple = None,
+    kwargs: dict = None,
+) -> Py5Promise:
+    """Create a `Py5Promise` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a `Py5Promise` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The `Py5Promise` object has an `is_ready` property that will be `True` when the
+    `result` property contains the value function `f` returned. Before then, the
+    `result` property will be `None`.
+
+    The `name` parameter is optional but useful if you want to monitor the thread
+    with other methods such as `has_thread()`. If the provided `name` is identical
+    to an already running thread, the running thread will first be stopped with a
+    call to `stop_thread()` with the `wait` parameter equal to `True`.
+
+    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+    to the function.
+
+    Use the `daemon` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to `True`, meaning
+    that function execution can be interupted if the Python process exits. Note that
+    if the Python process continues running after the Sketch exits, which is
+    typically the case when using a Jupyter Notebook, this parameter won't have any
+    effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to `False` causes problems but it is available for those
+    who really need it. See `stop_all_threads()` for a better approach to exit
+    threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f,
+        name=name,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs,
+    )
+
+
+def launch_repeating_thread(
+    f: Callable,
+    name: str = None,
+    *,
+    time_delay: float = 0,
+    daemon: bool = True,
+    args: tuple = None,
+    kwargs: dict = None,
+) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the `time_delay` parameter to set the time in seconds between one call to
+    function `f` and the next call. Set this parameter to `0` if you want each call
+    to happen immediately after the previous call finishes. If the function `f`
+    takes longer than expected to finish, py5 will wait for it to finish before
+    making the next call. There will not be overlapping calls to function `f`.
+
+    The `name` parameter is optional but useful if you want to monitor the thread
+    with other methods such as `has_thread()`. If the provided `name` is identical
+    to an already running thread, the running thread will first be stopped with a
+    call to `stop_thread()` with the `wait` parameter equal to `True`.
+
+    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+    to the function.
+
+    Use the `daemon` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to `True`, meaning
+    that function execution can be interupted if the Python process exits. Note that
+    if the Python process continues running after the Sketch exits, which is
+    typically the case when using a Jupyter Notebook, this parameter won't have any
+    effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to `False` causes problems but it is available for those
+    who really need it. See `stop_all_threads()` for a better approach to exit
+    threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs,
+    )
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with `list_threads()`.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def join_thread(name: str, *, timeout: float = None) -> bool:
+    """Join the Python thread associated with the given thread name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    timeout: float = None
+        maximum time in seconds to wait for the thread to join
+
+    Notes
+    -----
+
+    Join the Python thread associated with the given thread name. The
+    `join_thread()` method will wait until the named thread has finished executing
+    before returning. Use the `timeout` parameter to set an upper limit for the
+    number of seconds to wait. This method will return right away if the named
+    thread does not exist or the thread has already finished executing. You can get
+    the list of all currently running threads with `list_threads()`.
+
+    This method will return `True` if the named thread has completed execution and
+    `False` if the named thread is still executing. It will only return `False` if
+    you use the `timeout` parameter and the method is not able to join with the
+    thread within that time limit.
+    """
+    return _py5sketch.join_thread(name, timeout=timeout)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The `wait` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    `launch_thread()` or `launch_promise_thread()` and the `wait` parameter is
+    `False`. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the `wait` parameter to `True` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use `launch_repeating_thread()` instead.
+
+    Use `has_thread()` to determine if a thread of a given name exists and
+    `list_threads()` to get a list of all thread names. Use `stop_all_threads()` to
+    stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The `wait` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, `stop_all_threads(wait=False)` is called for you. If
+    you would rather the Sketch waited for threads to exit, create an `exiting`
+    method and make a call to `stop_all_threads(wait=True)`.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
 
 
 PI = np.pi
@@ -20645,14 +21123,14 @@ def print_line_profiler_stats() -> None:
     return _py5sketch.print_line_profiler_stats()
 
 
-def save_frame(filename: Union[str,
-                               Path,
-                               BytesIO],
-               *,
-               format: str = None,
-               drop_alpha: bool = True,
-               use_thread: bool = False,
-               **params) -> None:
+def save_frame(
+    filename: Union[str, Path, BytesIO],
+    *,
+    format: str = None,
+    drop_alpha: bool = True,
+    use_thread: bool = False,
+    **params,
+) -> None:
     """Save the current frame as an image.
 
     Parameters
@@ -20699,13 +21177,11 @@ def save_frame(filename: Union[str,
         format=format,
         drop_alpha=drop_alpha,
         use_thread=use_thread,
-        **params)
+        **params,
+    )
 
 
-def select_folder(
-        prompt: str,
-        callback: Callable,
-        default_folder: str = None) -> None:
+def select_folder(prompt: str, callback: Callable, default_folder: str = None) -> None:
     """Opens a file chooser dialog to select a folder.
 
     Underlying Processing method: Sketch.selectFolder
@@ -20736,14 +21212,10 @@ def select_folder(
     OpenGL renderers (`P2D` or `P3D`) will be minimized while the select dialog box
     is open. This method only uses native dialog boxes on OSX.
     """
-    return _py5sketch.select_folder(
-        prompt, callback, default_folder=default_folder)
+    return _py5sketch.select_folder(prompt, callback, default_folder=default_folder)
 
 
-def select_input(
-        prompt: str,
-        callback: Callable,
-        default_file: str = None) -> None:
+def select_input(prompt: str, callback: Callable, default_file: str = None) -> None:
     """Open a file chooser dialog to select a file for input.
 
     Underlying Processing method: Sketch.selectInput
@@ -20777,10 +21249,7 @@ def select_input(
     return _py5sketch.select_input(prompt, callback, default_file=default_file)
 
 
-def select_output(
-        prompt: str,
-        callback: Callable,
-        default_file: str = None) -> None:
+def select_output(prompt: str, callback: Callable, default_file: str = None) -> None:
     """Opens a file chooser dialog to select a file for output.
 
     Underlying Processing method: Sketch.selectOutput
@@ -20811,12 +21280,12 @@ def select_output(
     OpenGL renderers (`P2D` or `P3D`) will be minimized while the select dialog box
     is open. This method only uses native dialog boxes on OSX.
     """
-    return _py5sketch.select_output(
-        prompt, callback, default_file=default_file)
+    return _py5sketch.select_output(prompt, callback, default_file=default_file)
 
 
 def create_image_from_numpy(
-        array: npt.NDArray[np.uint8], bands: str = 'ARGB', *, dst: Py5Image = None) -> Py5Image:
+    array: npt.NDArray[np.uint8], bands: str = "ARGB", *, dst: Py5Image = None
+) -> Py5Image:
     """Convert a numpy array into a Py5Image object.
 
     Parameters
@@ -20825,7 +21294,7 @@ def create_image_from_numpy(
     array: npt.NDArray[np.uint8]
         numpy image array
 
-    bands: str = 'ARGB'
+    bands: str = "ARGB"
         color channels in array
 
     dst: Py5Image = None
@@ -20890,8 +21359,7 @@ def convert_image(obj: Any, *, dst: Py5Image = None) -> Py5Image:
     return _py5sketch.convert_image(obj, dst=dst)
 
 
-def load_image(image_path: Union[str, Path], *,
-               dst: Py5Image = None) -> Py5Image:
+def load_image(image_path: Union[str, Path], *, dst: Py5Image = None) -> Py5Image:
     """Load an image into a variable of type `Py5Image`.
 
     Parameters
@@ -20956,12 +21424,15 @@ def request_image(image_path: Union[str, Path]) -> Py5Promise:
     return _py5sketch.request_image(image_path)
 
 
-def run_sketch(block: bool = None, *,
-               py5_options: list[str] = None,
-               sketch_args: list[str] = None,
-               sketch_functions: dict[str, Callable] = None,
-               jclassname: str = None,
-               _osx_alt_run_method: bool = True) -> None:
+def run_sketch(
+    block: bool = None,
+    *,
+    py5_options: list[str] = None,
+    sketch_args: list[str] = None,
+    sketch_functions: dict[str, Callable] = None,
+    jclassname: str = None,
+    _osx_alt_run_method: bool = True,
+) -> None:
     """Run the Sketch.
 
     Parameters
@@ -21040,40 +21511,53 @@ def run_sketch(block: bool = None, *,
     caller_locals = inspect.stack()[1].frame.f_locals
     caller_globals = inspect.stack()[1].frame.f_globals
     functions, function_param_counts = bridge._extract_py5_user_function_data(
-        sketch_functions if sketch_functions else caller_locals)
+        sketch_functions if sketch_functions else caller_locals
+    )
     functions = _split_setup.transform(
         functions,
         caller_globals,
         caller_locals,
         println,
-        mode='imported' if _PY5_USE_IMPORTED_MODE else 'module')
+        mode="imported" if _PY5_USE_IMPORTED_MODE else "module",
+    )
 
-    if not set(functions.keys()) & set(
-            ['settings', 'setup', 'draw']) and not jclassname:
+    if (
+        not set(functions.keys()) & set(["settings", "setup", "draw"])
+        and not jclassname
+    ):
         warnings.warn(
-            ("Unable to find settings, setup, or draw functions. "
-             "Your sketch will be a small gray square. "
-             "If that isn't what you intended, you need to make sure "
-             "your implementation of those functions are available in "
-             "the local namespace that made the `run_sketch()` call."), stacklevel=2)
+            (
+                "Unable to find settings, setup, or draw functions. "
+                "Your sketch will be a small gray square. "
+                "If that isn't what you intended, you need to make sure "
+                "your implementation of those functions are available in "
+                "the local namespace that made the `run_sketch()` call."
+            ),
+            stacklevel=2,
+        )
 
     global _py5sketch
     if _py5sketch.is_running:
         print(
-            'Sketch is already running. To run a new sketch, exit the running sketch first.',
-            file=sys.stderr)
+            "Sketch is already running. To run a new sketch, exit the running sketch first.",
+            file=sys.stderr,
+        )
         return
     if _py5sketch.is_dead or jclassname:
         _py5sketch = Sketch(jclassname=jclassname)
 
     _prepare_dynamic_variables(caller_locals, caller_globals)
 
-    _py5sketch._run_sketch(functions, function_param_counts, block,
-                           py5_options=py5_options,
-                           sketch_args=sketch_args,
-                           _caller_locals=caller_locals,
-                           _caller_globals=caller_globals,
-                           _osx_alt_run_method=_osx_alt_run_method)
+    _py5sketch._run_sketch(
+        functions,
+        function_param_counts,
+        block,
+        py5_options=py5_options,
+        sketch_args=sketch_args,
+        _caller_locals=caller_locals,
+        _caller_globals=caller_globals,
+        _osx_alt_run_method=_osx_alt_run_method,
+    )
 
 
 def get_current_sketch() -> Sketch:
@@ -21157,6 +21641,7 @@ def prune_tracebacks(prune: bool) -> None:
     messages. Almost always this is helpful, but when investigating bugs in py5
     itself, sometimes it is helpful to turn off this feature."""
     from . import bridge
+
     bridge._prune_tracebacks = prune
 
 
@@ -21178,6 +21663,7 @@ def set_stackprinter_style(style: str) -> None:
     color. Alternative styles using color are `'darkbg'`, `'darkbg2'`, `'darkbg3'`,
     `'lightbg'`, `'lightbg2'`, and `'lightbg3'`."""
     from . import bridge
+
     bridge._stackprinter_style = style
 
 
@@ -21185,12 +21671,7 @@ def __getattr__(name):
     if hasattr(_py5sketch, name):
         return getattr(_py5sketch, name)
     else:
-        raise AttributeError(
-            _spelling.error_msg(
-                '',
-                name,
-                _py5sketch,
-                module=True))
+        raise AttributeError(_spelling.error_msg("", name, _py5sketch, module=True))
 
 
 def __dir__():
@@ -21212,13 +21693,15 @@ def _prepare_dynamic_variables(caller_locals, caller_globals):
     When running in imported mode, place variables in the the caller's local
     namespace that link to the Sketch's dynamic variable property objects.
     """
-    for dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES + \
-            py5_tools.reference.PY5_PYTHON_DYNAMIC_VARIABLES:
+    for dvar in (
+        py5_tools.reference.PY5_DYNAMIC_VARIABLES
+        + py5_tools.reference.PY5_PYTHON_DYNAMIC_VARIABLES
+    ):
         if dvar in caller_globals:
             caller_globals.pop(dvar)
         if _PY5_USE_IMPORTED_MODE:
             if dvar in py5_tools.reference.PY5_DYNAMIC_VARIABLES:
-                caller_locals[dvar] = getattr(_py5sketch, '_get_' + dvar)
+                caller_locals[dvar] = getattr(_py5sketch, "_get_" + dvar)
             else:
                 caller_locals[dvar] = getattr(_py5sketch, dvar)
 

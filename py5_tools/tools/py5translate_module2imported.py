@@ -22,17 +22,11 @@ from pathlib import Path
 
 from py5_tools import translators
 
-
 parser = argparse.ArgumentParser(
-    description="Translate module mode code to imported mode code")
-parser.add_argument(
-    action='store',
-    dest='src',
-    help='path to module mode code')
-parser.add_argument(
-    action='store',
-    dest='dest',
-    help='path to imported mode code')
+    description="Translate module mode code to imported mode code"
+)
+parser.add_argument(action="store", dest="src", help="path to module mode code")
+parser.add_argument(action="store", dest="dest", help="path to imported mode code")
 
 
 def main():
@@ -41,7 +35,7 @@ def main():
     dest = Path(args.dest)
 
     if not src.exists():
-        print(f'Error: Code source {src} does not exist')
+        print(f"Error: Code source {src} does not exist")
         return
 
     if src.is_dir() and (dest.is_dir() or not dest.exists()):
@@ -49,8 +43,8 @@ def main():
     elif src.is_file() and (dest.is_file() or not dest.exists()):
         translators.module2imported.translate_file(src, dest)
     else:
-        print('Error: The two arguments must both be directories or both be files')
+        print("Error: The two arguments must both be directories or both be files")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

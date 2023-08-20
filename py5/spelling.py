@@ -19,14 +19,14 @@
 # *****************************************************************************
 import string
 
-
 # many thanks to Peter Norvig for his spelling corrector tutorial:
 # http://norvig.com/spell-correct.html
 
 
 def edits1(word):
-    letters = (string.ascii_uppercase if word == word.upper()
-               else string.ascii_lowercase) + '_'
+    letters = (
+        string.ascii_uppercase if word == word.upper() else string.ascii_lowercase
+    ) + "_"
 
     splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
     deletes = [L + R[1:] for L, R in splits if R]
@@ -49,12 +49,11 @@ def candidates(word, dictionary):
     if word in dictionary:
         return set([word])
     else:
-        return known(
-            edits1(word),
-            dictionary) or (
-            len(word) <= 10 and known(
-                edits2(word),
-                dictionary)) or []
+        return (
+            known(edits1(word), dictionary)
+            or (len(word) <= 10 and known(edits2(word), dictionary))
+            or []
+        )
 
 
 def suggestions(word, word_list):
@@ -64,20 +63,24 @@ def suggestions(word, word_list):
     elif len(words) == 1:
         return words[0]
     elif len(words) == 2:
-        return words[0] + ' or ' + words[1]
+        return words[0] + " or " + words[1]
     else:
-        return ', '.join(words[:-1]) + ', or ' + words[-1]
+        return ", ".join(words[:-1]) + ", or " + words[-1]
 
 
 def error_msg(obj_name, word, obj, module=False):
-    msg = 'py5 has no field or function' if module else obj_name + \
-        ' objects have no fields or methods'
+    msg = (
+        "py5 has no field or function"
+        if module
+        else obj_name + " objects have no fields or methods"
+    )
     msg += ' named "' + word + '"'
 
-    if word and word[0] != '_' and (
-        suggestion_list := suggestions(
-            word, set(
-            dir(obj)))):
-        msg += '. Did you mean ' + suggestion_list + '?'
+    if (
+        word
+        and word[0] != "_"
+        and (suggestion_list := suggestions(word, set(dir(obj))))
+    ):
+        msg += ". Did you mean " + suggestion_list + "?"
 
     return msg

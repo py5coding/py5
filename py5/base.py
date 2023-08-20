@@ -18,7 +18,6 @@
 #
 # *****************************************************************************
 class Py5Base:
-
     def __init__(self, instance):
         self._instance = instance
 

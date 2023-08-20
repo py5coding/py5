@@ -20,40 +20,42 @@
 from __future__ import annotations
 
 import functools
-from typing import overload  # noqa
 import weakref
+from typing import overload  # noqa
 
 import jpype
-from jpype import JException, JArray, JString  # noqa
+from jpype import JArray, JException, JString  # noqa
 
-from .shape import Py5Shape, _return_py5shape  # noqa
-from .decorators import _ret_str  # noqa
 from . import spelling
+from .decorators import _ret_str  # noqa
+from .shape import Py5Shape, _return_py5shape  # noqa
 
 
 def _return_py5font(f):
     @functools.wraps(f)
     def decorated(self_, *args):
         return Py5Font(f(self_, *args))
+
     return decorated
 
 
 def _load_py5font(f):
     @functools.wraps(f)
     def decorated(self_, *args):
-        # TODO: for load_font this prints a Java exception to strerr if the
-        # file cannot be found or read
+        # TODO: for load_font this prints a Java exception to strerr if the file cannot be found or read
         try:
             ret = f(self_, *args)
         except JException as e:
             msg = e.message()
         else:
             if ret is None:
-                msg = 'font file is missing or inaccessible.'
+                msg = "font file is missing or inaccessible."
             else:
                 return Py5Font(ret)
-        raise RuntimeError('cannot load font file ' +
-                           str(args[0]) + '. error message: ' + msg)
+        raise RuntimeError(
+            "cannot load font file " + str(args[0]) + ". error message: " + msg
+        )
+
     return decorated
 
 
@@ -61,6 +63,7 @@ def _return_list_str(f):
     @functools.wraps(f)
     def decorated(cls_, *args):
         return [str(x) for x in f(cls_, *args) or []]
+
     return decorated
 
 
@@ -82,9 +85,9 @@ class Py5Font:
     dynamically converting fonts into a format to use with py5.
 
     To create a new font dynamically, use the `create_font()` function. Do not use
-    the syntax `Py5Font()`.
-    """
-    _cls = jpype.JClass('processing.core.PFont')
+    the syntax `Py5Font()`."""
+
+    _cls = jpype.JClass("processing.core.PFont")
     CHARSET = _cls.CHARSET
 
     _py5_object_cache = weakref.WeakSet()
@@ -100,14 +103,19 @@ class Py5Font:
             return o
 
     def __str__(self) -> str:
-        return "Py5Font(font_name='" + self.get_name() + \
-            "', font_size=" + str(self.get_size()) + ")"
+        return (
+            "Py5Font(font_name='"
+            + self.get_name()
+            + "', font_size="
+            + str(self.get_size())
+            + ")"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Py5Font', name, self))
+        raise AttributeError(spelling.error_msg("Py5Font", name, self))
 
     def ascent(self) -> float:
         """Get the ascent of this font from the baseline.

@@ -17,16 +17,16 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-from typing import Union, Callable
 from types import ModuleType
-
+from typing import Callable, Union
 
 _PY5_PROCESSING_MODE_KEYS = {}
 _PY5_PROCESSING_MODE_CALLBACK_ONCE = set()
 
 
 def register_processing_mode_key(
-        key: str, value: Union[Callable, ModuleType], *, callback_once: bool = False):
+    key: str, value: Union[Callable, ModuleType], *, callback_once: bool = False
+):
     """Register a callable or module when programming in py5's Processing Mode.
 
     Parameters
@@ -57,4 +57,4 @@ def register_processing_mode_key(
         _PY5_PROCESSING_MODE_CALLBACK_ONCE.add(key)
 
 
-__all__ = ['register_processing_mode_key']
+__all__ = ["register_processing_mode_key"]

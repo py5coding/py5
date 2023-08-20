@@ -20,19 +20,19 @@
 from __future__ import annotations
 
 import threading
-from pathlib import Path
 from io import BytesIO
-from typing import overload, Union  # noqa
+from pathlib import Path
+from typing import Union, overload  # noqa
 
+import jpype
 import numpy as np
 import numpy.typing as npt
 from PIL import Image
-import jpype
+from PIL.Image import Image as PIL_Image
 
 from ..decorators import _hex_converter
 
-
-_Sketch = jpype.JClass('py5.core.Sketch')
+_Sketch = jpype.JClass("py5.core.Sketch")
 
 
 class PixelArray:
@@ -65,14 +65,16 @@ class PixelArray:
     def __getitem__(self, index):
         if self._instance.pixels is None:
             raise RuntimeError(
-                "Cannot get pixel colors because load_pixels() has not been called")
+                "Cannot get pixel colors because load_pixels() has not been called"
+            )
 
         return self._instance.pixels[index]
 
     def __setitem__(self, index, val):
         if self._instance.pixels is None:
             raise RuntimeError(
-                "Cannot set pixel colors because load_pixels() has not been called")
+                "Cannot set pixel colors because load_pixels() has not been called"
+            )
 
         if (newval := _hex_converter(val)) is not None:
             val = newval
@@ -82,16 +84,16 @@ class PixelArray:
     def __len__(self):
         if self._instance.pixels is None:
             raise RuntimeError(
-                "Cannot get pixel length because load_pixels() has not been called")
+                "Cannot get pixel length because load_pixels() has not been called"
+            )
 
         return len(self._instance.pixels)
 
 
 class PixelMixin:
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._instance = kwargs['instance']
+        self._instance = kwargs["instance"]
         self._np_pixels = None
         self.pixels = PixelArray(self._instance)
 
@@ -100,15 +102,13 @@ class PixelMixin:
         super()._replace_instance(new_instance)
 
     def _init_np_pixels(self):
-        width = self.pixel_width if hasattr(
-            self, 'pixel_width') else self.width
-        height = self.pixel_height if hasattr(
-            self, 'pixel_height') else self.height
+        width = self.pixel_width if hasattr(self, "pixel_width") else self.width
+        height = self.pixel_height if hasattr(self, "pixel_height") else self.height
         self._py_bb = bytearray(width * height * 4)
         self._java_bb = jpype.nio.convertToDirectBuffer(self._py_bb)
-        self._np_pixels = np.asarray(
-            self._py_bb, dtype=np.uint8).reshape(
-            height, width, 4)
+        self._np_pixels = np.asarray(self._py_bb, dtype=np.uint8).reshape(
+            height, width, 4
+        )
 
     # *** BEGIN METHODS ***
 
@@ -192,8 +192,10 @@ class PixelMixin:
         To set the entire contents of `np_pixels[]` to the contents of another properly
         sized numpy array, consider using `set_np_pixels()`."""
         return self._np_pixels
+
     np_pixels: npt.NDArray[np.uint8] = property(
-        fget=_get_np_pixels, doc="""The `np_pixels[]` array contains the values for all the pixels in the display
+        fget=_get_np_pixels,
+        doc="""The `np_pixels[]` array contains the values for all the pixels in the display
         window.
 
         Notes
@@ -225,11 +227,10 @@ class PixelMixin:
         display window.
 
         To set the entire contents of `np_pixels[]` to the contents of another properly
-        sized numpy array, consider using `set_np_pixels()`.""")
+        sized numpy array, consider using `set_np_pixels()`.""",
+    )
 
-    def set_np_pixels(self,
-                      array: npt.NDArray[np.uint8],
-                      bands: str = 'ARGB') -> None:
+    def set_np_pixels(self, array: npt.NDArray[np.uint8], bands: str = "ARGB") -> None:
         """Set the entire contents of `np_pixels[]` to the contents of another properly
         sized and typed numpy array.
 
@@ -239,7 +240,7 @@ class PixelMixin:
         array: npt.NDArray[np.uint8]
             properly sized numpy array to be copied to np_pixels[]
 
-        bands: str = 'ARGB'
+        bands: str = "ARGB"
             color channels in the array's third dimension
 
         Notes
@@ -264,39 +265,374 @@ class PixelMixin:
         This method exists because setting the array contents with the code
         `py5.np_pixels = array` will cause an error, while the correct syntax,
         `py5.np_pixels[:] = array`, might also be unintuitive for beginners."""
+        bands = bands.upper()
+
         self.load_np_pixels()
-        if bands == 'L':
+        if bands == "L":
             self._np_pixels[:, :, 0] = 255
-            self._np_pixels[:, :, 1:] = array[:, :,
-                                              None] if array.ndim == 2 else array
-        elif bands == 'ARGB':
+            self._np_pixels[:, :, 1:] = array[:, :, None] if array.ndim == 2 else array
+        elif bands == "ARGB":
             self._np_pixels[:] = array[:, :, :4]
-        elif bands == 'RGB':
+        elif bands == "RGB":
             self._np_pixels[:, :, 0] = 255
             self._np_pixels[:, :, 1:] = array[:, :, :3]
-        elif bands == 'RGBA':
+        elif bands == "RGBA":
             self._np_pixels[:, :, 0] = array[:, :, 3]
             self._np_pixels[:, :, 1:] = array[:, :, :3]
-        elif bands == 'BGR':
+        elif bands == "BGR":
             self._np_pixels[:, :, 0] = 255
             self._np_pixels[:, :, 1:] = array[:, :, 2::-1]
-        elif bands == 'BGRA':
+        elif bands == "BGRA":
             self._np_pixels[:, :, 0] = array[:, :, 3]
             self._np_pixels[:, :, 1:] = array[:, :, 2::-1]
         else:
             raise RuntimeError(
-                f"Unknown `bands` value '{bands}'. Supported values are 'L', 'ARGB', 'RGB', 'RGBA', 'BGR', and 'BGRA'.")
+                f"Unknown `bands` value '{bands}'. Supported values are 'L', 'ARGB', 'RGB', 'RGBA', 'BGR', and 'BGRA'."
+            )
         self.update_np_pixels()
 
-    def save(self,
-             filename: Union[str,
-                             Path,
-                             BytesIO],
-             *,
-             format: str = None,
-             drop_alpha: bool = True,
-             use_thread: bool = False,
-             **params) -> None:
+    @overload
+    def get_np_pixels(
+        self, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None
+    ) -> npt.NDArray[np.uint8]:
+        """Get the contents of `np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None, ) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `np_pixels[]` as a numpy array. The returned numpy array can
+        be the entirety of `np_pixels[]` or a rectangular subsection. Use the `x`, `y`,
+        `h`, and `w` parameters to specify the bounds of a rectangular subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in `np_pixels[]` and not a
+        view into that array or any other array. Use the `dst` parameter to provide the
+        numpy array to copy the pixel data into. The provided array must be sized
+        correctly. The array's `dtype` should `np.uint8`, but this isn't required."""
+        pass
+
+    @overload
+    def get_np_pixels(
+        self,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        /,
+        *,
+        bands: str = "ARGB",
+        dst: npt.NDArray[np.uint8] = None,
+    ) -> npt.NDArray[np.uint8]:
+        """Get the contents of `np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None, ) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `np_pixels[]` as a numpy array. The returned numpy array can
+        be the entirety of `np_pixels[]` or a rectangular subsection. Use the `x`, `y`,
+        `h`, and `w` parameters to specify the bounds of a rectangular subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in `np_pixels[]` and not a
+        view into that array or any other array. Use the `dst` parameter to provide the
+        numpy array to copy the pixel data into. The provided array must be sized
+        correctly. The array's `dtype` should `np.uint8`, but this isn't required."""
+        pass
+
+    def get_np_pixels(self, *args, **kwargs) -> npt.NDArray[np.uint8]:
+        """Get the contents of `np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None, ) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `np_pixels[]` as a numpy array. The returned numpy array can
+        be the entirety of `np_pixels[]` or a rectangular subsection. Use the `x`, `y`,
+        `h`, and `w` parameters to specify the bounds of a rectangular subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in `np_pixels[]` and not a
+        view into that array or any other array. Use the `dst` parameter to provide the
+        numpy array to copy the pixel data into. The provided array must be sized
+        correctly. The array's `dtype` should `np.uint8`, but this isn't required."""
+        self.load_np_pixels()
+
+        if len(args) == 4:
+            x, y, w, h = args
+        elif len(args) == 0:
+            x, y, h, w = 0, 0, *self.np_pixels.shape[:2]
+        else:
+            raise TypeError(
+                f"Received {len(args)} out of 4 positional arguments for x, y, w, and h."
+            )
+
+        bands = kwargs.get("bands", "ARGB").upper()
+        dst = kwargs.get("dst", None)
+
+        x_slice = slice(x, x + w)
+        y_slice = slice(y, y + h)
+
+        if bands == "L":
+            pixels = (
+                self._np_pixels[y_slice, x_slice][:, :, 1:] @ [0.299, 0.587, 0.114]
+            ).astype(np.uint8)
+        elif bands == "ARGB":
+            pixels = self._np_pixels[y_slice, x_slice]
+        elif bands == "RGB":
+            pixels = self._np_pixels[y_slice, x_slice, 1:]
+        elif bands == "RGBA":
+            pixels = np.roll(self._np_pixels[y_slice, x_slice], -1, axis=2)
+        elif bands == "BGR":
+            pixels = self._np_pixels[y_slice, x_slice, 3:0:-1]
+        elif bands == "BGRA":
+            pixels = np.dstack(
+                [
+                    self._np_pixels[y_slice, x_slice, 3:0:-1],
+                    self._np_pixels[y_slice, x_slice, 0],
+                ]
+            )
+        else:
+            raise RuntimeError(
+                f"Unknown `bands` value '{bands}'. Supported values are 'L', 'ARGB', 'RGB', 'RGBA', 'BGR', and 'BGRA'."
+            )
+
+        if dst is not None:
+            if dst.shape != pixels.shape:
+                raise ValueError(
+                    f"Destination array has shape {dst.shape} but expected {pixels.shape}"
+                )
+            else:
+                dst[:] = pixels
+                return dst
+        else:
+            return pixels if pixels.base is None else pixels.copy()
+
+    @overload
+    def to_pil(self) -> PIL_Image:
+        """Get the Sketch drawing surface as a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the Sketch drawing surface as a PIL Image object. The returned PIL Image
+        object can include the entirety of the Sketch drawing surface or a rectangular
+        subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+        rectangular subsection."""
+        pass
+
+    @overload
+    def to_pil(self, x: int, y: int, w: int, h: int, /) -> PIL_Image:
+        """Get the Sketch drawing surface as a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the Sketch drawing surface as a PIL Image object. The returned PIL Image
+        object can include the entirety of the Sketch drawing surface or a rectangular
+        subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+        rectangular subsection."""
+        pass
+
+    def to_pil(self, *args) -> PIL_Image:
+        """Get the Sketch drawing surface as a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int, /) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the Sketch drawing surface as a PIL Image object. The returned PIL Image
+        object can include the entirety of the Sketch drawing surface or a rectangular
+        subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+        rectangular subsection."""
+        return Image.fromarray(self.get_np_pixels(*args, bands="RGBA"))
+
+    def save(
+        self,
+        filename: Union[str, Path, BytesIO],
+        *,
+        format: str = None,
+        drop_alpha: bool = True,
+        use_thread: bool = False,
+        **params,
+    ) -> None:
         """Save the drawing surface to an image file.
 
         Parameters
@@ -332,26 +668,28 @@ class PixelMixin:
         The `use_thread` parameter will save the image in a separate Python thread. This
         improves performance by returning before the image has actually been written to
         the file."""
-        sketch_instance = self._instance if isinstance(
-            self._instance, _Sketch) else self._instance.parent
+        sketch_instance = (
+            self._instance
+            if isinstance(self._instance, _Sketch)
+            else self._instance.parent
+        )
         if not isinstance(filename, BytesIO):
             filename = Path(str(sketch_instance.savePath(str(filename))))
         self.load_np_pixels()
-        arr = self.np_pixels[:, :, 1:] if drop_alpha else np.roll(
-            self.np_pixels, -1, axis=2)
+        arr = (
+            self.np_pixels[:, :, 1:]
+            if drop_alpha
+            else np.roll(self.np_pixels, -1, axis=2)
+        )
 
         if use_thread:
+
             def _save(arr, filename, format, params):
                 Image.fromarray(arr).save(filename, format=format, **params)
 
             t = threading.Thread(
-                target=_save,
-                args=(
-                    arr,
-                    filename,
-                    format,
-                    params),
-                daemon=True)
+                target=_save, args=(arr, filename, format, params), daemon=True
+            )
             t.start()
         else:
             Image.fromarray(arr).save(filename, format=format, **params)
@@ -359,11 +697,13 @@ class PixelMixin:
     # *** END METHODS ***
 
 
-# NOTE: changes to the below method signatures will not update the
-# reference docs automatically
+# NOTE: changes to the below method signatures will not update the reference docs automatically
+# could also add this information to generator/reference.py but it is simpler to copy-paste from
+# the Sketch doc files to the Py5Graphics and Py5Image doc files.
+# Both of these classes are necessary so that the docstings will be correct.
+
 
 class PixelPy5GraphicsMixin(PixelMixin):
-
     def load_np_pixels(self) -> None:
         """Loads the pixel data of the current Py5Graphics drawing surface into the
         `Py5Graphics.np_pixels[]` array.
@@ -460,8 +800,10 @@ class PixelPy5GraphicsMixin(PixelMixin):
 
         This field is the same as `np_pixels[]` but linked to a `Py5Graphics` object."""
         return super()._get_np_pixels()
+
     np_pixels: npt.NDArray[np.uint8] = property(
-        fget=_get_np_pixels, doc="""The `np_pixels[]` array contains the values for all the pixels in the
+        fget=_get_np_pixels,
+        doc="""The `np_pixels[]` array contains the values for all the pixels in the
         Py5Graphics drawing surface.
 
         Notes
@@ -500,11 +842,10 @@ class PixelPy5GraphicsMixin(PixelMixin):
         To set the entire contents of `np_pixels[]` to the contents of another properly
         sized numpy array, consider using `Py5Graphics.set_np_pixels()`.
 
-        This field is the same as `np_pixels[]` but linked to a `Py5Graphics` object.""")
+        This field is the same as `np_pixels[]` but linked to a `Py5Graphics` object.""",
+    )
 
-    def set_np_pixels(self,
-                      array: npt.NDArray[np.uint8],
-                      bands: str = 'ARGB') -> None:
+    def set_np_pixels(self, array: npt.NDArray[np.uint8], bands: str = "ARGB") -> None:
         """Set the entire contents of `Py5Graphics.np_pixels[]` to the contents of another
         properly sized and typed numpy array.
 
@@ -514,7 +855,7 @@ class PixelPy5GraphicsMixin(PixelMixin):
         array: npt.NDArray[np.uint8]
             properly sized numpy array to be copied to np_pixels[]
 
-        bands: str = 'ARGB'
+        bands: str = "ARGB"
             color channels in the array's third dimension
 
         Notes
@@ -545,15 +886,319 @@ class PixelPy5GraphicsMixin(PixelMixin):
         object."""
         return super().set_np_pixels(array, bands)
 
-    def save(self,
-             filename: Union[str,
-                             Path,
-                             BytesIO],
-             *,
-             format: str = None,
-             drop_alpha: bool = True,
-             use_thread: bool = False,
-             **params) -> None:
+    @overload
+    def get_np_pixels(
+        self, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None
+    ) -> npt.NDArray[np.uint8]:
+        """Get the contents of `Py5Graphics.np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `Py5Graphics.np_pixels[]` as a numpy array. The returned
+        numpy array can be the entirety of `Py5Graphics.np_pixels[]` or a rectangular
+        subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+        rectangular subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in
+        `Py5Graphics.np_pixels[]` and not a view into that array or any other array. Use
+        the `dst` parameter to provide the numpy array to copy the pixel data into. The
+        provided array must be sized correctly. The array's `dtype` should `np.uint8`,
+        but this isn't required.
+
+        This method is the same as `get_np_pixels()` but linked to a `Py5Graphics`
+        object."""
+        pass
+
+    @overload
+    def get_np_pixels(
+        self,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        /,
+        *,
+        bands: str = "ARGB",
+        dst: npt.NDArray[np.uint8] = None,
+    ) -> npt.NDArray[np.uint8]:
+        """Get the contents of `Py5Graphics.np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `Py5Graphics.np_pixels[]` as a numpy array. The returned
+        numpy array can be the entirety of `Py5Graphics.np_pixels[]` or a rectangular
+        subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+        rectangular subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in
+        `Py5Graphics.np_pixels[]` and not a view into that array or any other array. Use
+        the `dst` parameter to provide the numpy array to copy the pixel data into. The
+        provided array must be sized correctly. The array's `dtype` should `np.uint8`,
+        but this isn't required.
+
+        This method is the same as `get_np_pixels()` but linked to a `Py5Graphics`
+        object."""
+        pass
+
+    def get_np_pixels(self, *args, **kwargs) -> npt.NDArray[np.uint8]:
+        """Get the contents of `Py5Graphics.np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `Py5Graphics.np_pixels[]` as a numpy array. The returned
+        numpy array can be the entirety of `Py5Graphics.np_pixels[]` or a rectangular
+        subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a
+        rectangular subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in
+        `Py5Graphics.np_pixels[]` and not a view into that array or any other array. Use
+        the `dst` parameter to provide the numpy array to copy the pixel data into. The
+        provided array must be sized correctly. The array's `dtype` should `np.uint8`,
+        but this isn't required.
+
+        This method is the same as `get_np_pixels()` but linked to a `Py5Graphics`
+        object."""
+        return super().get_np_pixels(*args, **kwargs)
+
+    @overload
+    def to_pil(self) -> PIL_Image:
+        """Get the Py5Graphics drawing surface as a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the Py5Graphics drawing surface as a PIL Image object. The returned PIL
+        Image object can include the entirety of the Py5Graphics drawing surface or a
+        rectangular subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the
+        bounds of a rectangular subsection.
+
+        This method is the same as `to_pil()` but linked to a `Py5Graphics` object."""
+        pass
+
+    @overload
+    def to_pil(self, x: int, y: int, w: int, h: int, /) -> PIL_Image:
+        """Get the Py5Graphics drawing surface as a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the Py5Graphics drawing surface as a PIL Image object. The returned PIL
+        Image object can include the entirety of the Py5Graphics drawing surface or a
+        rectangular subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the
+        bounds of a rectangular subsection.
+
+        This method is the same as `to_pil()` but linked to a `Py5Graphics` object."""
+        pass
+
+    def to_pil(self, *args) -> PIL_Image:
+        """Get the Py5Graphics drawing surface as a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the Py5Graphics drawing surface as a PIL Image object. The returned PIL
+        Image object can include the entirety of the Py5Graphics drawing surface or a
+        rectangular subsection. Use the `x`, `y`, `h`, and `w` parameters to specify the
+        bounds of a rectangular subsection.
+
+        This method is the same as `to_pil()` but linked to a `Py5Graphics` object."""
+        return super().to_pil(*args)
+
+    def save(
+        self,
+        filename: Union[str, Path, BytesIO],
+        *,
+        format: str = None,
+        drop_alpha: bool = True,
+        use_thread: bool = False,
+        **params,
+    ) -> None:
         """Save the Py5Graphics drawing surface to an image file.
 
         Parameters
@@ -597,11 +1242,11 @@ class PixelPy5GraphicsMixin(PixelMixin):
             format=format,
             drop_alpha=drop_alpha,
             use_thread=use_thread,
-            **params)
+            **params,
+        )
 
 
 class PixelPy5ImageMixin(PixelMixin):
-
     def load_np_pixels(self) -> None:
         """Loads the pixel data of the image into the `Py5Image.np_pixels[]` array.
 
@@ -672,8 +1317,10 @@ class PixelPy5ImageMixin(PixelMixin):
         To set the entire contents of `np_pixels[]` to the contents of another equally
         sized numpy array, consider using `Py5Image.set_np_pixels()`."""
         return super()._get_np_pixels()
+
     np_pixels: npt.NDArray[np.uint8] = property(
-        fget=_get_np_pixels, doc="""The `np_pixels[]` array contains the values for all the pixels in the image.
+        fget=_get_np_pixels,
+        doc="""The `np_pixels[]` array contains the values for all the pixels in the image.
 
         Notes
         -----
@@ -699,11 +1346,10 @@ class PixelPy5ImageMixin(PixelMixin):
         be called to update the content of the display window.
 
         To set the entire contents of `np_pixels[]` to the contents of another equally
-        sized numpy array, consider using `Py5Image.set_np_pixels()`.""")
+        sized numpy array, consider using `Py5Image.set_np_pixels()`.""",
+    )
 
-    def set_np_pixels(self,
-                      array: npt.NDArray[np.uint8],
-                      bands: str = 'ARGB') -> None:
+    def set_np_pixels(self, array: npt.NDArray[np.uint8], bands: str = "ARGB") -> None:
         """Set the entire contents of `Py5Image.np_pixels[]` to the contents of another
         properly sized and typed numpy array.
 
@@ -713,7 +1359,7 @@ class PixelPy5ImageMixin(PixelMixin):
         array: npt.NDArray[np.uint8]
             properly sized numpy array to be copied to np_pixels[]
 
-        bands: str = 'ARGB'
+        bands: str = "ARGB"
             color channels in the array's third dimension
 
         Notes
@@ -741,15 +1387,304 @@ class PixelPy5ImageMixin(PixelMixin):
         into a new Py5Image object."""
         return super().set_np_pixels(array, bands)
 
-    def save(self,
-             filename: Union[str,
-                             Path,
-                             BytesIO],
-             *,
-             format: str = None,
-             drop_alpha: bool = True,
-             use_thread: bool = False,
-             **params) -> None:
+    @overload
+    def get_np_pixels(
+        self, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None
+    ) -> npt.NDArray[np.uint8]:
+        """Get the contents of `Py5Image.np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `Py5Image.np_pixels[]` as a numpy array. The returned numpy
+        array can be the entirety of `Py5Image.np_pixels[]` or a rectangular subsection.
+        Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a rectangular
+        subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in `Py5Image.np_pixels[]`
+        and not a view into that array or any other array. Use the `dst` parameter to
+        provide the numpy array to copy the pixel data into. The provided array must be
+        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+        """
+        pass
+
+    @overload
+    def get_np_pixels(
+        self,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        /,
+        *,
+        bands: str = "ARGB",
+        dst: npt.NDArray[np.uint8] = None,
+    ) -> npt.NDArray[np.uint8]:
+        """Get the contents of `Py5Image.np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `Py5Image.np_pixels[]` as a numpy array. The returned numpy
+        array can be the entirety of `Py5Image.np_pixels[]` or a rectangular subsection.
+        Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a rectangular
+        subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in `Py5Image.np_pixels[]`
+        and not a view into that array or any other array. Use the `dst` parameter to
+        provide the numpy array to copy the pixel data into. The provided array must be
+        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+        """
+        pass
+
+    def get_np_pixels(self, *args, **kwargs) -> npt.NDArray[np.uint8]:
+        """Get the contents of `Py5Image.np_pixels[]` as a numpy array.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_np_pixels(*, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+         * get_np_pixels(x: int, y: int, w: int, h: int, /, *, bands: str = "ARGB", dst: npt.NDArray[np.uint8] = None) -> npt.NDArray[np.uint8]
+
+        Parameters
+        ----------
+
+        bands: str = "ARGB"
+            color channels in output array
+
+        dst: npt.NDArray[np.uint8] = None
+            destination array to copy pixel data into
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Get the contents of `Py5Image.np_pixels[]` as a numpy array. The returned numpy
+        array can be the entirety of `Py5Image.np_pixels[]` or a rectangular subsection.
+        Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a rectangular
+        subsection.
+
+        The `bands` parameter is used to determine the ordering of the returned numpy
+        array's color channel. It can be one of `'L'` (single-channel grayscale),
+        `'ARGB'`, `'RGB'`, or `'RGBA'`. If the `bands` parameter is `'L'`, the returned
+        array will have two dimensions, and each pixel value will be calculated as
+        `0.299 * red + 0.587 * green + 0.114 * blue`. The alpha channel will also be
+        ignored. For all other `bands` parameter values, the returned array will have
+        three dimensions, with the third dimension representing the different color
+        channels specified by the `bands` value.
+
+        The returned array will always be a copy of the data in `Py5Image.np_pixels[]`
+        and not a view into that array or any other array. Use the `dst` parameter to
+        provide the numpy array to copy the pixel data into. The provided array must be
+        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+        """
+        return super().get_np_pixels(*args, **kwargs)
+
+    @overload
+    def to_pil(self) -> PIL_Image:
+        """Convert the Py5Image object to a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Convert the Py5Image object to a PIL Image object. The returned PIL Image object
+        can include the entirety of the Py5Image's pixels or a rectangular subsection.
+        Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a rectangular
+        subsection."""
+        pass
+
+    @overload
+    def to_pil(self, x: int, y: int, w: int, h: int, /) -> PIL_Image:
+        """Convert the Py5Image object to a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Convert the Py5Image object to a PIL Image object. The returned PIL Image object
+        can include the entirety of the Py5Image's pixels or a rectangular subsection.
+        Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a rectangular
+        subsection."""
+        pass
+
+    def to_pil(self, *args) -> PIL_Image:
+        """Convert the Py5Image object to a PIL Image object.
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * to_pil() -> PIL_Image
+         * to_pil(x: int, y: int, w: int, h: int) -> PIL_Image
+
+        Parameters
+        ----------
+
+        h: int
+            source height
+
+        w: int
+            source width
+
+        x: int
+            x-coordinate of the source's upper left corner
+
+        y: int
+            y-coordinate of the source's upper left corner
+
+        Notes
+        -----
+
+        Convert the Py5Image object to a PIL Image object. The returned PIL Image object
+        can include the entirety of the Py5Image's pixels or a rectangular subsection.
+        Use the `x`, `y`, `h`, and `w` parameters to specify the bounds of a rectangular
+        subsection."""
+        return super().to_pil(*args)
+
+    def save(
+        self,
+        filename: Union[str, Path, BytesIO],
+        *,
+        format: str = None,
+        drop_alpha: bool = True,
+        use_thread: bool = False,
+        **params,
+    ) -> None:
         """Save the Py5Image object to an image file.
 
         Parameters
@@ -790,4 +1725,5 @@ class PixelPy5ImageMixin(PixelMixin):
             format=format,
             drop_alpha=drop_alpha,
             use_thread=use_thread,
-            **params)
+            **params,
+        )

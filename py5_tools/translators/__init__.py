@@ -17,12 +17,11 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-from . import processingpy2imported  # noqa
 from . import imported2module  # noqa
 from . import module2imported  # noqa
+from . import processingpy2imported  # noqa
 
-
-__ALL__ = ['processingpy2imported', 'imported2module', 'module2imported']
+__ALL__ = ["processingpy2imported", "imported2module", "module2imported"]
 
 
 def __dir__():

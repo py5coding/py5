@@ -145,35 +145,408 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     def __exit__(self, *exc):
         self._context_manager_exit_function(*self._context_manager_exit_args)
 
-    def points(self, coordinates):
+    # *** BEGIN METHODS ***
+
+    def points(self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Draw a collection of points, each a coordinate in space at the dimension of one
+        pixel.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of point coordinates with 2 or 3 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Draw a collection of points, each a coordinate in space at the dimension of one
+        pixel. The purpose of this method is to provide an alternative to repeatedly
+        calling `Py5Graphics.point()` in a loop. For a large number of points, the
+        performance of `points()` will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each point.
+        There should be two or three columns for 2D or 3D points, respectively.
+
+        This method is the same as `points()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `points()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.points(self._instance, coordinates)
 
-    def lines(self, coordinates):
+    def lines(self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Draw a collection of lines to the Py5Graphics drawing surface.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of line coordinates with 4 or 6 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Draw a collection of lines to the Py5Graphics drawing surface. The purpose of
+        this method is to provide an alternative to repeatedly calling
+        `Py5Graphics.line()` in a loop. For a large number of lines, the performance of
+        `lines()` will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each line.
+        The first few columns are for the first point of each line and the next few
+        columns are for the second point of each line. There will be four or six columns
+        for 2D or 3D points, respectively.
+
+        This method is the same as `lines()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `lines()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.lines(self._instance, coordinates)
 
-    def vertices(self, coordinates):
+    def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of vertices. The purpose of this method is to provide an
+        alternative to repeatedly calling `Py5Graphics.vertex()` in a loop. For a large
+        number of vertices, the performance of `vertices()` will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each
+        vertex. There should be two or three columns for 2D or 3D points, respectively.
+
+        This method is the same as `vertices()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `vertices()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.vertices(self._instance, coordinates)
 
-    def bezier_vertices(self, coordinates):
+    def bezier_vertices(
+            self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of bezier vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of bezier vertices. The purpose of this method is to provide
+        an alternative to repeatedly calling `Py5Graphics.bezier_vertex()` in a loop.
+        For a large number of bezier vertices, the performance of `bezier_vertices()`
+        will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each bezier
+        vertex. The first few columns are for the first control point, the next few
+        columns are for the second control point, and the final few columns are for the
+        anchor point. There should be six or nine columns for 2D or 3D points,
+        respectively.
+
+        This method is the same as `bezier_vertices()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `bezier_vertices()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.bezierVertices(self._instance, coordinates)
 
-    def curve_vertices(self, coordinates):
+    def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of curve vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of curve vertices. The purpose of this method is to provide
+        an alternative to repeatedly calling `Py5Graphics.curve_vertex()` in a loop. For
+        a large number of curve vertices, the performance of `curve_vertices()` will be
+        much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each curve
+        vertex.  There should be two or three columns for 2D or 3D points, respectively.
+
+        This method is the same as `curve_vertices()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `curve_vertices()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.curveVertices(self._instance, coordinates)
 
-    def quadratic_vertices(self, coordinates):
+    def quadratic_vertices(
+            self, coordinates: npt.NDArray[np.floating], /) -> None:
+        """Create a collection of quadratic vertices.
+
+        Parameters
+        ----------
+
+        coordinates: npt.NDArray[np.floating]
+            2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
+
+        Notes
+        -----
+
+        Create a collection of quadratic vertices. The purpose of this method is to
+        provide an alternative to repeatedly calling `Py5Graphics.quadratic_vertex()` in
+        a loop. For a large number of quadratic vertices, the performance of
+        `quadratic_vertices()` will be much faster.
+
+        The `coordinates` parameter should be a numpy array with one row for each
+        quadratic vertex. The first few columns are for the control point and the next
+        few columns are for the anchor point. There should be four or six columns for 2D
+        or 3D points, respectively.
+
+        This method is the same as `quadratic_vertices()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `quadratic_vertices()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.quadraticVertices(self._instance, coordinates)
+
+    @overload
+    def create_shape(self) -> Py5Shape:
+        """The `create_shape()` function is used to define a new shape.
+
+        Underlying Processing method: PGraphics.createShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * create_shape() -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
+
+        Parameters
+        ----------
+
+        kind: int
+            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
+
+        p: float
+            parameters that match the kind of shape
+
+        type: int
+            either GROUP, PATH, or GEOMETRY
+
+        Notes
+        -----
+
+        The `create_shape()` function is used to define a new shape. Once created, this
+        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
+        the function defines new primitive shapes. One of the following parameters are
+        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
+        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
+        the same as their corresponding functions: `Py5Graphics.ellipse()`,
+        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
+        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
+        `Py5Graphics.line()`.
+
+        Custom, unique shapes can be made by using `create_shape()` without a parameter.
+        After the shape is started, the drawing attributes and geometry can be set
+        directly to the shape within the `Py5Graphics.begin_shape()` and
+        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
+        for all of its options.
+
+        The  `create_shape()` function can also be used to make a complex shape made of
+        other shapes. This is called a "group" and it's created by using the parameter
+        `GROUP` as the first parameter.
+
+        After using `create_shape()`, stroke and fill color can be set by calling
+        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
+        examples. The complete list of methods and fields for the `Py5Shape` class are
+        in the py5 documentation.
+
+        This method is the same as `create_shape()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `create_shape()`."""
+        pass
+
+    @overload
+    def create_shape(self, type: int, /) -> Py5Shape:
+        """The `create_shape()` function is used to define a new shape.
+
+        Underlying Processing method: PGraphics.createShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * create_shape() -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
+
+        Parameters
+        ----------
+
+        kind: int
+            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
+
+        p: float
+            parameters that match the kind of shape
+
+        type: int
+            either GROUP, PATH, or GEOMETRY
+
+        Notes
+        -----
+
+        The `create_shape()` function is used to define a new shape. Once created, this
+        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
+        the function defines new primitive shapes. One of the following parameters are
+        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
+        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
+        the same as their corresponding functions: `Py5Graphics.ellipse()`,
+        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
+        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
+        `Py5Graphics.line()`.
+
+        Custom, unique shapes can be made by using `create_shape()` without a parameter.
+        After the shape is started, the drawing attributes and geometry can be set
+        directly to the shape within the `Py5Graphics.begin_shape()` and
+        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
+        for all of its options.
+
+        The  `create_shape()` function can also be used to make a complex shape made of
+        other shapes. This is called a "group" and it's created by using the parameter
+        `GROUP` as the first parameter.
+
+        After using `create_shape()`, stroke and fill color can be set by calling
+        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
+        examples. The complete list of methods and fields for the `Py5Shape` class are
+        in the py5 documentation.
+
+        This method is the same as `create_shape()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `create_shape()`."""
+        pass
+
+    @overload
+    def create_shape(self, kind: int, /, *p: float) -> Py5Shape:
+        """The `create_shape()` function is used to define a new shape.
+
+        Underlying Processing method: PGraphics.createShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * create_shape() -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
+
+        Parameters
+        ----------
+
+        kind: int
+            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
+
+        p: float
+            parameters that match the kind of shape
+
+        type: int
+            either GROUP, PATH, or GEOMETRY
+
+        Notes
+        -----
+
+        The `create_shape()` function is used to define a new shape. Once created, this
+        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
+        the function defines new primitive shapes. One of the following parameters are
+        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
+        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
+        the same as their corresponding functions: `Py5Graphics.ellipse()`,
+        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
+        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
+        `Py5Graphics.line()`.
+
+        Custom, unique shapes can be made by using `create_shape()` without a parameter.
+        After the shape is started, the drawing attributes and geometry can be set
+        directly to the shape within the `Py5Graphics.begin_shape()` and
+        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
+        for all of its options.
+
+        The  `create_shape()` function can also be used to make a complex shape made of
+        other shapes. This is called a "group" and it's created by using the parameter
+        `GROUP` as the first parameter.
+
+        After using `create_shape()`, stroke and fill color can be set by calling
+        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
+        examples. The complete list of methods and fields for the `Py5Shape` class are
+        in the py5 documentation.
+
+        This method is the same as `create_shape()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `create_shape()`."""
+        pass
+
+    @_return_py5shape
+    def create_shape(self, *args) -> Py5Shape:
+        """The `create_shape()` function is used to define a new shape.
+
+        Underlying Processing method: PGraphics.createShape
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * create_shape() -> Py5Shape
+         * create_shape(kind: int, /, *p: float) -> Py5Shape
+         * create_shape(type: int, /) -> Py5Shape
+
+        Parameters
+        ----------
+
+        kind: int
+            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
+
+        p: float
+            parameters that match the kind of shape
+
+        type: int
+            either GROUP, PATH, or GEOMETRY
+
+        Notes
+        -----
+
+        The `create_shape()` function is used to define a new shape. Once created, this
+        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
+        the function defines new primitive shapes. One of the following parameters are
+        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
+        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
+        the same as their corresponding functions: `Py5Graphics.ellipse()`,
+        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
+        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
+        `Py5Graphics.line()`.
+
+        Custom, unique shapes can be made by using `create_shape()` without a parameter.
+        After the shape is started, the drawing attributes and geometry can be set
+        directly to the shape within the `Py5Graphics.begin_shape()` and
+        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
+        for all of its options.
+
+        The  `create_shape()` function can also be used to make a complex shape made of
+        other shapes. This is called a "group" and it's created by using the parameter
+        `GROUP` as the first parameter.
+
+        After using `create_shape()`, stroke and fill color can be set by calling
+        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
+        examples. The complete list of methods and fields for the `Py5Shape` class are
+        in the py5 documentation.
+
+        This method is the same as `create_shape()` but linked to a `Py5Graphics`
+        object. To see example code for how it can be used, see `create_shape()`."""
+        return _Py5GraphicsHelper.createShape(self._instance, *args)
 
     ADD = 2
     ALPHA = 4
@@ -4418,7 +4791,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def color_mode(self, mode: int, /) -> None:
-        """Changes the way py5 interprets color data.
+        """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
 
@@ -4456,14 +4829,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Changes the way py5 interprets color data. By default, the parameters for
-        `Py5Graphics.fill()`, `Py5Graphics.stroke()`, `Py5Graphics.background()`, and
-        `Py5Graphics.color()` are defined by values between 0 and 255 using the `RGB`
-        color model. The `color_mode()` function is used to change the numerical range
-        used for specifying colors and to switch color systems. For example, calling
-        `color_mode(RGB, 1.0)` will specify that values are specified between 0 and 1.
-        The limits for defining colors are altered by setting the parameters `max`,
-        `max1`, `max2`, `max3`, and `max_a`.
+        Changes the way a `Py5Graphics` object interprets color data. By default, the
+        parameters for `Py5Graphics.fill()`, `Py5Graphics.stroke()`,
+        `Py5Graphics.background()`, and `Py5Graphics.color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
 
         After changing the range of values for colors with code like `color_mode(HSB,
         360, 100, 100)`, those ranges remain in use until they are explicitly changed
@@ -4480,7 +4853,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def color_mode(self, mode: int, max: float, /) -> None:
-        """Changes the way py5 interprets color data.
+        """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
 
@@ -4518,14 +4891,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Changes the way py5 interprets color data. By default, the parameters for
-        `Py5Graphics.fill()`, `Py5Graphics.stroke()`, `Py5Graphics.background()`, and
-        `Py5Graphics.color()` are defined by values between 0 and 255 using the `RGB`
-        color model. The `color_mode()` function is used to change the numerical range
-        used for specifying colors and to switch color systems. For example, calling
-        `color_mode(RGB, 1.0)` will specify that values are specified between 0 and 1.
-        The limits for defining colors are altered by setting the parameters `max`,
-        `max1`, `max2`, `max3`, and `max_a`.
+        Changes the way a `Py5Graphics` object interprets color data. By default, the
+        parameters for `Py5Graphics.fill()`, `Py5Graphics.stroke()`,
+        `Py5Graphics.background()`, and `Py5Graphics.color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
 
         After changing the range of values for colors with code like `color_mode(HSB,
         360, 100, 100)`, those ranges remain in use until they are explicitly changed
@@ -4543,7 +4916,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     @overload
     def color_mode(self, mode: int, max1: float,
                    max2: float, max3: float, /) -> None:
-        """Changes the way py5 interprets color data.
+        """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
 
@@ -4581,14 +4954,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Changes the way py5 interprets color data. By default, the parameters for
-        `Py5Graphics.fill()`, `Py5Graphics.stroke()`, `Py5Graphics.background()`, and
-        `Py5Graphics.color()` are defined by values between 0 and 255 using the `RGB`
-        color model. The `color_mode()` function is used to change the numerical range
-        used for specifying colors and to switch color systems. For example, calling
-        `color_mode(RGB, 1.0)` will specify that values are specified between 0 and 1.
-        The limits for defining colors are altered by setting the parameters `max`,
-        `max1`, `max2`, `max3`, and `max_a`.
+        Changes the way a `Py5Graphics` object interprets color data. By default, the
+        parameters for `Py5Graphics.fill()`, `Py5Graphics.stroke()`,
+        `Py5Graphics.background()`, and `Py5Graphics.color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
 
         After changing the range of values for colors with code like `color_mode(HSB,
         360, 100, 100)`, those ranges remain in use until they are explicitly changed
@@ -4606,7 +4979,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     @overload
     def color_mode(self, mode: int, max1: float, max2: float,
                    max3: float, max_a: float, /) -> None:
-        """Changes the way py5 interprets color data.
+        """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
 
@@ -4644,14 +5017,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Changes the way py5 interprets color data. By default, the parameters for
-        `Py5Graphics.fill()`, `Py5Graphics.stroke()`, `Py5Graphics.background()`, and
-        `Py5Graphics.color()` are defined by values between 0 and 255 using the `RGB`
-        color model. The `color_mode()` function is used to change the numerical range
-        used for specifying colors and to switch color systems. For example, calling
-        `color_mode(RGB, 1.0)` will specify that values are specified between 0 and 1.
-        The limits for defining colors are altered by setting the parameters `max`,
-        `max1`, `max2`, `max3`, and `max_a`.
+        Changes the way a `Py5Graphics` object interprets color data. By default, the
+        parameters for `Py5Graphics.fill()`, `Py5Graphics.stroke()`,
+        `Py5Graphics.background()`, and `Py5Graphics.color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
 
         After changing the range of values for colors with code like `color_mode(HSB,
         360, 100, 100)`, those ranges remain in use until they are explicitly changed
@@ -4667,7 +5040,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     def color_mode(self, *args):
-        """Changes the way py5 interprets color data.
+        """Changes the way a `Py5Graphics` object interprets color data.
 
         Underlying Processing method: PGraphics.colorMode
 
@@ -4705,14 +5078,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Notes
         -----
 
-        Changes the way py5 interprets color data. By default, the parameters for
-        `Py5Graphics.fill()`, `Py5Graphics.stroke()`, `Py5Graphics.background()`, and
-        `Py5Graphics.color()` are defined by values between 0 and 255 using the `RGB`
-        color model. The `color_mode()` function is used to change the numerical range
-        used for specifying colors and to switch color systems. For example, calling
-        `color_mode(RGB, 1.0)` will specify that values are specified between 0 and 1.
-        The limits for defining colors are altered by setting the parameters `max`,
-        `max1`, `max2`, `max3`, and `max_a`.
+        Changes the way a `Py5Graphics` object interprets color data. By default, the
+        parameters for `Py5Graphics.fill()`, `Py5Graphics.stroke()`,
+        `Py5Graphics.background()`, and `Py5Graphics.color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
 
         After changing the range of values for colors with code like `color_mode(HSB,
         360, 100, 100)`, those ranges remain in use until they are explicitly changed
@@ -4984,246 +5357,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         example code for how it can be used, see `copy()`.
         """
         return self._instance.copy(*args)
-
-    @overload
-    def create_shape(self) -> Py5Shape:
-        """The `create_shape()` function is used to define a new shape.
-
-        Underlying Processing method: PGraphics.createShape
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * create_shape() -> Py5Shape
-         * create_shape(kind: int, /, *p: float) -> Py5Shape
-         * create_shape(type: int, /) -> Py5Shape
-
-        Parameters
-        ----------
-
-        kind: int
-            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
-
-        p: float
-            parameters that match the kind of shape
-
-        type: int
-            either GROUP, PATH, or GEOMETRY
-
-        Notes
-        -----
-
-        The `create_shape()` function is used to define a new shape. Once created, this
-        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
-        the function defines new primitive shapes. One of the following parameters are
-        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
-        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
-        the same as their corresponding functions: `Py5Graphics.ellipse()`,
-        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
-        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
-        `Py5Graphics.line()`.
-
-        Custom, unique shapes can be made by using `create_shape()` without a parameter.
-        After the shape is started, the drawing attributes and geometry can be set
-        directly to the shape within the `Py5Graphics.begin_shape()` and
-        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
-        for all of its options.
-
-        The  `create_shape()` function can also be used to make a complex shape made of
-        other shapes. This is called a "group" and it's created by using the parameter
-        `GROUP` as the first parameter.
-
-        After using `create_shape()`, stroke and fill color can be set by calling
-        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
-        examples. The complete list of methods and fields for the `Py5Shape` class are
-        in the py5 documentation.
-
-        This method is the same as `create_shape()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `create_shape()`.
-        """
-        pass
-
-    @overload
-    def create_shape(self, type: int, /) -> Py5Shape:
-        """The `create_shape()` function is used to define a new shape.
-
-        Underlying Processing method: PGraphics.createShape
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * create_shape() -> Py5Shape
-         * create_shape(kind: int, /, *p: float) -> Py5Shape
-         * create_shape(type: int, /) -> Py5Shape
-
-        Parameters
-        ----------
-
-        kind: int
-            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
-
-        p: float
-            parameters that match the kind of shape
-
-        type: int
-            either GROUP, PATH, or GEOMETRY
-
-        Notes
-        -----
-
-        The `create_shape()` function is used to define a new shape. Once created, this
-        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
-        the function defines new primitive shapes. One of the following parameters are
-        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
-        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
-        the same as their corresponding functions: `Py5Graphics.ellipse()`,
-        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
-        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
-        `Py5Graphics.line()`.
-
-        Custom, unique shapes can be made by using `create_shape()` without a parameter.
-        After the shape is started, the drawing attributes and geometry can be set
-        directly to the shape within the `Py5Graphics.begin_shape()` and
-        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
-        for all of its options.
-
-        The  `create_shape()` function can also be used to make a complex shape made of
-        other shapes. This is called a "group" and it's created by using the parameter
-        `GROUP` as the first parameter.
-
-        After using `create_shape()`, stroke and fill color can be set by calling
-        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
-        examples. The complete list of methods and fields for the `Py5Shape` class are
-        in the py5 documentation.
-
-        This method is the same as `create_shape()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `create_shape()`.
-        """
-        pass
-
-    @overload
-    def create_shape(self, kind: int, /, *p: float) -> Py5Shape:
-        """The `create_shape()` function is used to define a new shape.
-
-        Underlying Processing method: PGraphics.createShape
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * create_shape() -> Py5Shape
-         * create_shape(kind: int, /, *p: float) -> Py5Shape
-         * create_shape(type: int, /) -> Py5Shape
-
-        Parameters
-        ----------
-
-        kind: int
-            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
-
-        p: float
-            parameters that match the kind of shape
-
-        type: int
-            either GROUP, PATH, or GEOMETRY
-
-        Notes
-        -----
-
-        The `create_shape()` function is used to define a new shape. Once created, this
-        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
-        the function defines new primitive shapes. One of the following parameters are
-        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
-        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
-        the same as their corresponding functions: `Py5Graphics.ellipse()`,
-        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
-        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
-        `Py5Graphics.line()`.
-
-        Custom, unique shapes can be made by using `create_shape()` without a parameter.
-        After the shape is started, the drawing attributes and geometry can be set
-        directly to the shape within the `Py5Graphics.begin_shape()` and
-        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
-        for all of its options.
-
-        The  `create_shape()` function can also be used to make a complex shape made of
-        other shapes. This is called a "group" and it's created by using the parameter
-        `GROUP` as the first parameter.
-
-        After using `create_shape()`, stroke and fill color can be set by calling
-        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
-        examples. The complete list of methods and fields for the `Py5Shape` class are
-        in the py5 documentation.
-
-        This method is the same as `create_shape()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `create_shape()`.
-        """
-        pass
-
-    @_return_py5shape
-    def create_shape(self, *args):
-        """The `create_shape()` function is used to define a new shape.
-
-        Underlying Processing method: PGraphics.createShape
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * create_shape() -> Py5Shape
-         * create_shape(kind: int, /, *p: float) -> Py5Shape
-         * create_shape(type: int, /) -> Py5Shape
-
-        Parameters
-        ----------
-
-        kind: int
-            either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
-
-        p: float
-            parameters that match the kind of shape
-
-        type: int
-            either GROUP, PATH, or GEOMETRY
-
-        Notes
-        -----
-
-        The `create_shape()` function is used to define a new shape. Once created, this
-        shape can be drawn with the `Py5Graphics.shape()` function. The basic way to use
-        the function defines new primitive shapes. One of the following parameters are
-        used as the first parameter: `ELLIPSE`, `RECT`, `ARC`, `TRIANGLE`, `SPHERE`,
-        `BOX`, `QUAD`, or `LINE`. The parameters for each of these different shapes are
-        the same as their corresponding functions: `Py5Graphics.ellipse()`,
-        `Py5Graphics.rect()`, `Py5Graphics.arc()`, `Py5Graphics.triangle()`,
-        `Py5Graphics.sphere()`, `Py5Graphics.box()`, `Py5Graphics.quad()`, and
-        `Py5Graphics.line()`.
-
-        Custom, unique shapes can be made by using `create_shape()` without a parameter.
-        After the shape is started, the drawing attributes and geometry can be set
-        directly to the shape within the `Py5Graphics.begin_shape()` and
-        `Py5Graphics.end_shape()` methods. See reference for `Py5Graphics.begin_shape()`
-        for all of its options.
-
-        The  `create_shape()` function can also be used to make a complex shape made of
-        other shapes. This is called a "group" and it's created by using the parameter
-        `GROUP` as the first parameter.
-
-        After using `create_shape()`, stroke and fill color can be set by calling
-        methods like `Py5Shape.set_fill()` and `Py5Shape.set_stroke()`, as seen in the
-        examples. The complete list of methods and fields for the `Py5Shape` class are
-        in the py5 documentation.
-
-        This method is the same as `create_shape()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `create_shape()`.
-        """
-        return self._instance.createShape(*args)
 
     @overload
     def curve(self, x1: float, y1: float, x2: float, y2: float,

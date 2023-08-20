@@ -81,7 +81,7 @@ def _py5_setup():
             _py5_user_ns
         )
 
-    py5.get(0, 0, {0}, {1}).save("{3}", use_thread=False)
+    py5.get_pixels(0, 0, {0}, {1}).save("{3}", use_thread=False)
     py5.exit_sketch()
 """
 

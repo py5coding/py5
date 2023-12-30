@@ -46,7 +46,7 @@ pip install py5
 
 ## Getting Started
 
-If you are new to Python, start with the [](https://py5coding.org/tutorials/intro_to_py5_and_python.html) tutorials. If you are familiar with Java programming and Processing, you'll find the [](https://py5coding.org/content/coming_from_processing_java.html) page to be helpful.
+If you are new to Python, start with the [intro to py5 and python](https://py5coding.org/tutorials/intro_to_py5_and_python.html) tutorials. If you are familiar with Java programming and Processing, you'll find the [Tips for Processing Java Users](https://py5coding.org/content/coming_from_processing_java.html) page to be helpful.
 
 There are currently five basic ways to use py5. They are:
 

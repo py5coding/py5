@@ -82,6 +82,12 @@ def sketch_portal(
     a Jupyter notebook. Each frame will appear embedded in the notebook, with each
     new frame replacing the previous frame.
 
+    **Unfortunately, the Sketch Portal feature had to be removed from py5 in release
+    0.10.0. Changes to Jupyter Lab and Jupyter Widgets somehow broke the code and it
+    was too difficult to figure out why. Rather than fix the code, the Sketch Portal
+    will be re-implemented using the Python library anywidget. This new approach
+    will hopefully be simpler to implement and easier to maintain.**
+
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
     running Sketch, such as a Sketch created using Class mode.
@@ -131,6 +137,10 @@ def sketch_portal(
     visible but the Sketch will still be streaming frames to the notebook client,
     wasting resources. A Sketch can only have one open portal, so opening a new
     portal with different options will replace an existing portal."""
+    raise RuntimeError(
+        "The sketch_widget() functionality is broken and was removed in py5 version 0.10.0. It will be re-introduced in a future release. Sorry!"
+    )
+
     environment = _environ.Environment()
     if not environment.in_ipython_session:
         raise RuntimeError(

@@ -23,11 +23,12 @@ import sys
 import tempfile
 import time
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Iterable
 
 import numpy as np
 import numpy.typing as npt
 import PIL
+from jpype import JClass
 from PIL.Image import Image as PIL_Image
 
 from .. import environ as _environ
@@ -66,6 +67,10 @@ def screenshot(*, sketch: Sketch = None, hook_post_draw: bool = False) -> PIL_Im
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
     running Sketch, such as a Sketch created using Class mode.
 
+    This function will not work on a Sketch with no `draw()` function that uses an
+    OpenGL renderer such as `P2D` or `P3D`. Either add a token `draw()` function or
+    switch to the default `JAVA2D` renderer.
+
     If your Sketch has a `post_draw()` method, use the `hook_post_draw` parameter to
     make this function run after `post_draw()` instead of `draw()`. This is
     important when using Processing libraries that support `post_draw()` such as
@@ -88,20 +93,32 @@ def screenshot(*, sketch: Sketch = None, hook_post_draw: bool = False) -> PIL_Im
         msg = "Calling py5_tools.screenshot() from within a py5 user function is not allowed. Please move this code to outside the Sketch or consider using save_frame() instead."
         raise RuntimeError(msg)
 
-    with tempfile.TemporaryDirectory() as tempdir:
-        temp_png = Path(tempdir) / "output.png"
-        hook = ScreenshotHook(temp_png)
+    if sketch._py5_bridge.has_function("draw"):
+        hook = ScreenshotHook()
         sketch._add_post_hook(
             "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
         )
 
         while not hook.is_ready and not hook.is_terminated:
             time.sleep(0.005)
+            if hook.is_ready:
+                return PIL.Image.fromarray(hook.pixels, mode="RGB")
+            elif hook.is_terminated and hook.exception:
+                raise RuntimeError("error running magic: " + str(hook.exception))
+    else:
+        # this works because Processing sees a dummy draw() in Sketch.java
+        # method and keeps looping
+        while sketch.frame_count < 1:
+            time.sleep(0.005)
 
-        if hook.is_ready:
-            return PIL.Image.open(temp_png)
-        elif hook.is_terminated and hook.exception:
-            raise RuntimeError("error running magic: " + str(hook.exception))
+        if isinstance(
+            sketch.get_graphics()._instance, JClass("processing.opengl.PGraphicsOpenGL")
+        ):
+            msg = "The py5_tools.screenshot() function cannot be used on an OpenGL Sketch with no draw() function."
+            raise RuntimeError(msg)
+        else:
+            sketch.load_np_pixels()
+            return PIL.Image.fromarray(sketch.np_pixels[:, :, 1:], mode="RGB")
 
 
 def save_frames(
@@ -158,7 +175,7 @@ def save_frames(
     directory specified by the `dirname` parameter. Set the `block` parameter to
     `True` to instruct the method to not return until the number of frames saved
     reaches the number specified by the `limit` parameter. This blocking feature is
-    not available on OSX when the Sketch is executed through an IPython kernel.
+    not available on macOS when the Sketch is executed through an IPython kernel.
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
@@ -192,7 +209,7 @@ def save_frames(
         raise RuntimeError(msg)
 
     if block and sys.platform == "darwin" and _environ.Environment().in_ipython_session:
-        raise RuntimeError("Blocking is not allowed on OSX when run from IPython")
+        raise RuntimeError("Blocking is not allowed on macOS when run from IPython")
 
     if block and py5.bridge.check_run_method_callstack():
         msg = "Calling py5_tools.save_frames() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
@@ -294,7 +311,7 @@ def offline_frame_processing(
     By default this function will return right away and will process frames in the
     background while the Sketch is running. Set the `block` parameter to `True` to
     instruct the method to not return until the processing is complete or the Sketch
-    terminates. This blocking feature is not available on OSX when the Sketch is
+    terminates. This blocking feature is not available on macOS when the Sketch is
     executed through an IPython kernel.
 
     Use the `sketch` parameter to specify a different running Sketch, such as a
@@ -340,10 +357,11 @@ def offline_frame_processing(
 
 def animated_gif(
     filename: str,
-    count: int,
-    period: float,
-    duration: float,
     *,
+    count: int = 0,
+    period: float = 0.0,
+    frame_numbers: Iterable = None,
+    duration: float = 0.0,
     loop: int = 0,
     optimize: bool = True,
     sketch: Sketch = None,
@@ -356,16 +374,19 @@ def animated_gif(
     ----------
 
     block: bool = False
-        method returns immediately (False) or blocks until function returns (True)
+        function returns immediately (False) or blocks until function returns (True)
 
-    count: int
+    count: int = 0
         number of Sketch snapshots to create
 
-    duration: float
+    duration: float = 0.0
         time in seconds between frames in the GIF
 
     filename: str
         filename of GIF to create
+
+    frame_numbers: Iterable = None
+        list of frame numbers to include in animated GIF
 
     hook_post_draw: bool = False
         attach hook to Sketch's post_draw method instead of draw
@@ -376,7 +397,7 @@ def animated_gif(
     optimize: bool = True
         optimize GIF palette
 
-    period: float
+    period: float = 0.0
         time in seconds between Sketch snapshots
 
     sketch: Sketch = None
@@ -387,23 +408,58 @@ def animated_gif(
 
     Create an animated GIF using a running Sketch.
 
-    By default the Sketch will be the currently running Sketch, as returned by
-    `get_current_sketch()`. Use the `sketch` parameter to specify a different
-    running Sketch, such as a Sketch created using Class mode.
+    You have two choices for how to specify which frames should be included in the
+    animated GIF. The first choice is to use the `count` keyword argument to include
+    a specific number of frames. Optionally, the `period` keyword argument can also
+    be used with `count` to introduce a fixed time delay between captured frames.
+    The second choice is to use the `frame_numbers` keyword argument to pass a list
+    of frame numbers. A frame will be included when the `frame_count` value is in
+    the list passed to `frame_numbers`. For this feature, frame number 0 is after
+    `setup()` is complete and frame number 1 is after the first call to `draw()`.
+
+    Bottom line, you must use either the `count` parameter or the `frame_numbers`
+    parameter but not both. The `period` parameter can only be used in conjunction
+    with the `count` parameter. The duration parameter must always be used.
 
     By default this function will return right away and construct the animated gif
     in the background while the Sketch is running. The completed gif will be saved
     to the location specified by the `filename` parameter when it is ready. Set the
-    `block` parameter to `True` to instruct the method to not return until the gif
-    construction is complete. This blocking feature is not available on OSX when the
-    Sketch is executed through an IPython kernel. If the Sketch terminates
+    `block` parameter to `True` to instruct the function to not return until the gif
+    construction is complete. This blocking feature is not available on macOS when
+    the Sketch is executed through an IPython kernel. If the Sketch terminates
     prematurely, no gif will be created.
+
+    By default the Sketch will be the currently running Sketch, as returned by
+    `get_current_sketch()`. Use the `sketch` parameter to specify a different
+    running Sketch, such as a Sketch created using Class mode.
 
     If your Sketch has a `post_draw()` method, use the `hook_post_draw` parameter to
     make this function run after `post_draw()` instead of `draw()`. This is
     important when using Processing libraries that support `post_draw()` such as
     Camera3D or ColorBlindness."""
     import py5
+
+    if count > 0 and frame_numbers is None:
+        # ok
+        pass
+    elif (
+        count == 0 and frame_numbers is not None and isinstance(frame_numbers, Iterable)
+    ):
+        # ok, but check period is still 0.0
+        if period != 0.0:
+            raise RuntimeError(
+                "Must not pass period parameter when using the frame_numbers parameter"
+            )
+    else:
+        # not ok
+        raise RuntimeError(
+            "Must either pass count > 0 or pass frame_numbers an iterable, but not both"
+        )
+
+    if duration <= 0.0:
+        raise RuntimeError(
+            "Must pass a duration > 0.0 to specify the time delay between frames in the animated gif"
+        )
 
     if sketch is None:
         sketch = py5.get_current_sketch()
@@ -418,7 +474,7 @@ def animated_gif(
         raise RuntimeError(msg)
 
     if block and sys.platform == "darwin" and _environ.Environment().in_ipython_session:
-        raise RuntimeError("Blocking is not allowed on OSX when run from IPython")
+        raise RuntimeError("Blocking is not allowed on macOS when run from IPython")
 
     if block and py5.bridge.check_run_method_callstack():
         msg = "Calling py5_tools.animated_gif() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
@@ -443,10 +499,15 @@ def animated_gif(
 
         hook.status_msg("animated gif written to " + str(filename))
 
-    hook = GrabFramesHook(period, count, complete_func)
+    hook_setup = bool(frame_numbers and 0 in frame_numbers)
+    hook = GrabFramesHook(
+        frame_numbers, period, count, complete_func, hooked_setup=hook_setup
+    )
     sketch._add_post_hook(
         "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
     )
+    if hook_setup:
+        sketch._add_post_hook("setup", hook.hook_name, hook)
 
     if block:
         while not hook.is_ready and not hook.is_terminated:
@@ -454,9 +515,10 @@ def animated_gif(
 
 
 def capture_frames(
-    count: float,
     *,
+    count: float = 0,
     period: float = 0.0,
+    frame_numbers: Iterable = None,
     sketch: Sketch = None,
     hook_post_draw: bool = False,
     block: bool = False,
@@ -467,10 +529,13 @@ def capture_frames(
     ----------
 
     block: bool = False
-        method returns immediately (False) or blocks until function returns (True)
+        function returns immediately (False) or blocks until function returns (True)
 
-    count: float
+    count: float = 0
         number of Sketch snapshots to capture
+
+    frame_numbers: Iterable = None
+        list of frame numbers to capture
 
     hook_post_draw: bool = False
         attach hook to Sketch's post_draw method instead of draw
@@ -486,13 +551,26 @@ def capture_frames(
 
     Capture frames from a running Sketch.
 
+    You have two choices for how to specify which frames should be captured. The
+    first choice is to use the `count` keyword argument to capture a specific number
+    of frames. Optionally, the `period` keyword argument can also be used with
+    `count` to introduce a fixed time delay between captured frames. The second
+    choice is to use the `frame_numbers` keyword argument to pass a list of frame
+    numbers. A frame will be captured when the `frame_count` value is in the list
+    passed to `frame_numbers`. For this feature, frame number 0 is after `setup()`
+    is complete and frame number 1 is after the first call to `draw()`.
+
+    Bottom line, you must use either the `count` parameter or the `frame_numbers`
+    parameter but not both. The `period` parameter can only be used in conjunction
+    with the `count` parameter.
+
     By default this function will return right away and will capture frames in the
     background while the Sketch is running. The returned list of PIL Image objects
     (`list[PIL.Image]`) will initially be empty, and will be populated all at once
     when the complete set of frames has been captured. Set the `block` parameter to
-    `True` to instruct the method to capture the frames in the foreground and to not
-    return until the complete list of frames is ready to be returned. To get access
-    to the captured frames as they become available, use the
+    `True` to instruct this function to capture the frames in the foreground and to
+    not return until the complete list of frames is ready to be returned. To get
+    access to the captured frames as they become available, use the
     `py5_tools.offline_frame_processing()` function instead. If the Sketch is
     terminated prematurely, the returned list will be empty.
 
@@ -505,6 +583,23 @@ def capture_frames(
     important when using Processing libraries that support `post_draw()` such as
     Camera3D or ColorBlindness."""
     import py5
+
+    if count > 0 and frame_numbers is None:
+        # ok
+        pass
+    elif (
+        count == 0 and frame_numbers is not None and isinstance(frame_numbers, Iterable)
+    ):
+        # ok, but check period is still 0.0
+        if period != 0.0:
+            raise RuntimeError(
+                "Must not pass period parameter when using the frame_numbers parameter"
+            )
+    else:
+        # not ok
+        raise RuntimeError(
+            "Must either pass count > 0 or pass frame_numbers an iterable, but not both"
+        )
 
     if sketch is None:
         sketch = py5.get_current_sketch()
@@ -519,7 +614,7 @@ def capture_frames(
         raise RuntimeError(msg)
 
     if block and sys.platform == "darwin" and _environ.Environment().in_ipython_session:
-        raise RuntimeError("Blocking is not allowed on OSX when run from IPython")
+        raise RuntimeError("Blocking is not allowed on macOS when run from IPython")
 
     if block and py5.bridge.check_run_method_callstack():
         msg = "Calling py5_tools.capture_frames() from within a py5 user function with `block=True` is not allowed. Please move this code to outside the Sketch or set `block=False`."
@@ -529,12 +624,17 @@ def capture_frames(
 
     def complete_func(hook):
         results.extend([PIL.Image.fromarray(arr, mode="RGB") for arr in hook.frames])
-        hook.status_msg(f"captured {count} frames")
+        hook.status_msg(f"captured {len(hook.frames)} frames")
 
-    hook = GrabFramesHook(period, count, complete_func)
+    hook_setup = bool(frame_numbers and 0 in frame_numbers)
+    hook = GrabFramesHook(
+        frame_numbers, period, count, complete_func, hooked_setup=hook_setup
+    )
     sketch._add_post_hook(
         "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
     )
+    if hook_setup:
+        sketch._add_post_hook("setup", hook.hook_name, hook)
 
     if block:
         while not hook.is_ready and not hook.is_terminated:

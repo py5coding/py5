@@ -37,13 +37,16 @@ def _convertable(obj):
     return any(pre(obj) for pre, _ in pimage_functions)
 
 
-def _convert(obj):
+def _convert(sketch, obj, **kwargs):
     for precondition, convert_function in pimage_functions:
         if precondition(obj):
-            obj = convert_function(obj)
+            obj = convert_function(sketch, obj, **kwargs)
             break
     else:
-        raise RuntimeError(f"Py5 Converter is not able to convert {str(obj)}")
+        classname = f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+        raise RuntimeError(
+            f"py5 convert_image() method is not able to convert objects of type {classname}"
+        )
 
     return obj
 
@@ -69,15 +72,17 @@ def register_image_conversion(
     This will allow users to extend py5's capabilities and compatability within the
     Python ecosystem.
 
-    The `precondition` parameter must be function that accepts an object as a
+    The `precondition` parameter must be a function that accepts an object as a
     parameter and returns `True` if and only if the `convert_function` can
     successfully convert the object.
 
     The `convert_function` parameter must be a function that accepts an object as a
     parameter and returns either a filename that can be read by `load_image()`, a
     `py5.NumpyImageArray` object, or a `Py5Image` object. View py5's source code for
-    detailed information about `py5.NumpyImageArray` objects."""
-    pimage_functions.append((precondition, convert_function))
+    detailed information about `py5.NumpyImageArray` objects. The `convert_function`
+    will take care of loading an image from a returned image filename or converting
+    the `py5.NumpyImageArray` object into a Py5Image object."""
+    pimage_functions.insert(0, (precondition, convert_function))
 
 
 ###############################################################################
@@ -124,7 +129,7 @@ def numpy_image_array_precondition(obj):
     return isinstance(obj, NumpyImageArray)
 
 
-def numpy_image_array_converter(obj):
+def numpy_image_array_converter(sketch, obj, **kwargs):
     return obj
 
 
@@ -135,7 +140,7 @@ def pillow_image_to_ndarray_precondition(obj):
     return isinstance(obj, Image.Image)
 
 
-def pillow_image_to_ndarray_converter(img):
+def pillow_image_to_ndarray_converter(sketch, img, **kwargs):
     if img.mode not in ["RGB", "RGBA"]:
         img = img.convert(mode="RGB")
     return NumpyImageArray(np.asarray(img), img.mode)
@@ -163,11 +168,38 @@ try:
         else:
             return False
 
-    def svg_file_to_ndarray_converter(filename):
+    def svg_file_to_ndarray_converter(sketch, filename, **kwargs):
+        parent_width = kwargs.get("parent_width", None)
+        parent_height = kwargs.get("parent_height", None)
+        dpi = kwargs.get("dpi", 96)
+        scale = kwargs.get("scale", 1)
+        unsafe = kwargs.get("unsafe", False)
+        background_color = kwargs.get("background_color", None)
+        negate_colors = kwargs.get("negate_colors", False)
+        invert_images = kwargs.get("invert_images", False)
+        output_width = kwargs.get("output_width", None)
+        output_height = kwargs.get("output_height", None)
+
         filename = Path(filename)
         with open(filename, "r") as f:
-            img = Image.open(io.BytesIO(cairosvg.svg2png(file_obj=f)))
-            return pillow_image_to_ndarray_converter(img)
+            img = Image.open(
+                io.BytesIO(
+                    cairosvg.svg2png(
+                        file_obj=f,
+                        dpi=dpi,
+                        parent_width=parent_width,
+                        parent_height=parent_height,
+                        scale=scale,
+                        unsafe=unsafe,
+                        background_color=background_color,
+                        negate_colors=negate_colors,
+                        invert_images=invert_images,
+                        output_width=output_width,
+                        output_height=output_height,
+                    )
+                )
+            )
+            return pillow_image_to_ndarray_converter(sketch, img, **kwargs)
 
     register_image_conversion(
         svg_file_to_ndarray_precondition, svg_file_to_ndarray_converter
@@ -182,7 +214,7 @@ try:
     def cairocffi_surface_to_tempfile_precondition(obj):
         return isinstance(obj, cairocffi.Surface)
 
-    def cairocffi_surface_to_tempfile_converter(surface):
+    def cairocffi_surface_to_tempfile_converter(sketch, surface, **kwargs):
         temp_png = _TEMP_DIR / f"{uuid.uuid4()}.png"
         surface.write_to_png(temp_png.as_posix())
         return temp_png
@@ -201,7 +233,7 @@ try:
     def cairo_surface_to_tempfile_precondition(obj):
         return isinstance(obj, cairo.Surface)
 
-    def cairo_surface_to_tempfile_converter(surface):
+    def cairo_surface_to_tempfile_converter(sketch, surface, **kwargs):
         temp_png = _TEMP_DIR / f"{uuid.uuid4()}.png"
         surface.write_to_png(temp_png.as_posix())
         return temp_png
@@ -220,7 +252,7 @@ try:
     def figure_to_ndarray_precondition(obj):
         return isinstance(obj, Figure)
 
-    def figure_to_ndarray_converter(figure):
+    def figure_to_ndarray_converter(sketch, figure, **kwargs):
         canvas = FigureCanvasAgg(figure)
         canvas.draw()
         return NumpyImageArray(np.asarray(canvas.buffer_rgba()), "RGBA")

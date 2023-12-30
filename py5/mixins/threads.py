@@ -45,6 +45,9 @@ class Py5Promise:
         self._result = result
         self._is_ready = True
 
+    def __bool__(self) -> bool:
+        return self._is_ready
+
 
 class Py5Thread:
     def __init__(self, sketch, f, args, kwargs):

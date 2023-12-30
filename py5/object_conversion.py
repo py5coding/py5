@@ -20,8 +20,9 @@
 import pathlib
 
 import numpy as np
-from jpype import JArray, JClass, _jcustomizer
+from jpype import JArray, JClass, JInt, _jcustomizer
 
+from .color import Py5Color
 from .pmath import (
     _numpy_to_pmatrix_converter,
     _numpy_to_pvector_converter,
@@ -107,6 +108,8 @@ def convert_to_java_type(obj):
             return obj._data
         else:
             return _py5vector_to_pvector_converter(obj)
+    elif isinstance(obj, Py5Color):
+        return JInt(obj)
     elif isinstance(obj, pathlib.Path):
         return _String(obj.as_posix())
     elif isinstance(obj, np.ndarray):

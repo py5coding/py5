@@ -17,14 +17,4 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-"""
-Utilities and accessory tools for py5. 
-"""
-from . import translators  # noqa
-from .config import *  # noqa
-from .hooks import *  # noqa
-from .imported import _lock_imported_mode, get_imported_mode, set_imported_mode  # noqa
-from .jvm import *  # noqa
-from .libraries import *  # noqa
-
-__version__ = "0.10.0a0"
+from . import css4, mpl_cmaps, xkcd

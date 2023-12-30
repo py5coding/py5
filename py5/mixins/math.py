@@ -75,8 +75,7 @@ class MathMixin:
         Conveniently, the hex color string returned by this method can also be used as
         parameter for other methods that accept color values. Observe how this is done
         in the example code."""
-        c = hex(np.uint32(color & 0xFFFFFFFF))[2:].zfill(8).upper()
-        return "#" + c[2:] + c[:2]
+        return "#%06X%02X" % (color & 0xFFFFFF, (color >> 24) & 0xFF)
 
     @classmethod
     def sin(cls, angle: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:

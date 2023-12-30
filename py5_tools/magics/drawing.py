@@ -372,7 +372,7 @@ class DrawingMagics(Magics):
         your code in the `setup()` function. By default it will use the default
         Processing renderer.
 
-        On OSX, only the default renderer is currently supported. Other platforms
+        On macOS, only the default renderer is currently supported. Other platforms
         support the default renderer and the OpenGL renderers (P2D and P3D).
 
         Internally this magic command creates a static Sketch using the user provided
@@ -398,7 +398,7 @@ class DrawingMagics(Magics):
         if sys.platform == "darwin":
             if args.renderer in ["P2D", "P3D", "DXF"]:
                 print(
-                    f"Sorry, py5 magics do not support the {args.renderer} renderer on OSX.",
+                    f"Sorry, py5 magics do not support the {args.renderer} renderer on macOS.",
                     file=sys.stderr,
                 )
                 return
@@ -468,7 +468,7 @@ class DXFDrawingMagic(Magics):
         As this is creating a DXF file, your code will be limited to the capabilities of
         that renderer.
 
-        This magic is not available on OSX.
+        This magic is not available on macOS.
 
         Code used in this cell can reference functions and variables defined in other
         cells because a copy of the user namespace is provided during execution. By

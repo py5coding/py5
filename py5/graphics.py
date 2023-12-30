@@ -30,7 +30,14 @@ from jpype import JClass
 
 from . import spelling
 from .base import Py5Base
-from .decorators import _context_wrapper, _convert_hex_color, _text_fix_str  # noqa
+from .color import Py5Color  # noqa
+from .decorators import (
+    _context_wrapper,
+    _convert_hex_color,
+    _hex_converter,
+    _return_color,
+    _text_fix_str,
+)
 from .font import Py5Font  # noqa
 from .image import Py5Image, _return_py5image  # noqa
 from .mixins import PixelPy5GraphicsMixin
@@ -211,7 +218,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         ----------
 
         coordinates: npt.NDArray[np.floating]
-            2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+            2D array of vertex coordinates and optional UV texture mapping values
 
         Notes
         -----
@@ -222,6 +229,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         The `coordinates` parameter should be a numpy array with one row for each
         vertex. There should be two or three columns for 2D or 3D points, respectively.
+        There may also be an additional two columns for UV texture mapping values.
 
         This method is the same as `vertices()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `vertices()`."""
@@ -549,6 +557,1088 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         object. To see example code for how it can be used, see `create_shape()`."""
         return _Py5GraphicsHelper.createShape(self._instance, *args)
 
+    @overload
+    def color(self, c: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, c: int, alpha: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, c: int, alpha: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, gray: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, gray: float, alpha: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, v1: float, v2: float, v3: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, v1: float, v2: float, v3: float, a: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, v1: int, v2: int, v3: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, v1: int, v2: int, v3: int, a: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        pass
+
+    @overload
+    def color(self, hex_code: str, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, hex_code: str, alpha: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    def color(self, *args) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PGraphics.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(c: int, /) -> int
+         * color(c: int, alpha: float, /) -> int
+         * color(c: int, alpha: int, /) -> int
+         * color(gray: float, /) -> int
+         * color(gray: float, alpha: float, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, a: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, a: int, /) -> int
+
+        Parameters
+        ----------
+
+        a: float
+            alpha value relative to current color range
+
+        a: int
+            alpha value relative to current color range
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        c: int
+            color value
+
+        gray: float
+            gray value relative to current color range
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
+        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
+        (see the first example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that when using hexadecimal notation, it is not necessary to use `color()`,
+        as in: `c = 0x006699`
+
+        This method is the same as `color()` but linked to a `Py5Graphics` object. To
+        see example code for how it can be used, see `color()`."""
+        args = list(args)
+
+        if not isinstance(args[0], Py5Color):
+            if (new_arg := _hex_converter(args[0])) is not None:
+                args[0] = Py5Color(new_arg, _creator_instance=self)
+
+            if len(args) == 1 and isinstance(args[0], Py5Color):
+                return args[0]
+
+        return Py5Color(self._instance.color(*args), _creator_instance=self)
+
     ADD = 2
     ALPHA = 4
     ALPHA_MASK = -16777216
@@ -779,7 +1869,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Height of the Py5Graphics drawing surface in pixels. When `pixel_density(2)` was
         used in `settings()` to make use of a high resolution display (called a Retina
-        display on OSX or high-dpi on Windows and Linux), the width and height of the
+        display on macOS or high-dpi on Windows and Linux), the width and height of the
         Py5Graphics drawing surface does not change, but the number of pixels is
         doubled. As a result, all operations that use pixels (like
         `Py5Graphics.load_pixels()`, `Py5Graphics.get_pixels()`, etc.) happen in this
@@ -806,7 +1896,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Height of the Py5Graphics drawing surface in pixels. When `pixel_density(2)` was
         used in `settings()` to make use of a high resolution display (called a Retina
-        display on OSX or high-dpi on Windows and Linux), the width and height of the
+        display on macOS or high-dpi on Windows and Linux), the width and height of the
         Py5Graphics drawing surface does not change, but the number of pixels is
         doubled. As a result, all operations that use pixels (like
         `Py5Graphics.load_pixels()`, `Py5Graphics.get_pixels()`, etc.) happen in this
@@ -831,7 +1921,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Width of the Py5Graphics drawing surface in pixels. When `pixel_density(2)` was
         used in `settings()` to make use of a high resolution display (called a Retina
-        display on OSX or high-dpi on Windows and Linux), the width and height of the
+        display on macOS or high-dpi on Windows and Linux), the width and height of the
         Py5Graphics drawing surface does not change, but the number of pixels is
         doubled. As a result, all operations that use pixels (like
         `Py5Graphics.load_pixels()`, `Py5Graphics.get_pixels()`, etc.) happen in this
@@ -858,7 +1948,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Width of the Py5Graphics drawing surface in pixels. When `pixel_density(2)` was
         used in `settings()` to make use of a high resolution display (called a Retina
-        display on OSX or high-dpi on Windows and Linux), the width and height of the
+        display on macOS or high-dpi on Windows and Linux), the width and height of the
         Py5Graphics drawing surface does not change, but the number of pixels is
         doubled. As a result, all operations that use pixels (like
         `Py5Graphics.load_pixels()`, `Py5Graphics.get_pixels()`, etc.) happen in this
@@ -935,6 +2025,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         0xFF` both extract the alpha value from a color variable `c` but the later is
         faster.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `alpha()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `alpha()`.
         """
@@ -983,6 +2078,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         and half of the green light to reflect. Use in combination with
         `Py5Graphics.emissive()`, `Py5Graphics.specular()`, and
         `Py5Graphics.shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `ambient()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `ambient()`.
@@ -1033,6 +2133,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.emissive()`, `Py5Graphics.specular()`, and
         `Py5Graphics.shininess()` to set the material properties of shapes.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `ambient()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `ambient()`.
         """
@@ -1082,6 +2187,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.emissive()`, `Py5Graphics.specular()`, and
         `Py5Graphics.shininess()` to set the material properties of shapes.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `ambient()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `ambient()`.
         """
@@ -1130,6 +2240,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         and half of the green light to reflect. Use in combination with
         `Py5Graphics.emissive()`, `Py5Graphics.specular()`, and
         `Py5Graphics.shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `ambient()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `ambient()`.
@@ -1885,6 +3000,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
         """
@@ -1945,6 +3065,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `background()` will ignore the current `Py5Graphics.tint()` setting. To resize
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
@@ -2007,6 +3132,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
         """
@@ -2067,6 +3197,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `background()` will ignore the current `Py5Graphics.tint()` setting. To resize
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
@@ -2129,6 +3264,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
         """
@@ -2189,6 +3329,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `background()` will ignore the current `Py5Graphics.tint()` setting. To resize
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
@@ -2251,6 +3396,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
         """
@@ -2311,6 +3461,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `background()` will ignore the current `Py5Graphics.tint()` setting. To resize
         an image to the size of the `Py5Graphics` object, use `image.resize(width,
         height)`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `background()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `background()`.
@@ -3622,6 +4777,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         to remove the other color components. For example, `blue(c)` and `c & 0xFF` both
         extract the blue value from a color variable `c` but the later is faster.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `blue()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `blue()`.
         """
@@ -3762,6 +4922,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         -----
 
         Extracts the brightness value from a color.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `brightness()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `brightness()`.
@@ -4043,836 +5208,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         example code for how it can be used, see `clip()`.
         """
         return self._instance.clip(a, b, c, d)
-
-    @overload
-    def color(self, gray: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, gray: float, alpha: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, v1: float, v2: float, v3: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, v1: float, v2: float, v3: float, a: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, c: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, c: int, alpha: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, c: int, alpha: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, v1: int, v2: int, v3: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @overload
-    def color(self, v1: int, v2: int, v3: int, a: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        pass
-
-    @_convert_hex_color()
-    def color(self, *args):
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PGraphics.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(c: int, /) -> int
-         * color(c: int, alpha: float, /) -> int
-         * color(c: int, alpha: int, /) -> int
-         * color(gray: float, /) -> int
-         * color(gray: float, alpha: float, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, a: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, a: int, /) -> int
-
-        Parameters
-        ----------
-
-        a: float
-            alpha value relative to current color range
-
-        a: int
-            alpha value relative to current color range
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        c: int
-            color value
-
-        gray: float
-            gray value relative to current color range
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `Py5Graphics.color_mode()`. The default mode is `RGB` values from 0
-        to 255 and, therefore, `color(255, 204, 0)` will return a bright yellow color
-        (see the first example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that when using hexadecimal notation, it is not necessary to use `color()`,
-        as in: `c = 0x006699`
-
-        This method is the same as `color()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `color()`.
-        """
-        return self._instance.color(*args)
 
     @overload
     def color_mode(self, mode: int, /) -> None:
@@ -6109,6 +6444,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.specular()`, and `Py5Graphics.shininess()` to set the material
         properties of shapes.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `emissive()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `emissive()`.
         """
@@ -6155,6 +6495,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         screen. Use in combination with `Py5Graphics.ambient()`,
         `Py5Graphics.specular()`, and `Py5Graphics.shininess()` to set the material
         properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `emissive()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `emissive()`.
@@ -6203,6 +6548,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.specular()`, and `Py5Graphics.shininess()` to set the material
         properties of shapes.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `emissive()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `emissive()`.
         """
@@ -6249,6 +6599,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         screen. Use in combination with `Py5Graphics.ambient()`,
         `Py5Graphics.specular()`, and `Py5Graphics.shininess()` to set the material
         properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `emissive()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `emissive()`.
@@ -6508,6 +6863,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
         """
@@ -6581,6 +6941,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         value is 255.
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
@@ -6656,6 +7021,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
         """
@@ -6729,6 +7099,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         value is 255.
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
@@ -6804,6 +7179,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
         """
@@ -6878,6 +7258,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
         """
@@ -6951,6 +7336,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         value is 255.
 
         To change the color of an image or a texture, use `Py5Graphics.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `fill()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `fill()`.
@@ -7644,6 +8034,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         0xFF` both extract the green value from a color variable `c` but the later is
         faster.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `green()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `green()`.
         """
@@ -7754,6 +8149,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         -----
 
         Extracts the hue value from a color.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `hue()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `hue()`.
@@ -8131,6 +8531,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         at 1. This is different from the behavior of `lerp()`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `lerp_color()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `lerp_color()`.
         """
@@ -8177,11 +8582,17 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         at 1. This is different from the behavior of `lerp()`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `lerp_color()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `lerp_color()`.
         """
         pass
 
+    @_return_color
     @_convert_hex_color(indices=[0, 1])
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
@@ -8222,6 +8633,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of `lerp()`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `lerp_color()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `lerp_color()`.
@@ -8667,10 +9083,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
-        If the file is not available or an error occurs, `None` will be returned and an
-        error message will be printed to the console. The error message does not halt
-        the program, however the `None` value may cause errors if your code does not
-        check whether the value returned is `None`.
+        If the shape file is not available or for whatever reason a shape cannot be
+        created, an exception will be thrown.
 
         This method is the same as `load_shape()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `load_shape()`.
@@ -8713,10 +9127,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
-        If the file is not available or an error occurs, `None` will be returned and an
-        error message will be printed to the console. The error message does not halt
-        the program, however the `None` value may cause errors if your code does not
-        check whether the value returned is `None`.
+        If the shape file is not available or for whatever reason a shape cannot be
+        created, an exception will be thrown.
 
         This method is the same as `load_shape()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `load_shape()`.
@@ -8759,10 +9171,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
-        If the file is not available or an error occurs, `None` will be returned and an
-        error message will be printed to the console. The error message does not halt
-        the program, however the `None` value may cause errors if your code does not
-        check whether the value returned is `None`.
+        If the shape file is not available or for whatever reason a shape cannot be
+        created, an exception will be thrown.
 
         This method is the same as `load_shape()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `load_shape()`.
@@ -10479,6 +10889,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         0xFF` both extract the red value from a color variable `c` but the later is
         faster.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `red()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `red()`.
         """
@@ -10859,6 +11274,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         -----
 
         Extracts the saturation value from a color.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `saturation()` but linked to a `Py5Graphics` object.
         To see example code for how it can be used, see `saturation()`.
@@ -12144,6 +12564,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.emissive()`, `Py5Graphics.ambient()`, and `Py5Graphics.shininess()`
         to set the material properties of shapes.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `specular()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `specular()`.
         """
@@ -12192,6 +12617,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         bouncing in all directions like a diffuse light). Use in combination with
         `Py5Graphics.emissive()`, `Py5Graphics.ambient()`, and `Py5Graphics.shininess()`
         to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `specular()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `specular()`.
@@ -12242,6 +12672,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `Py5Graphics.emissive()`, `Py5Graphics.ambient()`, and `Py5Graphics.shininess()`
         to set the material properties of shapes.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `specular()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `specular()`.
         """
@@ -12290,6 +12725,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         bouncing in all directions like a diffuse light). Use in combination with
         `Py5Graphics.emissive()`, `Py5Graphics.ambient()`, and `Py5Graphics.shininess()`
         to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `specular()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `specular()`.
@@ -12630,6 +13070,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
         """
@@ -12704,6 +13149,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
@@ -12780,6 +13230,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
         """
@@ -12854,6 +13309,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
@@ -12930,6 +13390,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
         """
@@ -13005,6 +13470,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
         """
@@ -13079,6 +13549,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `Py5Graphics.hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `stroke()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `stroke()`.
@@ -15024,6 +15499,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         The `tint()` function is also used to control the coloring of textures in 3D.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.
         """
@@ -15099,6 +15579,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.
@@ -15176,6 +15661,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         The `tint()` function is also used to control the coloring of textures in 3D.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.
         """
@@ -15251,6 +15741,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.
@@ -15328,6 +15823,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         The `tint()` function is also used to control the coloring of textures in 3D.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.
         """
@@ -15404,6 +15904,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         The `tint()` function is also used to control the coloring of textures in 3D.
 
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
+
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.
         """
@@ -15479,6 +15984,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
 
         This method is the same as `tint()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `tint()`.

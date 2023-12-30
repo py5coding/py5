@@ -66,7 +66,7 @@ class Py5BotMagics(Magics):
         that both of the OpenGL renderers will briefly open a window on your screen.
         This magic is only available when using the py5 kernel and coding in imported
         mode. The `P2D` and `P3D` renderers are not available when the py5 kernel is
-        hosted on an OSX computer.
+        hosted on a macOS computer.
 
         Code used in this cell can reference functions and variables defined in other
         cells because a copy of the user namespace is provided during execution.

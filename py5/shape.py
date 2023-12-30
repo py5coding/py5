@@ -33,9 +33,10 @@ from jpype.types import JBoolean, JFloat, JInt
 from . import spelling
 from .decorators import (
     _context_wrapper,
-    _convert_hex_color,  # noqa
+    _convert_hex_color,
     _convert_hex_color2,
     _ret_str,
+    _return_color,
 )
 from .pmath import _get_pvector_wrapper  # noqa
 
@@ -80,15 +81,22 @@ def _py5shape_type_fixer(f):
 def _load_py5shape(f):
     @functools.wraps(f)
     def decorated(self_, *args):
+        msg, pshape = "", None
+
         try:
-            return Py5Shape(f(self_, *args))
-        except JException as e:
+            if (pshape := f(self_, *args)) is None:
+                msg = "Processing unable to read shape file"
+        except Exception as e:
             msg = e.message()
             if msg == "None":
                 msg = "shape file cannot be found"
-        raise RuntimeError(
-            "cannot load shape " + str(args[0]) + ". error message: " + msg
-        )
+
+        if pshape is None:
+            raise RuntimeError(
+                "cannot load shape " + str(args[0]) + ". error message: " + msg
+            )
+        else:
+            return Py5Shape(pshape)
 
     return decorated
 
@@ -153,6 +161,149 @@ class Py5Shape:
 
     # *** BEGIN METHODS ***
 
+    def _get_width(self) -> float:
+        """Get the `Py5Shape` object's width.
+
+        Underlying Processing field: PShape.width
+
+        Notes
+        -----
+
+        Get the `Py5Shape` object's width. When using the `P2D` or `P3D` renderers, the
+        value should be the width of the drawn shape. When using the default renderer,
+        this will be the width of the drawing area, which will not necessarily be the
+        same as the width of the drawn shape. Consider that the shape's vertices might
+        have negative values or the shape may be offset from the shape's origin. To get
+        the shape's actual width, calculate the range of the vertices obtained with
+        `Py5Shape.get_vertex_x()`."""
+        return self._instance.getWidth()
+
+    width: float = property(
+        fget=_get_width,
+        doc="""Get the `Py5Shape` object's width.
+
+        Underlying Processing field: PShape.width
+
+        Notes
+        -----
+
+        Get the `Py5Shape` object's width. When using the `P2D` or `P3D` renderers, the
+        value should be the width of the drawn shape. When using the default renderer,
+        this will be the width of the drawing area, which will not necessarily be the
+        same as the width of the drawn shape. Consider that the shape's vertices might
+        have negative values or the shape may be offset from the shape's origin. To get
+        the shape's actual width, calculate the range of the vertices obtained with
+        `Py5Shape.get_vertex_x()`.""",
+    )
+
+    def _get_height(self) -> float:
+        """Get the `Py5Shape` object's height.
+
+        Underlying Processing field: PShape.height
+
+        Notes
+        -----
+
+        Get the `Py5Shape` object's height. When using the `P2D` or `P3D` renderers, the
+        value should be the height of the drawn shape. When using the default renderer,
+        this will be the height of the drawing area, which will not necessarily be the
+        same as the height of the drawn shape. Consider that the shape's vertices might
+        have negative values or the shape may be offset from the shape's origin. To get
+        the shape's actual height, calculate the range of the vertices obtained with
+        `Py5Shape.get_vertex_y()`."""
+        return self._instance.getHeight()
+
+    height: float = property(
+        fget=_get_height,
+        doc="""Get the `Py5Shape` object's height.
+
+        Underlying Processing field: PShape.height
+
+        Notes
+        -----
+
+        Get the `Py5Shape` object's height. When using the `P2D` or `P3D` renderers, the
+        value should be the height of the drawn shape. When using the default renderer,
+        this will be the height of the drawing area, which will not necessarily be the
+        same as the height of the drawn shape. Consider that the shape's vertices might
+        have negative values or the shape may be offset from the shape's origin. To get
+        the shape's actual height, calculate the range of the vertices obtained with
+        `Py5Shape.get_vertex_y()`.""",
+    )
+
+    def _get_depth(self) -> float:
+        """Get the `Py5Shape` object's depth.
+
+        Underlying Processing field: PShape.depth
+
+        Notes
+        -----
+
+        Get the `Py5Shape` object's depth. This property only makes sense when using the
+        `P3D` renderer. The value will be equal to 0 when using default renderer."""
+        return self._instance.getDepth()
+
+    depth: float = property(
+        fget=_get_depth,
+        doc="""Get the `Py5Shape` object's depth.
+
+        Underlying Processing field: PShape.depth
+
+        Notes
+        -----
+
+        Get the `Py5Shape` object's depth. This property only makes sense when using the
+        `P3D` renderer. The value will be equal to 0 when using default renderer.""",
+    )
+
+    def set_strokes(self, strokes: npt.NDArray[np.int32], /) -> None:
+        """Set the stroke color for each of the individual vertices of a `Py5Shape`.
+
+        Parameters
+        ----------
+
+        strokes: npt.NDArray[np.int32]
+            array of stroke colors
+
+        Notes
+        -----
+
+        Set the stroke color for each of the individual vertices of a `Py5Shape`. The
+        length of the passed `strokes` array must equal the number of vertices in the
+        shape. This method exists to provide an alternative to repeatedly calling
+        `Py5Shape.set_fill()` in a loop.
+
+        This method can only be used after the shape has been created. Do not use this
+        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`.
+        """
+        if isinstance(strokes, types.GeneratorType):
+            strokes = list(strokes)
+        _Py5ShapeHelper.setStrokes(self._instance, strokes)
+
+    def set_fills(self, fills: npt.NDArray[np.int32], /) -> None:
+        """Set the fill color for each of the individual vertices of a `Py5Shape`.
+
+        Parameters
+        ----------
+
+        fills: npt.NDArray[np.int32]
+            array of fill colors
+
+        Notes
+        -----
+
+        Set the fill color for each of the individual vertices of a `Py5Shape`. The
+        length of the passed `fills` array must equal the number of vertices in the
+        shape. This method exists to provide an alternative to repeatedly calling
+        `Py5Shape.set_fill()` in a loop.
+
+        This method can only be used after the shape has been created. Do not use this
+        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`.
+        """
+        if isinstance(fills, types.GeneratorType):
+            fills = list(fills)
+        _Py5ShapeHelper.setFills(self._instance, fills)
+
     def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of vertices.
 
@@ -160,7 +311,7 @@ class Py5Shape:
         ----------
 
         coordinates: npt.NDArray[np.floating]
-            2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+            2D array of vertex coordinates and optional UV texture mapping values
 
         Notes
         -----
@@ -171,7 +322,7 @@ class Py5Shape:
 
         The `coordinates` parameter should be a numpy array with one row for each
         vertex. There should be two or three columns for 2D or 3D points, respectively.
-        """
+        There may also be an additional two columns for UV texture mapping values."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5ShapeHelper.vertices(self._instance, coordinates)
@@ -451,6 +602,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The ambient color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -501,6 +657,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The ambient color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -551,6 +712,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The ambient color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -601,6 +767,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The ambient color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.ambient(*args)
 
@@ -2002,6 +2173,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The emissive color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2048,6 +2224,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The emissive color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2094,6 +2275,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The emissive color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2140,6 +2326,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The emissive color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.emissive(*args)
 
@@ -2341,6 +2532,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2418,6 +2614,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2495,6 +2696,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2572,6 +2778,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2649,6 +2860,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2726,6 +2942,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2803,6 +3024,11 @@ class Py5Shape:
 
         To change the color of a `Py5Shape` object's image or a texture, use
         `Py5Shape.tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.fill(*args)
 
@@ -2829,6 +3055,7 @@ class Py5Shape:
         """
         return self._instance.findChild(target)
 
+    @_return_color
     def get_ambient(self, index: int, /) -> int:
         """Get the ambient reflectance setting for one of a `Py5Shape` object's vertices.
 
@@ -3018,6 +3245,7 @@ class Py5Shape:
         """
         return self._instance.getDepth()
 
+    @_return_color
     def get_emissive(self, index: int, /) -> int:
         """Get the emissive color setting for one of a `Py5Shape` object's vertices.
 
@@ -3052,6 +3280,7 @@ class Py5Shape:
         """
         return self._instance.getFamily()
 
+    @_return_color
     def get_fill(self, index: int, /) -> int:
         """Gets the fill color used for a `Py5Shape` object.
 
@@ -3342,6 +3571,7 @@ class Py5Shape:
         """
         return self._instance.getShininess(index)
 
+    @_return_color
     def get_specular(self, index: int, /) -> int:
         """Get the specular color setting for one of a `Py5Shape` object's vertices.
 
@@ -3364,6 +3594,7 @@ class Py5Shape:
         """
         return self._instance.getSpecular(index)
 
+    @_return_color
     def get_stroke(self, index: int, /) -> int:
         """Gets the stroke color used for lines and points in a `Py5Shape` object.
 
@@ -3451,6 +3682,7 @@ class Py5Shape:
         """
         return self._instance.getTextureV(index)
 
+    @_return_color
     def get_tint(self, index: int, /) -> int:
         """Get the texture tint color assigned to one vertex in a `Py5Shape` object.
 
@@ -4496,6 +4728,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4539,6 +4776,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4582,6 +4824,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.setAmbient(*args)
 
@@ -4619,6 +4866,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4656,6 +4908,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4693,6 +4950,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.setEmissive(*args)
 
@@ -4734,6 +4996,11 @@ class Py5Shape:
         to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape
         is created, only the `set_fill()` method can define a new fill value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4775,6 +5042,11 @@ class Py5Shape:
         to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape
         is created, only the `set_fill()` method can define a new fill value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4816,6 +5088,11 @@ class Py5Shape:
         to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape
         is created, only the `set_fill()` method can define a new fill value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -4858,6 +5135,11 @@ class Py5Shape:
         to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape
         is created, only the `set_fill()` method can define a new fill value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.setFill(*args)
 
@@ -5052,6 +5334,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5090,6 +5377,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5128,6 +5420,11 @@ class Py5Shape:
 
         This method can only be used for a complete `Py5Shape` object, and never within
         a `Py5Shape.begin_shape()` and `Py5Shape.end_shape()` pair.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.setSpecular(*args)
 
@@ -5169,6 +5466,11 @@ class Py5Shape:
         `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape is
         created, only the `set_stroke()` method can define a new stroke value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5210,6 +5512,11 @@ class Py5Shape:
         `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape is
         created, only the `set_stroke()` method can define a new stroke value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5251,6 +5558,11 @@ class Py5Shape:
         `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape is
         created, only the `set_stroke()` method can define a new stroke value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5293,6 +5605,11 @@ class Py5Shape:
         `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`. However, after the shape is
         created, only the `set_stroke()` method can define a new stroke value for the
         `Py5Shape`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.setStroke(*args)
 
@@ -5579,6 +5896,11 @@ class Py5Shape:
         Calling this method with the boolean parameter `False` will delete the assigned
         tint. A later call with the boolean parameter `True` will not restore it; you
         must reassign the tint color, as shown in the second example.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5625,6 +5947,11 @@ class Py5Shape:
         Calling this method with the boolean parameter `False` will delete the assigned
         tint. A later call with the boolean parameter `True` will not restore it; you
         must reassign the tint color, as shown in the second example.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5671,6 +5998,11 @@ class Py5Shape:
         Calling this method with the boolean parameter `False` will delete the assigned
         tint. A later call with the boolean parameter `True` will not restore it; you
         must reassign the tint color, as shown in the second example.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -5718,6 +6050,11 @@ class Py5Shape:
         Calling this method with the boolean parameter `False` will delete the assigned
         tint. A later call with the boolean parameter `True` will not restore it; you
         must reassign the tint color, as shown in the second example.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.setTint(*args)
 
@@ -5989,6 +6326,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The specular color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6038,6 +6380,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The specular color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6087,6 +6434,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The specular color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6136,6 +6488,11 @@ class Py5Shape:
         This method can only be used within a `Py5Shape.begin_shape()` and
         `Py5Shape.end_shape()` pair. The specular color setting will be applied to
         vertices added after the call to this method.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.specular(*args)
 
@@ -6210,6 +6567,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6284,6 +6646,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6358,6 +6725,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6432,6 +6804,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6506,6 +6883,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6580,6 +6962,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6654,6 +7041,11 @@ class Py5Shape:
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.stroke(*args)
 
@@ -6851,6 +7243,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6925,6 +7322,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -6999,6 +7401,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -7073,6 +7480,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -7147,6 +7559,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -7221,6 +7638,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -7295,6 +7717,11 @@ class Py5Shape:
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.tint(*args)
 

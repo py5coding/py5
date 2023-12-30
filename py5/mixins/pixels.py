@@ -190,7 +190,10 @@ class PixelMixin:
         display window.
 
         To set the entire contents of `np_pixels[]` to the contents of another properly
-        sized numpy array, consider using `set_np_pixels()`."""
+        sized numpy array, consider using `set_np_pixels()`.
+
+        Look at the online "Numpy, Arrays, and Images" Python Ecosystem Integration
+        tutorial for more information about how to make best use of `np_pixels[]`."""
         return self._np_pixels
 
     np_pixels: npt.NDArray[np.uint8] = property(
@@ -227,7 +230,10 @@ class PixelMixin:
         display window.
 
         To set the entire contents of `np_pixels[]` to the contents of another properly
-        sized numpy array, consider using `set_np_pixels()`.""",
+        sized numpy array, consider using `set_np_pixels()`.
+
+        Look at the online "Numpy, Arrays, and Images" Python Ecosystem Integration
+        tutorial for more information about how to make best use of `np_pixels[]`.""",
     )
 
     def set_np_pixels(self, array: npt.NDArray[np.uint8], bands: str = "ARGB") -> None:
@@ -798,6 +804,9 @@ class PixelPy5GraphicsMixin(PixelMixin):
         To set the entire contents of `np_pixels[]` to the contents of another properly
         sized numpy array, consider using `Py5Graphics.set_np_pixels()`.
 
+        Look at the online "Numpy, Arrays, and Images" Python Ecosystem Integration
+        tutorial for more information about how to make best use of `np_pixels[]`.
+
         This field is the same as `np_pixels[]` but linked to a `Py5Graphics` object."""
         return super()._get_np_pixels()
 
@@ -841,6 +850,9 @@ class PixelPy5GraphicsMixin(PixelMixin):
 
         To set the entire contents of `np_pixels[]` to the contents of another properly
         sized numpy array, consider using `Py5Graphics.set_np_pixels()`.
+
+        Look at the online "Numpy, Arrays, and Images" Python Ecosystem Integration
+        tutorial for more information about how to make best use of `np_pixels[]`.
 
         This field is the same as `np_pixels[]` but linked to a `Py5Graphics` object.""",
     )
@@ -1315,7 +1327,10 @@ class PixelPy5ImageMixin(PixelMixin):
         be called to update the content of the display window.
 
         To set the entire contents of `np_pixels[]` to the contents of another equally
-        sized numpy array, consider using `Py5Image.set_np_pixels()`."""
+        sized numpy array, consider using `Py5Image.set_np_pixels()`.
+
+        Look at the online "Numpy, Arrays, and Images" Python Ecosystem Integration
+        tutorial for more information about how to make best use of `np_pixels[]`."""
         return super()._get_np_pixels()
 
     np_pixels: npt.NDArray[np.uint8] = property(
@@ -1346,7 +1361,10 @@ class PixelPy5ImageMixin(PixelMixin):
         be called to update the content of the display window.
 
         To set the entire contents of `np_pixels[]` to the contents of another equally
-        sized numpy array, consider using `Py5Image.set_np_pixels()`.""",
+        sized numpy array, consider using `Py5Image.set_np_pixels()`.
+
+        Look at the online "Numpy, Arrays, and Images" Python Ecosystem Integration
+        tutorial for more information about how to make best use of `np_pixels[]`.""",
     )
 
     def set_np_pixels(self, array: npt.NDArray[np.uint8], bands: str = "ARGB") -> None:

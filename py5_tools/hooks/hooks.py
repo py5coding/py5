@@ -18,6 +18,7 @@
 #
 # *****************************************************************************
 import time
+import uuid
 from queue import Empty, Queue
 from threading import Thread
 
@@ -28,8 +29,9 @@ from ..printstreams import _DefaultPrintlnStream, _WidgetPrintlnStream
 
 
 class BaseHook:
-    def __init__(self, hook_name):
-        self.hook_name = hook_name
+    def __init__(self, hook_name, hooked_setup=False):
+        self.hook_name = f"{hook_name}_{uuid.uuid4()}"
+        self.hooked_setup = hooked_setup
         self.is_ready = False
         self.exception = None
         self.is_terminated = False
@@ -42,13 +44,19 @@ class BaseHook:
 
     def hook_finished(self, sketch):
         sketch._remove_post_hook("draw", self.hook_name)
+        if self.hooked_setup:
+            sketch._remove_post_hook("setup", self.hook_name)
         self.is_ready = True
 
     def hook_error(self, sketch, e):
         self.exception = e
         sketch._remove_post_hook("draw", self.hook_name)
+        if self.hooked_setup:
+            sketch._remove_post_hook("setup", self.hook_name)
         self.is_terminated = True
-        self.status_msg("exception thrown while running magic: " + str(e), stderr=True)
+        self.status_msg(
+            "exception thrown while running py5 tools: " + str(e), stderr=True
+        )
 
     def sketch_terminated(self):
         self.is_terminated = True
@@ -64,13 +72,14 @@ class BaseHook:
 
 
 class ScreenshotHook(BaseHook):
-    def __init__(self, filename):
+    def __init__(self):
         super().__init__("py5screenshot_hook")
-        self.filename = filename
+        self.pixels = []
 
     def __call__(self, sketch):
         try:
-            sketch.save_frame(self.filename, use_thread=False)
+            sketch.load_np_pixels()
+            self.pixels = sketch.np_pixels[:, :, 1:].copy()
             self.hook_finished(sketch)
         except Exception as e:
             self.hook_error(sketch, e)
@@ -116,10 +125,17 @@ class SaveFramesHook(BaseHook):
 
 
 class GrabFramesHook(BaseHook):
-    def __init__(self, period, limit, complete_func):
-        super().__init__("py5grab_frames_hook")
-        self.period = period
-        self.limit = limit
+    def __init__(self, frame_numbers, period, limit, complete_func, hooked_setup):
+        super().__init__("py5grab_frames_hook", hooked_setup=hooked_setup)
+        if frame_numbers:
+            self.frame_numbers = set(frame_numbers)
+            self.period = 0
+            self.limit = len(self.frame_numbers)
+        else:
+            self.frame_numbers = set()
+            self.period = period
+            self.limit = limit
+
         self.complete_func = complete_func
         self.frames = []
         self.last_frame_time = 0
@@ -128,10 +144,22 @@ class GrabFramesHook(BaseHook):
         try:
             if time.time() - self.last_frame_time < self.period:
                 return
+            if self.frame_numbers:
+                if min(self.frame_numbers) < sketch.frame_count:
+                    raise RuntimeError(
+                        f"minimum requested frame number {min(self.frame_numbers)} has passed"
+                    )
+                if sketch.frame_count in self.frame_numbers:
+                    self.frame_numbers.remove(sketch.frame_count)
+                else:
+                    return
+
             sketch.load_np_pixels()
             self.frames.append(sketch.np_pixels[:, :, 1:].copy())
             self.last_frame_time = time.time()
-            if len(self.frames) == self.limit:
+            if len(self.frames) == self.limit or (
+                self.frame_numbers and max(self.frame_numbers) < sketch.frame_count
+            ):
                 self.hook_finished(sketch)
             self.status_msg(
                 f"collecting frame {len(self.frames)}"

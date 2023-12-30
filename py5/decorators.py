@@ -23,6 +23,20 @@ import re
 import numpy as np
 from jpype.types import JInt, JString
 
+try:
+    import colour
+except ImportError:
+    colour = None
+
+try:
+    import matplotlib as mpl
+    import matplotlib.colors as mcolors
+except ImportError:
+    mpl = None
+    mcolors = None
+
+from .color import Py5Color
+
 HEX_3DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{3}" + chr(36))
 HEX_4DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{4}" + chr(36))
 HEX_6DIGIT_COLOR_REGEX = re.compile(r"#[0-9A-F]{6}" + chr(36))
@@ -67,15 +81,20 @@ def _hex_converter(arg):
                 return JInt(int("0x" + arg[7:] + arg[1:7], base=16))
         else:
             try:
-                import matplotlib.colors as mcolors
-
-                return JInt(int("0xFF" + mcolors.to_hex(arg)[1:], base=16))
+                if mcolors is not None:
+                    return JInt(int("0xFF" + mcolors.to_hex(arg)[1:], base=16))
             except:
                 return None
     elif isinstance(arg, (int, np.integer)) and 0x7FFFFFFF < arg <= 0xFFFFFFFF:
         return JInt(arg)
+    elif colour is not None and isinstance(arg, colour.Color):
+        return JInt(int("0xFF" + arg.hex_l[1:], base=16))
 
     return None
+
+
+# both of the following two decorators should be named something else but they
+# are all over the place and it would be a pain to change them now.
 
 
 def _convert_hex_color(indices=[0]):
@@ -84,7 +103,24 @@ def _convert_hex_color(indices=[0]):
         def decorated(self_, *args):
             args = list(args)
             for i, arg in [(i, args[i]) for i in indices if i < len(args)]:
-                if (new_arg := _hex_converter(arg)) is not None:
+                if (
+                    mcolors is not None
+                    and getattr(self_, "_cmap", None) is not None
+                    and isinstance(args[i], (int, np.integer, float, np.floating))
+                    and not isinstance(args[i], Py5Color)
+                ):
+                    hex_color = mcolors.to_hex(
+                        self_._cmap(arg / self_._cmap_range), keep_alpha=True
+                    )
+                    # small hack because matplotlib returns #00000000 for bad values
+                    # without this, PApplet.color() would convert JInt(0) to 0xFF000000.
+                    hex_color = (
+                        "00010101"
+                        if hex_color == "#00000000"
+                        else hex_color[-2:] + hex_color[1:-2]
+                    )
+                    args[i] = JInt(int("0x" + hex_color, base=16))
+                elif (new_arg := _hex_converter(arg)) is not None:
                     args[i] = new_arg
             return f(self_, *args)
 
@@ -97,11 +133,36 @@ def _convert_hex_color2(f):
     @functools.wraps(f)
     def decorated(self_, *args):
         args = list(args)
-        if len(args) == 1 and (new_arg := _hex_converter(args[0])):
+        if (
+            mcolors is not None
+            and getattr(self_, "_cmap", None) is not None
+            and isinstance(args[0], (int, np.integer, float, np.floating))
+            and not isinstance(args[0], Py5Color)
+        ):
+            hex_color = mcolors.to_hex(
+                self_._cmap(args[0] / self_._cmap_range), keep_alpha=True
+            )
+            # small hack because matplotlib returns #00000000 for bad values
+            # without this, PApplet.color() would convert JInt(0) to 0xFF000000.
+            hex_color = (
+                "00010101"
+                if hex_color == "#00000000"
+                else hex_color[-2:] + hex_color[1:-2]
+            )
+            args[0] = JInt(int("0x" + hex_color, base=16))
+        elif len(args) == 1 and (new_arg := _hex_converter(args[0])):
             args[0] = new_arg
         elif len(args) == 2 and (new_arg := _hex_converter(args[1])):
             args[1] = new_arg
         return f(self_, *args)
+
+    return decorated
+
+
+def _return_color(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        return Py5Color(f(self_, *args), _creator_instance=self_)
 
     return decorated
 

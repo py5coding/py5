@@ -24,8 +24,7 @@
 
 
 
-PY5_DIR_STR = [
-    '__version__',
+PY5_DIR_STR = ['__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -93,12 +92,14 @@ PY5_DIR_STR = [
     'clear',
     'clip',
     'CLOSE',
+    'CMAP',
     'CODED',
     'color',
     'color_mode',
     'constrain',
     'CONTROL',
     'convert_image',
+    'convert_shape',
     'copy',
     'CORNER',
     'CORNERS',
@@ -110,6 +111,7 @@ PY5_DIR_STR = [
     'create_image_from_numpy',
     'create_shape',
     'CROSS',
+    'css4_colors',
     'cursor',
     'curve',
     'curve_detail',
@@ -188,11 +190,11 @@ PY5_DIR_STR = [
     'frustum',
     'full_screen',
     'FX2D',
-    'g',
     'get_current_sketch',
     'get_frame_rate',
     'get_graphics',
     'get_matrix',
+    'get_np_pixels',
     'get_pixels',
     'get_surface',
     'GRAY',
@@ -273,6 +275,7 @@ PY5_DIR_STR = [
     'mouse_x',
     'mouse_y',
     'MOVE',
+    'mpl_cmaps',
     'MULTIPLY',
     'no_clip',
     'no_cursor',
@@ -335,6 +338,7 @@ PY5_DIR_STR = [
     'push',
     'push_matrix',
     'push_style',
+    'Py5Color',
     'Py5Font',
     'Py5Graphics',
     'Py5Image',
@@ -375,6 +379,7 @@ PY5_DIR_STR = [
     'redraw',
     'register_exception_msg',
     'register_image_conversion',
+    'register_shape_conversion',
     'remap',
     'render',
     'render_frame',
@@ -472,6 +477,7 @@ PY5_DIR_STR = [
     'THIRD_PI',
     'THRESHOLD',
     'tint',
+    'to_pil',
     'TOP',
     'translate',
     'TRIANGLE',
@@ -497,11 +503,10 @@ PY5_DIR_STR = [
     'window_title',
     'window_x',
     'window_y',
-    'year'
-]
+    'xkcd_colors',
+    'year']
 
-PY5_ALL_STR = [
-    '__version__',
+PY5_ALL_STR = ['__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -569,12 +574,14 @@ PY5_ALL_STR = [
     'clear',
     'clip',
     'CLOSE',
+    'CMAP',
     'CODED',
     'color',
     'color_mode',
     'constrain',
     'CONTROL',
     'convert_image',
+    'convert_shape',
     'copy',
     'CORNER',
     'CORNERS',
@@ -586,6 +593,7 @@ PY5_ALL_STR = [
     'create_image_from_numpy',
     'create_shape',
     'CROSS',
+    'css4_colors',
     'cursor',
     'curve',
     'curve_detail',
@@ -663,6 +671,7 @@ PY5_ALL_STR = [
     'get_frame_rate',
     'get_graphics',
     'get_matrix',
+    'get_np_pixels',
     'get_pixels',
     'get_surface',
     'GRAY',
@@ -729,6 +738,7 @@ PY5_ALL_STR = [
     'model_z',
     'month',
     'MOVE',
+    'mpl_cmaps',
     'MULTIPLY',
     'no_clip',
     'no_cursor',
@@ -784,6 +794,7 @@ PY5_ALL_STR = [
     'push',
     'push_matrix',
     'push_style',
+    'Py5Color',
     'Py5Font',
     'Py5Graphics',
     'Py5Image',
@@ -821,6 +832,7 @@ PY5_ALL_STR = [
     'redraw',
     'register_exception_msg',
     'register_image_conversion',
+    'register_shape_conversion',
     'remap',
     'render',
     'render_frame',
@@ -914,6 +926,7 @@ PY5_ALL_STR = [
     'THIRD_PI',
     'THRESHOLD',
     'tint',
+    'to_pil',
     'TOP',
     'translate',
     'TRIANGLE',
@@ -936,16 +949,14 @@ PY5_ALL_STR = [
     'window_resizable',
     'window_resize',
     'window_title',
-    'year'
-]
+    'xkcd_colors',
+    'year']
 
-PY5_DYNAMIC_VARIABLES = [
-    'display_height',
+PY5_DYNAMIC_VARIABLES = ['display_height',
     'display_width',
     'finished',
     'focused',
     'frame_count',
-    'g',
     'height',
     'is_dead',
     'is_dead_from_error',
@@ -976,9 +987,6 @@ PY5_DYNAMIC_VARIABLES = [
     'rwidth',
     'width',
     'window_x',
-    'window_y'
-]
+    'window_y']
 
-PY5_PYTHON_DYNAMIC_VARIABLES = [
-    'pixels'
-]
+PY5_PYTHON_DYNAMIC_VARIABLES = ['pixels']

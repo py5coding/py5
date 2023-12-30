@@ -18,17 +18,18 @@
 #
 # *****************************************************************************
 import functools
-from typing import overload, Any  # noqa
 import weakref
+from typing import Any, overload  # noqa
 
-from .image import Py5Image  # noqa
 from . import spelling
+from .image import Py5Image  # noqa
 
 
 def _return_py5surface(f):
     @functools.wraps(f)
     def decorated(self_, *args):
         return Py5Surface(f(self_, *args))
+
     return decorated
 
 
@@ -42,8 +43,8 @@ class Py5Surface:
 
     The Py5Surface object is the actual window py5 draws animations to. You can use
     this to interact with the window and change some of its characteristics, such as
-    the window title or location.
-    """
+    the window title or location."""
+
     _py5_object_cache = weakref.WeakSet()
 
     def __new__(cls, psurface):
@@ -63,7 +64,7 @@ class Py5Surface:
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Py5Surface', name, self))
+        raise AttributeError(spelling.error_msg("Py5Surface", name, self))
 
     def get_native(self) -> Any:
         """Get the Sketch's Java native window object.

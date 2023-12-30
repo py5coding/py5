@@ -17,24 +17,22 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-import sys
-import re
-from pathlib import Path
-from collections import defaultdict
-from typing import Union
 import inspect
-import line_profiler
+import re
+import sys
 import traceback
+from collections import defaultdict
+from pathlib import Path
+from typing import Union
 
+import line_profiler
+import py5_tools
+import stackprinter
 from jpype import JClass, JImplements, JOverride, JString
 
-import stackprinter
+from . import custom_exceptions, reference
 
-import py5_tools
-from . import reference
-from . import custom_exceptions
-
-_stackprinter_style = 'plaintext'
+_stackprinter_style = "plaintext"
 # prune tracebacks to only show only show stack levels in the user's py5 code.
 _prune_tracebacks = True
 
@@ -42,18 +40,19 @@ _MODULE_INSTALL_DIR = str(Path(__file__).parent)
 _PY5TOOLS_MODULE_INSTALL_DIR = str(Path(py5_tools.__file__).parent)
 
 _PY5_STATIC_CODE_FILENAME_REGEX = re.compile(
-    r'File "[^\"]*?_PY5_STATIC_(SETUP|SETTINGS|FRAMEWORK)_CODE_\.py", line \d+, in .*')
+    r'File "[^\"]*?_PY5_STATIC_(SETUP|SETTINGS|FRAMEWORK)_CODE_\.py", line \d+, in .*'
+)
 
 _EXCEPTION_MSGS = {
     **custom_exceptions.CUSTOM_EXCEPTION_MSGS,
 }
 
-_JAVA_RUNTIMEEXCEPTION = JClass('java.lang.RuntimeException')
+_JAVA_RUNTIMEEXCEPTION = JClass("java.lang.RuntimeException")
 
 
 def check_run_method_callstack():
     for t in traceback.extract_stack():
-        if t.filename == __file__ and t.name == 'run_method':
+        if t.filename == __file__ and t.name == "run_method":
             return True
     else:
         return False
@@ -68,13 +67,12 @@ def _exception_msg(println, exc_type_name, exc_msg, py5info):
             return msg(exc_type_name, exc_msg, py5info)
         else:
             println(
-                f'unknown exception msg type for {exc_type_name}: {type(msg).__name__}',
-                stderr=True)
+                f"unknown exception msg type for {exc_type_name}: {type(msg).__name__}",
+                stderr=True,
+            )
             return exc_msg
     except Exception as e:
-        println(
-            f'error generating exception msg for {exc_type_name}: {e}',
-            stderr=True)
+        println(f"error generating exception msg for {exc_type_name}: {e}", stderr=True)
         return exc_msg
 
 
@@ -85,21 +83,38 @@ def register_exception_msg(exc_type_name: str, msg: Union[str, callable]):
 def handle_exception(println, exc_type, exc_value, exc_tb):
     py5info = []
     try:
-        if _prune_tracebacks and hasattr(exc_tb, 'tb_next'):
+        if _prune_tracebacks and hasattr(exc_tb, "tb_next"):
             prev_tb = exc_tb
             trim_tb = None
             tb = exc_tb.tb_next
-            while hasattr(tb, 'tb_next') and hasattr(tb, 'tb_frame'):
+            while hasattr(tb, "tb_next") and hasattr(tb, "tb_frame"):
                 f_code = tb.tb_frame.f_code
                 if f_code.co_filename.startswith(
-                        _MODULE_INSTALL_DIR) and not f_code.co_name.endswith('py5_no_prune'):
-                    py5info.append((Path(f_code.co_filename[(len(_MODULE_INSTALL_DIR) + 1):]).parts,
-                                    f_code.co_name))
+                    _MODULE_INSTALL_DIR
+                ) and not f_code.co_name.endswith("py5_no_prune"):
+                    py5info.append(
+                        (
+                            Path(
+                                f_code.co_filename[(len(_MODULE_INSTALL_DIR) + 1) :]
+                            ).parts,
+                            f_code.co_name,
+                        )
+                    )
                     if trim_tb is None:
                         trim_tb = prev_tb
-                elif f_code.co_filename.startswith(_PY5TOOLS_MODULE_INSTALL_DIR) and not f_code.co_name.endswith('py5_no_prune'):
-                    py5info.append((Path(f_code.co_filename[(
-                        len(_PY5TOOLS_MODULE_INSTALL_DIR) + 1):]).parts, f_code.co_name))
+                elif f_code.co_filename.startswith(
+                    _PY5TOOLS_MODULE_INSTALL_DIR
+                ) and not f_code.co_name.endswith("py5_no_prune"):
+                    py5info.append(
+                        (
+                            Path(
+                                f_code.co_filename[
+                                    (len(_PY5TOOLS_MODULE_INSTALL_DIR) + 1) :
+                                ]
+                            ).parts,
+                            f_code.co_name,
+                        )
+                    )
                     if trim_tb is None:
                         trim_tb = prev_tb
                 prev_tb = tb
@@ -108,28 +123,28 @@ def handle_exception(println, exc_type, exc_value, exc_tb):
                 trim_tb.tb_next = None
     except Exception as e:
         println(
-            f'Exception thrown while examining error traceback: {str(e)}',
-            stderr=True)
+            f"Exception thrown while examining error traceback: {str(e)}", stderr=True
+        )
 
     errmsg = stackprinter.format(
         thing=(exc_type, exc_value, exc_tb.tb_next),
-        show_vals='line',
+        show_vals="line",
         style=_stackprinter_style,
-        suppressed_paths=[r"lib/python.*?/site-packages/numpy/",
-                          r"lib/python.*?/site-packages/py5/",
-                          r"lib/python.*?/site-packages/py5tools/"])
+        suppressed_paths=[
+            r"lib/python.*?/site-packages/numpy/",
+            r"lib/python.*?/site-packages/py5/",
+            r"lib/python.*?/site-packages/py5tools/",
+        ],
+    )
 
     if _prune_tracebacks:
         errmsg = errmsg.replace(
             str(exc_value),
-            _exception_msg(
-                println,
-                exc_type.__name__,
-                str(exc_value),
-                py5info))
+            _exception_msg(println, exc_type.__name__, str(exc_value), py5info),
+        )
 
         while m := _PY5_STATIC_CODE_FILENAME_REGEX.search(errmsg):
-            errmsg = errmsg[m.span()[1]:]
+            errmsg = errmsg[m.span()[1] :]
         else:
             errmsg = "py5 encountered an error in your code:\n\n" + errmsg
 
@@ -146,10 +161,18 @@ def _extract_py5_user_function_data(d: dict):
             continue
 
         sig = inspect.signature(d[name])
-        pargs_count = len([p for p in sig.parameters.values() if p.kind in [
-                          inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD]])
-        if pargs_count != len(
-                sig.parameters) or pargs_count not in allowed_parg_count:
+        pargs_count = len(
+            [
+                p
+                for p in sig.parameters.values()
+                if p.kind
+                in [
+                    inspect.Parameter.POSITIONAL_ONLY,
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                ]
+            ]
+        )
+        if pargs_count != len(sig.parameters) or pargs_count not in allowed_parg_count:
             continue
 
         functions[name] = d[name]
@@ -158,9 +181,8 @@ def _extract_py5_user_function_data(d: dict):
     return functions, function_param_counts
 
 
-@JImplements('py5.core.Py5Bridge')
+@JImplements("py5.core.Py5Bridge")
 class Py5Bridge:
-
     def __init__(self, sketch):
         self._sketch = sketch
         self._caller_locals = dict()
@@ -173,7 +195,8 @@ class Py5Bridge:
         self._current_running_method = None
         self._is_terminated = False
 
-        from .object_conversion import convert_to_python_types, convert_to_java_type
+        from .object_conversion import convert_to_java_type, convert_to_python_types
+
         self._convert_to_python_types = convert_to_python_types
         self._convert_to_java_type = convert_to_java_type
 
@@ -189,9 +212,10 @@ class Py5Bridge:
     def add_functions(self, functions, function_param_counts):
         for name, f in functions.items():
             self._functions[name] = f
-            if name == 'settings':
-                self._function_param_counts['settings'] = function_param_counts.get(
-                    'settings', function_param_counts.get('setup'))
+            if name == "settings":
+                self._function_param_counts["settings"] = function_param_counts.get(
+                    "settings", function_param_counts.get("setup")
+                )
             else:
                 self._function_param_counts[name] = function_param_counts[name]
 
@@ -208,13 +232,13 @@ class Py5Bridge:
         self._profiler.print_stats()
 
     def add_pre_hook(self, method_name, hook_name, hook):
-        if self._is_terminated and hasattr(hook, 'sketch_terminated'):
+        if self._is_terminated and hasattr(hook, "sketch_terminated"):
             hook.sketch_terminated()
         else:
             self._pre_hooks[method_name][hook_name] = hook
 
     def add_post_hook(self, method_name, hook_name, hook):
-        if self._is_terminated and hasattr(hook, 'sketch_terminated'):
+        if self._is_terminated and hasattr(hook, "sketch_terminated"):
             hook.sketch_terminated()
         else:
             self._post_hooks[method_name][hook_name] = hook
@@ -238,19 +262,21 @@ class Py5Bridge:
     def terminate_hooks(self):
         for method_name, hooks in self._pre_hooks.items():
             for hook_name, hook in list(hooks.items()):
-                if hasattr(hook, 'sketch_terminated'):
+                if hasattr(hook, "sketch_terminated"):
                     hook.sketch_terminated()
                 self.remove_pre_hook(method_name, hook_name)
         for method_name, hooks in self._post_hooks.items():
             for hook_name, hook in list(hooks.items()):
-                if hasattr(hook, 'sketch_terminated'):
+                if hasattr(hook, "sketch_terminated"):
                     hook.sketch_terminated()
                 self.remove_post_hook(method_name, hook_name)
 
     @JOverride
     def get_function_list(self):
-        return [JString(f'{name}:{self._function_param_counts[name]}')
-                for name in self._functions.keys()]
+        return [
+            JString(f"{name}:{self._function_param_counts[name]}")
+            for name in self._functions.keys()
+        ]
 
     @JOverride
     def terminate_sketch(self):
@@ -268,8 +294,7 @@ class Py5Bridge:
                         hook(self._sketch)
 
                 # now run the actual method
-                self._functions[method_name](
-                    *self._convert_to_python_types(params))
+                self._functions[method_name](*self._convert_to_python_types(params))
 
                 # finally, post-hooks
                 if method_name in self._post_hooks:
@@ -285,14 +310,15 @@ class Py5Bridge:
 
     def _get_current_running_method(self):
         return self._current_running_method
+
     current_running_method = property(fget=_get_current_running_method)
 
     @JOverride
     def call_function(self, key, params):
         try:
             key = str(key)
-            *str_hierarchy, c = key.split('.')
-            key_start = key.split('.')[0]
+            *str_hierarchy, c = key.split(".")
+            key_start = key.split(".")[0]
 
             if key_start in py5_tools.config._PY5_PROCESSING_MODE_KEYS:
                 d = py5_tools.config._PY5_PROCESSING_MODE_KEYS
@@ -301,32 +327,29 @@ class Py5Bridge:
             elif key_start in self._caller_globals:
                 d = self._caller_globals
             else:
-                return _JAVA_RUNTIMEEXCEPTION(
-                    f'callable {c} not found with key {key}')
+                return _JAVA_RUNTIMEEXCEPTION(f"callable {c} not found with key {key}")
 
             for s in str_hierarchy:
                 if s in d:
                     subd = d[s]
                     if isinstance(subd, dict):
                         d = subd
-                    elif hasattr(subd, '__dir__') or hasattr(subd, '__dict__'):
+                    elif hasattr(subd, "__dir__") or hasattr(subd, "__dict__"):
                         d = {k: getattr(subd, k) for k in dir(subd)}
                     else:
                         return _JAVA_RUNTIMEEXCEPTION(
-                            f'{s} in key {key} does not map to a dict or an object that can be inspected with dir()')
+                            f"{s} in key {key} does not map to a dict or an object that can be inspected with dir()"
+                        )
                 else:
-                    return _JAVA_RUNTIMEEXCEPTION(
-                        f'{s} not found with key {key}')
+                    return _JAVA_RUNTIMEEXCEPTION(f"{s} not found with key {key}")
 
             if c not in d or not callable(func := d[c]):
-                return _JAVA_RUNTIMEEXCEPTION(
-                    f'callable {c} not found with key {key}')
+                return _JAVA_RUNTIMEEXCEPTION(f"callable {c} not found with key {key}")
 
             try:
                 retval = func(*self._convert_to_python_types(params))
                 if key in py5_tools.config._PY5_PROCESSING_MODE_CALLBACK_ONCE:
-                    py5_tools.config._PY5_PROCESSING_MODE_CALLBACK_ONCE.remove(
-                        key)
+                    py5_tools.config._PY5_PROCESSING_MODE_CALLBACK_ONCE.remove(key)
                     if key in py5_tools.config._PY5_PROCESSING_MODE_KEYS:
                         py5_tools.config._PY5_PROCESSING_MODE_KEYS.pop(key)
                 return self._convert_to_java_type(retval)
@@ -347,6 +370,4 @@ class Py5Bridge:
             self._is_terminated = True
             self.terminate_hooks()
         except Exception:
-            self._sketch.println(
-                'exception in sketch shutdown sequence',
-                stderr=True)
+            self._sketch.println("exception in sketch shutdown sequence", stderr=True)

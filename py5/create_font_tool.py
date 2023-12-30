@@ -21,24 +21,24 @@ from .sketch import Sketch
 
 
 class CreateFontTool(Sketch):
-
     def __init__(
-            self,
-            font_name,
-            font_size,
-            filename=None,
-            characters=None,
-            pause=True):
+        self, font_name, font_size, filename=None, characters=None, pause=True
+    ):
         super().__init__()
         self.font_name = font_name
         self.font_size = font_size
         self.pause = pause
-        self.filename = filename or f'{font_name}-{font_size}.vlw'
+        self.filename = filename or f"{font_name}-{font_size}.vlw"
         self.characters = characters
 
     def __str__(self) -> str:
-        return f"CreateFontTool(font_name='" + self.font_name + \
-            "', font_size=" + str(self.font_size) + ")"
+        return (
+            f"CreateFontTool(font_name='"
+            + self.font_name
+            + "', font_size="
+            + str(self.font_size)
+            + ")"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -54,7 +54,7 @@ class CreateFontTool(Sketch):
         self.fill(0)
 
         self.text_font(font)
-        characters = self.characters or ''.join(font.CHARSET)
+        characters = self.characters or "".join(font.CHARSET)
         self.text(characters, self.width / 2, self.height / 2)
 
         os = self._instance.createOutput(str(self.filename))
@@ -62,8 +62,7 @@ class CreateFontTool(Sketch):
         os.close()
 
         self.fill(255)
-        msg = str(font.get_glyph_count()) + \
-            ' glyphs written to ' + self.filename
+        msg = str(font.get_glyph_count()) + " glyphs written to " + self.filename
         self.translate(self.width / 2, self.height / 2)
         self.scale(0.95 * self.width / self.text_width(msg))
         self.text(msg, 0, 0)
@@ -73,11 +72,12 @@ class CreateFontTool(Sketch):
 
 
 def create_font_file(
-        font_name: str,
-        font_size: int,
-        filename: str = None,
-        characters: str = None,
-        pause: bool = True):
+    font_name: str,
+    font_size: int,
+    filename: str = None,
+    characters: str = None,
+    pause: bool = True,
+):
     """Utility function to create Processing's vlw font data files.
 
     Parameters
@@ -120,7 +120,7 @@ def create_font_file(
     Get a list of font names available on your computer with Py5Font's
     `Py5Font.list()` method. If you request an unavailable font, it will create the
     data file anyway but using a default font."""
-    vlw_creator = CreateFontTool(font_name, font_size,
-                                 filename=filename, characters=characters,
-                                 pause=pause)
+    vlw_creator = CreateFontTool(
+        font_name, font_size, filename=filename, characters=characters, pause=pause
+    )
     vlw_creator.run_sketch(block=pause)

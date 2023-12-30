@@ -27,6 +27,9 @@ classifiers = [
     "Programming Language :: Java",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Artistic Software",
     "Topic :: Multimedia :: Graphics",
 ]
@@ -44,6 +47,13 @@ dependencies = [
 [project.optional-dependencies]
 jupyter = [
     "py5jupyter>=0.2.0a0",
+]
+extras = [
+    "colour>=0.1.5",
+    "matplotlib>=3.7",
+    "py5jupyter>=0.2.0a0",
+    "shapely>=2.0",
+    "trimesh>=3.23",
 ]
 
 [project.scripts]

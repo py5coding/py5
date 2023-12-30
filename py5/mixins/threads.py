@@ -20,16 +20,15 @@
 from __future__ import annotations
 
 import sys
-import time
 import threading
+import time
 from collections.abc import Iterable
-from typing import Callable, Any, Union
+from typing import Any, Callable, Union
 
 from .. import bridge
 
 
 class Py5Promise:
-
     def __init__(self):
         self._result = None
         self._is_ready = False
@@ -46,9 +45,11 @@ class Py5Promise:
         self._result = result
         self._is_ready = True
 
+    def __bool__(self) -> bool:
+        return self._is_ready
+
 
 class Py5Thread:
-
     def __init__(self, sketch, f, args, kwargs):
         self.sketch = sketch
         self.f = f
@@ -67,7 +68,6 @@ class Py5Thread:
 
 
 class Py5PromiseThread(Py5Thread):
-
     def __init__(self, sketch, f, promise, args, kwargs):
         super().__init__(sketch, f, args, kwargs)
         self.promise = promise
@@ -84,7 +84,6 @@ class Py5PromiseThread(Py5Thread):
 
 
 class Py5RepeatingThread(Py5Thread):
-
     def __init__(self, sketch, f, delay, args, kwargs):
         super().__init__(sketch, f, args, kwargs)
         self.repeat = True
@@ -109,7 +108,6 @@ class Py5RepeatingThread(Py5Thread):
 
 
 class ThreadsMixin:
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._py5threads = {}
@@ -117,9 +115,10 @@ class ThreadsMixin:
     def _check_param_types(self, args, kwargs):
         if not isinstance(args, Iterable) and args is not None:
             raise RuntimeError(
-                'args argument must be iterable (such as a tuple or list)')
+                "args argument must be iterable (such as a tuple or list)"
+            )
         if not isinstance(kwargs, dict) and kwargs is not None:
-            raise RuntimeError('kwargs argument must be a dictionary')
+            raise RuntimeError("kwargs argument must be a dictionary")
 
         kwargs = kwargs or {}
         args = args or ()
@@ -143,13 +142,14 @@ class ThreadsMixin:
     # *** BEGIN METHODS ***
 
     def launch_thread(
-            self,
-            f: Callable,
-            name: str = None,
-            *,
-            daemon: bool = True,
-            args: tuple = None,
-            kwargs: dict = None) -> str:
+        self,
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None,
+    ) -> str:
         """Launch a new thread to execute a function in parallel with your Sketch code.
 
         Parameters
@@ -198,18 +198,17 @@ class ThreadsMixin:
         The new thread is a Python thread, so all the usual caveats about the Global
         Interpreter Lock (GIL) apply here."""
         args, kwargs = self._check_param_types(args, kwargs)
-        return self._launch_py5thread(
-            name, Py5Thread(
-                self, f, args, kwargs), daemon)
+        return self._launch_py5thread(name, Py5Thread(self, f, args, kwargs), daemon)
 
     def launch_promise_thread(
-            self,
-            f: Callable,
-            name: str = None,
-            *,
-            daemon: bool = True,
-            args: tuple = None,
-            kwargs: dict = None) -> Py5Promise:
+        self,
+        f: Callable,
+        name: str = None,
+        *,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None,
+    ) -> Py5Promise:
         """Create a `Py5Promise` object that will store the returned result of a function
         when that function completes.
 
@@ -266,19 +265,20 @@ class ThreadsMixin:
         args, kwargs = self._check_param_types(args, kwargs)
         promise = Py5Promise()
         self._launch_py5thread(
-            name, Py5PromiseThread(
-                self, f, promise, args, kwargs), daemon)
+            name, Py5PromiseThread(self, f, promise, args, kwargs), daemon
+        )
         return promise
 
     def launch_repeating_thread(
-            self,
-            f: Callable,
-            name: str = None,
-            *,
-            time_delay: float = 0,
-            daemon: bool = True,
-            args: tuple = None,
-            kwargs: dict = None) -> str:
+        self,
+        f: Callable,
+        name: str = None,
+        *,
+        time_delay: float = 0,
+        daemon: bool = True,
+        args: tuple = None,
+        kwargs: dict = None,
+    ) -> str:
         """Launch a new thread that will repeatedly execute a function in parallel with
         your Sketch code.
 
@@ -338,8 +338,8 @@ class ThreadsMixin:
         Interpreter Lock (GIL) apply here."""
         args, kwargs = self._check_param_types(args, kwargs)
         return self._launch_py5thread(
-            name, Py5RepeatingThread(
-                self, f, time_delay, args, kwargs), daemon)
+            name, Py5RepeatingThread(self, f, time_delay, args, kwargs), daemon
+        )
 
     def _remove_dead_threads(self):
         thread_names = list(self._py5threads.keys())

@@ -17,7 +17,7 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-Sketch = 'Sketch'
+Sketch = "Sketch"
 
 
 class Py5SketchPortal:
@@ -31,7 +31,8 @@ def sketch_portal(
     scale: float = 1.0,
     quality: int = 75,
     portal_widget: Py5SketchPortal = None,
-        sketch: Sketch = None) -> None:
+    sketch: Sketch = None,
+) -> None:
     """Creates a portal widget to continuously stream frames from a running Sketch into
     a Jupyter notebook.
 
@@ -65,6 +66,12 @@ def sketch_portal(
     Creates a portal widget to continuously stream frames from a running Sketch into
     a Jupyter notebook. Each frame will appear embedded in the notebook, with each
     new frame replacing the previous frame.
+
+    **Unfortunately, the Sketch Portal feature had to be removed from py5 in release
+    0.10.0. Changes to Jupyter Lab and Jupyter Widgets somehow broke the code and it
+    was too difficult to figure out why. Rather than fix the code, the Sketch Portal
+    will be re-implemented using the Python library anywidget. This new approach
+    will hopefully be simpler to implement and easier to maintain.**
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
@@ -116,7 +123,12 @@ def sketch_portal(
     wasting resources. A Sketch can only have one open portal, so opening a new
     portal with different options will replace an existing portal."""
     raise RuntimeError(
-        'The sketch_widget() function can only be used with IPython and ZMQInteractiveShell (such as Jupyter Lab)')
+        "The sketch_widget() functionality is broken and was removed in py5 version 0.10.0. It will be re-introduced in a future release. Sorry!"
+    )
+
+    raise RuntimeError(
+        "The sketch_widget() function can only be used with IPython and ZMQInteractiveShell (such as Jupyter Lab)"
+    )
 
 
-__all__ = ['sketch_portal']
+__all__ = ["sketch_portal"]

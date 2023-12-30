@@ -19,61 +19,77 @@
 # *****************************************************************************
 from __future__ import annotations
 
-import time
+import functools
+import inspect
 import os
-import sys
 import platform
+import sys
+import time
+import types
+import uuid
 import warnings
 from io import BytesIO
 from pathlib import Path
-import inspect
-import functools
-import types
-import uuid
-from typing import overload, Any, Callable, Union  # noqa
+from typing import Any, Callable, Union, overload  # noqa
 
 import jpype
-from jpype.types import JClass, JException, JArray, JInt  # noqa
-
 import numpy as np
 import numpy.typing as npt
-
 import py5_tools
 import py5_tools.environ as _environ
+from jpype.types import JArray, JClass, JException, JInt  # noqa
 from py5_tools.printstreams import _DefaultPrintlnStream, _DisplayPubPrintlnStream
-from .bridge import Py5Bridge, _extract_py5_user_function_data
+
+from . import image_conversion, reference, shape_conversion, spelling
 from .base import Py5Base
-from .mixins import MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream
-from .mixins.threads import Py5Promise  # noqa
-from .image import Py5Image, _return_py5image  # noqa
-from .shape import Py5Shape, _return_py5shape, _load_py5shape  # noqa
-from .surface import Py5Surface, _return_py5surface  # noqa
-from .shader import Py5Shader, _return_py5shader, _load_py5shader  # noqa
-from .font import Py5Font, _return_py5font, _load_py5font, _return_list_str  # noqa
+from .bridge import Py5Bridge, _extract_py5_user_function_data
+from .color import Py5Color  # noqa
+from .decorators import (
+    _context_wrapper,
+    _convert_hex_color,
+    _hex_converter,
+    _return_color,
+    _text_fix_str,
+)
+from .font import Py5Font, _load_py5font, _return_list_str, _return_py5font  # noqa
 from .graphics import Py5Graphics, _return_py5graphics  # noqa
+from .image import Py5Image, _return_py5image  # noqa
 from .keyevent import Py5KeyEvent, _convert_jchar_to_chr, _convert_jint_to_int  # noqa
+from .mixins import DataMixin, MathMixin, PixelMixin, PrintlnStream, ThreadsMixin
+from .mixins.threads import Py5Promise  # noqa
 from .mouseevent import Py5MouseEvent  # noqa
-from .utilities import Py5Utilities
-from .decorators import _text_fix_str, _convert_hex_color, _context_wrapper  # noqa
 from .pmath import _get_matrix_wrapper  # noqa
-from . import image_conversion
-from .image_conversion import NumpyImageArray, _convertable
-from . import spelling
-from . import reference
+from .shader import Py5Shader, _load_py5shader, _return_py5shader  # noqa
+from .shape import Py5Shape, _load_py5shape, _return_py5shape  # noqa
+from .surface import Py5Surface, _return_py5surface  # noqa
+from .utilities import Py5Utilities
+
+try:
+    import matplotlib as mpl
+    import matplotlib.colors as mcolors
+    from matplotlib.colors import Colormap
+except:
+    mpl = None
+    mcolors = None
+    Colormap = "matplotlib.colors.Colormap"
 
 
-_Sketch = jpype.JClass('py5.core.Sketch')
-_SketchBase = jpype.JClass('py5.core.SketchBase')
+_Sketch = jpype.JClass("py5.core.Sketch")
+_SketchBase = jpype.JClass("py5.core.SketchBase")
 
 
 try:
-    # be aware that __IPYTHON__ and get_ipython() are inserted into the user
-    # namespace late in the kernel startup process
+    # be aware that __IPYTHON__ and get_ipython() are inserted into the user namespace late in the kernel startup process
     __IPYTHON__  # type: ignore
-    if sys.platform == 'darwin' and (
-            _ipython_shell := get_ipython()).active_eventloop != 'osx':  # type: ignore
-        print("Importing py5 on OSX but the necessary Jupyter OSX event loop has not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library.")
-        _ipython_shell.run_line_magic('gui', 'osx')
+    # type: ignore
+    if (
+        sys.platform == "darwin"
+        and (_ipython_shell := get_ipython()).active_eventloop != "osx"
+    ):
+        print(
+            "Importing py5 on macOS but the necessary Jupyter macOS event loop has not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library."
+        )
+        _ipython_shell.run_line_magic("gui", "osx")
 except Exception:
     pass
 
@@ -88,8 +104,10 @@ def _deprecated_g(f):
         warnings.warn(
             "Accessing the primary Py5Graphics object with `g` is deprecated. Please use `get_graphics()` instead.",
             category=DeprecationWarning,
-            stacklevel=3 if py5_tools.imported.get_imported_mode() else 4)
+            stacklevel=3 if py5_tools.imported.get_imported_mode() else 4,
+        )
         return f(self_, *args)
+
     return decorated
 
 
@@ -100,14 +118,30 @@ def _auto_convert_to_py5image(argnum):
             if len(args) > argnum:
                 args = list(args)
                 img = args[argnum]
-                if isinstance(img, NumpyImageArray):
-                    args[argnum] = self_.create_image_from_numpy(
-                        img.array, img.bands)
-                elif not isinstance(img, (Py5Image, Py5Graphics)) and _convertable(img):
+                if isinstance(img, image_conversion.NumpyImageArray):
+                    args[argnum] = self_.create_image_from_numpy(img.array, img.bands)
+                elif not isinstance(
+                    img, (Py5Image, Py5Graphics)
+                ) and image_conversion._convertable(img):
                     args[argnum] = self_.convert_image(img)
             return f(self_, *args)
+
         return decorated
+
     return _decorator
+
+
+def _auto_convert_to_py5shape(f):
+    @functools.wraps(f)
+    def decorated(self_, *args):
+        if len(args) >= 1:
+            args = list(args)
+            shape = args[0]
+            if not isinstance(shape, Py5Shape) and shape_conversion._convertable(shape):
+                args[0] = self_.convert_shape(shape)
+        return f(self_, *args)
+
+    return decorated
 
 
 def _generator_to_list(f):
@@ -116,6 +150,7 @@ def _generator_to_list(f):
         if isinstance(args[0], types.GeneratorType):
             args = list(args[0]), *args[1:]
         return f(self_, *args)
+
     return decorated
 
 
@@ -123,24 +158,21 @@ def _settings_only(name):
     def _decorator(f):
         @functools.wraps(f)
         def decorated(self_, *args):
-            if self_._py5_bridge.current_running_method == 'settings':
+            if self_._py5_bridge.current_running_method == "settings":
                 return f(self_, *args)
             else:
                 raise RuntimeError(
-                    "Cannot call the " +
-                    name +
-                    "() method here. Either move it to a settings() function or move it to closer to the start of setup().")
+                    "Cannot call the "
+                    + name
+                    + "() method here. Either move it to a settings() function or move it to closer to the start of setup()."
+                )
+
         return decorated
+
     return _decorator
 
 
-class Sketch(
-        MathMixin,
-        DataMixin,
-        ThreadsMixin,
-        PixelMixin,
-        PrintlnStream,
-        Py5Base):
+class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5Base):
     """Core py5 class for leveraging py5's functionality.
 
     Underlying Processing class: PApplet.PApplet
@@ -175,81 +207,99 @@ class Sketch(
     When coding in class mode, all of the above functions should be class methods.
     When coding in module mode or imported mode, the above functions should be
     stand-alone functions available in the local namespace in which `run_sketch()`
-    was called.
-    """
+    was called."""
+
     _py5_object_cache = set()
     _cls = _Sketch
 
     def __new__(cls, *args, **kwargs):
-        _instance = kwargs.get('_instance')
+        _instance = kwargs.get("_instance")
 
         # remove dead or malformed Sketch instances from the object cache
         cls._py5_object_cache = set(
-            s for s in cls._py5_object_cache if hasattr(
-                s, '_instance') and not s.is_dead)
+            s
+            for s in cls._py5_object_cache
+            if hasattr(s, "_instance") and not s.is_dead
+        )
         if _instance:
             for s in cls._py5_object_cache:
                 if _instance == s._instance:
                     return s
             else:
                 raise RuntimeError(
-                    'Failed to locate cached Sketch class for provided py5.core.Sketch instance')
+                    "Failed to locate cached Sketch class for provided py5.core.Sketch instance"
+                )
         else:
             s = object.__new__(cls)
             cls._py5_object_cache.add(s)
             return s
 
     def __init__(self, *args, **kwargs):
-        _instance = kwargs.get('_instance')
-        jclassname = kwargs.get('jclassname')
+        _instance = kwargs.get("_instance")
+        jclassname = kwargs.get("jclassname")
 
         if _instance:
-            if _instance == getattr(self, '_instance', None):
+            if _instance == getattr(self, "_instance", None):
                 # this is a cached Sketch object, don't re-run __init__()
                 return
             else:
                 raise RuntimeError(
-                    'Unexpected Situation: Passed py5.core.Sketch instance does not match existing py5.core.Sketch instance. What is going on?')
+                    "Unexpected Situation: Passed py5.core.Sketch instance does not match existing py5.core.Sketch instance. What is going on?"
+                )
 
         Sketch._cls = JClass(jclassname) if jclassname else _Sketch
         instance = Sketch._cls()
         if not isinstance(instance, _SketchBase):
-            raise RuntimeError(
-                'Java instance must inherit from py5.core.SketchBase')
+            raise RuntimeError("Java instance must inherit from py5.core.SketchBase")
 
         super().__init__(instance=instance)
         self._methods_to_profile = []
         self._pre_hooks_to_add = []
         self._post_hooks_to_add = []
         # must always keep the _py5_bridge reference count from hitting zero.
-        # otherwise, it will be garbage collected and lead to segmentation
-        # faults!
+        # otherwise, it will be garbage collected and lead to segmentation faults!
         self._py5_bridge = None
         self._environ = None
-        iconPath = Path(__file__).parent.parent / \
-            'py5_tools/resources/logo-64x64.png'
-        if iconPath.exists() and hasattr(self._instance, 'setPy5IconPath'):
+        iconPath = Path(__file__).parent.parent / "py5_tools/resources/logo-64x64.png"
+        if iconPath.exists() and hasattr(self._instance, "setPy5IconPath"):
             self._instance.setPy5IconPath(str(iconPath))
-        elif hasattr(sys, '_MEIPASS'):
+        elif hasattr(sys, "_MEIPASS"):
             warnings.warn(
                 "py5 logo image cannot be found. You are running this Sketch with pyinstaller and the image is missing from the packaging. I'm going to nag you about this until you fix it.",
-                stacklevel=3)
+                stacklevel=3,
+            )
         Sketch._cls.setJOGLProperties(str(Path(__file__).parent))
         self.utils = Py5Utilities(self)
 
+        self._cmap = None
+        self._cmap_range = 0
+        self._cmap_alpha_range = 0
+
     def __str__(self):
-        return f"Sketch(width=" + str(self._get_width()) + ", height=" + str(
-            self._get_height()) + ", renderer=" + str(self._instance.getRendererName()) + ")"
+        return (
+            f"Sketch(width="
+            + str(self._get_width())
+            + ", height="
+            + str(self._get_height())
+            + ", renderer="
+            + str(self._instance.getRendererName())
+            + ")"
+        )
 
     def __repr__(self):
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Sketch', name, self))
+        raise AttributeError(spelling.error_msg("Sketch", name, self))
 
-    def run_sketch(self, block: bool = None, *,
-                   py5_options: list = None, sketch_args: list = None,
-                   _osx_alt_run_method: bool = True) -> None:
+    def run_sketch(
+        self,
+        block: bool = None,
+        *,
+        py5_options: list = None,
+        sketch_args: list = None,
+        _osx_alt_run_method: bool = True,
+    ) -> None:
         """Run the Sketch.
 
         Parameters
@@ -280,8 +330,8 @@ class Sketch(
         immediately (asynchronous Sketch execution) or block until the Sketch exits. If
         the `block` parameter is not specified, py5 will first attempt to determine if
         the Sketch is running in a Jupyter Notebook or an IPython shell. If it is,
-        `block` will default to `False`, and `True` otherwise. However, on OSX, these
-        default values are required, as py5 cannot work on OSX without them.
+        `block` will default to `False`, and `True` otherwise. However, on macOS, these
+        default values are required, as py5 cannot work on macOS without them.
 
         A list of strings passed to `py5_options` will be passed to the Processing
         PApplet class as arguments to specify characteristics such as the window's
@@ -325,42 +375,60 @@ class Sketch(
         Mode. This value must be the canonical name of your Processing Sketch class
         (i.e. `"org.test.MySketch"`). The class must inherit from `py5.core.SketchBase`.
         Read py5's online documentation to learn more about Processing Mode."""
-        if not hasattr(self, '_instance'):
+        if not hasattr(self, "_instance"):
             raise RuntimeError(
-                ('py5 internal problem: did you create a class with an `__init__()` '
-                 'method without a call to `super().__init__()`?'))
+                (
+                    "py5 internal problem: did you create a class with an `__init__()` "
+                    "method without a call to `super().__init__()`?"
+                )
+            )
 
-        methods, method_param_counts = _extract_py5_user_function_data(dict(
-            [(e, getattr(self, e)) for e in reference.METHODS.keys() if hasattr(self, e)]))
+        methods, method_param_counts = _extract_py5_user_function_data(
+            dict(
+                [
+                    (e, getattr(self, e))
+                    for e in reference.METHODS.keys()
+                    if hasattr(self, e)
+                ]
+            )
+        )
 
         caller_locals = inspect.stack()[1].frame.f_locals
         caller_globals = inspect.stack()[1].frame.f_globals
 
-        self._run_sketch(methods, method_param_counts, block,
-                         py5_options=py5_options,
-                         sketch_args=sketch_args,
-                         _caller_locals=caller_locals,
-                         _caller_globals=caller_globals,
-                         _osx_alt_run_method=_osx_alt_run_method)
+        self._run_sketch(
+            methods,
+            method_param_counts,
+            block,
+            py5_options=py5_options,
+            sketch_args=sketch_args,
+            _caller_locals=caller_locals,
+            _caller_globals=caller_globals,
+            _osx_alt_run_method=_osx_alt_run_method,
+        )
 
-    def _run_sketch(self,
-                    methods: dict[str, Callable],
-                    method_param_counts: dict[str, int],
-                    block: bool,
-                    *,
-                    py5_options: list[str] = None,
-                    sketch_args: list[str] = None,
-                    _caller_locals: dict[str, Any] = None,
-                    _caller_globals: dict[str, Any] = None,
-                    _osx_alt_run_method: bool = True) -> None:
+    def _run_sketch(
+        self,
+        methods: dict[str, Callable],
+        method_param_counts: dict[str, int],
+        block: bool,
+        *,
+        py5_options: list[str] = None,
+        sketch_args: list[str] = None,
+        _caller_locals: dict[str, Any] = None,
+        _caller_globals: dict[str, Any] = None,
+        _osx_alt_run_method: bool = True,
+    ) -> None:
         self._environ = _environ.Environment()
-        self.set_println_stream(_DisplayPubPrintlnStream(
-        ) if self._environ.in_jupyter_zmq_shell else _DefaultPrintlnStream())
+        self.set_println_stream(
+            _DisplayPubPrintlnStream()
+            if self._environ.in_jupyter_zmq_shell
+            else _DefaultPrintlnStream()
+        )
         self._init_println_stream()
 
         self._py5_bridge = Py5Bridge(self)
-        self._py5_bridge.set_caller_locals_globals(
-            _caller_locals, _caller_globals)
+        self._py5_bridge.set_caller_locals_globals(_caller_locals, _caller_globals)
         self._py5_bridge.add_functions(methods, method_param_counts)
         self._py5_bridge.profile_functions(self._methods_to_profile)
         self._py5_bridge.add_pre_hooks(self._pre_hooks_to_add)
@@ -368,25 +436,27 @@ class Sketch(
         self._instance.buildPy5Bridge(
             self._py5_bridge,
             self._environ.in_ipython_session,
-            self._environ.in_jupyter_zmq_shell)
+            self._environ.in_jupyter_zmq_shell,
+        )
 
         if not py5_options:
             py5_options = []
         if not sketch_args:
             sketch_args = []
-        if not any([a.startswith('--sketch-path') for a in py5_options]):
-            py5_options.append('--sketch-path=' + os.getcwd())
-        if not any([a.startswith('--location') for a in py5_options]
-                   ) and _PY5_LAST_WINDOW_X is not None and _PY5_LAST_WINDOW_Y is not None:
+        if not any([a.startswith("--sketch-path") for a in py5_options]):
+            py5_options.append("--sketch-path=" + os.getcwd())
+        if (
+            not any([a.startswith("--location") for a in py5_options])
+            and _PY5_LAST_WINDOW_X is not None
+            and _PY5_LAST_WINDOW_Y is not None
+        ):
             py5_options.append(
-                '--location=' +
-                str(_PY5_LAST_WINDOW_X) +
-                ',' +
-                str(_PY5_LAST_WINDOW_Y))
-        args = py5_options + [''] + sketch_args
+                "--location=" + str(_PY5_LAST_WINDOW_X) + "," + str(_PY5_LAST_WINDOW_Y)
+            )
+        args = py5_options + [""] + sketch_args
 
         try:
-            if _osx_alt_run_method and platform.system() == 'Darwin':
+            if _osx_alt_run_method and platform.system() == "Darwin":
                 from PyObjCTools import AppHelper  # type: ignore
 
                 def run():
@@ -402,36 +472,43 @@ class Sketch(
 
                 if block == False and not self._environ.in_ipython_session:
                     self.println(
-                        "On OSX, blocking is manditory when Sketch is not run through Jupyter. This applies to all renderers.",
-                        stderr=True)
+                        "On macOS, blocking is manditory when Sketch is not run through Jupyter. This applies to all renderers.",
+                        stderr=True,
+                    )
 
-                proxy = jpype.JProxy('java.lang.Runnable', dict(run=run))
-                jpype.JClass('java.lang.Thread')(proxy).start()
+                proxy = jpype.JProxy("java.lang.Runnable", dict(run=run))
+                jpype.JClass("java.lang.Thread")(proxy).start()
                 if not self._environ.in_ipython_session:
                     AppHelper.runConsoleEventLoop()
             else:
                 Sketch._cls.runSketch(args, self._instance)
         except Exception as e:
             self.println(
-                'Java exception thrown by Sketch.runSketch:\n' +
-                str(e),
-                stderr=True)
+                "Java exception thrown by Sketch.runSketch:\n" + str(e), stderr=True
+            )
 
-        if platform.system() == 'Darwin' and self._environ.in_ipython_session and block:
+        if platform.system() == "Darwin" and self._environ.in_ipython_session and block:
             if (renderer := self._instance.getRendererName()) in [
-                    'JAVA2D', 'P2D', 'P3D', 'FX2D']:
+                "JAVA2D",
+                "P2D",
+                "P3D",
+                "FX2D",
+            ]:
                 self.println(
-                    "On OSX, blocking is not allowed when Sketch using the",
+                    "On macOS, blocking is not allowed when Sketch using the",
                     renderer,
                     "renderer is run though Jupyter.",
-                    stderr=True)
+                    stderr=True,
+                )
                 block = False
 
         if block or (block is None and not self._environ.in_ipython_session):
             # wait for the sketch to finish
             surface = self.get_surface()
             if surface._instance is not None:
-                while not surface.is_stopped() and not hasattr(self, '_shutdown_initiated'):
+                while not surface.is_stopped() and not hasattr(
+                    self, "_shutdown_initiated"
+                ):
                     time.sleep(0.25)
 
             # Wait no more than 1 second for any shutdown tasks to complete.
@@ -441,8 +518,7 @@ class Sketch(
             # procedure. Bottom line, this currently doesn't do very much but
             # might if a mixin had more complex shutdown steps.
             time_waited = 0
-            while time_waited < 1.0 and not hasattr(
-                    self, '_shutdown_complete'):
+            while time_waited < 1.0 and not hasattr(self, "_shutdown_complete"):
                 pause = 0.01
                 time_waited += pause
                 time.sleep(pause)
@@ -450,8 +526,12 @@ class Sketch(
     def _shutdown(self):
         global _PY5_LAST_WINDOW_X
         global _PY5_LAST_WINDOW_Y
-        if (hasattr(self._instance, 'lastWindowX') and hasattr(self._instance, 'lastWindowY')
-                and self._instance.lastWindowX is not None and self._instance.lastWindowY is not None):
+        if (
+            hasattr(self._instance, "lastWindowX")
+            and hasattr(self._instance, "lastWindowY")
+            and self._instance.lastWindowX is not None
+            and self._instance.lastWindowY is not None
+        ):
             _PY5_LAST_WINDOW_X = int(self._instance.lastWindowX)
             _PY5_LAST_WINDOW_Y = int(self._instance.lastWindowY)
         super()._shutdown()
@@ -470,7 +550,10 @@ class Sketch(
     def _remove_pre_hook(self, method_name, hook_name):
         if self._py5_bridge is None:
             self._pre_hooks_to_add = [
-                x for x in self._pre_hooks_to_add if x[0] != method_name and x[1] != hook_name]
+                x
+                for x in self._pre_hooks_to_add
+                if x[0] != method_name and x[1] != hook_name
+            ]
         else:
             self._py5_bridge.remove_pre_hook(method_name, hook_name)
 
@@ -483,7 +566,10 @@ class Sketch(
     def _remove_post_hook(self, method_name, hook_name):
         if self._py5_bridge is None:
             self._post_hooks_to_add = [
-                x for x in self._post_hooks_to_add if x[0] != method_name and x[1] != hook_name]
+                x
+                for x in self._post_hooks_to_add
+                if x[0] != method_name and x[1] != hook_name
+            ]
         else:
             self._py5_bridge.remove_post_hook(method_name, hook_name)
 
@@ -497,6 +583,7 @@ class Sketch(
     TAU = 2 * np.pi  # CODEBUILDER INCLUDE
     RAD_TO_DEG = 180 / np.pi  # CODEBUILDER INCLUDE
     DEG_TO_RAD = np.pi / 180  # CODEBUILDER INCLUDE
+    CMAP = 6  # CODEBUILDER INCLUDE
 
     @overload
     def sketch_path(self) -> Path:
@@ -590,18 +677,17 @@ class Sketch(
         including a `--sketch-path` argument in the `py5_options` parameters."""
         if not self.is_running:
             msg = (
-                "Calling method sketch_path() when Sketch is not running. " +
-                "The returned value will not be correct on all platforms. Consider " +
-                "calling this after setup() or perhaps using the Python standard " +
-                "library methods os.getcwd() or pathlib.Path.cwd().")
+                "Calling method sketch_path() when Sketch is not running. "
+                + "The returned value will not be correct on all platforms. Consider "
+                + "calling this after setup() or perhaps using the Python standard "
+                + "library methods os.getcwd() or pathlib.Path.cwd()."
+            )
             warnings.warn(msg)
         if len(args) <= 1:
             return Path(str(self._instance.sketchPath(*args)))
         else:
-            # this exception will be replaced with a more informative one by
-            # the custom exception handler
-            raise TypeError(
-                'The parameters are invalid for method sketch_path()')
+            # this exception will be replaced with a more informative one by the custom exception handler
+            raise TypeError("The parameters are invalid for method sketch_path()")
 
     def _get_is_ready(self) -> bool:
         """Boolean value reflecting if the Sketch is in the ready state.
@@ -615,6 +701,7 @@ class Sketch(
         surface = self.get_surface()
         # if there is no surface yet, the sketch can be run.
         return surface._instance is None
+
     is_ready: bool = property(
         fget=_get_is_ready,
         doc="""Boolean value reflecting if the Sketch is in the ready state.
@@ -624,7 +711,8 @@ class Sketch(
 
         Boolean value reflecting if the Sketch is in the ready state. This will be
         `True` before `run_sketch()` is called. It will be `False` while the Sketch is
-        running and after it has exited.""")
+        running and after it has exited.""",
+    )
 
     def _get_is_running(self) -> bool:
         """Boolean value reflecting if the Sketch is in the running state.
@@ -640,7 +728,8 @@ class Sketch(
             # Sketch has not been run yet
             return False
         else:
-            return not surface.is_stopped() and not hasattr(self, '_shutdown_initiated')
+            return not surface.is_stopped() and not hasattr(self, "_shutdown_initiated")
+
     is_running: bool = property(
         fget=_get_is_running,
         doc="""Boolean value reflecting if the Sketch is in the running state.
@@ -650,7 +739,8 @@ class Sketch(
 
         Boolean value reflecting if the Sketch is in the running state. This will be
         `False` before `run_sketch()` is called and `True` after. It will be `False`
-        again after the Sketch has exited.""")
+        again after the Sketch has exited.""",
+    )
 
     def _get_is_dead(self) -> bool:
         """Boolean value reflecting if the Sketch has been run and has now stopped.
@@ -670,7 +760,8 @@ class Sketch(
         if surface._instance is None:
             # Sketch has not been run yet
             return False
-        return surface.is_stopped() or hasattr(self, '_shutdown_initiated')
+        return surface.is_stopped() or hasattr(self, "_shutdown_initiated")
+
     is_dead: bool = property(
         fget=_get_is_dead,
         doc="""Boolean value reflecting if the Sketch has been run and has now stopped.
@@ -685,7 +776,8 @@ class Sketch(
         cannot be rerun.
 
         After an error or a call to `Py5Surface.stop_thread()`, the Sketch window will
-        still be open. Call `exit_sketch()` to close the window.""")
+        still be open. Call `exit_sketch()` to close the window.""",
+    )
 
     def _get_is_dead_from_error(self) -> bool:
         """Boolean value reflecting if the Sketch has been run and has now stopped because
@@ -698,6 +790,7 @@ class Sketch(
         of an error. This will be `True` only when `is_dead` is `True` and the Sketch
         stopped because an exception was thrown."""
         return self.is_dead and not self._instance.getSuccess()
+
     is_dead_from_error: bool = property(
         fget=_get_is_dead_from_error,
         doc="""Boolean value reflecting if the Sketch has been run and has now stopped because
@@ -708,7 +801,8 @@ class Sketch(
 
         Boolean value reflecting if the Sketch has been run and has now stopped because
         of an error. This will be `True` only when `is_dead` is `True` and the Sketch
-        stopped because an exception was thrown.""")
+        stopped because an exception was thrown.""",
+    )
 
     def _get_is_mouse_pressed(self) -> bool:
         """The `is_mouse_pressed` variable stores whether or not a mouse button is
@@ -720,8 +814,10 @@ class Sketch(
         The `is_mouse_pressed` variable stores whether or not a mouse button is
         currently being pressed. The value is `True` when `any` mouse button is pressed,
         and `False` if no button is pressed. The `mouse_button` variable (see the
-        related reference entry) can be used to determine which button has been pressed."""
+        related reference entry) can be used to determine which button has been pressed.
+        """
         return self._instance.isMousePressed()
+
     is_mouse_pressed: bool = property(
         fget=_get_is_mouse_pressed,
         doc="""The `is_mouse_pressed` variable stores whether or not a mouse button is
@@ -733,7 +829,8 @@ class Sketch(
         The `is_mouse_pressed` variable stores whether or not a mouse button is
         currently being pressed. The value is `True` when `any` mouse button is pressed,
         and `False` if no button is pressed. The `mouse_button` variable (see the
-        related reference entry) can be used to determine which button has been pressed.""")
+        related reference entry) can be used to determine which button has been pressed.""",
+    )
 
     def _get_is_key_pressed(self) -> bool:
         """The `is_key_pressed` variable stores whether or not a keyboard button is
@@ -748,6 +845,7 @@ class Sketch(
         variables (see the related reference entries) can be used to determine which
         button has been pressed."""
         return self._instance.isKeyPressed()
+
     is_key_pressed: bool = property(
         fget=_get_is_key_pressed,
         doc="""The `is_key_pressed` variable stores whether or not a keyboard button is
@@ -760,7 +858,8 @@ class Sketch(
         currently being pressed. The value is true when `any` keyboard button is
         pressed, and false if no button is pressed. The `key` variable and `key_code`
         variables (see the related reference entries) can be used to determine which
-        button has been pressed.""")
+        button has been pressed.""",
+    )
 
     def hot_reload_draw(self, draw: Callable) -> None:
         """Perform a hot reload of the Sketch's draw function.
@@ -776,9 +875,8 @@ class Sketch(
 
         Perform a hot reload of the Sketch's draw function. This method allows you to
         replace a running Sketch's draw function with a different one."""
-        methods, method_param_counts = _extract_py5_user_function_data(
-            dict(draw=draw))
-        if 'draw' in methods:
+        methods, method_param_counts = _extract_py5_user_function_data(dict(draw=draw))
+        if "draw" in methods:
             self._py5_bridge.add_functions(methods, method_param_counts)
         else:
             self.println("The new draw() function must take no parameters")
@@ -835,7 +933,7 @@ class Sketch(
 
         To profile a other functions besides draw, use `profile_functions()`. To see the
         results, use `print_line_profiler_stats()`."""
-        self.profile_functions(['draw'])
+        self.profile_functions(["draw"])
 
     def print_line_profiler_stats(self) -> None:
         """Print the line profiler stats initiated with `profile_draw()` or
@@ -861,24 +959,24 @@ class Sketch(
         """
         if num is None:
             num = self._instance.frameCount
-        first = what.find('#')
-        last = len(what) - what[::-1].find('#')
+        first = what.find("#")
+        last = len(what) - what[::-1].find("#")
         if first != -1 and last - first > 1:
             count = last - first
             numstr = str(num)
-            numprefix = '0' * (count - len(numstr))
+            numprefix = "0" * (count - len(numstr))
             what = what[:first] + numprefix + numstr + what[last:]
         return what
 
-    def save_frame(self,
-                   filename: Union[str,
-                                   Path,
-                                   BytesIO],
-                   *,
-                   format: str = None,
-                   drop_alpha: bool = True,
-                   use_thread: bool = False,
-                   **params) -> None:
+    def save_frame(
+        self,
+        filename: Union[str, Path, BytesIO],
+        *,
+        format: str = None,
+        drop_alpha: bool = True,
+        use_thread: bool = False,
+        **params,
+    ) -> None:
         """Save the current frame as an image.
 
         Parameters
@@ -926,10 +1024,12 @@ class Sketch(
             format=format,
             drop_alpha=drop_alpha,
             use_thread=use_thread,
-            **params)
+            **params,
+        )
 
-    def select_folder(self, prompt: str, callback: Callable,
-                      default_folder: str = None) -> None:
+    def select_folder(
+        self, prompt: str, callback: Callable, default_folder: str = None
+    ) -> None:
         """Opens a file chooser dialog to select a folder.
 
         Underlying Processing method: Sketch.selectFolder
@@ -955,30 +1055,29 @@ class Sketch(
         waiting for additional input. The callback is necessary because of how threading
         works.
 
-        This method has some platform specific quirks. On OSX, this does not work when
+        This method has some platform specific quirks. On macOS, this does not work when
         the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
         OpenGL renderers (`P2D` or `P3D`) will be minimized while the select dialog box
-        is open. This method only uses native dialog boxes on OSX."""
-        if not isinstance(
-                prompt,
-                str) or not callable(callback) or (
-                default_folder is not None and not isinstance(
-                default_folder,
-                str)):
+        is open. This method only uses native dialog boxes on macOS."""
+        if (
+            not isinstance(prompt, str)
+            or not callable(callback)
+            or (default_folder is not None and not isinstance(default_folder, str))
+        ):
             raise TypeError(
-                "This method's signature is select_folder(prompt: str, callback: Callable, default_folder: str)")
+                "This method's signature is select_folder(prompt: str, callback: Callable, default_folder: str)"
+            )
         self._generic_select(
             self._instance.py5SelectFolder,
-            'select_folder',
+            "select_folder",
             prompt,
             callback,
-            default_folder)
+            default_folder,
+        )
 
     def select_input(
-            self,
-            prompt: str,
-            callback: Callable,
-            default_file: str = None) -> None:
+        self, prompt: str, callback: Callable, default_file: str = None
+    ) -> None:
         """Opens a file chooser dialog to select a folder.
 
         Underlying Processing method: Sketch.selectFolder
@@ -1004,30 +1103,29 @@ class Sketch(
         waiting for additional input. The callback is necessary because of how threading
         works.
 
-        This method has some platform specific quirks. On OSX, this does not work when
+        This method has some platform specific quirks. On macOS, this does not work when
         the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
         OpenGL renderers (`P2D` or `P3D`) will be minimized while the select dialog box
-        is open. This method only uses native dialog boxes on OSX."""
-        if not isinstance(
-                prompt,
-                str) or not callable(callback) or (
-                default_file is not None and not isinstance(
-                default_file,
-                str)):
+        is open. This method only uses native dialog boxes on macOS."""
+        if (
+            not isinstance(prompt, str)
+            or not callable(callback)
+            or (default_file is not None and not isinstance(default_file, str))
+        ):
             raise TypeError(
-                "This method's signature is select_input(prompt: str, callback: Callable, default_file: str)")
+                "This method's signature is select_input(prompt: str, callback: Callable, default_file: str)"
+            )
         self._generic_select(
             self._instance.py5SelectInput,
-            'select_input',
+            "select_input",
             prompt,
             callback,
-            default_file)
+            default_file,
+        )
 
     def select_output(
-            self,
-            prompt: str,
-            callback: Callable,
-            default_file: str = None) -> None:
+        self, prompt: str, callback: Callable, default_file: str = None
+    ) -> None:
         """Opens a file chooser dialog to select a folder.
 
         Underlying Processing method: Sketch.selectFolder
@@ -1053,68 +1151,75 @@ class Sketch(
         waiting for additional input. The callback is necessary because of how threading
         works.
 
-        This method has some platform specific quirks. On OSX, this does not work when
+        This method has some platform specific quirks. On macOS, this does not work when
         the Sketch is run through a Jupyter notebook. On Windows, Sketches using the
         OpenGL renderers (`P2D` or `P3D`) will be minimized while the select dialog box
-        is open. This method only uses native dialog boxes on OSX."""
-        if not isinstance(
-                prompt,
-                str) or not callable(callback) or (
-                default_file is not None and not isinstance(
-                default_file,
-                str)):
+        is open. This method only uses native dialog boxes on macOS."""
+        if (
+            not isinstance(prompt, str)
+            or not callable(callback)
+            or (default_file is not None and not isinstance(default_file, str))
+        ):
             raise TypeError(
-                "This method's signature is select_output(prompt: str, callback: Callable, default_file: str)")
+                "This method's signature is select_output(prompt: str, callback: Callable, default_file: str)"
+            )
         self._generic_select(
             self._instance.py5SelectOutput,
-            'select_output',
+            "select_output",
             prompt,
             callback,
-            default_file)
+            default_file,
+        )
 
     def _generic_select(
-            self,
-            py5f: Callable,
-            name: str,
-            prompt: str,
-            callback: Callable,
-            default_folder: str = None) -> None:
+        self,
+        py5f: Callable,
+        name: str,
+        prompt: str,
+        callback: Callable,
+        default_folder: str = None,
+    ) -> None:
         callback_sig = inspect.signature(callback)
-        if len(callback_sig.parameters) != 1 or list(callback_sig.parameters.values())[
-                0].kind == inspect.Parameter.KEYWORD_ONLY:
+        if (
+            len(callback_sig.parameters) != 1
+            or list(callback_sig.parameters.values())[0].kind
+            == inspect.Parameter.KEYWORD_ONLY
+        ):
             raise RuntimeError(
-                "The callback function must have one and only one positional argument")
+                "The callback function must have one and only one positional argument"
+            )
 
         key = "_PY5_SELECT_CALLBACK_" + str(uuid.uuid4())
 
         def wrapped_callback_py5_no_prune(selection):
-            return callback(
-                selection if selection is None else Path(selection))
+            return callback(selection if selection is None else Path(selection))
 
         py5_tools.config.register_processing_mode_key(
-            key, wrapped_callback_py5_no_prune, callback_once=True)
+            key, wrapped_callback_py5_no_prune, callback_once=True
+        )
 
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             if self._environ.in_ipython_session:
                 raise RuntimeError(
-                    "Sorry, py5's " +
-                    name +
-                    "() method doesn't work on OSX when the Sketch is run through Jupyter. However, there are some IPython widgets you can use instead.")
+                    "Sorry, py5's "
+                    + name
+                    + "() method doesn't work on macOS when the Sketch is run through Jupyter. However, there are some IPython widgets you can use instead."
+                )
             else:
+
                 def _run():
                     py5f(key, prompt, default_folder)
-                proxy = jpype.JProxy('java.lang.Runnable', dict(run=_run))
-                jpype.JClass('java.lang.Thread')(proxy).start()
+
+                proxy = jpype.JProxy("java.lang.Runnable", dict(run=_run))
+                jpype.JClass("java.lang.Thread")(proxy).start()
         else:
             py5f(key, prompt, default_folder)
 
     # *** Py5Image methods ***
 
-    def create_image_from_numpy(self,
-                                array: npt.NDArray[np.uint8],
-                                bands: str = 'ARGB',
-                                *,
-                                dst: Py5Image = None) -> Py5Image:
+    def create_image_from_numpy(
+        self, array: npt.NDArray[np.uint8], bands: str = "ARGB", *, dst: Py5Image = None
+    ) -> Py5Image:
         """Convert a numpy array into a Py5Image object.
 
         Parameters
@@ -1123,7 +1228,7 @@ class Sketch(
         array: npt.NDArray[np.uint8]
             numpy image array
 
-        bands: str = 'ARGB'
+        bands: str = "ARGB"
             color channels in array
 
         dst: Py5Image = None
@@ -1151,8 +1256,7 @@ class Sketch(
 
         if dst:
             if width != dst.pixel_width or height != dst.pixel_height:
-                raise RuntimeError(
-                    "array size does not match size of dst Py5Image")
+                raise RuntimeError("array size does not match size of dst Py5Image")
             py5_img = dst
         else:
             py5_img = self.create_image(width, height, self.ARGB)
@@ -1161,7 +1265,9 @@ class Sketch(
 
         return py5_img
 
-    def convert_image(self, obj: Any, *, dst: Py5Image = None) -> Py5Image:
+    def convert_image(
+        self, obj: Any, *, dst: Py5Image = None, **kwargs: dict[str, Any]
+    ) -> Py5Image:
         """Convert non-py5 image objects into Py5Image objects.
 
         Parameters
@@ -1169,6 +1275,9 @@ class Sketch(
 
         dst: Py5Image = None
             existing Py5Image object to put the converted image into
+
+        kwargs: dict[str, Any]
+            keyword arguments for conversion function
 
         obj: Any
             object to convert into a Py5Image object
@@ -1180,35 +1289,74 @@ class Sketch(
         compatability with other commonly used Python libraries.
 
         This method is comparable to `load_image()`, except instead of reading image
-        files from disk, it reads image data from other Python objects.
+        files from disk, it converts image data from other Python objects.
 
         Passed image object types must be known to py5's image conversion tools. New
         object types and functions to effect conversions can be registered with
         `register_image_conversion()`.
 
-        The `convert_image()` method has builtin support for conversion of `PIL.Image`
-        objects. This will allow users to use image formats that `load_image()` cannot
-        read. To convert a numpy array into a Py5Image, use `create_image_from_numpy()`.
+        The `convert_image()` method has builtin support for the conversion of
+        `PIL.Image` objects. This will allow users to use image formats that
+        `load_image()` cannot read. Look at the online "Images and Pillow" Python
+        Ecosystem Integration tutorial for more information. To convert a numpy array
+        into a Py5Image, use `create_image_from_numpy()`.
 
         The caller can optionally pass an existing Py5Image object to put the converted
         image into using the `dst` parameter. This can have performance benefits in code
         that would otherwise continuously create new Py5Image objects. The converted
-        image width and height must match that of the recycled Py5Image object."""
-        result = image_conversion._convert(obj)
+        image width and height must match that of the recycled Py5Image object.
+
+        The `convert_image()` method has builtin support for the conversion of
+        matplotlib charts and Cairo surfaces. Look at the online "Charts, Plots, and
+        Matplotlib" and "SVG Images and Cairo" Python Ecosystem Integration tutorials
+        for more information. You can also create your own custom integrations. Look at
+        the online "Custom Integrations" Python Ecosystem Integration tutorial to learn
+        more."""
+        result = image_conversion._convert(self, obj, **kwargs)
         if isinstance(result, (Path, str)):
             return self.load_image(result, dst=dst)
-        elif isinstance(result, NumpyImageArray):
-            return self.create_image_from_numpy(
-                result.array, result.bands, dst=dst)
+        elif isinstance(result, image_conversion.NumpyImageArray):
+            return self.create_image_from_numpy(result.array, result.bands, dst=dst)
         else:
             # could be Py5Image or something comparable
             return result
 
-    def load_image(self,
-                   image_path: Union[str,
-                                     Path],
-                   *,
-                   dst: Py5Image = None) -> Py5Image:
+    def convert_shape(self, obj: Any, **kwargs: dict[str, Any]) -> Py5Shape:
+        """Convert non-py5 shape objects into Py5Shape objects.
+
+        Parameters
+        ----------
+
+        kwargs: dict[str, Any]
+            keyword arguments for conversion function
+
+        obj: Any
+            object to convert into a Py5Shape object
+
+        Notes
+        -----
+
+        Convert non-py5 shape objects into Py5Shape objects. This facilitates py5
+        compatability with other commonly used Python libraries.
+
+        This method is comparable to `load_shape()`, except instead of reading shape
+        files from disk, it converts shape data from other Python objects.
+
+        Passed shape object types must be known to py5's shape conversion tools. New
+        object types and functions to effect conversions can be registered with
+        `register_shape_conversion()`.
+
+        The `convert_shape()` method has builtin support for the conversion of shapely
+        and trimesh objects. This will allow users to explore the geometry capabilities
+        of those libraries. Look at the online "2D Shapes and Shapely" and "3D Shapes
+        and Trimesh" Python Ecosystem Integration tutorials for more information. You
+        can also create your own custom integrations. Look at the online "Custom
+        Integrations" Python Ecosystem Integration tutorial to learn more."""
+        return shape_conversion._convert(self, obj, **kwargs)
+
+    def load_image(
+        self, image_path: Union[str, Path], *, dst: Py5Image = None
+    ) -> Py5Image:
         """Load an image into a variable of type `Py5Image`.
 
         Parameters
@@ -1245,26 +1393,31 @@ class Sketch(
         try:
             pimg = self._instance.loadImage(str(image_path))
         except JException as e:
-            msg = 'cannot load image file ' + str(image_path)
-            if e.message() == 'None':
-                msg += '. error message: either the file cannot be found or the file does not contain valid image data.'
+            msg = "cannot load image file " + str(image_path)
+            if e.message() == "None":
+                msg += ". error message: either the file cannot be found or the file does not contain valid image data."
             else:
-                msg += '. error message: ' + e.message()
+                msg += ". error message: " + e.message()
         else:
             if pimg and pimg.width > 0:
                 if dst:
-                    if pimg.pixel_width != dst.pixel_width or pimg.pixel_height != dst.pixel_height:
+                    if (
+                        pimg.pixel_width != dst.pixel_width
+                        or pimg.pixel_height != dst.pixel_height
+                    ):
                         raise RuntimeError(
-                            "size of loaded image does not match size of dst Py5Image")
+                            "size of loaded image does not match size of dst Py5Image"
+                        )
                     dst._replace_instance(pimg)
                     return dst
                 else:
                     return Py5Image(pimg)
             else:
                 raise RuntimeError(
-                    'cannot load image file ' +
-                    str(image_path) +
-                    '. error message: either the file cannot be found or the file does not contain valid image data.')
+                    "cannot load image file "
+                    + str(image_path)
+                    + ". error message: either the file cannot be found or the file does not contain valid image data."
+                )
         raise RuntimeError(msg)
 
     def request_image(self, image_path: Union[str, Path]) -> Py5Promise:
@@ -1292,6 +1445,2246 @@ class Sketch(
         then, the `result` property will be `None`."""
         return self.launch_promise_thread(self.load_image, args=(image_path,))
 
+    @overload
+    def color_mode(self, mode: int, /) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max1: float, max2: float, max3: float, /) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(
+        self, mode: int, max1: float, max2: float, max3: float, max_a: float, /
+    ) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(self, mode: int, max: float, /) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(self, colormap_mode: int, color_map: str, /) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(self, colormap_mode: int, color_map_instance: Colormap, /) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(self, colormap_mode: int, color_map: str, max_map: float, /) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(
+        self, colormap_mode: int, color_map_instance: Colormap, max_map: float, /
+    ) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(
+        self, colormap_mode: int, color_map: str, max_map: float, max_a: float, /
+    ) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    @overload
+    def color_mode(
+        self,
+        colormap_mode: int,
+        color_map_instance: Colormap,
+        max_map: float,
+        max_a: float,
+        /,
+    ) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        pass
+
+    def color_mode(self, mode: int, *args) -> None:
+        """Changes the way py5 interprets color data.
+
+        Underlying Processing method: PApplet.colorMode
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color_mode(colormap_mode: int, color_map: str, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map: str, max_map: float, max_a: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, /) -> None
+         * color_mode(colormap_mode: int, color_map_instance: Colormap, max_map: float, max_a: float, /, ) -> None
+         * color_mode(mode: int, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
+         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
+         * color_mode(mode: int, max: float, /) -> None
+
+        Parameters
+        ----------
+
+        color_map: str
+            name of builtin matplotlib Colormap
+
+        color_map_instance: Colormap
+            matplotlib.colors.Colormap instance
+
+        colormap_mode: int
+            CMAP, activating matplotlib Colormap mode
+
+        max1: float
+            range for the red or hue depending on the current color mode
+
+        max2: float
+            range for the green or saturation depending on the current color mode
+
+        max3: float
+            range for the blue or brightness depending on the current color mode
+
+        max: float
+            range for all color elements
+
+        max_a: float
+            range for the alpha
+
+        max_map: float
+            range for the color map
+
+        mode: int
+            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+
+        Notes
+        -----
+
+        Changes the way py5 interprets color data. By default, the parameters for
+        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
+        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
+        used to change the numerical range used for specifying colors and to switch
+        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
+        values are specified between 0 and 1. The limits for defining colors are altered
+        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
+
+        After changing the range of values for colors with code like `color_mode(HSB,
+        360, 100, 100)`, those ranges remain in use until they are explicitly changed
+        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
+        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
+        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
+        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
+        `color_mode(RGB, 255, 255, 255)`."""
+        # don't allow users to call this before the Sketch starts running
+        if not self.is_running:
+            raise RuntimeError(
+                "color_mode() cannot be called for a Sketch that is not running."
+            )
+
+        if mode == self.CMAP:
+            if mpl is None:
+                raise RuntimeError(
+                    "matplotlib must be installed to use CMAP color mode"
+                )
+            args = list(args)
+            if len(args) == 0:
+                raise TypeError(
+                    "When using the CMAP color mode, the second parameter must be an instance of matplotlib.colors.Colormap or a string representing a matplotlib colormap name"
+                )
+            if isinstance(args[0], str):
+                if args[0] in mpl.colormaps:
+                    args[0] = mpl.colormaps[args[0]]
+                else:
+                    raise RuntimeError(
+                        "provided colormap name not available in matplotlib"
+                    )
+            elif not isinstance(args[0], mpl.colors.Colormap):
+                raise RuntimeError(
+                    "provided colormap is not an instance of mpl.colors.Colormap"
+                )
+
+            if len(args) == 1:
+                self._cmap = args[0]
+                self._cmap_range = 1.0
+                self._cmap_alpha_range = 255
+            elif len(args) == 2:
+                self._cmap = args[0]
+                self._cmap_range = args[1]
+                self._cmap_alpha_range = 255
+            elif len(args) == 3:
+                self._cmap = args[0]
+                self._cmap_range = args[1]
+                self._cmap_alpha_range = args[2]
+            else:
+                raise TypeError(
+                    "When using the CMAP color mode, the arguments must be one of color_mode(CMAP, cmap), color_mode(CMAP, cmap, range), or color_mode(CMAP, cmap, range, alpha_range)"
+                )
+
+            self._instance.colorMode(self.RGB, 255, 255, 255, self._cmap_alpha_range)
+        else:
+            self._cmap = None
+            self._cmap_range = 0
+            self._cmap_alpha_range = 0
+            self._instance.colorMode(mode, *args)
+
+    @overload
+    def color(self, fgray: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, fgray: float, falpha: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, gray: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, gray: int, alpha: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, v1: float, v2: float, v3: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, v1: float, v2: float, v3: float, alpha: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, v1: int, v2: int, v3: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, v1: int, v2: int, v3: int, alpha: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, cmap_input: float, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, cmap_input: float, alpha: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, hex_code: str, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    @overload
+    def color(self, hex_code: str, alpha: int, /) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        pass
+
+    def color(self, *args) -> int:
+        """Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer).
+
+        Underlying Processing method: PApplet.color
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * color(cmap_input: float, /) -> int
+         * color(cmap_input: float, alpha: int, /) -> int
+         * color(fgray: float, /) -> int
+         * color(fgray: float, falpha: float, /) -> int
+         * color(gray: int, /) -> int
+         * color(gray: int, alpha: int, /) -> int
+         * color(hex_code: str, /) -> int
+         * color(hex_code: str, alpha: int, /) -> int
+         * color(v1: float, v2: float, v3: float, /) -> int
+         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
+         * color(v1: int, v2: int, v3: int, /) -> int
+         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
+
+        Parameters
+        ----------
+
+        alpha: float
+            alpha value relative to current color range
+
+        alpha: int
+            alpha value relative to current color range
+
+        cmap_input: float
+            input value when using colormap color mode
+
+        falpha: float
+            alpha value relative to current color range
+
+        fgray: float
+            number specifying value between white and black
+
+        gray: int
+            number specifying value between white and black
+
+        hex_code: str
+            hex color code
+
+        v1: float
+            red or hue values relative to the current color range
+
+        v1: int
+            red or hue values relative to the current color range
+
+        v2: float
+            green or saturation values relative to the current color range
+
+        v2: int
+            green or saturation values relative to the current color range
+
+        v3: float
+            blue or brightness values relative to the current color range
+
+        v3: int
+            blue or brightness values relative to the current color range
+
+        Notes
+        -----
+
+        Creates colors for storing in variables of the `color` datatype (a 32 bit
+        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
+        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
+        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
+        example).
+
+        Note that if only one value is provided to `color()`, it will be interpreted as
+        a grayscale value. Add a second value, and it will be used for alpha
+        transparency. When three values are specified, they are interpreted as either
+        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
+
+        Note that you can also use hexadecimal notation and web color notation to
+        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
+        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
+        color notations as a parameter.
+
+        When using hexadecimal notation to specify a color, use "`0x`" before the values
+        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
+        characters; the first two characters define the alpha component, and the
+        remainder define the red, green, and blue components.
+
+        When using web color notation to specify a color, create a string beginning with
+        the "`#`" character followed by three, four, six, or eight characters. The
+        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
+        that order) for the color and assume the color has no transparency. The example
+        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
+        (in that order) for the color. Notice that in web color notation the alpha
+        channel is last, which is consistent with CSS colors, and in hexadecimal
+        notation the alpha channel is first, which is consistent with Processing color
+        values."""
+        args = list(args)
+
+        if not isinstance(args[0], Py5Color):
+            if self._cmap is not None and isinstance(
+                args[0], (int, np.integer, float, np.floating)
+            ):
+                new_arg = JInt(
+                    int(
+                        "0xFF"
+                        + mcolors.to_hex(self._cmap(args[0] / self._cmap_range))[1:],
+                        base=16,
+                    )
+                )
+                args[0] = Py5Color(new_arg, _creator_instance=self)
+
+            elif (new_arg := _hex_converter(args[0])) is not None:
+                args[0] = Py5Color(new_arg, _creator_instance=self)
+
+            if len(args) == 1 and isinstance(args[0], Py5Color):
+                return args[0]
+
+        if self.is_running:
+            return Py5Color(self._instance.color(*args), _creator_instance=self)
+        else:
+            if not hasattr(self, "_dummy_pgraphics"):
+                self._dummy_pgraphics = JClass("processing.core.PGraphics")()
+                self._dummy_pgraphics.colorMode(self.RGB, 255, 255, 255, 255)
+
+            return Py5Color(self._dummy_pgraphics.color(*args), _creator_instance=self)
+
     ADD = 2
     ALPHA = 4
     ALT = 18
@@ -1312,7 +3705,7 @@ class Sketch(
     ARGS_UI_SCALE = "--ui-scale"
     ARGS_WINDOW_COLOR = "--window-color"
     ARROW = 0
-    BACKSPACE = '\b'
+    BACKSPACE = "\b"
     BASELINE = 0
     BEVEL = 32
     BEZIER_VERTEX = 1
@@ -1326,14 +3719,14 @@ class Sketch(
     CHORD = 2
     CLAMP = 0
     CLOSE = 2
-    CODED = '\uffff'
+    CODED = "\uffff"
     CONTROL = 17
     CORNER = 0
     CORNERS = 1
     CROSS = 1
     CURVE_VERTEX = 3
     DARKEST = 16
-    DELETE = '\u007f'
+    DELETE = "\u007f"
     DIAMETER = 3
     DIFFERENCE = 32
     DILATE = 18
@@ -1366,10 +3759,10 @@ class Sketch(
     ENABLE_STROKE_PERSPECTIVE = 7
     ENABLE_STROKE_PURE = 9
     ENABLE_TEXTURE_MIPMAPS = -8
-    ENTER = '\n'
-    EPSILON = 1.0E-4
+    ENTER = "\n"
+    EPSILON = 1.0e-4
     ERODE = 17
-    ESC = '\u001b'
+    ESC = "\u001b"
     EXCLUSION = 64
     EXTERNAL_MOVE = "__MOVE__"
     EXTERNAL_STOP = "__STOP__"
@@ -1389,9 +3782,9 @@ class Sketch(
     LINES = 5
     LINE_LOOP = 51
     LINE_STRIP = 50
-    MAX_FLOAT = 3.4028235E38
+    MAX_FLOAT = 3.4028235e38
     MAX_INT = 2147483647
-    MIN_FLOAT = -3.4028235E38
+    MIN_FLOAT = -3.4028235e38
     MIN_INT = -2147483648
     MITER = 8
     MODEL = 4
@@ -1421,7 +3814,7 @@ class Sketch(
     RECT = 30
     REPEAT = 1
     REPLACE = 0
-    RETURN = '\r'
+    RETURN = "\r"
     RGB = 1
     RIGHT = 39
     ROUND = 2
@@ -1435,7 +3828,7 @@ class Sketch(
     SQUARE = 1
     SUBTRACT = 4
     SVG = "processing.svg.PGraphicsSVG"
-    TAB = '\t'
+    TAB = "\t"
     TEXT = 2
     THRESHOLD = 16
     TOP = 101
@@ -1462,6 +3855,7 @@ class Sketch(
         to make this more useful.
         """
         return self._instance.args
+
     pargs: list[str] = property(
         fget=_get_pargs,
         doc="""List of strings passed to the Sketch through the call to `run_sketch()`.
@@ -1473,7 +3867,8 @@ class Sketch(
 
         List of strings passed to the Sketch through the call to `run_sketch()`. Only
         passing strings is allowed, but you can convert string types to something else
-        to make this more useful.""")
+        to make this more useful.""",
+    )
 
     def _get_display_height(self) -> int:
         """System variable that stores the height of the entire screen display.
@@ -1488,6 +3883,7 @@ class Sketch(
         `full_screen()` is usually a better choice.
         """
         return self._instance.displayHeight
+
     display_height: int = property(
         fget=_get_display_height,
         doc="""System variable that stores the height of the entire screen display.
@@ -1499,7 +3895,8 @@ class Sketch(
 
         System variable that stores the height of the entire screen display. This can be
         used to run a full-screen program on any display size, but calling
-        `full_screen()` is usually a better choice.""")
+        `full_screen()` is usually a better choice.""",
+    )
 
     def _get_display_width(self) -> int:
         """System variable that stores the width of the entire screen display.
@@ -1514,6 +3911,7 @@ class Sketch(
         `full_screen()` is usually a better choice.
         """
         return self._instance.displayWidth
+
     display_width: int = property(
         fget=_get_display_width,
         doc="""System variable that stores the width of the entire screen display.
@@ -1525,7 +3923,8 @@ class Sketch(
 
         System variable that stores the width of the entire screen display. This can be
         used to run a full-screen program on any display size, but calling
-        `full_screen()` is usually a better choice.""")
+        `full_screen()` is usually a better choice.""",
+    )
 
     def _get_finished(self) -> bool:
         """Boolean variable reflecting if the Sketch has stopped permanently.
@@ -1538,6 +3937,7 @@ class Sketch(
         Boolean variable reflecting if the Sketch has stopped permanently.
         """
         return self._instance.finished
+
     finished: bool = property(
         fget=_get_finished,
         doc="""Boolean variable reflecting if the Sketch has stopped permanently.
@@ -1547,7 +3947,8 @@ class Sketch(
         Notes
         -----
 
-        Boolean variable reflecting if the Sketch has stopped permanently.""")
+        Boolean variable reflecting if the Sketch has stopped permanently.""",
+    )
 
     def _get_focused(self) -> bool:
         """Confirms if a py5 program is "focused," meaning that it is active and will
@@ -1563,6 +3964,7 @@ class Sketch(
         `False` if not.
         """
         return self._instance.focused
+
     focused: bool = property(
         fget=_get_focused,
         doc="""Confirms if a py5 program is "focused," meaning that it is active and will
@@ -1575,7 +3977,8 @@ class Sketch(
 
         Confirms if a py5 program is "focused," meaning that it is active and will
         accept mouse or keyboard input. This variable is `True` if it is focused and
-        `False` if not.""")
+        `False` if not.""",
+    )
 
     def _get_frame_count(self) -> int:
         """The system variable `frame_count` contains the number of frames that have been
@@ -1592,6 +3995,7 @@ class Sketch(
         execution of `draw()` after that.
         """
         return self._instance.frameCount
+
     frame_count: int = property(
         fget=_get_frame_count,
         doc="""The system variable `frame_count` contains the number of frames that have been
@@ -1605,41 +4009,8 @@ class Sketch(
         The system variable `frame_count` contains the number of frames that have been
         displayed since the program started. Inside `setup()` the value is 0. Inside the
         first execution of `draw()` it is 1, and it will increase by 1 for every
-        execution of `draw()` after that.""")
-
-    @_return_py5graphics
-    @_deprecated_g
-    def _get_g(self) -> Py5Graphics:
-        """The `Py5Graphics` object used by the Sketch.
-
-        Underlying Processing field: Sketch.g
-
-        Notes
-        -----
-
-        The `Py5Graphics` object used by the Sketch. Internally, all of Processing's
-        drawing functionality comes from interaction with PGraphics objects, and this
-        will provide direct access to the PGraphics object used by the Sketch.
-
-        Use of `g` is deprecated as of version 0.9.1. Please use `get_graphics()`
-        instead.
-        """
-        return self._instance.g
-    g: Py5Graphics = property(
-        fget=_get_g,
-        doc="""The `Py5Graphics` object used by the Sketch.
-
-        Underlying Processing field: Sketch.g
-
-        Notes
-        -----
-
-        The `Py5Graphics` object used by the Sketch. Internally, all of Processing's
-        drawing functionality comes from interaction with PGraphics objects, and this
-        will provide direct access to the PGraphics object used by the Sketch.
-
-        Use of `g` is deprecated as of version 0.9.1. Please use `get_graphics()`
-        instead.""")
+        execution of `draw()` after that.""",
+    )
 
     def _get_height(self) -> int:
         """System variable that stores the height of the display window.
@@ -1655,6 +4026,7 @@ class Sketch(
         `height` defaults to 100 if `size()` is not used in a program.
         """
         return self._instance.height
+
     height: int = property(
         fget=_get_height,
         doc="""System variable that stores the height of the display window.
@@ -1667,7 +4039,8 @@ class Sketch(
         System variable that stores the height of the display window. This value is set
         by the second parameter of the `size()` function. For example, the function call
         `size(320, 240)` sets the `height` variable to the value 240. The value of
-        `height` defaults to 100 if `size()` is not used in a program.""")
+        `height` defaults to 100 if `size()` is not used in a program.""",
+    )
 
     def _get_java_platform(self) -> int:
         """Version of Java currently being used by py5.
@@ -1683,6 +4056,7 @@ class Sketch(
         Virtual Machine.
         """
         return self._instance.javaPlatform
+
     java_platform: int = property(
         fget=_get_java_platform,
         doc="""Version of Java currently being used by py5.
@@ -1695,7 +4069,8 @@ class Sketch(
         Version of Java currently being used by py5. Internally the py5 library is using
         the Processing Java libraries to provide functionality. Those libraries run in a
         Java Virtual Machine. This field provides the Java platform number for that
-        Virtual Machine.""")
+        Virtual Machine.""",
+    )
 
     def _get_java_version_name(self) -> str:
         """Version name of Java currently being used by py5.
@@ -1711,6 +4086,7 @@ class Sketch(
         that Virtual Machine.
         """
         return self._instance.javaVersionName
+
     java_version_name: str = property(
         fget=_get_java_version_name,
         doc="""Version name of Java currently being used by py5.
@@ -1723,7 +4099,8 @@ class Sketch(
         Version name of Java currently being used by py5. Internally the py5 library is
         using the Processing Java libraries to provide functionality. Those libraries
         run in a Java Virtual Machine. This field provides the Java version name for
-        that Virtual Machine.""")
+        that Virtual Machine.""",
+    )
 
     @_convert_jchar_to_chr
     def _get_key(self) -> chr:
@@ -1751,6 +4128,7 @@ class Sketch(
         operating systems.
         """
         return self._instance.key
+
     key: chr = property(
         fget=_get_key,
         doc="""The system variable `key` always contains the value of the most recent key on
@@ -1774,7 +4152,8 @@ class Sketch(
 
         There are issues with how `key_code` behaves across different renderers and
         operating systems. Watch out for unexpected behavior as you switch renderers and
-        operating systems.""")
+        operating systems.""",
+    )
 
     @_convert_jint_to_int
     def _get_key_code(self) -> int:
@@ -1814,6 +4193,7 @@ class Sketch(
         constants.
         """
         return self._instance.keyCode
+
     key_code: int = property(
         fget=_get_key_code,
         doc="""The variable `key_code` is used to detect special keys such as the arrow keys
@@ -1849,7 +4229,8 @@ class Sketch(
         entry.
 
         If you are using `P2D` or `P3D` as your renderer, use the `NEWT` KeyEvent
-        constants.""")
+        constants.""",
+    )
 
     def _get_mouse_button(self) -> int:
         """When a mouse button is pressed, the value of the system variable `mouse_button`
@@ -1869,6 +4250,7 @@ class Sketch(
         examples.)
         """
         return self._instance.mouseButton
+
     mouse_button: int = property(
         fget=_get_mouse_button,
         doc="""When a mouse button is pressed, the value of the system variable `mouse_button`
@@ -1885,7 +4267,8 @@ class Sketch(
         pressed. (If no button is pressed, `mouse_button` may be reset to `0`. For that
         reason, it's best to use `mouse_pressed` first to test if any button is being
         pressed, and only then test the value of `mouse_button`, as shown in the
-        examples.)""")
+        examples.)""",
+    )
 
     def _get_mouse_x(self) -> int:
         """The system variable `mouse_x` always contains the current horizontal coordinate
@@ -1906,6 +4289,7 @@ class Sketch(
         `mouse_x` will continue to report its most recent position.
         """
         return self._instance.mouseX
+
     mouse_x: int = property(
         fget=_get_mouse_x,
         doc="""The system variable `mouse_x` always contains the current horizontal coordinate
@@ -1923,7 +4307,8 @@ class Sketch(
         current window. The default value of `mouse_x` is `0`, so `0` will be returned
         until the mouse moves in front of the Sketch window. (This typically happens
         when a Sketch is first run.)  Once the mouse moves away from the window,
-        `mouse_x` will continue to report its most recent position.""")
+        `mouse_x` will continue to report its most recent position.""",
+    )
 
     def _get_mouse_y(self) -> int:
         """The system variable `mouse_y` always contains the current vertical coordinate of
@@ -1944,6 +4329,7 @@ class Sketch(
         `mouse_y` will continue to report its most recent position.
         """
         return self._instance.mouseY
+
     mouse_y: int = property(
         fget=_get_mouse_y,
         doc="""The system variable `mouse_y` always contains the current vertical coordinate of
@@ -1961,7 +4347,8 @@ class Sketch(
         current window. The default value of `mouse_y` is `0`, so `0` will be returned
         until the mouse moves in front of the Sketch window. (This typically happens
         when a Sketch is first run.)  Once the mouse moves away from the window,
-        `mouse_y` will continue to report its most recent position.""")
+        `mouse_y` will continue to report its most recent position.""",
+    )
 
     def _get_pixel_height(self) -> int:
         """Height of the display window in pixels.
@@ -1972,8 +4359,8 @@ class Sketch(
         -----
 
         Height of the display window in pixels. When `pixel_density(2)` is used to make
-        use of a high resolution display (called a Retina display on OSX or high-dpi on
-        Windows and Linux), the width and height of the Sketch do not change, but the
+        use of a high resolution display (called a Retina display on macOS or high-dpi
+        on Windows and Linux), the width and height of the Sketch do not change, but the
         number of pixels is doubled. As a result, all operations that use pixels (like
         `load_pixels()`, `get_pixels()`, etc.) happen in this doubled space. As a
         convenience, the variables `pixel_width` and `pixel_height` hold the actual
@@ -1982,6 +4369,7 @@ class Sketch(
         elements in each array will be `pixel_width*pixel_height`, not `width*height`.
         """
         return self._instance.pixelHeight
+
     pixel_height: int = property(
         fget=_get_pixel_height,
         doc="""Height of the display window in pixels.
@@ -1992,14 +4380,15 @@ class Sketch(
         -----
 
         Height of the display window in pixels. When `pixel_density(2)` is used to make
-        use of a high resolution display (called a Retina display on OSX or high-dpi on
-        Windows and Linux), the width and height of the Sketch do not change, but the
+        use of a high resolution display (called a Retina display on macOS or high-dpi
+        on Windows and Linux), the width and height of the Sketch do not change, but the
         number of pixels is doubled. As a result, all operations that use pixels (like
         `load_pixels()`, `get_pixels()`, etc.) happen in this doubled space. As a
         convenience, the variables `pixel_width` and `pixel_height` hold the actual
         width and height of the Sketch in pixels. This is useful for any Sketch that use
         the `pixels[]` or `np_pixels[]` arrays, for instance, because the number of
-        elements in each array will be `pixel_width*pixel_height`, not `width*height`.""")
+        elements in each array will be `pixel_width*pixel_height`, not `width*height`.""",
+    )
 
     def _get_pixel_width(self) -> int:
         """Width of the display window in pixels.
@@ -2010,8 +4399,8 @@ class Sketch(
         -----
 
         Width of the display window in pixels. When `pixel_density(2)` is used to make
-        use of a high resolution display (called a Retina display on OSX or high-dpi on
-        Windows and Linux), the width and height of the Sketch do not change, but the
+        use of a high resolution display (called a Retina display on macOS or high-dpi
+        on Windows and Linux), the width and height of the Sketch do not change, but the
         number of pixels is doubled. As a result, all operations that use pixels (like
         `load_pixels()`, `get_pixels()`, etc.) happen in this doubled space. As a
         convenience, the variables `pixel_width` and `pixel_height` hold the actual
@@ -2020,6 +4409,7 @@ class Sketch(
         elements in each array will be `pixel_width*pixel_height`, not `width*height`.
         """
         return self._instance.pixelWidth
+
     pixel_width: int = property(
         fget=_get_pixel_width,
         doc="""Width of the display window in pixels.
@@ -2030,14 +4420,15 @@ class Sketch(
         -----
 
         Width of the display window in pixels. When `pixel_density(2)` is used to make
-        use of a high resolution display (called a Retina display on OSX or high-dpi on
-        Windows and Linux), the width and height of the Sketch do not change, but the
+        use of a high resolution display (called a Retina display on macOS or high-dpi
+        on Windows and Linux), the width and height of the Sketch do not change, but the
         number of pixels is doubled. As a result, all operations that use pixels (like
         `load_pixels()`, `get_pixels()`, etc.) happen in this doubled space. As a
         convenience, the variables `pixel_width` and `pixel_height` hold the actual
         width and height of the Sketch in pixels. This is useful for any Sketch that use
         the `pixels[]` or `np_pixels[]` arrays, for instance, because the number of
-        elements in each array will be `pixel_width*pixel_height`, not `width*height`.""")
+        elements in each array will be `pixel_width*pixel_height`, not `width*height`.""",
+    )
 
     def _get_pmouse_x(self) -> int:
         """The system variable `pmouse_x` always contains the horizontal position of the
@@ -2068,6 +4459,7 @@ class Sketch(
         inside the mouse event functions.
         """
         return self._instance.pmouseX
+
     pmouse_x: int = property(
         fget=_get_pmouse_x,
         doc="""The system variable `pmouse_x` always contains the horizontal position of the
@@ -2095,7 +4487,8 @@ class Sketch(
 
         If you want values relative to the previous frame, use `pmouse_x` and `pmouse_y`
         inside `draw()`. If you want continuous response, use `pmouse_x` and `pmouse_y`
-        inside the mouse event functions.""")
+        inside the mouse event functions.""",
+    )
 
     def _get_pmouse_y(self) -> int:
         """The system variable `pmouse_y` always contains the vertical position of the
@@ -2113,6 +4506,7 @@ class Sketch(
         `draw()`, see the reference for `pmouse_x`.
         """
         return self._instance.pmouseY
+
     pmouse_y: int = property(
         fget=_get_pmouse_y,
         doc="""The system variable `pmouse_y` always contains the vertical position of the
@@ -2127,7 +4521,8 @@ class Sketch(
         mouse in the frame previous to the current frame.
 
         For more detail on how `pmouse_y` is updated inside of mouse events and
-        `draw()`, see the reference for `pmouse_x`.""")
+        `draw()`, see the reference for `pmouse_x`.""",
+    )
 
     def _get_ratio_left(self) -> float:
         """Width of the left section of the window that does not fit the desired aspect
@@ -2146,6 +4541,7 @@ class Sketch(
         drawing and why it is useful.
         """
         return self._instance.ratioLeft
+
     ratio_left: float = property(
         fget=_get_ratio_left,
         doc="""Width of the left section of the window that does not fit the desired aspect
@@ -2161,7 +4557,8 @@ class Sketch(
         zero. Experimenting with the example and seeing how this value changes will
         provide more understanding than what can be explained with words. See
         `window_ratio()` for more information about how to activate scale invariant
-        drawing and why it is useful.""")
+        drawing and why it is useful.""",
+    )
 
     def _get_ratio_scale(self) -> float:
         """Scaling factor used to maintain scale invariant drawing.
@@ -2177,6 +4574,7 @@ class Sketch(
         about how to activate scale invariant drawing and why it is useful.
         """
         return self._instance.ratioScale
+
     ratio_scale: float = property(
         fget=_get_ratio_scale,
         doc="""Scaling factor used to maintain scale invariant drawing.
@@ -2189,7 +4587,8 @@ class Sketch(
         Scaling factor used to maintain scale invariant drawing. Experimenting with the
         example and seeing how this value changes will provide more understanding than
         what can be explained with words. See `window_ratio()` for more information
-        about how to activate scale invariant drawing and why it is useful.""")
+        about how to activate scale invariant drawing and why it is useful.""",
+    )
 
     def _get_ratio_top(self) -> float:
         """Height of the top section of the window that does not fit the desired aspect
@@ -2208,6 +4607,7 @@ class Sketch(
         drawing and why it is useful.
         """
         return self._instance.ratioTop
+
     ratio_top: float = property(
         fget=_get_ratio_top,
         doc="""Height of the top section of the window that does not fit the desired aspect
@@ -2223,7 +4623,8 @@ class Sketch(
         zero. Experimenting with the example and seeing how this value changes will
         provide more understanding than what can be explained with words. See
         `window_ratio()` for more information about how to activate scale invariant
-        drawing and why it is useful.""")
+        drawing and why it is useful.""",
+    )
 
     def _get_rheight(self) -> int:
         """The height of the scale invariant display window.
@@ -2240,6 +4641,7 @@ class Sketch(
         is useful.
         """
         return self._instance.rheight
+
     rheight: int = property(
         fget=_get_rheight,
         doc="""The height of the scale invariant display window.
@@ -2253,7 +4655,8 @@ class Sketch(
         `high` parameter used in the call to `window_ratio()` that activates scale
         invariant drawing. This field should only be used in a scale invariant Sketch.
         See `window_ratio()` for more information about how to activate this and why it
-        is useful.""")
+        is useful.""",
+    )
 
     def _get_rmouse_x(self) -> int:
         """The current horizonal coordinate of the mouse after activating scale invariant
@@ -2275,6 +4678,7 @@ class Sketch(
         `rmouse_x` will continue to report its most recent position.
         """
         return self._instance.rmouseX
+
     rmouse_x: int = property(
         fget=_get_rmouse_x,
         doc="""The current horizonal coordinate of the mouse after activating scale invariant
@@ -2293,7 +4697,8 @@ class Sketch(
         current window. The default value of `rmouse_x` is `0`, so `0` will be returned
         until the mouse moves in front of the Sketch window. (This typically happens
         when a Sketch is first run.)  Once the mouse moves away from the window,
-        `rmouse_x` will continue to report its most recent position.""")
+        `rmouse_x` will continue to report its most recent position.""",
+    )
 
     def _get_rmouse_y(self) -> int:
         """The current vertical coordinate of the mouse after activating scale invariant
@@ -2315,6 +4720,7 @@ class Sketch(
         `rmouse_y` will continue to report its most recent position.
         """
         return self._instance.rmouseY
+
     rmouse_y: int = property(
         fget=_get_rmouse_y,
         doc="""The current vertical coordinate of the mouse after activating scale invariant
@@ -2333,7 +4739,8 @@ class Sketch(
         current window. The default value of `rmouse_y` is `0`, so `0` will be returned
         until the mouse moves in front of the Sketch window. (This typically happens
         when a Sketch is first run.)  Once the mouse moves away from the window,
-        `rmouse_y` will continue to report its most recent position.""")
+        `rmouse_y` will continue to report its most recent position.""",
+    )
 
     def _get_rwidth(self) -> int:
         """The width of the scale invariant display window.
@@ -2350,6 +4757,7 @@ class Sketch(
         is useful.
         """
         return self._instance.rwidth
+
     rwidth: int = property(
         fget=_get_rwidth,
         doc="""The width of the scale invariant display window.
@@ -2363,7 +4771,8 @@ class Sketch(
         `wide` parameter used in the call to `window_ratio()` that activates scale
         invariant drawing. This field should only be used in a scale invariant Sketch.
         See `window_ratio()` for more information about how to activate this and why it
-        is useful.""")
+        is useful.""",
+    )
 
     def _get_width(self) -> int:
         """System variable that stores the width of the display window.
@@ -2379,6 +4788,7 @@ class Sketch(
         `width` defaults to 100 if `size()` is not used in a program.
         """
         return self._instance.width
+
     width: int = property(
         fget=_get_width,
         doc="""System variable that stores the width of the display window.
@@ -2391,7 +4801,8 @@ class Sketch(
         System variable that stores the width of the display window. This value is set
         by the first parameter of the `size()` function. For example, the function call
         `size(320, 240)` sets the `width` variable to the value 320. The value of
-        `width` defaults to 100 if `size()` is not used in a program.""")
+        `width` defaults to 100 if `size()` is not used in a program.""",
+    )
 
     def _get_window_x(self) -> int:
         """The x-coordinate of the current window location.
@@ -2405,6 +4816,7 @@ class Sketch(
         the Sketch window's upper left corner.
         """
         return self._instance.windowX
+
     window_x: int = property(
         fget=_get_window_x,
         doc="""The x-coordinate of the current window location.
@@ -2415,7 +4827,8 @@ class Sketch(
         -----
 
         The x-coordinate of the current window location. The location is measured from
-        the Sketch window's upper left corner.""")
+        the Sketch window's upper left corner.""",
+    )
 
     def _get_window_y(self) -> int:
         """The y-coordinate of the current window location.
@@ -2429,6 +4842,7 @@ class Sketch(
         the Sketch window's upper left corner.
         """
         return self._instance.windowY
+
     window_y: int = property(
         fget=_get_window_y,
         doc="""The y-coordinate of the current window location.
@@ -2439,7 +4853,8 @@ class Sketch(
         -----
 
         The y-coordinate of the current window location. The location is measured from
-        the Sketch window's upper left corner.""")
+        the Sketch window's upper left corner.""",
+    )
 
     @_convert_hex_color()
     def alpha(self, rgb: int, /) -> float:
@@ -2464,6 +4879,11 @@ class Sketch(
         shift operator (`>>`) with a bit mask. For example, `alpha(c)` and `c >> 24 &
         0xFF` both extract the alpha value from a color variable `c` but the later is
         faster.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.alpha(rgb)
 
@@ -2509,6 +4929,11 @@ class Sketch(
         mode, setting `ambient(255, 127, 0)`, would cause all the red light to reflect
         and half of the green light to reflect. Use in combination with `emissive()`,
         `specular()`, and `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2554,6 +4979,11 @@ class Sketch(
         mode, setting `ambient(255, 127, 0)`, would cause all the red light to reflect
         and half of the green light to reflect. Use in combination with `emissive()`,
         `specular()`, and `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2599,6 +5029,11 @@ class Sketch(
         mode, setting `ambient(255, 127, 0)`, would cause all the red light to reflect
         and half of the green light to reflect. Use in combination with `emissive()`,
         `specular()`, and `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -2644,6 +5079,11 @@ class Sketch(
         mode, setting `ambient(255, 127, 0)`, would cause all the red light to reflect
         and half of the green light to reflect. Use in combination with `emissive()`,
         `specular()`, and `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.ambient(*args)
 
@@ -2697,8 +5137,9 @@ class Sketch(
         pass
 
     @overload
-    def ambient_light(self, v1: float, v2: float, v3: float,
-                      x: float, y: float, z: float, /) -> None:
+    def ambient_light(
+        self, v1: float, v2: float, v3: float, x: float, y: float, z: float, /
+    ) -> None:
         """Adds an ambient light.
 
         Underlying Processing method: PApplet.ambientLight
@@ -2795,8 +5236,9 @@ class Sketch(
         return self._instance.ambientLight(*args)
 
     @overload
-    def apply_matrix(self, n00: float, n01: float, n02: float,
-                     n10: float, n11: float, n12: float, /) -> None:
+    def apply_matrix(
+        self, n00: float, n01: float, n02: float, n10: float, n11: float, n12: float, /
+    ) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
         Underlying Processing method: PApplet.applyMatrix
@@ -2876,24 +5318,25 @@ class Sketch(
 
     @overload
     def apply_matrix(
-            self,
-            n00: float,
-            n01: float,
-            n02: float,
-            n03: float,
-            n10: float,
-            n11: float,
-            n12: float,
-            n13: float,
-            n20: float,
-            n21: float,
-            n22: float,
-            n23: float,
-            n30: float,
-            n31: float,
-            n32: float,
-            n33: float,
-            /) -> None:
+        self,
+        n00: float,
+        n01: float,
+        n02: float,
+        n03: float,
+        n10: float,
+        n11: float,
+        n12: float,
+        n13: float,
+        n20: float,
+        n21: float,
+        n22: float,
+        n23: float,
+        n30: float,
+        n31: float,
+        n32: float,
+        n33: float,
+        /,
+    ) -> None:
         """Multiplies the current matrix by the one specified through the parameters.
 
         Underlying Processing method: PApplet.applyMatrix
@@ -3129,8 +5572,9 @@ class Sketch(
         return self._instance.applyMatrix(*args)
 
     @overload
-    def arc(self, a: float, b: float, c: float, d: float,
-            start: float, stop: float, /) -> None:
+    def arc(
+        self, a: float, b: float, c: float, d: float, start: float, stop: float, /
+    ) -> None:
         """Draws an arc to the screen.
 
         Underlying Processing method: PApplet.arc
@@ -3189,8 +5633,17 @@ class Sketch(
         pass
 
     @overload
-    def arc(self, a: float, b: float, c: float, d: float,
-            start: float, stop: float, mode: int, /) -> None:
+    def arc(
+        self,
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        start: float,
+        stop: float,
+        mode: int,
+        /,
+    ) -> None:
         """Draws an arc to the screen.
 
         Underlying Processing method: PApplet.arc
@@ -3367,6 +5820,11 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -3431,6 +5889,11 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -3495,12 +5958,16 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
     @overload
-    def background(self, v1: float, v2: float,
-                   v3: float, alpha: float, /) -> None:
+    def background(self, v1: float, v2: float, v3: float, alpha: float, /) -> None:
         """The `background()` function sets the color used for the background of the py5
         window.
 
@@ -3560,6 +6027,11 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -3624,6 +6096,11 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -3688,6 +6165,11 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -3752,6 +6234,11 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -3817,10 +6304,15 @@ class Sketch(
         It is not possible to use the transparency `alpha` parameter with background
         colors on the main drawing surface. It can only be used along with a
         `Py5Graphics` object and `create_graphics()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.background(*args)
 
-    @_context_wrapper('end_camera')
+    @_context_wrapper("end_camera")
     def begin_camera(self) -> None:
         """The `begin_camera()` and `end_camera()` functions enable advanced customization
         of the camera space.
@@ -3851,7 +6343,7 @@ class Sketch(
         """
         return self._instance.beginCamera()
 
-    @_context_wrapper('end_contour')
+    @_context_wrapper("end_contour")
     def begin_contour(self) -> None:
         """Use the `begin_contour()` and `end_contour()` methods to create negative shapes
         within shapes such as the center of the letter 'O'.
@@ -3988,7 +6480,7 @@ class Sketch(
         """
         pass
 
-    @_context_wrapper('end_raw')
+    @_context_wrapper("end_raw")
     @_return_py5graphics
     def begin_raw(self, *args):
         """To create vectors from 3D data, use the `begin_raw()` and `end_raw()` commands.
@@ -4140,7 +6632,7 @@ class Sketch(
         """
         pass
 
-    @_context_wrapper('end_record')
+    @_context_wrapper("end_record")
     @_return_py5graphics
     def begin_record(self, *args):
         """Opens a new file and all subsequent drawing functions are echoed to this file as
@@ -4295,7 +6787,7 @@ class Sketch(
         """
         pass
 
-    @_context_wrapper('end_shape')
+    @_context_wrapper("end_shape")
     def begin_shape(self, *args):
         """Using the `begin_shape()` and `end_shape()` functions allow creating more
         complex forms.
@@ -4416,7 +6908,7 @@ class Sketch(
         """
         pass
 
-    @_context_wrapper('end_shape', exit_attr_args=('CLOSE',))
+    @_context_wrapper("end_shape", exit_attr_args=("CLOSE",))
     def begin_closed_shape(self, *args):
         """This method is used to start a custom closed shape.
 
@@ -4451,8 +6943,18 @@ class Sketch(
         return self._instance.beginShape(*args)
 
     @overload
-    def bezier(self, x1: float, y1: float, x2: float, y2: float,
-               x3: float, y3: float, x4: float, y4: float, /) -> None:
+    def bezier(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        x3: float,
+        y3: float,
+        x4: float,
+        y4: float,
+        /,
+    ) -> None:
         """Draws a Bezier curve on the screen.
 
         Underlying Processing method: PApplet.bezier
@@ -4517,8 +7019,22 @@ class Sketch(
         pass
 
     @overload
-    def bezier(self, x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
-               x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def bezier(
+        self,
+        x1: float,
+        y1: float,
+        z1: float,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Draws a Bezier curve on the screen.
 
         Underlying Processing method: PApplet.bezier
@@ -4666,8 +7182,9 @@ class Sketch(
         """
         return self._instance.bezierDetail(detail)
 
-    def bezier_point(self, a: float, b: float, c: float,
-                     d: float, t: float, /) -> float:
+    def bezier_point(
+        self, a: float, b: float, c: float, d: float, t: float, /
+    ) -> float:
         """Evaluates the Bezier at point t for points a, b, c, d.
 
         Underlying Processing method: PApplet.bezierPoint
@@ -4700,8 +7217,9 @@ class Sketch(
         """
         return self._instance.bezierPoint(a, b, c, d, t)
 
-    def bezier_tangent(self, a: float, b: float, c: float,
-                       d: float, t: float, /) -> float:
+    def bezier_tangent(
+        self, a: float, b: float, c: float, d: float, t: float, /
+    ) -> float:
         """Calculates the tangent of a point on a Bezier curve.
 
         Underlying Processing method: PApplet.bezierTangent
@@ -4733,8 +7251,9 @@ class Sketch(
         return self._instance.bezierTangent(a, b, c, d, t)
 
     @overload
-    def bezier_vertex(self, x2: float, y2: float, x3: float,
-                      y3: float, x4: float, y4: float, /) -> None:
+    def bezier_vertex(
+        self, x2: float, y2: float, x3: float, y3: float, x4: float, y4: float, /
+    ) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
         Underlying Processing method: PApplet.bezierVertex
@@ -4792,8 +7311,19 @@ class Sketch(
         pass
 
     @overload
-    def bezier_vertex(self, x2: float, y2: float, z2: float, x3: float,
-                      y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def bezier_vertex(
+        self,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Specifies vertex coordinates for Bezier curves.
 
         Underlying Processing method: PApplet.bezierVertex
@@ -4908,8 +7438,7 @@ class Sketch(
         return self._instance.bezierVertex(*args)
 
     @_generator_to_list
-    def bezier_vertices(
-            self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def bezier_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of bezier vertices.
 
         Parameters
@@ -4935,8 +7464,19 @@ class Sketch(
         return self._instance.bezierVertices(coordinates)
 
     @overload
-    def blend(self, sx: int, sy: int, sw: int, sh: int, dx: int,
-              dy: int, dw: int, dh: int, mode: int, /) -> None:
+    def blend(
+        self,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        mode: int,
+        /,
+    ) -> None:
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
@@ -5019,8 +7559,20 @@ class Sketch(
         pass
 
     @overload
-    def blend(self, src: Py5Image, sx: int, sy: int, sw: int, sh: int,
-              dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None:
+    def blend(
+        self,
+        src: Py5Image,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        mode: int,
+        /,
+    ) -> None:
         """Blends a region of pixels from one image into another (or in itself again) with
         full alpha channel support.
 
@@ -5249,6 +7801,11 @@ class Sketch(
         achieve the same results as `blue()` but with greater speed by using a bit mask
         to remove the other color components. For example, `blue(c)` and `c & 0xFF` both
         extract the blue value from a color variable `c` but the later is faster.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.blue(rgb)
 
@@ -5378,6 +7935,11 @@ class Sketch(
         -----
 
         Extracts the brightness value from a color.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.brightness(rgb)
 
@@ -5443,17 +8005,18 @@ class Sketch(
 
     @overload
     def camera(
-            self,
-            eye_x: float,
-            eye_y: float,
-            eye_z: float,
-            center_x: float,
-            center_y: float,
-            center_z: float,
-            up_x: float,
-            up_y: float,
-            up_z: float,
-            /) -> None:
+        self,
+        eye_x: float,
+        eye_y: float,
+        eye_z: float,
+        center_x: float,
+        center_y: float,
+        center_z: float,
+        up_x: float,
+        up_y: float,
+        up_z: float,
+        /,
+    ) -> None:
         """Sets the position of the camera through setting the eye position, the center of
         the scene, and which axis is facing upward.
 
@@ -5643,1134 +8206,6 @@ class Sketch(
         return self._instance.clip(a, b, c, d)
 
     @overload
-    def color(self, fgray: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, fgray: float, falpha: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, v1: float, v2: float, v3: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, v1: float, v2: float, v3: float, alpha: float, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, gray: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, gray: int, alpha: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, v1: int, v2: int, v3: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @overload
-    def color(self, v1: int, v2: int, v3: int, alpha: int, /) -> int:
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        pass
-
-    @_convert_hex_color()
-    def color(self, *args):
-        """Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer).
-
-        Underlying Processing method: PApplet.color
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color(fgray: float, /) -> int
-         * color(fgray: float, falpha: float, /) -> int
-         * color(gray: int, /) -> int
-         * color(gray: int, alpha: int, /) -> int
-         * color(v1: float, v2: float, v3: float, /) -> int
-         * color(v1: float, v2: float, v3: float, alpha: float, /) -> int
-         * color(v1: int, v2: int, v3: int, /) -> int
-         * color(v1: int, v2: int, v3: int, alpha: int, /) -> int
-
-        Parameters
-        ----------
-
-        alpha: float
-            alpha value relative to current color range
-
-        alpha: int
-            alpha value relative to current color range
-
-        falpha: float
-            alpha value relative to current color range
-
-        fgray: float
-            number specifying value between white and black
-
-        gray: int
-            number specifying value between white and black
-
-        v1: float
-            red or hue values relative to the current color range
-
-        v1: int
-            red or hue values relative to the current color range
-
-        v2: float
-            green or saturation values relative to the current color range
-
-        v2: int
-            green or saturation values relative to the current color range
-
-        v3: float
-            blue or brightness values relative to the current color range
-
-        v3: int
-            blue or brightness values relative to the current color range
-
-        Notes
-        -----
-
-        Creates colors for storing in variables of the `color` datatype (a 32 bit
-        integer). The parameters are interpreted as `RGB` or `HSB` values depending on
-        the current `color_mode()`. The default mode is `RGB` values from 0 to 255 and,
-        therefore, `color(255, 204, 0)` will return a bright yellow color (see the first
-        example).
-
-        Note that if only one value is provided to `color()`, it will be interpreted as
-        a grayscale value. Add a second value, and it will be used for alpha
-        transparency. When three values are specified, they are interpreted as either
-        `RGB` or `HSB` values. Adding a fourth value applies alpha transparency.
-
-        Note that you can also use hexadecimal notation and web color notation to
-        specify colors, as in `c = 0xFFDDCC33` or `c = "#DDCC33FF"` in place of `c =
-        color(221, 204, 51, 255)`. Additionally, the `color()` method can accept both
-        color notations as a parameter.
-
-        When using hexadecimal notation to specify a color, use "`0x`" before the values
-        (e.g., `0xFFCCFFAA`). The hexadecimal value must be specified with eight
-        characters; the first two characters define the alpha component, and the
-        remainder define the red, green, and blue components.
-
-        When using web color notation to specify a color, create a string beginning with
-        the "`#`" character followed by three, four, six, or eight characters. The
-        example colors `"#D93"` and `"#DD9933"` specify red, green, and blue values (in
-        that order) for the color and assume the color has no transparency. The example
-        colors `"#D93F"` and `"#DD9933FF"` specify red, green, blue, and alpha values
-        (in that order) for the color. Notice that in web color notation the alpha
-        channel is last, which is consistent with CSS colors, and in hexadecimal
-        notation the alpha channel is first, which is consistent with Processing color
-        values.
-        """
-        return self._instance.color(*args)
-
-    @overload
-    def color_mode(self, mode: int, /) -> None:
-        """Changes the way py5 interprets color data.
-
-        Underlying Processing method: PApplet.colorMode
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color_mode(mode: int, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
-         * color_mode(mode: int, max: float, /) -> None
-
-        Parameters
-        ----------
-
-        max1: float
-            range for the red or hue depending on the current color mode
-
-        max2: float
-            range for the green or saturation depending on the current color mode
-
-        max3: float
-            range for the blue or brightness depending on the current color mode
-
-        max: float
-            range for all color elements
-
-        max_a: float
-            range for the alpha
-
-        mode: int
-            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-
-        Notes
-        -----
-
-        Changes the way py5 interprets color data. By default, the parameters for
-        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
-        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
-        used to change the numerical range used for specifying colors and to switch
-        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
-        values are specified between 0 and 1. The limits for defining colors are altered
-        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
-
-        After changing the range of values for colors with code like `color_mode(HSB,
-        360, 100, 100)`, those ranges remain in use until they are explicitly changed
-        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
-        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
-        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
-        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`.
-        """
-        pass
-
-    @overload
-    def color_mode(self, mode: int, max: float, /) -> None:
-        """Changes the way py5 interprets color data.
-
-        Underlying Processing method: PApplet.colorMode
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color_mode(mode: int, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
-         * color_mode(mode: int, max: float, /) -> None
-
-        Parameters
-        ----------
-
-        max1: float
-            range for the red or hue depending on the current color mode
-
-        max2: float
-            range for the green or saturation depending on the current color mode
-
-        max3: float
-            range for the blue or brightness depending on the current color mode
-
-        max: float
-            range for all color elements
-
-        max_a: float
-            range for the alpha
-
-        mode: int
-            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-
-        Notes
-        -----
-
-        Changes the way py5 interprets color data. By default, the parameters for
-        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
-        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
-        used to change the numerical range used for specifying colors and to switch
-        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
-        values are specified between 0 and 1. The limits for defining colors are altered
-        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
-
-        After changing the range of values for colors with code like `color_mode(HSB,
-        360, 100, 100)`, those ranges remain in use until they are explicitly changed
-        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
-        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
-        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
-        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`.
-        """
-        pass
-
-    @overload
-    def color_mode(self, mode: int, max1: float,
-                   max2: float, max3: float, /) -> None:
-        """Changes the way py5 interprets color data.
-
-        Underlying Processing method: PApplet.colorMode
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color_mode(mode: int, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
-         * color_mode(mode: int, max: float, /) -> None
-
-        Parameters
-        ----------
-
-        max1: float
-            range for the red or hue depending on the current color mode
-
-        max2: float
-            range for the green or saturation depending on the current color mode
-
-        max3: float
-            range for the blue or brightness depending on the current color mode
-
-        max: float
-            range for all color elements
-
-        max_a: float
-            range for the alpha
-
-        mode: int
-            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-
-        Notes
-        -----
-
-        Changes the way py5 interprets color data. By default, the parameters for
-        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
-        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
-        used to change the numerical range used for specifying colors and to switch
-        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
-        values are specified between 0 and 1. The limits for defining colors are altered
-        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
-
-        After changing the range of values for colors with code like `color_mode(HSB,
-        360, 100, 100)`, those ranges remain in use until they are explicitly changed
-        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
-        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
-        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
-        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`.
-        """
-        pass
-
-    @overload
-    def color_mode(self, mode: int, max1: float, max2: float,
-                   max3: float, max_a: float, /) -> None:
-        """Changes the way py5 interprets color data.
-
-        Underlying Processing method: PApplet.colorMode
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color_mode(mode: int, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
-         * color_mode(mode: int, max: float, /) -> None
-
-        Parameters
-        ----------
-
-        max1: float
-            range for the red or hue depending on the current color mode
-
-        max2: float
-            range for the green or saturation depending on the current color mode
-
-        max3: float
-            range for the blue or brightness depending on the current color mode
-
-        max: float
-            range for all color elements
-
-        max_a: float
-            range for the alpha
-
-        mode: int
-            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-
-        Notes
-        -----
-
-        Changes the way py5 interprets color data. By default, the parameters for
-        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
-        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
-        used to change the numerical range used for specifying colors and to switch
-        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
-        values are specified between 0 and 1. The limits for defining colors are altered
-        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
-
-        After changing the range of values for colors with code like `color_mode(HSB,
-        360, 100, 100)`, those ranges remain in use until they are explicitly changed
-        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
-        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
-        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
-        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`.
-        """
-        pass
-
-    def color_mode(self, *args):
-        """Changes the way py5 interprets color data.
-
-        Underlying Processing method: PApplet.colorMode
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * color_mode(mode: int, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None
-         * color_mode(mode: int, max1: float, max2: float, max3: float, max_a: float, /) -> None
-         * color_mode(mode: int, max: float, /) -> None
-
-        Parameters
-        ----------
-
-        max1: float
-            range for the red or hue depending on the current color mode
-
-        max2: float
-            range for the green or saturation depending on the current color mode
-
-        max3: float
-            range for the blue or brightness depending on the current color mode
-
-        max: float
-            range for all color elements
-
-        max_a: float
-            range for the alpha
-
-        mode: int
-            Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-
-        Notes
-        -----
-
-        Changes the way py5 interprets color data. By default, the parameters for
-        `fill()`, `stroke()`, `background()`, and `color()` are defined by values
-        between 0 and 255 using the `RGB` color model. The `color_mode()` function is
-        used to change the numerical range used for specifying colors and to switch
-        color systems. For example, calling `color_mode(RGB, 1.0)` will specify that
-        values are specified between 0 and 1. The limits for defining colors are altered
-        by setting the parameters `max`, `max1`, `max2`, `max3`, and `max_a`.
-
-        After changing the range of values for colors with code like `color_mode(HSB,
-        360, 100, 100)`, those ranges remain in use until they are explicitly changed
-        again. For example, after running `color_mode(HSB, 360, 100, 100)` and then
-        changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
-        range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
-        when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`.
-        """
-        return self._instance.colorMode(*args)
-
-    @overload
     def copy(self) -> Py5Image:
         """Copies a region of pixels from the display window to another area of the display
         window and copies a region of pixels from an image used as the `src_img`
@@ -6832,8 +8267,9 @@ class Sketch(
         pass
 
     @overload
-    def copy(self, sx: int, sy: int, sw: int, sh: int,
-             dx: int, dy: int, dw: int, dh: int, /) -> None:
+    def copy(
+        self, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /
+    ) -> None:
         """Copies a region of pixels from the display window to another area of the display
         window and copies a region of pixels from an image used as the `src_img`
         parameter into the display window.
@@ -6894,8 +8330,19 @@ class Sketch(
         pass
 
     @overload
-    def copy(self, src: Py5Image, sx: int, sy: int, sw: int,
-             sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None:
+    def copy(
+        self,
+        src: Py5Image,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        /,
+    ) -> None:
         """Copies a region of pixels from the display window to another area of the display
         window and copies a region of pixels from an image used as the `src_img`
         parameter into the display window.
@@ -7142,8 +8589,9 @@ class Sketch(
         pass
 
     @overload
-    def create_font(self, name: str, size: float, smooth: bool,
-                    charset: list[chr], /) -> Py5Font:
+    def create_font(
+        self, name: str, size: float, smooth: bool, charset: list[chr], /
+    ) -> Py5Font:
         """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
         computer.
@@ -7403,8 +8851,9 @@ class Sketch(
         pass
 
     @overload
-    def create_graphics(self, w: int, h: int, renderer: str,
-                        path: str, /) -> Py5Graphics:
+    def create_graphics(
+        self, w: int, h: int, renderer: str, path: str, /
+    ) -> Py5Graphics:
         """Creates and returns a new `Py5Graphics` object.
 
         Underlying Processing method: PApplet.createGraphics
@@ -8043,8 +9492,18 @@ class Sketch(
         return self._instance.cursor(*args)
 
     @overload
-    def curve(self, x1: float, y1: float, x2: float, y2: float,
-              x3: float, y3: float, x4: float, y4: float, /) -> None:
+    def curve(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        x3: float,
+        y3: float,
+        x4: float,
+        y4: float,
+        /,
+    ) -> None:
         """Draws a curved line on the screen.
 
         Underlying Processing method: PApplet.curve
@@ -8111,8 +9570,22 @@ class Sketch(
         pass
 
     @overload
-    def curve(self, x1: float, y1: float, z1: float, x2: float, y2: float, z2: float,
-              x3: float, y3: float, z3: float, x4: float, y4: float, z4: float, /) -> None:
+    def curve(
+        self,
+        x1: float,
+        y1: float,
+        z1: float,
+        x2: float,
+        y2: float,
+        z2: float,
+        x3: float,
+        y3: float,
+        z3: float,
+        x4: float,
+        y4: float,
+        z4: float,
+        /,
+    ) -> None:
         """Draws a curved line on the screen.
 
         Underlying Processing method: PApplet.curve
@@ -8264,8 +9737,7 @@ class Sketch(
         """
         return self._instance.curveDetail(detail)
 
-    def curve_point(self, a: float, b: float, c: float,
-                    d: float, t: float, /) -> float:
+    def curve_point(self, a: float, b: float, c: float, d: float, t: float, /) -> float:
         """Evaluates the curve at point `t` for points `a`, `b`, `c`, `d`.
 
         Underlying Processing method: PApplet.curvePoint
@@ -8299,8 +9771,9 @@ class Sketch(
         """
         return self._instance.curvePoint(a, b, c, d, t)
 
-    def curve_tangent(self, a: float, b: float, c: float,
-                      d: float, t: float, /) -> float:
+    def curve_tangent(
+        self, a: float, b: float, c: float, d: float, t: float, /
+    ) -> float:
         """Calculates the tangent of a point on a curve.
 
         Underlying Processing method: PApplet.curveTangent
@@ -8514,8 +9987,9 @@ class Sketch(
         """
         return cls._cls.day()
 
-    def directional_light(self, v1: float, v2: float, v3: float,
-                          nx: float, ny: float, nz: float, /) -> None:
+    def directional_light(
+        self, v1: float, v2: float, v3: float, nx: float, ny: float, nz: float, /
+    ) -> None:
         """Adds a directional light.
 
         Underlying Processing method: PApplet.directionalLight
@@ -8560,7 +10034,7 @@ class Sketch(
     @overload
     def display_density(self) -> int:
         """This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on macOS or high-dpi on Windows and Linux) and a "1" if
         not.
 
         Underlying Processing method: PApplet.displayDensity
@@ -8583,7 +10057,7 @@ class Sketch(
         -----
 
         This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on macOS or high-dpi on Windows and Linux) and a "1" if
         not. This information is useful for a program to adapt to run at double the
         pixel density on a screen that supports it.
         """
@@ -8592,7 +10066,7 @@ class Sketch(
     @overload
     def display_density(self, display: int, /) -> int:
         """This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on macOS or high-dpi on Windows and Linux) and a "1" if
         not.
 
         Underlying Processing method: PApplet.displayDensity
@@ -8615,7 +10089,7 @@ class Sketch(
         -----
 
         This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on macOS or high-dpi on Windows and Linux) and a "1" if
         not. This information is useful for a program to adapt to run at double the
         pixel density on a screen that supports it.
         """
@@ -8623,7 +10097,7 @@ class Sketch(
 
     def display_density(self, *args):
         """This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on macOS or high-dpi on Windows and Linux) and a "1" if
         not.
 
         Underlying Processing method: PApplet.displayDensity
@@ -8646,7 +10120,7 @@ class Sketch(
         -----
 
         This function returns the number "2" if the screen is a high-density screen
-        (called a Retina display on OSX or high-dpi on Windows and Linux) and a "1" if
+        (called a Retina display on macOS or high-dpi on Windows and Linux) and a "1" if
         not. This information is useful for a program to adapt to run at double the
         pixel density on a screen that supports it.
         """
@@ -8761,6 +10235,11 @@ class Sketch(
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Use in combination with `ambient()`, `specular()`, and `shininess()` to
         set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -8804,6 +10283,11 @@ class Sketch(
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Use in combination with `ambient()`, `specular()`, and `shininess()` to
         set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -8847,6 +10331,11 @@ class Sketch(
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Use in combination with `ambient()`, `specular()`, and `shininess()` to
         set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -8890,6 +10379,11 @@ class Sketch(
         Sets the emissive color of the material used for drawing shapes drawn to the
         screen. Use in combination with `ambient()`, `specular()`, and `shininess()` to
         set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.emissive(*args)
 
@@ -9139,6 +10633,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -9208,6 +10707,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -9277,6 +10781,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -9346,6 +10855,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -9415,6 +10929,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -9484,6 +11003,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -9553,6 +11077,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         To change the color of an image or a texture, use `tint()`.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.fill(*args)
 
@@ -9807,8 +11336,16 @@ class Sketch(
         """
         return self._instance.frameRate(fps)
 
-    def frustum(self, left: float, right: float, bottom: float,
-                top: float, near: float, far: float, /) -> None:
+    def frustum(
+        self,
+        left: float,
+        right: float,
+        bottom: float,
+        top: float,
+        near: float,
+        far: float,
+        /,
+    ) -> None:
         """Sets a perspective matrix as defined by the parameters.
 
         Underlying Processing method: PApplet.frustum
@@ -10075,7 +11612,7 @@ class Sketch(
         """
         pass
 
-    @_settings_only('full_screen')
+    @_settings_only("full_screen")
     def full_screen(self, *args):
         """Open a Sketch using the full size of the computer's display.
 
@@ -10425,7 +11962,8 @@ class Sketch(
 
     @overload
     def get_matrix(
-            self, target: npt.NDArray[np.floating], /) -> npt.NDArray[np.floating]:
+        self, target: npt.NDArray[np.floating], /
+    ) -> npt.NDArray[np.floating]:
         """Get the current matrix as a numpy array.
 
         Underlying Processing method: PApplet.getMatrix
@@ -10452,7 +11990,7 @@ class Sketch(
         """
         pass
 
-    @ _get_matrix_wrapper
+    @_get_matrix_wrapper
     def get_matrix(self, *args):
         """Get the current matrix as a numpy array.
 
@@ -10516,6 +12054,11 @@ class Sketch(
         shift operator (`>>`) with a bit mask. For example, `green(c)` and `c >> 8 &
         0xFF` both extract the green value from a color variable `c` but the later is
         faster.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.green(rgb)
 
@@ -10632,6 +12175,11 @@ class Sketch(
         -----
 
         Extracts the hue value from a color.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.hue(rgb)
 
@@ -10703,8 +12251,7 @@ class Sketch(
         pass
 
     @overload
-    def image(self, img: Py5Image, a: float, b: float,
-              c: float, d: float, /) -> None:
+    def image(self, img: Py5Image, a: float, b: float, c: float, d: float, /) -> None:
         """The `image()` function draws an image to the display window.
 
         Underlying Processing method: PApplet.image
@@ -10771,8 +12318,19 @@ class Sketch(
         pass
 
     @overload
-    def image(self, img: Py5Image, a: float, b: float, c: float,
-              d: float, u1: int, v1: int, u2: int, v2: int, /) -> None:
+    def image(
+        self,
+        img: Py5Image,
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        u1: int,
+        v1: int,
+        u2: int,
+        v2: int,
+        /,
+    ) -> None:
         """The `image()` function draws an image to the display window.
 
         Underlying Processing method: PApplet.image
@@ -10980,6 +12538,11 @@ class Sketch(
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of `lerp()`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -11023,9 +12586,15 @@ class Sketch(
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of `lerp()`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
+    @_return_color
     @_convert_hex_color(indices=[0, 1])
     def lerp_color(self, *args):
         """Calculates a color between two colors at a specific increment.
@@ -11066,11 +12635,17 @@ class Sketch(
         An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped
         at 1. This is different from the behavior of `lerp()`, but necessary because
         otherwise numbers outside the range will produce strange and unexpected colors.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.lerpColor(*args)
 
-    def light_falloff(self, constant: float, linear: float,
-                      quadratic: float, /) -> None:
+    def light_falloff(
+        self, constant: float, linear: float, quadratic: float, /
+    ) -> None:
         """Sets the falloff rates for point lights, spot lights, and ambient lights.
 
         Underlying Processing method: PApplet.lightFalloff
@@ -11201,8 +12776,9 @@ class Sketch(
         pass
 
     @overload
-    def line(self, x1: float, y1: float, z1: float,
-             x2: float, y2: float, z2: float, /) -> None:
+    def line(
+        self, x1: float, y1: float, z1: float, x2: float, y2: float, z2: float, /
+    ) -> None:
         """Draws a line (a direct path between two points) to the screen.
 
         Underlying Processing method: PApplet.line
@@ -11428,8 +13004,7 @@ class Sketch(
         pass
 
     @overload
-    def load_shader(self, frag_filename: str,
-                    vert_filename: str, /) -> Py5Shader:
+    def load_shader(self, frag_filename: str, vert_filename: str, /) -> Py5Shader:
         """Loads a shader into a `Py5Shader` object.
 
         Underlying Processing method: PApplet.loadShader
@@ -11548,10 +13123,8 @@ class Sketch(
         drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
-        If the file is not available or an error occurs, `None` will be returned and an
-        error message will be printed to the console. The error message does not halt
-        the program, however the `None` value may cause errors if your code does not
-        check whether the value returned is `None`.
+        If the shape file is not available or for whatever reason a shape cannot be
+        created, an exception will be thrown.
         """
         pass
 
@@ -11591,10 +13164,8 @@ class Sketch(
         drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
-        If the file is not available or an error occurs, `None` will be returned and an
-        error message will be printed to the console. The error message does not halt
-        the program, however the `None` value may cause errors if your code does not
-        check whether the value returned is `None`.
+        If the shape file is not available or for whatever reason a shape cannot be
+        created, an exception will be thrown.
         """
         pass
 
@@ -11634,10 +13205,8 @@ class Sketch(
         drive letter on Windows), or the filename parameter can be a URL for a file
         found on a network.
 
-        If the file is not available or an error occurs, `None` will be returned and an
-        error message will be printed to the console. The error message does not halt
-        the program, however the `None` value may cause errors if your code does not
-        check whether the value returned is `None`.
+        If the shape file is not available or for whatever reason a shape cannot be
+        created, an exception will be thrown.
         """
         return self._instance.loadShape(*args)
 
@@ -11879,7 +13448,7 @@ class Sketch(
         """
         return self._instance.noLoop()
 
-    @_settings_only('no_smooth')
+    @_settings_only("no_smooth")
     def no_smooth(self) -> None:
         """Draws all geometry and fonts with jagged (aliased) edges and images with hard
         edges between the pixels when enlarged rather than interpolating pixels.
@@ -12175,8 +13744,7 @@ class Sketch(
         pass
 
     @overload
-    def ortho(self, left: float, right: float,
-              bottom: float, top: float, /) -> None:
+    def ortho(self, left: float, right: float, bottom: float, top: float, /) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
         Underlying Processing method: PApplet.ortho
@@ -12225,8 +13793,16 @@ class Sketch(
         pass
 
     @overload
-    def ortho(self, left: float, right: float, bottom: float,
-              top: float, near: float, far: float, /) -> None:
+    def ortho(
+        self,
+        left: float,
+        right: float,
+        bottom: float,
+        top: float,
+        near: float,
+        far: float,
+        /,
+    ) -> None:
         """Sets an orthographic projection and defines a parallel clipping volume.
 
         Underlying Processing method: PApplet.ortho
@@ -12386,8 +13962,9 @@ class Sketch(
         pass
 
     @overload
-    def perspective(self, fovy: float, aspect: float,
-                    z_near: float, z_far: float, /) -> None:
+    def perspective(
+        self, fovy: float, aspect: float, z_near: float, z_far: float, /
+    ) -> None:
         """Sets a perspective projection applying foreshortening, making distant objects
         appear smaller than closer ones.
 
@@ -12475,7 +14052,7 @@ class Sketch(
         """
         return self._instance.perspective(*args)
 
-    @_settings_only('pixel_density')
+    @_settings_only("pixel_density")
     def pixel_density(self, density: int, /) -> None:
         """This function makes it possible for py5 to render using all of the pixels on
         high resolutions screens like Apple Retina displays and Windows High-DPI
@@ -12660,8 +14237,9 @@ class Sketch(
         """
         return self._instance.point(*args)
 
-    def point_light(self, v1: float, v2: float, v3: float,
-                    x: float, y: float, z: float, /) -> None:
+    def point_light(
+        self, v1: float, v2: float, v3: float, x: float, y: float, z: float, /
+    ) -> None:
         """Adds a point light.
 
         Underlying Processing method: PApplet.pointLight
@@ -12823,7 +14401,7 @@ class Sketch(
         """
         return self._instance.printProjection()
 
-    @_context_wrapper('pop')
+    @_context_wrapper("pop")
     def push(self) -> None:
         """The `push()` function saves the current drawing style settings and
         transformations, while `pop()` restores these settings.
@@ -12856,7 +14434,7 @@ class Sketch(
         """
         return self._instance.push()
 
-    @_context_wrapper('pop_matrix')
+    @_context_wrapper("pop_matrix")
     def push_matrix(self) -> None:
         """Pushes the current transformation matrix onto the matrix stack.
 
@@ -12878,7 +14456,7 @@ class Sketch(
         """
         return self._instance.pushMatrix()
 
-    @_context_wrapper('pop_style')
+    @_context_wrapper("pop_style")
     def push_style(self) -> None:
         """The `push_style()` function saves the current style settings and `pop_style()`
         restores the prior settings.
@@ -12907,8 +14485,18 @@ class Sketch(
         """
         return self._instance.pushStyle()
 
-    def quad(self, x1: float, y1: float, x2: float, y2: float,
-             x3: float, y3: float, x4: float, y4: float, /) -> None:
+    def quad(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        x3: float,
+        y3: float,
+        x4: float,
+        y4: float,
+        /,
+    ) -> None:
         """A quad is a quadrilateral, a four sided polygon.
 
         Underlying Processing method: PApplet.quad
@@ -12951,8 +14539,7 @@ class Sketch(
         return self._instance.quad(x1, y1, x2, y2, x3, y3, x4, y4)
 
     @overload
-    def quadratic_vertex(self, cx: float, cy: float,
-                         x3: float, y3: float, /) -> None:
+    def quadratic_vertex(self, cx: float, cy: float, x3: float, y3: float, /) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
         Underlying Processing method: PApplet.quadraticVertex
@@ -13001,8 +14588,9 @@ class Sketch(
         pass
 
     @overload
-    def quadratic_vertex(self, cx: float, cy: float, cz: float,
-                         x3: float, y3: float, z3: float, /) -> None:
+    def quadratic_vertex(
+        self, cx: float, cy: float, cz: float, x3: float, y3: float, z3: float, /
+    ) -> None:
         """Specifies vertex coordinates for quadratic Bezier curves.
 
         Underlying Processing method: PApplet.quadraticVertex
@@ -13099,8 +14687,7 @@ class Sketch(
         return self._instance.quadraticVertex(*args)
 
     @_generator_to_list
-    def quadratic_vertices(
-            self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def quadratic_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
         """Create a collection of quadratic vertices.
 
         Parameters
@@ -13189,8 +14776,7 @@ class Sketch(
         pass
 
     @overload
-    def rect(self, a: float, b: float, c: float,
-             d: float, r: float, /) -> None:
+    def rect(self, a: float, b: float, c: float, d: float, r: float, /) -> None:
         """Draws a rectangle to the screen.
 
         Underlying Processing method: PApplet.rect
@@ -13254,8 +14840,18 @@ class Sketch(
         pass
 
     @overload
-    def rect(self, a: float, b: float, c: float, d: float,
-             tl: float, tr: float, br: float, bl: float, /) -> None:
+    def rect(
+        self,
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        tl: float,
+        tr: float,
+        br: float,
+        bl: float,
+        /,
+    ) -> None:
         """Draws a rectangle to the screen.
 
         Underlying Processing method: PApplet.rect
@@ -13443,6 +15039,11 @@ class Sketch(
         shift operator (`>>`) with a bit mask. For example, `red(c)` and `c >> 16 &
         0xFF` both extract the red value from a color variable `c` but the later is
         faster.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.red(rgb)
 
@@ -13812,6 +15413,11 @@ class Sketch(
         -----
 
         Extracts the saturation value from a color.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.saturation(rgb)
 
@@ -14645,8 +16251,7 @@ class Sketch(
         pass
 
     @overload
-    def shape(self, shape: Py5Shape, a: float,
-              b: float, c: float, d: float, /) -> None:
+    def shape(self, shape: Py5Shape, a: float, b: float, c: float, d: float, /) -> None:
         """Draws shapes to the display window.
 
         Underlying Processing method: PApplet.shape
@@ -14697,6 +16302,7 @@ class Sketch(
         """
         pass
 
+    @_auto_convert_to_py5shape
     def shape(self, *args):
         """Draws shapes to the display window.
 
@@ -15051,8 +16657,7 @@ class Sketch(
         pass
 
     @overload
-    def size(self, width: int, height: int,
-             renderer: str, path: str, /) -> None:
+    def size(self, width: int, height: int, renderer: str, path: str, /) -> None:
         """Defines the dimension of the display window width and height in units of pixels.
 
         Underlying Processing method: PApplet.size
@@ -15149,7 +16754,7 @@ class Sketch(
         """
         pass
 
-    @_settings_only('size')
+    @_settings_only("size")
     def size(self, *args):
         """Defines the dimension of the display window width and height in units of pixels.
 
@@ -15357,7 +16962,7 @@ class Sketch(
         """
         pass
 
-    @_settings_only('smooth')
+    @_settings_only("smooth")
     def smooth(self, *args):
         """Draws all geometry with smooth (anti-aliased) edges.
 
@@ -15454,6 +17059,11 @@ class Sketch(
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Use in combination with `emissive()`, `ambient()`, and
         `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -15499,6 +17109,11 @@ class Sketch(
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Use in combination with `emissive()`, `ambient()`, and
         `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -15544,6 +17159,11 @@ class Sketch(
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Use in combination with `emissive()`, `ambient()`, and
         `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -15589,6 +17209,11 @@ class Sketch(
         surface in a preferred direction (rather than bouncing in all directions like a
         diffuse light). Use in combination with `emissive()`, `ambient()`, and
         `shininess()` to set the material properties of shapes.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.specular(*args)
 
@@ -15742,19 +17367,20 @@ class Sketch(
         return self._instance.sphereDetail(*args)
 
     def spot_light(
-            self,
-            v1: float,
-            v2: float,
-            v3: float,
-            x: float,
-            y: float,
-            z: float,
-            nx: float,
-            ny: float,
-            nz: float,
-            angle: float,
-            concentration: float,
-            /) -> None:
+        self,
+        v1: float,
+        v2: float,
+        v3: float,
+        x: float,
+        y: float,
+        z: float,
+        nx: float,
+        ny: float,
+        nz: float,
+        angle: float,
+        concentration: float,
+        /,
+    ) -> None:
         """Adds a spot light.
 
         Underlying Processing method: PApplet.spotLight
@@ -15808,7 +17434,8 @@ class Sketch(
         sets the bias of light focusing toward the center of that cone.
         """
         return self._instance.spotLight(
-            v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
+            v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration
+        )
 
     def square(self, x: float, y: float, extent: float, /) -> None:
         """Draws a square to the screen.
@@ -15906,6 +17533,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -15977,6 +17609,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -16048,6 +17685,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -16119,6 +17761,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -16190,6 +17837,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -16261,6 +17913,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -16332,6 +17989,11 @@ class Sketch(
         When drawing in 2D with the default renderer, you may need
         `hint(ENABLE_STROKE_PURE)` to improve drawing quality (at the expense of
         performance). See the `hint()` documentation for more details.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.stroke(*args)
 
@@ -16584,8 +18246,9 @@ class Sketch(
         pass
 
     @overload
-    def text(self, chars: list[chr], start: int,
-             stop: int, x: float, y: float, /) -> None:
+    def text(
+        self, chars: list[chr], start: int, stop: int, x: float, y: float, /
+    ) -> None:
         """Draws text to the screen.
 
         Underlying Processing method: PApplet.text
@@ -16675,8 +18338,9 @@ class Sketch(
         pass
 
     @overload
-    def text(self, chars: list[chr], start: int,
-             stop: int, x: float, y: float, z: float, /) -> None:
+    def text(
+        self, chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /
+    ) -> None:
         """Draws text to the screen.
 
         Underlying Processing method: PApplet.text
@@ -17306,8 +18970,7 @@ class Sketch(
         pass
 
     @overload
-    def text(self, str: str, x1: float, y1: float,
-             x2: float, y2: float, /) -> None:
+    def text(self, str: str, x1: float, y1: float, x2: float, y2: float, /) -> None:
         """Draws text to the screen.
 
         Underlying Processing method: PApplet.text
@@ -17897,8 +19560,7 @@ class Sketch(
         pass
 
     @overload
-    def text_width(self, chars: list[chr],
-                   start: int, length: int, /) -> float:
+    def text_width(self, chars: list[chr], start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
         Underlying Processing method: PApplet.textWidth
@@ -18155,6 +19817,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -18227,6 +19894,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -18299,6 +19971,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -18371,6 +20048,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -18443,6 +20125,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -18515,6 +20202,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         pass
 
@@ -18587,6 +20279,11 @@ class Sketch(
         maximum value as specified by `color_mode()`. The default maximum value is 255.
 
         The `tint()` function is also used to control the coloring of textures in 3D.
+
+        This method has additional color functionality that is not reflected in the
+        method's signatures. For example, you can pass the name of a color (e.g.
+        "green", "mediumpurple", etc). Look at the online "All About Colors" Python
+        Ecosystem Integration tutorial for more information.
         """
         return self._instance.tint(*args)
 
@@ -18721,8 +20418,9 @@ class Sketch(
         """
         return self._instance.translate(*args)
 
-    def triangle(self, x1: float, y1: float, x2: float,
-                 y2: float, x3: float, y3: float, /) -> None:
+    def triangle(
+        self, x1: float, y1: float, x2: float, y2: float, x3: float, y3: float, /
+    ) -> None:
         """A triangle is a plane created by connecting three points.
 
         Underlying Processing method: PApplet.triangle
@@ -19048,8 +20746,7 @@ class Sketch(
         pass
 
     @overload
-    def vertex(self, x: float, y: float, z: float,
-               u: float, v: float, /) -> None:
+    def vertex(self, x: float, y: float, z: float, u: float, v: float, /) -> None:
         """Add a new vertex to a shape.
 
         Underlying Processing method: PApplet.vertex
@@ -19229,7 +20926,7 @@ class Sketch(
         ----------
 
         coordinates: npt.NDArray[np.floating]
-            2D array of vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
+            2D array of vertex coordinates and optional UV texture mapping values
 
         Notes
         -----
@@ -19240,6 +20937,7 @@ class Sketch(
 
         The `coordinates` parameter should be a numpy array with one row for each
         vertex. There should be two or three columns for 2D or 3D points, respectively.
+        There may also be an additional two columns for UV texture mapping values.
         """
         return self._instance.vertices(coordinates)
 

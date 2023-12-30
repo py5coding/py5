@@ -20,12 +20,12 @@
 from __future__ import annotations
 
 import functools
-from typing import overload, Union  # noqa
 import weakref
+from typing import Union, overload  # noqa
 
+from . import spelling
 from .base import Py5Base
 from .mixins import PixelPy5ImageMixin
-from . import spelling
 
 
 def _return_py5image(f):
@@ -36,6 +36,7 @@ def _return_py5image(f):
             return ret
         else:
             return Py5Image(ret)
+
     return decorated
 
 
@@ -62,8 +63,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     method on the image before using the `Py5Image.np_pixels[]` array.
 
     To create a new image, use the `create_image()` function. Do not use the syntax
-    `Py5Image()`.
-    """
+    `Py5Image()`."""
+
     _py5_object_cache = weakref.WeakSet()
 
     def __new__(cls, pimage):
@@ -76,7 +77,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
             return o
 
     def __init__(self, pimage):
-        if pimage == getattr(self, '_instance', None):
+        if pimage == getattr(self, "_instance", None):
             # this is a cached Py5Image object, don't re-run __init__()
             return
 
@@ -84,14 +85,19 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         super().__init__(instance=pimage)
 
     def __str__(self) -> str:
-        return f"Py5Image(width=" + str(self._get_width()) + \
-            ", height=" + str(self._get_height()) + ")"
+        return (
+            f"Py5Image(width="
+            + str(self._get_width())
+            + ", height="
+            + str(self._get_height())
+            + ")"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Py5Image', name, self))
+        raise AttributeError(spelling.error_msg("Py5Image", name, self))
 
     ADD = 2
     ALPHA = 4
@@ -136,6 +142,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         The height of the image in units of pixels.
         """
         return self._instance.height
+
     height: int = property(
         fget=_get_height,
         doc="""The height of the image in units of pixels.
@@ -145,7 +152,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        The height of the image in units of pixels.""")
+        The height of the image in units of pixels.""",
+    )
 
     def _get_pixel_density(self) -> int:
         """Pixel density of the Py5Image object.
@@ -160,6 +168,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         than 1.
         """
         return self._instance.pixelDensity
+
     pixel_density: int = property(
         fget=_get_pixel_density,
         doc="""Pixel density of the Py5Image object.
@@ -171,7 +180,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         Pixel density of the Py5Image object. This will always be equal to 1, even if
         the Sketch used `pixel_density()` to set the pixel density to a value greater
-        than 1.""")
+        than 1.""",
+    )
 
     def _get_pixel_height(self) -> int:
         """Height of the Py5Image object in pixels.
@@ -186,6 +196,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         density to a value greater than 1.
         """
         return self._instance.pixelHeight
+
     pixel_height: int = property(
         fget=_get_pixel_height,
         doc="""Height of the Py5Image object in pixels.
@@ -197,7 +208,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         Height of the Py5Image object in pixels. This will be the same as
         `Py5Image.height`, even if the Sketch used `pixel_density()` to set the pixel
-        density to a value greater than 1.""")
+        density to a value greater than 1.""",
+    )
 
     def _get_pixel_width(self) -> int:
         """Width of the Py5Image object in pixels.
@@ -212,6 +224,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         density to a value greater than 1.
         """
         return self._instance.pixelWidth
+
     pixel_width: int = property(
         fget=_get_pixel_width,
         doc="""Width of the Py5Image object in pixels.
@@ -223,7 +236,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
 
         Width of the Py5Image object in pixels. This will be the same as
         `Py5Image.width`, even if the Sketch used `pixel_density()` to set the pixel
-        density to a value greater than 1.""")
+        density to a value greater than 1.""",
+    )
 
     def _get_width(self) -> int:
         """The width of the image in units of pixels.
@@ -236,6 +250,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         The width of the image in units of pixels.
         """
         return self._instance.width
+
     width: int = property(
         fget=_get_width,
         doc="""The width of the image in units of pixels.
@@ -245,11 +260,23 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         Notes
         -----
 
-        The width of the image in units of pixels.""")
+        The width of the image in units of pixels.""",
+    )
 
     @overload
-    def blend(self, sx: int, sy: int, sw: int, sh: int, dx: int,
-              dy: int, dw: int, dh: int, mode: int, /) -> None:
+    def blend(
+        self,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        mode: int,
+        /,
+    ) -> None:
         """Blends a region of pixels into the image specified by the `img` parameter.
 
         Underlying Processing method: PImage.blend
@@ -332,8 +359,20 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         pass
 
     @overload
-    def blend(self, src: Py5Image, sx: int, sy: int, sw: int, sh: int,
-              dx: int, dy: int, dw: int, dh: int, mode: int, /) -> None:
+    def blend(
+        self,
+        src: Py5Image,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        mode: int,
+        /,
+    ) -> None:
         """Blends a region of pixels into the image specified by the `img` parameter.
 
         Underlying Processing method: PImage.blend
@@ -556,8 +595,9 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         pass
 
     @overload
-    def copy(self, sx: int, sy: int, sw: int, sh: int,
-             dx: int, dy: int, dw: int, dh: int, /) -> None:
+    def copy(
+        self, sx: int, sy: int, sw: int, sh: int, dx: int, dy: int, dw: int, dh: int, /
+    ) -> None:
         """Copies a region of pixels from one image into another.
 
         Underlying Processing method: PImage.copy
@@ -615,8 +655,19 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         pass
 
     @overload
-    def copy(self, src: Py5Image, sx: int, sy: int, sw: int,
-             sh: int, dx: int, dy: int, dw: int, dh: int, /) -> None:
+    def copy(
+        self,
+        src: Py5Image,
+        sx: int,
+        sy: int,
+        sw: int,
+        sh: int,
+        dx: int,
+        dy: int,
+        dw: int,
+        dh: int,
+        /,
+    ) -> None:
         """Copies a region of pixels from one image into another.
 
         Underlying Processing method: PImage.copy
@@ -1032,6 +1083,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         """
         pass
 
+    @_return_py5image
     def get_pixels(self, *args):
         """Reads the color of any pixel or grabs a section of an image.
 

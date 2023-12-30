@@ -19,25 +19,30 @@
 # *****************************************************************************
 from __future__ import annotations
 
-
 import functools
-from typing import overload, Any  # noqa
 import weakref
+from typing import Any, overload  # noqa
 
 import numpy as np  # noqa
 import numpy.typing as npt  # noqa
+from jpype.types import JArray, JBoolean, JException, JFloat, JInt  # noqa
 
-from .image import Py5Image  # noqa
-from jpype.types import JException, JArray, JBoolean, JInt, JFloat  # noqa
-from .pmath import _py5vector_to_pvector, _numpy_to_pvector, _numpy_to_pmatrix2d, _numpy_to_pmatrix3d  # noqa
-from .vector import Py5Vector
 from . import spelling
+from .image import Py5Image  # noqa
+from .pmath import (
+    _numpy_to_pmatrix2d,
+    _numpy_to_pmatrix3d,  # noqa
+    _numpy_to_pvector,
+    _py5vector_to_pvector,
+)
+from .vector import Py5Vector
 
 
 def _return_py5shader(f):
     @functools.wraps(f)
     def decorated(self_, *args):
         return Py5Shader(f(self_, *args))
+
     return decorated
 
 
@@ -48,10 +53,12 @@ def _load_py5shader(f):
             return Py5Shader(f(self_, *args))
         except JException as e:
             msg = e.message()
-            if msg == 'None':
-                msg = 'shader file cannot be found'
-        raise RuntimeError('cannot load shader file ' +
-                           str(args[0]) + '. error message: ' + msg)
+            if msg == "None":
+                msg = "shader file cannot be found"
+        raise RuntimeError(
+            "cannot load shader file " + str(args[0]) + ". error message: " + msg
+        )
+
     return decorated
 
 
@@ -69,6 +76,7 @@ def _py5shader_set_wrapper(f):
         elif isinstance(args[0], Py5Vector):
             args = _py5vector_to_pvector(args[0]), *args[1:]
         else:
+
             def fix_type(arg):
                 if isinstance(arg, bool):
                     return JBoolean(arg)
@@ -78,8 +86,10 @@ def _py5shader_set_wrapper(f):
                     return JFloat(arg)
                 else:
                     return arg
+
             args = [fix_type(a) for a in args]
         return f(self_, name, *args)
+
     return decorated
 
 
@@ -95,8 +105,8 @@ class Py5Shader:
     This class encapsulates a GLSL shader program, including a vertex and a fragment
     shader. It's compatible with the `P2D` and `P3D` renderers, but not with the
     default renderer. Use the `load_shader()` function to load your shader code and
-    create `Py5Shader` objects.
-    """
+    create `Py5Shader` objects."""
+
     _py5_object_cache = weakref.WeakSet()
 
     def __new__(cls, pshader):
@@ -116,7 +126,7 @@ class Py5Shader:
         return self.__str__()
 
     def __getattr__(self, name):
-        raise AttributeError(spelling.error_msg('Py5Shader', name, self))
+        raise AttributeError(spelling.error_msg("Py5Shader", name, self))
 
     @overload
     def set(self, name: str, x: bool, /) -> None:
@@ -679,8 +689,7 @@ class Py5Shader:
         pass
 
     @overload
-    def set(self, name: str, boolvec: JArray(
-            JBoolean), ncoords: int, /) -> None:
+    def set(self, name: str, boolvec: JArray(JBoolean), ncoords: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -1128,8 +1137,7 @@ class Py5Shader:
         pass
 
     @overload
-    def set(self, name: str, x: float, y: float,
-            z: float, w: float, /) -> None:
+    def set(self, name: str, x: float, y: float, z: float, w: float, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -1353,8 +1361,7 @@ class Py5Shader:
         pass
 
     @overload
-    def set(self, name: str,
-            vec: npt.NDArray[np.floating], ncoords: int, /) -> None:
+    def set(self, name: str, vec: npt.NDArray[np.floating], ncoords: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -2026,8 +2033,7 @@ class Py5Shader:
         pass
 
     @overload
-    def set(self, name: str,
-            vec: npt.NDArray[np.integer], ncoords: int, /) -> None:
+    def set(self, name: str, vec: npt.NDArray[np.integer], ncoords: int, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 
@@ -2363,8 +2369,7 @@ class Py5Shader:
         pass
 
     @overload
-    def set(self, name: str,
-            mat: npt.NDArray[np.floating], use3x3: bool, /) -> None:
+    def set(self, name: str, mat: npt.NDArray[np.floating], use3x3: bool, /) -> None:
         """Sets the uniform variables inside the shader to modify the effect while the
         program is running.
 

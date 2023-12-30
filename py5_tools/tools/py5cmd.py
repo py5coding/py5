@@ -17,15 +17,14 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-import cmd
 import argparse
-import platform
+import cmd
 import glob
+import platform
 from pathlib import Path
 
 import py5_tools
 import py5_tools.imported
-
 
 parser = argparse.ArgumentParser(description="py5 command tool")
 
@@ -47,13 +46,12 @@ Description: {paragraph}"""
 
 
 class Py5Cmd(cmd.Cmd):
-
     def __init__(self):
         super().__init__()
         self._libraries = py5_tools.ProcessingLibraryInfo()
         self._running_sketches = []
 
-    prompt = 'py5: '
+    prompt = "py5: "
     intro = "Welcome to the py5 command tool."
 
     def _print_library_info(self, info):
@@ -71,22 +69,20 @@ class Py5Cmd(cmd.Cmd):
         """show_category [category name]
         Show information for all of the available libraries in a given category."""
         category_libraries = sorted(
-            self._libraries.get_library_info(
-                category=line),
-            key=lambda x: x.get('name'))
+            self._libraries.get_library_info(category=line), key=lambda x: x.get("name")
+        )
 
         if category_libraries:
             for info in category_libraries:
-                print(SHORT_LIBRARY_TEMPLATE.format(**info).strip() + '\n')
+                print(SHORT_LIBRARY_TEMPLATE.format(**info).strip() + "\n")
         else:
-            print('No libraries found in category ' + line)
+            print("No libraries found in category " + line)
 
     def complete_show_category(self, text, line, begidx, endidx):
         if not text:
             completions = self._libraries.categories
         else:
-            completions = [
-                c for c in self._libraries.categories if c.startswith(text)]
+            completions = [c for c in self._libraries.categories if c.startswith(text)]
 
         return completions
 
@@ -95,7 +91,7 @@ class Py5Cmd(cmd.Cmd):
         Run the imported mode Sketch found at the given path."""
         if line:
             try:
-                new_process = platform.system() != 'Windows'
+                new_process = platform.system() != "Windows"
                 p = py5_tools.imported.run_code(line, new_process=new_process)
                 if p:
                     self._running_sketches.append(p)
@@ -105,16 +101,17 @@ class Py5Cmd(cmd.Cmd):
     def complete_run_sketch(self, text, line, begidx, endidx):
         path = line[10:].strip()
         completions = []
-        for p in glob.glob(path + '*'):
-            completions.append(p[(len(path) - len(text)):] +
-                               ('/' if Path(p).is_dir() else ''))
+        for p in glob.glob(path + "*"):
+            completions.append(
+                p[(len(path) - len(text)) :] + ("/" if Path(p).is_dir() else "")
+            )
         return completions
 
     def do_get_library(self, line):
         """get_library [library name]
         Download a library and unzip it into a jars subdirectory."""
         try:
-            self._libraries.download_zip('jars', library_name=line)
+            self._libraries.download_zip("jars", library_name=line)
         except Exception as e:
             print(e)
 
@@ -122,8 +119,7 @@ class Py5Cmd(cmd.Cmd):
         if not text:
             completions = self._libraries.names
         else:
-            completions = [
-                n for n in self._libraries.names if n.startswith(text)]
+            completions = [n for n in self._libraries.names if n.startswith(text)]
 
         return completions
 
@@ -133,18 +129,17 @@ class Py5Cmd(cmd.Cmd):
         info = self._libraries.get_library_info(library_name=line)
 
         if len(info) == 0:
-            print('There are no libraries named ' + line)
+            print("There are no libraries named " + line)
         elif len(info) == 1:
-            print(FULL_LIBRARY_TEMPLATE.format(**info[0]).strip() + '\n')
+            print(FULL_LIBRARY_TEMPLATE.format(**info[0]).strip() + "\n")
         else:
-            print('Multiple libraries found named ' + line)
+            print("Multiple libraries found named " + line)
 
     def complete_library_info(self, text, line, begidx, endidx):
         if not text:
             completions = self._libraries.names
         else:
-            completions = [
-                n for n in self._libraries.names if n.startswith(text)]
+            completions = [n for n in self._libraries.names if n.startswith(text)]
 
         return completions
 
@@ -178,5 +173,5 @@ def main():
     py5cmd.cmdloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

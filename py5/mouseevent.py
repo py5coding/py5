@@ -125,6 +125,9 @@ class Py5MouseEvent:
 
         Get the number of mouse clicks. This will be 1 for a single mouse click and 2
         for a double click. The value can be much higher if the user clicks fast enough.
+
+        This method also responds to the mouse wheel. It will be 1 when the mouse wheel
+        is rotating down and -1 when the mouse wheel is rotating up.
         """
         return self._instance.getCount()
 

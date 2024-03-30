@@ -114,7 +114,7 @@ except ImportError:
     pass
 
 
-__version__ = "0.10.0a0"
+__version__ = "0.10.1a1"
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 py5_tools._lock_imported_mode()
@@ -9264,13 +9264,13 @@ def ortho() -> None:
         bottom plane of the clipping volume
 
     far: float
-        maximum distance from the origin away from the viewer
+        distance from the viewer to the farthest clipping plane
 
     left: float
         left plane of the clipping volume
 
     near: float
-        maximum distance from the origin to the viewer
+        distance from the viewer to the nearest clipping plane
 
     right: float
         right plane of the clipping volume
@@ -9314,13 +9314,13 @@ def ortho(left: float, right: float, bottom: float, top: float, /) -> None:
         bottom plane of the clipping volume
 
     far: float
-        maximum distance from the origin away from the viewer
+        distance from the viewer to the farthest clipping plane
 
     left: float
         left plane of the clipping volume
 
     near: float
-        maximum distance from the origin to the viewer
+        distance from the viewer to the nearest clipping plane
 
     right: float
         right plane of the clipping volume
@@ -9366,13 +9366,13 @@ def ortho(
         bottom plane of the clipping volume
 
     far: float
-        maximum distance from the origin away from the viewer
+        distance from the viewer to the farthest clipping plane
 
     left: float
         left plane of the clipping volume
 
     near: float
-        maximum distance from the origin to the viewer
+        distance from the viewer to the nearest clipping plane
 
     right: float
         right plane of the clipping volume
@@ -9415,13 +9415,13 @@ def ortho(*args):
         bottom plane of the clipping volume
 
     far: float
-        maximum distance from the origin away from the viewer
+        distance from the viewer to the farthest clipping plane
 
     left: float
         left plane of the clipping volume
 
     near: float
-        maximum distance from the origin to the viewer
+        distance from the viewer to the nearest clipping plane
 
     right: float
         right plane of the clipping volume
@@ -16862,8 +16862,6 @@ def parse_json(serialized_json: Any, **kwargs: dict[str, Any]) -> Any:
 def load_strings(string_path: Union[str, Path], **kwargs: dict[str, Any]) -> list[str]:
     """Load a list of strings from a file or URL.
 
-    Underlying Processing method: Sketch.loadStrings
-
     Parameters
     ----------
 
@@ -16893,8 +16891,6 @@ def save_strings(
     string_data: list[str], filename: Union[str, Path], *, end: str = "\n"
 ) -> None:
     """Save a list of strings to a file.
-
-    Underlying Processing method: Sketch.saveStrings
 
     Parameters
     ----------
@@ -16928,8 +16924,6 @@ def save_strings(
 def load_bytes(bytes_path: Union[str, Path], **kwargs: dict[str, Any]) -> bytearray:
     """Load byte data from a file or URL.
 
-    Underlying Processing method: Sketch.loadBytes
-
     Parameters
     ----------
 
@@ -16958,8 +16952,6 @@ def load_bytes(bytes_path: Union[str, Path], **kwargs: dict[str, Any]) -> bytear
 def save_bytes(bytes_data: Union[bytes, bytearray], filename: Union[str, Path]) -> None:
     """Save byte data to a file.
 
-    Underlying Processing method: Sketch.saveBytes
-
     Parameters
     ----------
 
@@ -16982,8 +16974,6 @@ def save_bytes(bytes_data: Union[bytes, bytearray], filename: Union[str, Path]) 
 def load_pickle(pickle_path: Union[str, Path]) -> Any:
     """Load a pickled Python object from a file.
 
-    Underlying Processing method: Sketch.loadPickle
-
     Parameters
     ----------
 
@@ -16999,14 +16989,21 @@ def load_pickle(pickle_path: Union[str, Path]) -> Any:
 
     There are security risks associated with Python pickle files. A pickle file can
     contain malicious code, so never load a pickle file from an untrusted source.
+
+    When using py5 in imported mode, pickling will not work on objects instantiated
+    from new classes you have defined yourself on the main sketch file. This applies
+    to py5's `save_pickle()` and `load_pickle()` methods, as well as the Python's
+    standard library pickle module methods they depend upon. If you need to pickle
+    objects from classes you defined, move the class definitions to a different .py
+    file that you import as a module or import the classes from. Otherwise, you
+    could also try using module mode if you want to use pickle with your classes and
+    keep all the sketch code in a single file.
     """
     return _py5sketch.load_pickle(pickle_path)
 
 
 def save_pickle(obj: Any, filename: Union[str, Path]) -> None:
     """Pickle a Python object to a file.
-
-    Underlying Processing method: Sketch.savePickle
 
     Parameters
     ----------
@@ -17024,12 +17021,424 @@ def save_pickle(obj: Any, filename: Union[str, Path]) -> None:
     be saved relative to the current working directory (`sketch_path()`). The saved
     file can be reloaded with `load_pickle()`.
 
-    Object "pickling" is a method for serializing objects and saving them to a file
-    for later retrieval. The recreated objects will be clones of the original
+    Object "pickling" is a technique for serializing objects and saving them to a
+    file for later retrieval. The recreated objects will be clones of the original
     objects. Not all Python objects can be saved to a Python pickle file. This
     limitation prevents any py5 object from being pickled.
+
+    When using py5 in imported mode, pickling will not work on objects instantiated
+    from new classes you have defined yourself on the main sketch file. This applies
+    to py5's `save_pickle()` and `load_pickle()` methods, as well as the Python's
+    standard library pickle module methods they depend upon. If you need to pickle
+    objects from classes you defined, move the class definitions to a different .py
+    file that you import as a module or import the classes from. Otherwise, you
+    could also try using module mode if you want to use pickle with your classes and
+    keep all the sketch code in a single file.
     """
     return _py5sketch.save_pickle(obj, filename)
+
+
+##############################################################################
+# module functions from print_tools.py
+##############################################################################
+
+
+def set_println_stream(println_stream: Any) -> None:
+    """Customize where the output of `println()` goes.
+
+    Parameters
+    ----------
+
+    println_stream: Any
+        println stream object to be used by println method
+
+    Notes
+    -----
+
+    Customize where the output of `println()` goes.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any `print`
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. The
+    `println()` method was created to provide users with print functionality in a
+    Sketch without having to cope with output moving from one cell to the next. Use
+    `set_println_stream` to change how the output is handled. The `println_stream`
+    object must provide `init()` and `print()` methods, as shown in the example. The
+    example demonstrates how to configure py5 to output text to an IPython Widget.
+    """
+    return _py5sketch.set_println_stream(println_stream)
+
+
+def println(*args, sep: str = " ", end: str = "\n", stderr: bool = False) -> None:
+    """Print text or other values to the screen.
+
+    Parameters
+    ----------
+
+    args
+        values to be printed
+
+    end: str = "\\n"
+        string appended after the last value, defaults to newline character
+
+    sep: str = " "
+        string inserted between values, defaults to a space
+
+    stderr: bool = False
+        use stderr instead of stdout
+
+    Notes
+    -----
+
+    Print text or other values to the screen. For a Sketch running outside of a
+    Jupyter Notebook, this method will behave the same as the Python's builtin
+    `print` method. For Sketches running in a Jupyter Notebook, this will place text
+    in the output of the cell that made the `run_sketch()` call.
+
+    When running a Sketch asynchronously through Jupyter Notebook, any `print`
+    statements using Python's builtin function will always appear in the output of
+    the currently active cell. This will rarely be desirable, as the active cell
+    will keep changing as the user executes code elsewhere in the notebook. This
+    method was created to provide users with print functionality in a Sketch without
+    having to cope with output moving from one cell to the next.
+
+    Use `set_println_stream()` to customize the behavior of `println()`.
+    """
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+
+
+##############################################################################
+# module functions from threads.py
+##############################################################################
+
+
+def launch_thread(
+    f: Callable,
+    name: str = None,
+    *,
+    daemon: bool = True,
+    args: tuple = None,
+    kwargs: dict = None,
+) -> str:
+    """Launch a new thread to execute a function in parallel with your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Launch a new thread to execute a function in parallel with your Sketch code.
+    This can be useful for executing non-py5 code that would otherwise slow down the
+    animation thread and reduce the Sketch's frame rate.
+
+    The `name` parameter is optional but useful if you want to monitor the thread
+    with other methods such as `has_thread()`. If the provided `name` is identical
+    to an already running thread, the running thread will first be stopped with a
+    call to `stop_thread()` with the `wait` parameter equal to `True`.
+
+    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+    to the function.
+
+    Use the `daemon` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to `True`, meaning
+    that function execution can be interupted if the Python process exits. Note that
+    if the Python process continues running after the Sketch exits, which is
+    typically the case when using a Jupyter Notebook, this parameter won't have any
+    effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to `False` causes problems but it is available for those
+    who really need it. See `stop_all_threads()` for a better approach to exit
+    threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_thread(
+        f,
+        name=name,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs,
+    )
+
+
+def launch_promise_thread(
+    f: Callable,
+    name: str = None,
+    *,
+    daemon: bool = True,
+    args: tuple = None,
+    kwargs: dict = None,
+) -> Py5Promise:
+    """Create a `Py5Promise` object that will store the returned result of a function
+    when that function completes.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    Notes
+    -----
+
+    Create a `Py5Promise` object that will store the returned result of a function
+    when that function completes. This can be useful for executing non-py5 code that
+    would otherwise slow down the animation thread and reduce the Sketch's frame
+    rate.
+
+    The `Py5Promise` object has an `is_ready` property that will be `True` when the
+    `result` property contains the value function `f` returned. Before then, the
+    `result` property will be `None`.
+
+    The `name` parameter is optional but useful if you want to monitor the thread
+    with other methods such as `has_thread()`. If the provided `name` is identical
+    to an already running thread, the running thread will first be stopped with a
+    call to `stop_thread()` with the `wait` parameter equal to `True`.
+
+    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+    to the function.
+
+    Use the `daemon` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to `True`, meaning
+    that function execution can be interupted if the Python process exits. Note that
+    if the Python process continues running after the Sketch exits, which is
+    typically the case when using a Jupyter Notebook, this parameter won't have any
+    effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to `False` causes problems but it is available for those
+    who really need it. See `stop_all_threads()` for a better approach to exit
+    threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_promise_thread(
+        f,
+        name=name,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs,
+    )
+
+
+def launch_repeating_thread(
+    f: Callable,
+    name: str = None,
+    *,
+    time_delay: float = 0,
+    daemon: bool = True,
+    args: tuple = None,
+    kwargs: dict = None,
+) -> str:
+    """Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code.
+
+    Parameters
+    ----------
+
+    args: tuple = None
+        positional arguments to pass to the given function
+
+    daemon: bool = True
+        if the thread should be a daemon thread
+
+    f: Callable
+        function to call in the launched thread
+
+    kwargs: dict = None
+        keyword arguments to pass to the given function
+
+    name: str = None
+        name of thread to be created
+
+    time_delay: float = 0
+        time delay in seconds between calls to the given function
+
+    Notes
+    -----
+
+    Launch a new thread that will repeatedly execute a function in parallel with
+    your Sketch code. This can be useful for executing non-py5 code that would
+    otherwise slow down the animation thread and reduce the Sketch's frame rate.
+
+    Use the `time_delay` parameter to set the time in seconds between one call to
+    function `f` and the next call. Set this parameter to `0` if you want each call
+    to happen immediately after the previous call finishes. If the function `f`
+    takes longer than expected to finish, py5 will wait for it to finish before
+    making the next call. There will not be overlapping calls to function `f`.
+
+    The `name` parameter is optional but useful if you want to monitor the thread
+    with other methods such as `has_thread()`. If the provided `name` is identical
+    to an already running thread, the running thread will first be stopped with a
+    call to `stop_thread()` with the `wait` parameter equal to `True`.
+
+    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
+    to the function.
+
+    Use the `daemon` parameter to make the launched thread a daemon that will run
+    without blocking Python from exiting. This parameter defaults to `True`, meaning
+    that function execution can be interupted if the Python process exits. Note that
+    if the Python process continues running after the Sketch exits, which is
+    typically the case when using a Jupyter Notebook, this parameter won't have any
+    effect unless if you try to restart the Notebook kernel. Generally speaking,
+    setting this parameter to `False` causes problems but it is available for those
+    who really need it. See `stop_all_threads()` for a better approach to exit
+    threads.
+
+    The new thread is a Python thread, so all the usual caveats about the Global
+    Interpreter Lock (GIL) apply here.
+    """
+    return _py5sketch.launch_repeating_thread(
+        f,
+        name=name,
+        time_delay=time_delay,
+        daemon=daemon,
+        args=args,
+        kwargs=kwargs,
+    )
+
+
+def has_thread(name: str) -> None:
+    """Determine if a thread of a given name exists and is currently running.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    Notes
+    -----
+
+    Determine if a thread of a given name exists and is currently running. You can
+    get the list of all currently running threads with `list_threads()`.
+    """
+    return _py5sketch.has_thread(name)
+
+
+def join_thread(name: str, *, timeout: float = None) -> bool:
+    """Join the Python thread associated with the given thread name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    timeout: float = None
+        maximum time in seconds to wait for the thread to join
+
+    Notes
+    -----
+
+    Join the Python thread associated with the given thread name. The
+    `join_thread()` method will wait until the named thread has finished executing
+    before returning. Use the `timeout` parameter to set an upper limit for the
+    number of seconds to wait. This method will return right away if the named
+    thread does not exist or the thread has already finished executing. You can get
+    the list of all currently running threads with `list_threads()`.
+
+    This method will return `True` if the named thread has completed execution and
+    `False` if the named thread is still executing. It will only return `False` if
+    you use the `timeout` parameter and the method is not able to join with the
+    thread within that time limit.
+    """
+    return _py5sketch.join_thread(name, timeout=timeout)
+
+
+def stop_thread(name: str, wait: bool = False) -> None:
+    """Stop a thread of a given name.
+
+    Parameters
+    ----------
+
+    name: str
+        name of thread
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop a thread of a given name. The `wait` parameter determines if the method
+    call will return right away or wait for the thread to exit.
+
+    This won't do anything useful if the thread was launched with either
+    `launch_thread()` or `launch_promise_thread()` and the `wait` parameter is
+    `False`. Non-repeating threads are executed once and will stop when they
+    complete execution. Setting the `wait` parameter to `True` will merely block
+    until the thread exits on its own. Killing off a running thread in Python is
+    complicated and py5 cannot do that for you. If you want a thread to perform some
+    action repeatedly and be interuptable, use `launch_repeating_thread()` instead.
+
+    Use `has_thread()` to determine if a thread of a given name exists and
+    `list_threads()` to get a list of all thread names. Use `stop_all_threads()` to
+    stop all threads.
+    """
+    return _py5sketch.stop_thread(name, wait=wait)
+
+
+def stop_all_threads(wait: bool = False) -> None:
+    """Stop all running threads.
+
+    Parameters
+    ----------
+
+    wait: bool = False
+        wait for thread to exit before returning
+
+    Notes
+    -----
+
+    Stop all running threads. The `wait` parameter determines if the method call
+    will return right away or wait for the threads to exit.
+
+    When the Sketch shuts down, `stop_all_threads(wait=False)` is called for you. If
+    you would rather the Sketch waited for threads to exit, create an `exiting`
+    method and make a call to `stop_all_threads(wait=True)`.
+    """
+    return _py5sketch.stop_all_threads(wait=wait)
+
+
+def list_threads() -> None:
+    """List the names of all of the currently running threads.
+
+    Notes
+    -----
+
+    List the names of all of the currently running threads. The names of previously
+    launched threads that have exited will be removed from the list.
+    """
+    return _py5sketch.list_threads()
 
 
 ##############################################################################
@@ -17470,76 +17879,6 @@ def save(
 
 
 ##############################################################################
-# module functions from print_tools.py
-##############################################################################
-
-
-def set_println_stream(println_stream: Any) -> None:
-    """Customize where the output of `println()` goes.
-
-    Parameters
-    ----------
-
-    println_stream: Any
-        println stream object to be used by println method
-
-    Notes
-    -----
-
-    Customize where the output of `println()` goes.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any `print`
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. The
-    `println()` method was created to provide users with print functionality in a
-    Sketch without having to cope with output moving from one cell to the next. Use
-    `set_println_stream` to change how the output is handled. The `println_stream`
-    object must provide `init()` and `print()` methods, as shown in the example. The
-    example demonstrates how to configure py5 to output text to an IPython Widget.
-    """
-    return _py5sketch.set_println_stream(println_stream)
-
-
-def println(*args, sep: str = " ", end: str = "\n", stderr: bool = False) -> None:
-    """Print text or other values to the screen.
-
-    Parameters
-    ----------
-
-    args
-        values to be printed
-
-    end: str = "\\n"
-        string appended after the last value, defaults to newline character
-
-    sep: str = " "
-        string inserted between values, defaults to a space
-
-    stderr: bool = False
-        use stderr instead of stdout
-
-    Notes
-    -----
-
-    Print text or other values to the screen. For a Sketch running outside of a
-    Jupyter Notebook, this method will behave the same as the Python's builtin
-    `print` method. For Sketches running in a Jupyter Notebook, this will place text
-    in the output of the cell that made the `run_sketch()` call.
-
-    When running a Sketch asynchronously through Jupyter Notebook, any `print`
-    statements using Python's builtin function will always appear in the output of
-    the currently active cell. This will rarely be desirable, as the active cell
-    will keep changing as the user executes code elsewhere in the notebook. This
-    method was created to provide users with print functionality in a Sketch without
-    having to cope with output moving from one cell to the next.
-
-    Use `set_println_stream()` to customize the behavior of `println()`.
-    """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
-
-
-##############################################################################
 # module functions from math.py
 ##############################################################################
 
@@ -17780,7 +18119,7 @@ def constrain(
     low: Union[float, npt.NDArray],
     high: Union[float, npt.NDArray],
 ) -> Union[float, npt.NDArray]:
-    """Constrains a value to not exceed a maximum and minimum value.
+    """Constrains a value between a minimum and maximum value.
 
     Parameters
     ----------
@@ -17789,15 +18128,15 @@ def constrain(
         the value to constrain
 
     high: Union[float, npt.NDArray]
-        minimum limit
+        maximum limit
 
     low: Union[float, npt.NDArray]
-        maximum limit
+        minimum limit
 
     Notes
     -----
 
-    Constrains a value to not exceed a maximum and minimum value.
+    Constrains a value between a minimum and maximum value.
     """
     return Sketch.constrain(
         amt,
@@ -19694,339 +20033,6 @@ def os_noise(*args) -> Union[float, npt.NDArray]:
     implementations.
     """
     return _py5sketch.os_noise(*args)
-
-
-##############################################################################
-# module functions from threads.py
-##############################################################################
-
-
-def launch_thread(
-    f: Callable,
-    name: str = None,
-    *,
-    daemon: bool = True,
-    args: tuple = None,
-    kwargs: dict = None,
-) -> str:
-    """Launch a new thread to execute a function in parallel with your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Launch a new thread to execute a function in parallel with your Sketch code.
-    This can be useful for executing non-py5 code that would otherwise slow down the
-    animation thread and reduce the Sketch's frame rate.
-
-    The `name` parameter is optional but useful if you want to monitor the thread
-    with other methods such as `has_thread()`. If the provided `name` is identical
-    to an already running thread, the running thread will first be stopped with a
-    call to `stop_thread()` with the `wait` parameter equal to `True`.
-
-    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
-    to the function.
-
-    Use the `daemon` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to `True`, meaning
-    that function execution can be interupted if the Python process exits. Note that
-    if the Python process continues running after the Sketch exits, which is
-    typically the case when using a Jupyter Notebook, this parameter won't have any
-    effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to `False` causes problems but it is available for those
-    who really need it. See `stop_all_threads()` for a better approach to exit
-    threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_thread(
-        f,
-        name=name,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs,
-    )
-
-
-def launch_promise_thread(
-    f: Callable,
-    name: str = None,
-    *,
-    daemon: bool = True,
-    args: tuple = None,
-    kwargs: dict = None,
-) -> Py5Promise:
-    """Create a `Py5Promise` object that will store the returned result of a function
-    when that function completes.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    Notes
-    -----
-
-    Create a `Py5Promise` object that will store the returned result of a function
-    when that function completes. This can be useful for executing non-py5 code that
-    would otherwise slow down the animation thread and reduce the Sketch's frame
-    rate.
-
-    The `Py5Promise` object has an `is_ready` property that will be `True` when the
-    `result` property contains the value function `f` returned. Before then, the
-    `result` property will be `None`.
-
-    The `name` parameter is optional but useful if you want to monitor the thread
-    with other methods such as `has_thread()`. If the provided `name` is identical
-    to an already running thread, the running thread will first be stopped with a
-    call to `stop_thread()` with the `wait` parameter equal to `True`.
-
-    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
-    to the function.
-
-    Use the `daemon` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to `True`, meaning
-    that function execution can be interupted if the Python process exits. Note that
-    if the Python process continues running after the Sketch exits, which is
-    typically the case when using a Jupyter Notebook, this parameter won't have any
-    effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to `False` causes problems but it is available for those
-    who really need it. See `stop_all_threads()` for a better approach to exit
-    threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_promise_thread(
-        f,
-        name=name,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs,
-    )
-
-
-def launch_repeating_thread(
-    f: Callable,
-    name: str = None,
-    *,
-    time_delay: float = 0,
-    daemon: bool = True,
-    args: tuple = None,
-    kwargs: dict = None,
-) -> str:
-    """Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code.
-
-    Parameters
-    ----------
-
-    args: tuple = None
-        positional arguments to pass to the given function
-
-    daemon: bool = True
-        if the thread should be a daemon thread
-
-    f: Callable
-        function to call in the launched thread
-
-    kwargs: dict = None
-        keyword arguments to pass to the given function
-
-    name: str = None
-        name of thread to be created
-
-    time_delay: float = 0
-        time delay in seconds between calls to the given function
-
-    Notes
-    -----
-
-    Launch a new thread that will repeatedly execute a function in parallel with
-    your Sketch code. This can be useful for executing non-py5 code that would
-    otherwise slow down the animation thread and reduce the Sketch's frame rate.
-
-    Use the `time_delay` parameter to set the time in seconds between one call to
-    function `f` and the next call. Set this parameter to `0` if you want each call
-    to happen immediately after the previous call finishes. If the function `f`
-    takes longer than expected to finish, py5 will wait for it to finish before
-    making the next call. There will not be overlapping calls to function `f`.
-
-    The `name` parameter is optional but useful if you want to monitor the thread
-    with other methods such as `has_thread()`. If the provided `name` is identical
-    to an already running thread, the running thread will first be stopped with a
-    call to `stop_thread()` with the `wait` parameter equal to `True`.
-
-    Use the `args` and `kwargs` parameters to pass positional and keyword arguments
-    to the function.
-
-    Use the `daemon` parameter to make the launched thread a daemon that will run
-    without blocking Python from exiting. This parameter defaults to `True`, meaning
-    that function execution can be interupted if the Python process exits. Note that
-    if the Python process continues running after the Sketch exits, which is
-    typically the case when using a Jupyter Notebook, this parameter won't have any
-    effect unless if you try to restart the Notebook kernel. Generally speaking,
-    setting this parameter to `False` causes problems but it is available for those
-    who really need it. See `stop_all_threads()` for a better approach to exit
-    threads.
-
-    The new thread is a Python thread, so all the usual caveats about the Global
-    Interpreter Lock (GIL) apply here.
-    """
-    return _py5sketch.launch_repeating_thread(
-        f,
-        name=name,
-        time_delay=time_delay,
-        daemon=daemon,
-        args=args,
-        kwargs=kwargs,
-    )
-
-
-def has_thread(name: str) -> None:
-    """Determine if a thread of a given name exists and is currently running.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    Notes
-    -----
-
-    Determine if a thread of a given name exists and is currently running. You can
-    get the list of all currently running threads with `list_threads()`.
-    """
-    return _py5sketch.has_thread(name)
-
-
-def join_thread(name: str, *, timeout: float = None) -> bool:
-    """Join the Python thread associated with the given thread name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    timeout: float = None
-        maximum time in seconds to wait for the thread to join
-
-    Notes
-    -----
-
-    Join the Python thread associated with the given thread name. The
-    `join_thread()` method will wait until the named thread has finished executing
-    before returning. Use the `timeout` parameter to set an upper limit for the
-    number of seconds to wait. This method will return right away if the named
-    thread does not exist or the thread has already finished executing. You can get
-    the list of all currently running threads with `list_threads()`.
-
-    This method will return `True` if the named thread has completed execution and
-    `False` if the named thread is still executing. It will only return `False` if
-    you use the `timeout` parameter and the method is not able to join with the
-    thread within that time limit.
-    """
-    return _py5sketch.join_thread(name, timeout=timeout)
-
-
-def stop_thread(name: str, wait: bool = False) -> None:
-    """Stop a thread of a given name.
-
-    Parameters
-    ----------
-
-    name: str
-        name of thread
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop a thread of a given name. The `wait` parameter determines if the method
-    call will return right away or wait for the thread to exit.
-
-    This won't do anything useful if the thread was launched with either
-    `launch_thread()` or `launch_promise_thread()` and the `wait` parameter is
-    `False`. Non-repeating threads are executed once and will stop when they
-    complete execution. Setting the `wait` parameter to `True` will merely block
-    until the thread exits on its own. Killing off a running thread in Python is
-    complicated and py5 cannot do that for you. If you want a thread to perform some
-    action repeatedly and be interuptable, use `launch_repeating_thread()` instead.
-
-    Use `has_thread()` to determine if a thread of a given name exists and
-    `list_threads()` to get a list of all thread names. Use `stop_all_threads()` to
-    stop all threads.
-    """
-    return _py5sketch.stop_thread(name, wait=wait)
-
-
-def stop_all_threads(wait: bool = False) -> None:
-    """Stop all running threads.
-
-    Parameters
-    ----------
-
-    wait: bool = False
-        wait for thread to exit before returning
-
-    Notes
-    -----
-
-    Stop all running threads. The `wait` parameter determines if the method call
-    will return right away or wait for the threads to exit.
-
-    When the Sketch shuts down, `stop_all_threads(wait=False)` is called for you. If
-    you would rather the Sketch waited for threads to exit, create an `exiting`
-    method and make a call to `stop_all_threads(wait=True)`.
-    """
-    return _py5sketch.stop_all_threads(wait=wait)
-
-
-def list_threads() -> None:
-    """List the names of all of the currently running threads.
-
-    Notes
-    -----
-
-    List the names of all of the currently running threads. The names of previously
-    launched threads that have exited will be removed from the list.
-    """
-    return _py5sketch.list_threads()
 
 
 PI = np.pi
@@ -22806,6 +22812,7 @@ def run_sketch(
     sketch_args: list[str] = None,
     sketch_functions: dict[str, Callable] = None,
     jclassname: str = None,
+    jclass_params: tuple[Any] = (),
     _osx_alt_run_method: bool = True,
 ) -> None:
     """Run the Sketch.
@@ -22815,6 +22822,9 @@ def run_sketch(
 
     block: bool = None
         method returns immediately (False) or blocks until Sketch exits (True)
+
+    jclass_params: tuple[Any] = ()
+        parameters to pass to constructor when using py5 in processing mode
 
     jclassname: str = None
         canonical name of class to instantiate when using py5 in processing mode
@@ -22826,7 +22836,7 @@ def run_sketch(
         command line arguments that become Sketch arguments
 
     sketch_functions: dict[str, Callable] = None
-        sketch methods when using module mode
+        sketch methods when using [module mode](content-py5-modes-module-mode)
 
     Notes
     -----
@@ -22882,7 +22892,9 @@ def run_sketch(
     The `jclassname` parameter should only be used when programming in Processing
     Mode. This value must be the canonical name of your Processing Sketch class
     (i.e. `"org.test.MySketch"`). The class must inherit from `py5.core.SketchBase`.
-    Read py5's online documentation to learn more about Processing Mode."""
+    To pass parameters to your Processing Sketch class constructor, use the
+    `jclass_params` parameter. Read py5's online documentation to learn more about
+    Processing Mode."""
     caller_locals = inspect.stack()[1].frame.f_locals
     caller_globals = inspect.stack()[1].frame.f_globals
     functions, function_param_counts = bridge._extract_py5_user_function_data(
@@ -22919,7 +22931,7 @@ def run_sketch(
         )
         return
     if _py5sketch.is_dead or jclassname:
-        _py5sketch = Sketch(jclassname=jclassname)
+        _py5sketch = Sketch(jclassname=jclassname, jclass_params=jclass_params)
 
     _prepare_dynamic_variables(caller_locals, caller_globals)
 

@@ -141,8 +141,6 @@ class DataMixin:
     ) -> list[str]:
         """Load a list of strings from a file or URL.
 
-        Underlying Processing method: Sketch.loadStrings
-
         Parameters
         ----------
 
@@ -189,8 +187,6 @@ class DataMixin:
     ) -> None:
         """Save a list of strings to a file.
 
-        Underlying Processing method: Sketch.saveStrings
-
         Parameters
         ----------
 
@@ -228,8 +224,6 @@ class DataMixin:
         self, bytes_path: Union[str, Path], **kwargs: dict[str, Any]
     ) -> bytearray:
         """Load byte data from a file or URL.
-
-        Underlying Processing method: Sketch.loadBytes
 
         Parameters
         ----------
@@ -277,8 +271,6 @@ class DataMixin:
     ) -> None:
         """Save byte data to a file.
 
-        Underlying Processing method: Sketch.saveBytes
-
         Parameters
         ----------
 
@@ -305,8 +297,6 @@ class DataMixin:
     def load_pickle(self, pickle_path: Union[str, Path]) -> Any:
         """Load a pickled Python object from a file.
 
-        Underlying Processing method: Sketch.loadPickle
-
         Parameters
         ----------
 
@@ -321,7 +311,16 @@ class DataMixin:
         path.
 
         There are security risks associated with Python pickle files. A pickle file can
-        contain malicious code, so never load a pickle file from an untrusted source."""
+        contain malicious code, so never load a pickle file from an untrusted source.
+
+        When using py5 in imported mode, pickling will not work on objects instantiated
+        from new classes you have defined yourself on the main sketch file. This applies
+        to py5's `save_pickle()` and `load_pickle()` methods, as well as the Python's
+        standard library pickle module methods they depend upon. If you need to pickle
+        objects from classes you defined, move the class definitions to a different .py
+        file that you import as a module or import the classes from. Otherwise, you
+        could also try using module mode if you want to use pickle with your classes and
+        keep all the sketch code in a single file."""
         path = Path(pickle_path)
         if not path.is_absolute():
             cwd = self.sketch_path()
@@ -337,8 +336,6 @@ class DataMixin:
 
     def save_pickle(self, obj: Any, filename: Union[str, Path]) -> None:
         """Pickle a Python object to a file.
-
-        Underlying Processing method: Sketch.savePickle
 
         Parameters
         ----------
@@ -356,10 +353,19 @@ class DataMixin:
         be saved relative to the current working directory (`sketch_path()`). The saved
         file can be reloaded with `load_pickle()`.
 
-        Object "pickling" is a method for serializing objects and saving them to a file
-        for later retrieval. The recreated objects will be clones of the original
+        Object "pickling" is a technique for serializing objects and saving them to a
+        file for later retrieval. The recreated objects will be clones of the original
         objects. Not all Python objects can be saved to a Python pickle file. This
-        limitation prevents any py5 object from being pickled."""
+        limitation prevents any py5 object from being pickled.
+
+        When using py5 in imported mode, pickling will not work on objects instantiated
+        from new classes you have defined yourself on the main sketch file. This applies
+        to py5's `save_pickle()` and `load_pickle()` methods, as well as the Python's
+        standard library pickle module methods they depend upon. If you need to pickle
+        objects from classes you defined, move the class definitions to a different .py
+        file that you import as a module or import the classes from. Otherwise, you
+        could also try using module mode if you want to use pickle with your classes and
+        keep all the sketch code in a single file."""
         path = Path(filename)
         if not path.is_absolute():
             path = self.sketch_path() / filename

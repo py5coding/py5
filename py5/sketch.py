@@ -183,10 +183,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     Core py5 class for leveraging py5's functionality. This is analogous to the
     PApplet class in Processing. Launch the Sketch with the `run_sketch()` method.
 
-    The core functions to be implemented by the py5 coder are `settings`, `setup`,
-    and `draw`. The first two will be run once at Sketch initialization and the
-    third will be run in an animation thread, once per frame. The following event
-    functions are also supported:
+    The core functions to be implemented by the py5 coder are `setup` and `draw`.
+    The first will be run once at Sketch initialization and the second will be run
+    in an animation thread, once per frame. The following event functions are also
+    supported:
 
     * `exiting`
     * `key_pressed`
@@ -201,13 +201,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     * `mouse_released`
     * `mouse_wheel`
     * `movie_event`
+    * `predraw_update`
     * `post_draw`
     * `pre_draw`
 
-    When coding in class mode, all of the above functions should be class methods.
-    When coding in module mode or imported mode, the above functions should be
-    stand-alone functions available in the local namespace in which `run_sketch()`
-    was called."""
+    When coding in class mode, all of the above functions should be instance
+    methods. When coding in module mode or imported mode, the above functions should
+    be stand-alone functions available in the local namespace in which
+    `run_sketch()` was called.
+
+    For more information, look at the online "User Functions" documentation."""
 
     _py5_object_cache = set()
     _cls = _Sketch
@@ -237,6 +240,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     def __init__(self, *args, **kwargs):
         _instance = kwargs.get("_instance")
         jclassname = kwargs.get("jclassname")
+        jclass_params = kwargs.get("jclass_params", ())
 
         if _instance:
             if _instance == getattr(self, "_instance", None):
@@ -248,7 +252,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
                 )
 
         Sketch._cls = JClass(jclassname) if jclassname else _Sketch
-        instance = Sketch._cls()
+        instance = Sketch._cls(*jclass_params)
         if not isinstance(instance, _SketchBase):
             raise RuntimeError("Java instance must inherit from py5.core.SketchBase")
 
@@ -308,6 +312,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         block: bool = None
             method returns immediately (False) or blocks until Sketch exits (True)
 
+        jclass_params: tuple[Any] = ()
+            parameters to pass to constructor when using py5 in processing mode
+
         jclassname: str = None
             canonical name of class to instantiate when using py5 in processing mode
 
@@ -318,7 +325,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             command line arguments that become Sketch arguments
 
         sketch_functions: dict[str, Callable] = None
-            sketch methods when using module mode
+            sketch methods when using [module mode](content-py5-modes-module-mode)
 
         Notes
         -----
@@ -374,7 +381,9 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         The `jclassname` parameter should only be used when programming in Processing
         Mode. This value must be the canonical name of your Processing Sketch class
         (i.e. `"org.test.MySketch"`). The class must inherit from `py5.core.SketchBase`.
-        Read py5's online documentation to learn more about Processing Mode."""
+        To pass parameters to your Processing Sketch class constructor, use the
+        `jclass_params` parameter. Read py5's online documentation to learn more about
+        Processing Mode."""
         if not hasattr(self, "_instance"):
             raise RuntimeError(
                 (
@@ -1312,6 +1321,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         for more information. You can also create your own custom integrations. Look at
         the online "Custom Integrations" Python Ecosystem Integration tutorial to learn
         more."""
+        if isinstance(obj, (Py5Image, Py5Graphics)):
+            return obj
         result = image_conversion._convert(self, obj, **kwargs)
         if isinstance(result, (Path, str)):
             return self.load_image(result, dst=dst)
@@ -1352,6 +1363,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         and Trimesh" Python Ecosystem Integration tutorials for more information. You
         can also create your own custom integrations. Look at the online "Custom
         Integrations" Python Ecosystem Integration tutorial to learn more."""
+        if isinstance(obj, Py5Shape):
+            return obj
         return shape_conversion._convert(self, obj, **kwargs)
 
     def load_image(
@@ -4659,7 +4672,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_rmouse_x(self) -> int:
-        """The current horizonal coordinate of the mouse after activating scale invariant
+        """The current horizontal coordinate of the mouse after activating scale invariant
         drawing.
 
         Underlying Processing field: Sketch.rmouseX
@@ -4667,7 +4680,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         Notes
         -----
 
-        The current horizonal coordinate of the mouse after activating scale invariant
+        The current horizontal coordinate of the mouse after activating scale invariant
         drawing. See `window_ratio()` for more information about how to activate this
         and why it is useful.
 
@@ -4681,7 +4694,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     rmouse_x: int = property(
         fget=_get_rmouse_x,
-        doc="""The current horizonal coordinate of the mouse after activating scale invariant
+        doc="""The current horizontal coordinate of the mouse after activating scale invariant
         drawing.
 
         Underlying Processing field: Sketch.rmouseX
@@ -4689,7 +4702,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         Notes
         -----
 
-        The current horizonal coordinate of the mouse after activating scale invariant
+        The current horizontal coordinate of the mouse after activating scale invariant
         drawing. See `window_ratio()` for more information about how to activate this
         and why it is useful.
 
@@ -13716,13 +13729,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             bottom plane of the clipping volume
 
         far: float
-            maximum distance from the origin away from the viewer
+            distance from the viewer to the farthest clipping plane
 
         left: float
             left plane of the clipping volume
 
         near: float
-            maximum distance from the origin to the viewer
+            distance from the viewer to the nearest clipping plane
 
         right: float
             right plane of the clipping volume
@@ -13765,13 +13778,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             bottom plane of the clipping volume
 
         far: float
-            maximum distance from the origin away from the viewer
+            distance from the viewer to the farthest clipping plane
 
         left: float
             left plane of the clipping volume
 
         near: float
-            maximum distance from the origin to the viewer
+            distance from the viewer to the nearest clipping plane
 
         right: float
             right plane of the clipping volume
@@ -13823,13 +13836,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             bottom plane of the clipping volume
 
         far: float
-            maximum distance from the origin away from the viewer
+            distance from the viewer to the farthest clipping plane
 
         left: float
             left plane of the clipping volume
 
         near: float
-            maximum distance from the origin to the viewer
+            distance from the viewer to the nearest clipping plane
 
         right: float
             right plane of the clipping volume
@@ -13871,13 +13884,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             bottom plane of the clipping volume
 
         far: float
-            maximum distance from the origin away from the viewer
+            distance from the viewer to the farthest clipping plane
 
         left: float
             left plane of the clipping volume
 
         near: float
-            maximum distance from the origin to the viewer
+            distance from the viewer to the nearest clipping plane
 
         right: float
             right plane of the clipping volume

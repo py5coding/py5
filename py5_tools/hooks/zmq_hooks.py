@@ -90,7 +90,7 @@ def sketch_portal(
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
-    running Sketch, such as a Sketch created using Class mode.
+    running Sketch, such as a Sketch created using class mode.
 
     The Sketch Portal is a custom Jupyter Widget and can handle keyboard or mouse
     events just like a native window. You will need to click on the portal for it to

@@ -277,7 +277,7 @@ class MathMixin:
         low: Union[float, npt.NDArray],
         high: Union[float, npt.NDArray],
     ) -> Union[float, npt.NDArray]:
-        """Constrains a value to not exceed a maximum and minimum value.
+        """Constrains a value between a minimum and maximum value.
 
         Parameters
         ----------
@@ -286,15 +286,15 @@ class MathMixin:
             the value to constrain
 
         high: Union[float, npt.NDArray]
-            minimum limit
+            maximum limit
 
         low: Union[float, npt.NDArray]
-            maximum limit
+            minimum limit
 
         Notes
         -----
 
-        Constrains a value to not exceed a maximum and minimum value."""
+        Constrains a value between a minimum and maximum value."""
         return np.where(amt < low, low, np.where(amt > high, high, amt))
 
     @classmethod
@@ -733,7 +733,7 @@ class MathMixin:
         parameter.
 
         This function makes a call to the numpy `floor()` function."""
-        return np.floor(value).astype(np.int_)
+        return np.floor(value).astype(np.int64)
 
     @classmethod
     def ceil(cls, value: Union[float, npt.ArrayLike]) -> Union[int, npt.NDArray]:
@@ -753,7 +753,7 @@ class MathMixin:
         the parameter.
 
         This function makes a call to the numpy `ceil()` function."""
-        return np.ceil(value).astype(np.int_)
+        return np.ceil(value).astype(np.int64)
 
     @classmethod
     def exp(cls, value: Union[float, npt.ArrayLike]) -> Union[float, npt.NDArray]:

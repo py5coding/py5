@@ -85,7 +85,7 @@ class Py5Vector(Sequence):
 
         used_default_dim = len(args) == 0 and dim is None
         dim = Py5Vector._DEFAULT_DIM if dim is None else dim
-        dtype = np.float_ if dtype is None else dtype
+        dtype = np.float64 if dtype is None else dtype
 
         if not isinstance(dtype, (type, np.dtype)) or not np.issubdtype(
             dtype, np.floating
@@ -1018,13 +1018,13 @@ class Py5Vector(Sequence):
     )
 
     @classmethod
-    def from_heading(cls, *heading, dtype: int = np.float_) -> Py5Vector:
+    def from_heading(cls, *heading, dtype: int = np.float64) -> Py5Vector:
         """Class method to create a new vector with a given heading, measured in radians.
 
         Parameters
         ----------
 
-        dtype: int = np.float_
+        dtype: int = np.float64
             dtype of new vector to create
 
         heading
@@ -1068,7 +1068,7 @@ class Py5Vector(Sequence):
             )
 
     @classmethod
-    def random(cls, dim: int, *, dtype: type = np.float_) -> Py5Vector:
+    def random(cls, dim: int, *, dtype: type = np.float64) -> Py5Vector:
         """Create a new vector with random values.
 
         Parameters
@@ -1077,7 +1077,7 @@ class Py5Vector(Sequence):
         dim: int
             dimension of the random vector to create
 
-        dtype: type = np.float_
+        dtype: type = np.float64
             dtype of the random vector to create
 
         Notes
@@ -1164,7 +1164,7 @@ class Py5Vector2D(Py5Vector):
     to instead use the same numpy array and share its data with provided array, set
     the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`."""
 
-    def __new__(cls, *args, dtype: type = np.float_):
+    def __new__(cls, *args, dtype: type = np.float64):
         return super().__new__(cls, *args, dim=2, dtype=dtype)
 
     # *** BEGIN METHODS ***
@@ -1214,7 +1214,7 @@ class Py5Vector2D(Py5Vector):
     # *** END METHODS ***
 
     @classmethod
-    def random(cls, dim: int = 2, *, dtype: type = np.float_) -> Py5Vector2D:
+    def random(cls, dim: int = 2, *, dtype: type = np.float64) -> Py5Vector2D:
         """Create a new vector with random values.
 
         Parameters
@@ -1223,7 +1223,7 @@ class Py5Vector2D(Py5Vector):
         dim: int
             dimension of the random vector to create
 
-        dtype: type = np.float_
+        dtype: type = np.float64
             dtype of the random vector to create
 
         Notes
@@ -1291,7 +1291,7 @@ class Py5Vector3D(Py5Vector):
     to instead use the same numpy array and share its data with provided array, set
     the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`."""
 
-    def __new__(cls, *args, dtype: type = np.float_):
+    def __new__(cls, *args, dtype: type = np.float64):
         return super().__new__(cls, *args, dim=3, dtype=dtype)
 
     def _get_z(self) -> float:
@@ -1443,7 +1443,7 @@ class Py5Vector3D(Py5Vector):
     # *** END METHODS ***
 
     @classmethod
-    def random(cls, dim: int = 3, *, dtype: type = np.float_) -> Py5Vector3D:
+    def random(cls, dim: int = 3, *, dtype: type = np.float64) -> Py5Vector3D:
         """Create a new vector with random values.
 
         Parameters
@@ -1452,7 +1452,7 @@ class Py5Vector3D(Py5Vector):
         dim: int
             dimension of the random vector to create
 
-        dtype: type = np.float_
+        dtype: type = np.float64
             dtype of the random vector to create
 
         Notes
@@ -1520,7 +1520,7 @@ class Py5Vector4D(Py5Vector):
     to instead use the same numpy array and share its data with provided array, set
     the `copy` parameter to `False`, such as `v6 = py5.Py5Vector(arr, copy=False)`."""
 
-    def __new__(cls, *args, dtype: type = np.float_):
+    def __new__(cls, *args, dtype: type = np.float64):
         return super().__new__(cls, *args, dim=4, dtype=dtype)
 
     def _get_z(self) -> float:
@@ -1587,7 +1587,7 @@ class Py5Vector4D(Py5Vector):
     )
 
     @classmethod
-    def random(cls, dim: int = 4, *, dtype: type = np.float_) -> Py5Vector4D:
+    def random(cls, dim: int = 4, *, dtype: type = np.float64) -> Py5Vector4D:
         """Create a new vector with random values.
 
         Parameters
@@ -1596,7 +1596,7 @@ class Py5Vector4D(Py5Vector):
         dim: int
             dimension of the random vector to create
 
-        dtype: type = np.float_
+        dtype: type = np.float64
             dtype of the random vector to create
 
         Notes

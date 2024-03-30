@@ -65,7 +65,7 @@ def screenshot(*, sketch: Sketch = None, hook_post_draw: bool = False) -> PIL_Im
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
-    running Sketch, such as a Sketch created using Class mode.
+    running Sketch, such as a Sketch created using class mode.
 
     This function will not work on a Sketch with no `draw()` function that uses an
     OpenGL renderer such as `P2D` or `P3D`. Either add a token `draw()` function or
@@ -179,7 +179,7 @@ def save_frames(
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
-    running Sketch, such as a Sketch created using Class mode.
+    running Sketch, such as a Sketch created using class mode.
 
     If the `limit` parameter is used, this function will wait to return a list of
     the filenames. If not, it will return right away as the frames are saved in the
@@ -241,6 +241,7 @@ def offline_frame_processing(
     hook_post_draw: bool = False,
     queue_limit: int = None,
     block: bool = None,
+    display_progress: bool = True,
 ) -> None:
     """Process Sketch frames in a separate thread that will minimize the performance
     impact on the Sketch's main animation thread.
@@ -256,6 +257,9 @@ def offline_frame_processing(
 
     complete_func: Callable[[], None] = None
         function to call when frame processing is complete
+
+    display_progress: bool = True
+        display progress as frames are processed
 
     func: Callable[[npt.NDArray[np.uint8]], None]
         function to process the Sketch's pixels, one batch at a time
@@ -314,8 +318,13 @@ def offline_frame_processing(
     terminates. This blocking feature is not available on macOS when the Sketch is
     executed through an IPython kernel.
 
+    By default this function will report its progress as frames are processed. If
+    you are using a Jupyter Notebook and happen to be processing tens of thousands
+    of frames, this might cause Jupyter to crash. To avoid that fate, set the
+    `display_progress` parameter to `False`.
+
     Use the `sketch` parameter to specify a different running Sketch, such as a
-    Sketch created using Class mode. If your Sketch has a `post_draw()` method, use
+    Sketch created using class mode. If your Sketch has a `post_draw()` method, use
     the `hook_post_draw` parameter to make this function run after `post_draw()`
     instead of `draw()`. This is important when using Processing libraries that
     support `post_draw()` such as Camera3D or ColorBlindness."""
@@ -345,6 +354,7 @@ def offline_frame_processing(
         complete_func=complete_func,
         stop_processing_func=stop_processing_func,
         queue_limit=queue_limit,
+        display_progress=display_progress,
     )
     sketch._add_post_hook(
         "post_draw" if hook_post_draw else "draw", hook.hook_name, hook
@@ -431,7 +441,7 @@ def animated_gif(
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
-    running Sketch, such as a Sketch created using Class mode.
+    running Sketch, such as a Sketch created using class mode.
 
     If your Sketch has a `post_draw()` method, use the `hook_post_draw` parameter to
     make this function run after `post_draw()` instead of `draw()`. This is
@@ -576,7 +586,7 @@ def capture_frames(
 
     By default the Sketch will be the currently running Sketch, as returned by
     `get_current_sketch()`. Use the `sketch` parameter to specify a different
-    running Sketch, such as a Sketch created using Class mode.
+    running Sketch, such as a Sketch created using class mode.
 
     If your Sketch has a `post_draw()` method, use the `hook_post_draw` parameter to
     make this function run after `post_draw()` instead of `draw()`. This is

@@ -37,7 +37,7 @@ dependencies = [
     "autopep8>=2.0",
     "jpype1>=1.4",
     "line_profiler>=4.0",
-    "numpy>=1.24",
+    "numpy>=1.24,<2.0",
     "pillow>=9.5",
     "pyobjc>=9.0;sys_platform==\"darwin\"",
     "requests>=2.28",

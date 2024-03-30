@@ -217,12 +217,14 @@ class QueuedBatchProcessingHook(BaseHook):
         complete_func=None,
         stop_processing_func=None,
         queue_limit=0,
+        display_progress=True,
     ):
         super().__init__("py5queued_block_processing_hook")
         self.period = period
         self.limit = limit
         self.batch_size = batch_size
         self.queue_limit = queue_limit
+        self.display_progress = display_progress
 
         self.continue_grabbing_frames = True
         self.current_batch = None
@@ -305,7 +307,8 @@ class QueuedBatchProcessingHook(BaseHook):
                 self.processor.stop_processing = True
                 self.hook_finished(sketch)
 
-            self.status_msg(self.msg())
+            if self.display_progress:
+                self.status_msg(self.msg())
 
         except Exception as e:
             self.hook_error(sketch, e)

@@ -19,6 +19,7 @@
 # *****************************************************************************
 from __future__ import annotations
 
+import tempfile
 import threading
 from io import BytesIO
 from pathlib import Path
@@ -30,6 +31,7 @@ import numpy.typing as npt
 from PIL import Image
 from PIL.Image import Image as PIL_Image
 
+from .. import bridge
 from ..decorators import _hex_converter
 
 _Sketch = jpype.JClass("py5.core.Sketch")
@@ -679,14 +681,36 @@ class PixelMixin:
             if isinstance(self._instance, _Sketch)
             else self._instance.parent
         )
-        if not isinstance(filename, BytesIO):
-            filename = Path(str(sketch_instance.savePath(str(filename))))
-        self.load_np_pixels()
-        arr = (
-            self.np_pixels[:, :, 1:]
-            if drop_alpha
-            else np.roll(self.np_pixels, -1, axis=2)
-        )
+        if (
+            isinstance(self._instance, _Sketch)
+            and bridge.check_run_method_callstack()
+            and self._py5_bridge.current_running_method not in ["setup", "draw"]
+        ):
+            if (
+                drop_alpha
+                # and not use_thread  # ignore use_thread because the alternative is always slower
+                and format is None
+                and isinstance((filename_param := Path(str(filename))), (str, Path))
+                and filename_param.suffix.lower() in [".jpg", ".jpeg", ".png"]
+            ):
+                self._instance.save(filename)
+                return
+
+            with tempfile.TemporaryDirectory() as td:
+                temp_filename = Path(td) / "temp.png"
+                self._instance.save(temp_filename)
+                arr = np.asarray(Image.open(temp_filename))
+                if not drop_alpha:
+                    arr = np.dstack([arr, np.full(arr.shape[:2], 255, dtype=np.uint8)])
+        else:
+            if not isinstance(filename, BytesIO):
+                filename = Path(str(sketch_instance.savePath(str(filename))))
+            self.load_np_pixels()
+            arr = (
+                self.np_pixels[:, :, 1:]
+                if drop_alpha
+                else np.roll(self.np_pixels, -1, axis=2)
+            )
 
         if use_thread:
 

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -102,6 +102,10 @@ TAB10 = "tab10"
 TAB20 = "tab20"
 TAB20B = "tab20b"
 TAB20C = "tab20c"
+GREY = "grey"
+GIST_GREY = "gist_grey"
+GIST_YERG = "gist_yerg"
+GRAYS = "Grays"
 MAGMA_R = "magma_r"
 INFERNO_R = "inferno_r"
 PLASMA_R = "plasma_r"

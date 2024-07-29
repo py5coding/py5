@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -315,8 +315,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         or 3D points, respectively.
 
         This method is the same as `quadratic_vertices()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `quadratic_vertices()`.
-        """
+        object. To see example code for how it can be used, see `quadratic_vertices()`."""
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.quadraticVertices(self._instance, coordinates)

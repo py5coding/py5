@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -36,10 +36,10 @@ class BaseHook:
         self.exception = None
         self.is_terminated = False
         self._msg_writer = (
-            _WidgetPrintlnStream
+            _WidgetPrintlnStream()
             if _environ.Environment().in_jupyter_zmq_shell
-            else _DefaultPrintlnStream
-        )().init()
+            else _DefaultPrintlnStream()
+        )
         self._last_println_msg = 0
 
     def hook_finished(self, sketch):

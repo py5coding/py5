@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -713,7 +713,7 @@ class MathMixin:
         complex before using the value. You can also extract the real and imaginary
         components of the complex value with `.real` and `.imag`. See the second example
         to learn how to do both of these things."""
-        return value**0.5
+        return value ** 0.5
 
     @classmethod
     def floor(cls, value: Union[float, npt.ArrayLike]) -> Union[int, npt.NDArray]:

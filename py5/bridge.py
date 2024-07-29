@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -194,6 +194,7 @@ class Py5Bridge:
         self._profiler = line_profiler.LineProfiler()
         self._current_running_method = None
         self._is_terminated = False
+        self.handle_exception = handle_exception
 
         from .object_conversion import convert_to_java_type, convert_to_python_types
 
@@ -221,6 +222,9 @@ class Py5Bridge:
 
     def has_function(self, function_name):
         return function_name in self._functions
+
+    def set_handle_exception_function(self, handle_exception):
+        self.handle_exception = handle_exception
 
     def profile_functions(self, function_names):
         for fname in function_names:
@@ -302,7 +306,7 @@ class Py5Bridge:
                         hook(self._sketch)
             return True
         except Exception:
-            handle_exception(self._sketch.println, *sys.exc_info())
+            self.handle_exception(self._sketch.println, *sys.exc_info())
             self.terminate_sketch()
             return False
         finally:
@@ -354,7 +358,7 @@ class Py5Bridge:
                         py5_tools.config._PY5_PROCESSING_MODE_KEYS.pop(key)
                 return self._convert_to_java_type(retval)
             except Exception as e:
-                handle_exception(self._sketch.println, *sys.exc_info())
+                self.handle_exception(self._sketch.println, *sys.exc_info())
                 return _JAVA_RUNTIMEEXCEPTION(str(e))
         except Exception as e:
             return _JAVA_RUNTIMEEXCEPTION(str(e))

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -98,6 +98,8 @@ PY5_DIR_STR = ['__version__',
     'color_mode',
     'constrain',
     'CONTROL',
+    'convert_cached_image',
+    'convert_cached_shape',
     'convert_image',
     'convert_shape',
     'copy',
@@ -580,6 +582,8 @@ PY5_ALL_STR = ['__version__',
     'color_mode',
     'constrain',
     'CONTROL',
+    'convert_cached_image',
+    'convert_cached_shape',
     'convert_image',
     'convert_shape',
     'copy',

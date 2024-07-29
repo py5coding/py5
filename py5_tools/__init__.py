@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -27,4 +27,4 @@ from .imported import _lock_imported_mode, get_imported_mode, set_imported_mode 
 from .jvm import *  # noqa
 from .libraries import *  # noqa
 
-__version__ = "0.10.1a1"
+__version__ = "0.10.2a0"

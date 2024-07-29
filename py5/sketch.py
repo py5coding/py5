@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -275,6 +275,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         Sketch._cls.setJOGLProperties(str(Path(__file__).parent))
         self.utils = Py5Utilities(self)
 
+        self._py5_convert_image_cache = dict()
+        self._py5_convert_shape_cache = dict()
         self._cmap = None
         self._cmap_range = 0
         self._cmap_alpha_range = 0
@@ -434,7 +436,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             if self._environ.in_jupyter_zmq_shell
             else _DefaultPrintlnStream()
         )
-        self._init_println_stream()
 
         self._py5_bridge = Py5Bridge(self)
         self._py5_bridge.set_caller_locals_globals(_caller_locals, _caller_globals)
@@ -823,8 +824,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         The `is_mouse_pressed` variable stores whether or not a mouse button is
         currently being pressed. The value is `True` when `any` mouse button is pressed,
         and `False` if no button is pressed. The `mouse_button` variable (see the
-        related reference entry) can be used to determine which button has been pressed.
-        """
+        related reference entry) can be used to determine which button has been pressed."""
         return self._instance.isMousePressed()
 
     is_mouse_pressed: bool = property(
@@ -1332,6 +1332,67 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             # could be Py5Image or something comparable
             return result
 
+    def convert_cached_image(
+        self, obj: Any, force_conversion: bool = False, **kwargs: dict[str, Any]
+    ) -> Py5Image:
+        """Convert non-py5 image objects into Py5Image objects, but cache the results.
+
+        Parameters
+        ----------
+
+        force_conversion: bool = False
+            force conversion of object if it is already in the cache
+
+        kwargs: dict[str, Any]
+            keyword arguments for conversion function
+
+        obj: Any
+            object to convert into a Py5Image object
+
+        Notes
+        -----
+
+        Convert non-py5 image objects into Py5Image objects, but cache the results. This
+        method is similar to `convert_image()` with the addition of an object cache.
+        Both methods facilitate py5 compatibility with other commonly used Python
+        libraries.
+
+        See `convert_image()` for method details.
+
+        Converting objects to Py5Image objects can sometimes be slow. Usually you will
+        not want to repeatedly convert the same object in your `draw()` function.
+        Writing code to convert an object one time in `setup()` (with a `global`
+        directive) to be later used in your `draw()` function can be a bit tedious. This
+        method lets you write simpler code.
+
+        Your object must be hashable for object caching to work. If your object is not
+        hashable, it cannot be cached and you will receive a warning. If you want py5 to
+        ignore a previously cached object and force a re-conversion, set the
+        `force_conversion` parameter to `True`."""
+        try:
+            obj_in_cache = obj in self._py5_convert_image_cache
+            hashable = True
+        except TypeError:
+            obj_in_cache = False
+            hashable = False
+            warnings.warn(
+                "cannot cache convert image results for unhashable "
+                + str(obj.__class__.__module__)
+                + "."
+                + str(obj.__class__.__name__)
+                + " object"
+            )
+
+        if obj_in_cache and not force_conversion:
+            return self._py5_convert_image_cache[obj]
+        else:
+            converted_obj = self.convert_image(obj, **kwargs)
+
+            if hashable:
+                self._py5_convert_image_cache[obj] = converted_obj
+
+            return converted_obj
+
     def convert_shape(self, obj: Any, **kwargs: dict[str, Any]) -> Py5Shape:
         """Convert non-py5 shape objects into Py5Shape objects.
 
@@ -1366,6 +1427,67 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         if isinstance(obj, Py5Shape):
             return obj
         return shape_conversion._convert(self, obj, **kwargs)
+
+    def convert_cached_shape(
+        self, obj: Any, force_conversion: bool = False, **kwargs: dict[str, Any]
+    ) -> Py5Shape:
+        """Convert non-py5 shape objects into Py5Shape objects, but cache the results.
+
+        Parameters
+        ----------
+
+        force_conversion: bool = False
+            force conversion of object if it is already in the cache
+
+        kwargs: dict[str, Any]
+            keyword arguments for conversion function
+
+        obj: Any
+            object to convert into a Py5Shape object
+
+        Notes
+        -----
+
+        Convert non-py5 shape objects into Py5Shape objects, but cache the results. This
+        method is similar to `convert_shape()` with the addition of an object cache.
+        Both methods facilitate py5 compatibility with other commonly used Python
+        libraries.
+
+        See `convert_shape()` for method details.
+
+        Converting objects to Py5Shape objects can sometimes be slow. Usually you will
+        not want to repeatedly convert the same object in your `draw()` function.
+        Writing code to convert an object one time in `setup()` (with a `global`
+        directive) to be later used in your `draw()` function can be a bit tedious. This
+        method lets you write simpler code.
+
+        Your object must be hashable for object caching to work. If your object is not
+        hashable, it cannot be cached and you will receive a warning. If you want py5 to
+        ignore a previously cached object and force a re-conversion, set the
+        `force_conversion` parameter to `True`."""
+        try:
+            obj_in_cache = obj in self._py5_convert_shape_cache
+            hashable = True
+        except TypeError:
+            obj_in_cache = False
+            hashable = False
+            warnings.warn(
+                "cannot cache convert shape results for unhashable "
+                + str(obj.__class__.__module__)
+                + "."
+                + str(obj.__class__.__name__)
+                + " object"
+            )
+
+        if obj_in_cache and not force_conversion:
+            return self._py5_convert_shape_cache[obj]
+        else:
+            converted_obj = self.convert_shape(obj, **kwargs)
+
+            if hashable:
+                self._py5_convert_shape_cache[obj] = converted_obj
+
+            return converted_obj
 
     def load_image(
         self, image_path: Union[str, Path], *, dst: Py5Image = None
@@ -11913,8 +12035,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     def get_frame_rate(self) -> float:
         """Get the running Sketch's current frame rate.
-
-        Underlying Processing method: PApplet.getFrameRate
 
         Notes
         -----

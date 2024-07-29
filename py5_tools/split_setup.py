@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -141,14 +141,16 @@ def transform(functions, sketch_globals, sketch_locals, println, *, mode):
     if "settings" in functions or "setup" not in functions:
         return functions
 
+    filename = None
+
     try:
         setup = functions["setup"]
+        filename = inspect.getfile(setup)
         code = inspect.getsource(setup).strip()
         cutoff1, cutoff2 = find_cutoffs(code, mode)
 
         # build the fake code
         lines, lineno = inspect.getsourcelines(setup)
-        filename = inspect.getfile(setup)
         fake_settings_code = (
             (lineno - 1) * "\n"
             + "def _py5_faux_settings():\n"
@@ -202,13 +204,24 @@ def transform(functions, sketch_globals, sketch_locals, println, *, mode):
                 del sketch_globals["_py5_faux_setup"]
 
     except OSError as e:
-        println(
-            "Unable to obtain source code for setup(). Either make it obtainable or create a settings() function for calls to size(), fullscreen(), etc.",
-            stderr=True,
+        msg = "Unable to obtain source code for setup(). "
+        if filename in ("<stdin>", "<string>"):
+            msg += "Please save your sketch to a file before running it"
+        else:
+            msg += "Please make it obtainable"
+        msg += (
+            " or create a settings() function for calls to size(), fullscreen(), etc."
         )
+
+        println(msg, stderr=True)
+
+        return None
+
     except Exception as e:
         println(
             "Exception thrown while analyzing setup() function:", str(e), stderr=True
         )
+
+        return None
 
     return functions

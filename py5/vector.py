@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -418,8 +418,7 @@ class Py5Vector(Sequence):
         -----
 
         Create a new Py5Vector instance with a specified numpy dtype. Only floating
-        types (`np.float16`, `np.float32`, `np.float64`, and `np.float128`) are allowed.
-        """
+        types (`np.float16`, `np.float32`, `np.float64`, and `np.float128`) are allowed."""
         return Py5Vector(self._data, dtype=dtype, copy=True)
 
     def tolist(self) -> list[float]:
@@ -686,8 +685,8 @@ class Py5Vector(Sequence):
             other,
             lambda s, o: np.arccos(
                 (
-                    (s / np.sum(s**2) ** 0.5)
-                    * (o / np.sum(o**2, axis=-1, keepdims=o.ndim) ** 0.5)
+                    (s / np.sum(s ** 2) ** 0.5)
+                    * (o / np.sum(o ** 2, axis=-1, keepdims=o.ndim) ** 0.5)
                 ).sum(axis=-1)
             ),
             "angle between",
@@ -736,7 +735,7 @@ class Py5Vector(Sequence):
         The vector's magnitude. Setting this property to a non-negative number will
         adjust the vector's magnitude to that value. Negative values will result in an
         error."""
-        return float(np.sum(self._data**2) ** 0.5)
+        return float(np.sum(self._data ** 2) ** 0.5)
 
     def set_mag(self, mag: float) -> Py5Vector:
         """The vector's magnitude.
@@ -764,7 +763,7 @@ class Py5Vector(Sequence):
         The square of the vector's magnitude. Setting this property to a non-negative
         number will adjust the vector's squared magnitude to that value. Negative values
         will result in an error."""
-        return float(np.sum(self._data**2))
+        return float(np.sum(self._data ** 2))
 
     def set_mag_sq(self, mag_sq: float) -> Py5Vector:
         """The square of the vector's magnitude.
@@ -781,7 +780,7 @@ class Py5Vector(Sequence):
             self._data[:] = 0
         else:
             self.normalize()
-            self._data *= mag_sq**0.5
+            self._data *= mag_sq ** 0.5
         return self
 
     def normalize(self) -> Py5Vector:
@@ -793,7 +792,7 @@ class Py5Vector(Sequence):
         Normalize the vector by setting the vector's magnitude to 1.0. This method
         cannot be used on a vector of zeros, because a vector of zeros cannot be
         normalized."""
-        mag = np.sum(self._data**2) ** 0.5
+        mag = np.sum(self._data ** 2) ** 0.5
         if mag > 0:
             self._data /= mag
             return self
@@ -870,9 +869,9 @@ class Py5Vector(Sequence):
         elif max_mag == 0:
             self._data[:] = 0
         else:
-            mag_sq = np.sum(self._data**2)
+            mag_sq = np.sum(self._data ** 2)
             if mag_sq > max_mag * max_mag:
-                self._data *= max_mag / (mag_sq**0.5)
+                self._data *= max_mag / (mag_sq ** 0.5)
         return self
 
     def _get_heading(self) -> Union(float, tuple[float]):
@@ -1104,12 +1103,12 @@ class Py5Vector(Sequence):
             )
         elif dim == 3:
             return Py5Vector(
-                (v := np.random.randn(3).astype(dtype)) / (v**2).sum() ** 0.5,
+                (v := np.random.randn(3).astype(dtype)) / (v ** 2).sum() ** 0.5,
                 copy=False,
             )
         elif dim == 4:
             return Py5Vector(
-                (v := np.random.randn(4).astype(dtype)) / (v**2).sum() ** 0.5,
+                (v := np.random.randn(4).astype(dtype)) / (v ** 2).sum() ** 0.5,
                 copy=False,
             )
         else:
@@ -1203,8 +1202,7 @@ class Py5Vector2D(Py5Vector):
 
         A 3D vector's rotation will follow the right-hand rule. Using your right hand,
         point your thumb in the direction of the axis to rotate around. Your fingers
-        will curl in the direction of rotation when the `angle` parameter is positive.
-        """
+        will curl in the direction of rotation when the `angle` parameter is positive."""
         sin_angle = np.sin(angle)
         cos_angle = np.cos(angle)
         rot = np.array([[cos_angle, -sin_angle], [sin_angle, cos_angle]])
@@ -1362,8 +1360,7 @@ class Py5Vector3D(Py5Vector):
 
         A 3D vector's rotation will follow the right-hand rule. Using your right hand,
         point your thumb in the direction of the axis to rotate around. Your fingers
-        will curl in the direction of rotation when the `angle` parameter is positive.
-        """
+        will curl in the direction of rotation when the `angle` parameter is positive."""
         sin_angle = np.sin(angle)
         cos_angle = np.cos(angle)
         if dim in [1, "x"]:
@@ -1408,8 +1405,7 @@ class Py5Vector3D(Py5Vector):
 
         The vector's rotation will follow the right-hand rule. Using your right hand,
         point your thumb in the direction of the vector to rotate around. Your fingers
-        will curl in the direction of rotation when the `angle` parameter is positive.
-        """
+        will curl in the direction of rotation when the `angle` parameter is positive."""
         if not isinstance(v, Py5Vector3D):
             raise RuntimeError("Can only rotate around another 3D Py5Vector")
         if not v:

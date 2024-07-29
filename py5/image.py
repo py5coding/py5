@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -724,6 +724,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         """
         pass
 
+    @_return_py5image
     def copy(self, *args):
         """Copies a region of pixels from one image into another.
 

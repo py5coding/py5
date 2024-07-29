@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -274,8 +274,7 @@ class Py5Shape:
         `Py5Shape.set_fill()` in a loop.
 
         This method can only be used after the shape has been created. Do not use this
-        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`.
-        """
+        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`."""
         if isinstance(strokes, types.GeneratorType):
             strokes = list(strokes)
         _Py5ShapeHelper.setStrokes(self._instance, strokes)
@@ -298,8 +297,7 @@ class Py5Shape:
         `Py5Shape.set_fill()` in a loop.
 
         This method can only be used after the shape has been created. Do not use this
-        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`.
-        """
+        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`."""
         if isinstance(fills, types.GeneratorType):
             fills = list(fills)
         _Py5ShapeHelper.setFills(self._instance, fills)

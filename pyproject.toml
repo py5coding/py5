@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "Processing for CPython"
 readme = "README.md"
 license = ""
-requires-python = ">3.8"
+requires-python = ">3.9"
 authors = [
     { name = "Jim Schmitz", email = "jim@ixora.io" },
 ]
@@ -25,7 +25,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
     "Programming Language :: Java",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -34,14 +33,14 @@ classifiers = [
     "Topic :: Multimedia :: Graphics",
 ]
 dependencies = [
-    "autopep8>=2.0",
-    "jpype1>=1.4",
-    "line_profiler>=4.0",
-    "numpy>=1.24,<2.0",
-    "pillow>=9.5",
-    "pyobjc>=9.0;sys_platform==\"darwin\"",
-    "requests>=2.28",
-    "stackprinter>=0.2.10",
+    "autopep8>=2.2",
+    "jpype1>=1.5",
+    "line_profiler>=4.1",
+    "numpy>=1.26",
+    "pillow>=10.2",
+    "pyobjc>=10.1;sys_platform==\"darwin\"",
+    "requests>=2.31",
+    "stackprinter>=0.2.11",
 ]
 
 [project.optional-dependencies]
@@ -50,10 +49,10 @@ jupyter = [
 ]
 extras = [
     "colour>=0.1.5",
-    "matplotlib>=3.7",
+    "matplotlib>=3.9",
     "py5jupyter>=0.2.0a0",
     "shapely>=2.0",
-    "trimesh>=3.23",
+    "trimesh>=4.3",
 ]
 
 [project.scripts]

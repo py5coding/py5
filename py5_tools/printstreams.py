@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2023 Jim Schmitz
+#   Copyright (C) 2020-2024 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,23 +23,24 @@ from . import environ as _environ
 
 
 class _DefaultPrintlnStream:
-    def init(self):
-        return self
+    def __init__(self):
+        pass
 
     def print(self, text, end="\n", stderr=False):
         print(text, end=end, file=sys.stderr if stderr else sys.stdout)
 
+    def shutdown(self):
+        pass
+
 
 class _DisplayPubPrintlnStream:
-    def init(self):
+    def __init__(self):
         try:
             self.display_pub = _environ.Environment().ipython_shell.display_pub
             self.parent_header = self.display_pub.parent_header
         except:
             self.display_pub = None
             self.parent_header = None
-
-        return self
 
     def print(self, text, end="\n", stderr=False):
         if self.display_pub is None or self.parent_header is None:
@@ -53,9 +54,12 @@ class _DisplayPubPrintlnStream:
                 self.display_pub.pub_socket, msg, ident=b"stream"
             )
 
+    def shutdown(self):
+        pass
+
 
 class _WidgetPrintlnStream:
-    def init(self):
+    def __init__(self):
         try:
             import ipywidgets as widgets
             from IPython.display import display
@@ -65,8 +69,6 @@ class _WidgetPrintlnStream:
         except:
             self.out = None
 
-        return self
-
     def print(self, text, end="\n", stderr=False):
         if self.out is None:
             print(text, end=end, file=sys.stderr if stderr else sys.stdout)
@@ -75,3 +77,22 @@ class _WidgetPrintlnStream:
                 self.out.append_stderr(text + end)
             else:
                 self.out.append_stdout(text + end)
+
+    def shutdown(self):
+        pass
+
+
+class _PrintlnFileStream:
+    def __init__(self, filename):
+        self.filename = filename
+        self.f = None
+
+    def print(self, text, end="\n", stderr=False):
+        if self.f is None:
+            self.f = open(self.filename, "w")
+
+        print(text, end=end, file=self.f)
+
+    def shutdown(self):
+        if self.f is not None:
+            self.f.close()

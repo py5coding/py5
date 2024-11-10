@@ -968,3 +968,10 @@ PINK = "#ff81c0"
 BLUE = "#0343df"
 GREEN = "#15b01a"
 PURPLE = "#7e1e9c"
+
+
+def __getattr__(name):
+    if name in locals():
+        return locals()[name]
+    else:
+        raise AttributeError("unknown xkcd color '" + name + "'")

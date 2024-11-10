@@ -189,3 +189,10 @@ TAB10_R = "tab10_r"
 TAB20_R = "tab20_r"
 TAB20B_R = "tab20b_r"
 TAB20C_R = "tab20c_r"
+
+
+def __getattr__(name):
+    if name in locals():
+        return locals()[name]
+    else:
+        raise AttributeError("unknown matplotlib colormap '" + name + "'")

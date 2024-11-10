@@ -17,37 +17,15 @@
 #   along with this library. If not, see <https://www.gnu.org/licenses/>.
 #
 # *****************************************************************************
-"""
-Utilities and accessory tools for py5. 
-"""
-from . import live_coding  # noqa
-from . import translators  # noqa
-from .config import *  # noqa
-from .hooks import *  # noqa
-from .imported import _lock_imported_mode, get_imported_mode, set_imported_mode  # noqa
-from .jvm import *  # noqa
-from .libraries import *  # noqa
-
-__version__ = "0.10.3a1"
-
+from .controls import copy_code, count, screenshot, snapshot
+from .notebook_launcher import activate
 
 __all__ = [
-    "__version__",
-    "add_classpath",
-    "add_jars",
-    "add_options",
-    "animated_gif",
-    "capture_frames",
-    "get_classpath",
-    "get_jvm_debug_info",
-    "is_jvm_running",
-    "live_coding",
-    "offline_frame_processing",
-    "register_processing_mode_key",
-    "save_frames",
+    "copy_code",
+    "count",
     "screenshot",
-    "sketch_portal",
-    "translators",
+    "snapshot",
+    "activate",
 ]
 
 

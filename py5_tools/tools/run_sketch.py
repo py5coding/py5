@@ -31,16 +31,30 @@ parser.add_argument(
     help="extra directories to add to classpath",
 )
 parser.add_argument(
-    "--py5_options",
+    "--py5-options",
     nargs="*",
     dest="py5_options",
     help='list of parameters to pass to Processing (do not prefix anything with a "-")',
 )
 parser.add_argument(
-    "--sketch_args",
+    "--sketch-args",
     nargs="*",
     dest="sketch_args",
     help='list of parameters to pass to py5 (do not prefix anything with a "-")',
+)
+
+# DEPRECATED PARAMETERS, --py5_options USED IN THONNY PLUGIN
+parser.add_argument(
+    "--py5_options",
+    nargs="*",
+    dest="py5_options",
+    help='(DEPRECATED PARAMETER) list of parameters to pass to Processing (do not prefix anything with a "-")',
+)
+parser.add_argument(
+    "--sketch_args",
+    nargs="*",
+    dest="sketch_args",
+    help='(DEPRECATED PARAMETER) list of parameters to pass to py5 (do not prefix anything with a "-")',
 )
 
 

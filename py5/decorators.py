@@ -84,7 +84,9 @@ def _hex_converter(arg):
                 if mcolors is not None:
                     return JInt(int("0xFF" + mcolors.to_hex(arg)[1:], base=16))
             except:
-                return None
+                raise RuntimeError(
+                    f"unknown color or unparsable color string '{arg}'"
+                ) from None
     elif isinstance(arg, (int, np.integer)) and 0x7FFFFFFF < arg <= 0xFFFFFFFF:
         return JInt(arg)
     elif colour is not None and isinstance(arg, colour.Color):

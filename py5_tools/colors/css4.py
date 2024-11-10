@@ -167,3 +167,10 @@ WHITE = "#FFFFFF"
 WHITESMOKE = "#F5F5F5"
 YELLOW = "#FFFF00"
 YELLOWGREEN = "#9ACD32"
+
+
+def __getattr__(name):
+    if name in locals():
+        return locals()[name]
+    else:
+        raise AttributeError("unknown css4 color '" + name + "'")

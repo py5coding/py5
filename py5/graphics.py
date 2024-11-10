@@ -8489,6 +8489,20 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         """
         return self._instance.imageMode(mode)
 
+    def is3d(self) -> bool:
+        """Boolean value reflecting if the Py5Graphics object is or is not a 3D renderer.
+
+        Underlying Processing method: PGraphics.is3D
+
+        Notes
+        -----
+
+        Boolean value reflecting if the Py5Graphics object is or is not a 3D renderer.
+
+        This will be `True` if the renderer is a 3D renderer such as `P3D`.
+        """
+        return self._instance.is3D()
+
     @overload
     def lerp_color(self, c1: int, c2: int, amt: float, /) -> int:
         """Calculates a color between two colors at a specific increment.
@@ -16322,7 +16336,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -16336,9 +16349,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -16382,7 +16392,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -16396,9 +16405,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -16442,7 +16448,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -16456,9 +16461,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -16502,7 +16504,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -16516,69 +16517,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
-
-        x: float
-            x-coordinate of the vertex
-
-        y: float
-            y-coordinate of the vertex
-
-        z: float
-            z-coordinate of the vertex
-
-        Notes
-        -----
-
-        Add a new vertex to a shape. All shapes are constructed by connecting a series
-        of vertices. The `vertex()` method is used to specify the vertex coordinates for
-        points, lines, triangles, quads, and polygons. It is used exclusively within the
-        `Py5Graphics.begin_shape()` and `Py5Graphics.end_shape()` functions.
-
-        Drawing a vertex in 3D using the `z` parameter requires the `P3D` renderer.
-
-        This method is also used to map a texture onto geometry. The
-        `Py5Graphics.texture()` function declares the texture to apply to the geometry
-        and the `u` and `v` coordinates define the mapping of this texture to the form.
-        By default, the coordinates used for `u` and `v` are specified in relation to
-        the image's size in pixels, but this relation can be changed with the
-        `Py5Graphics.texture_mode()` method.
-
-        This method is the same as `vertex()` but linked to a `Py5Graphics` object. To
-        see example code for how it can be used, see `vertex()`.
-        """
-        pass
-
-    @overload
-    def vertex(self, v: npt.NDArray[np.floating], /) -> None:
-        """Add a new vertex to a shape.
-
-        Underlying Processing method: PGraphics.vertex
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * vertex(v: npt.NDArray[np.floating], /) -> None
-         * vertex(x: float, y: float, /) -> None
-         * vertex(x: float, y: float, u: float, v: float, /) -> None
-         * vertex(x: float, y: float, z: float, /) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
-
-        Parameters
-        ----------
-
-        u: float
-            horizontal coordinate for the texture mapping
-
-        v: float
-            vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -16621,7 +16559,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -16635,9 +16572,6 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex

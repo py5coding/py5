@@ -274,6 +274,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
             )
         Sketch._cls.setJOGLProperties(str(Path(__file__).parent))
         self.utils = Py5Utilities(self)
+        self._sync_draw = None
 
         self._py5_convert_image_cache = dict()
         self._py5_convert_shape_cache = dict()
@@ -1223,6 +1224,12 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
                 jpype.JClass("java.lang.Thread")(proxy).start()
         else:
             py5f(key, prompt, default_folder)
+
+    def _set_sync_draw(self, sync_draw):
+        self._sync_draw = sync_draw
+
+    def _get_sync_draw(self):
+        return self._sync_draw
 
     # *** Py5Image methods ***
 
@@ -20715,7 +20722,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -20729,9 +20735,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -20773,7 +20776,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -20787,9 +20789,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -20831,7 +20830,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -20845,9 +20843,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -20889,7 +20884,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -20903,67 +20897,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
-
-        x: float
-            x-coordinate of the vertex
-
-        y: float
-            y-coordinate of the vertex
-
-        z: float
-            z-coordinate of the vertex
-
-        Notes
-        -----
-
-        Add a new vertex to a shape. All shapes are constructed by connecting a series
-        of vertices. The `vertex()` method is used to specify the vertex coordinates for
-        points, lines, triangles, quads, and polygons. It is used exclusively within the
-        `begin_shape()` and `end_shape()` functions.
-
-        Drawing a vertex in 3D using the `z` parameter requires the `P3D` renderer, as
-        shown in the second example.
-
-        This method is also used to map a texture onto geometry. The `texture()`
-        function declares the texture to apply to the geometry and the `u` and `v`
-        coordinates define the mapping of this texture to the form. By default, the
-        coordinates used for `u` and `v` are specified in relation to the image's size
-        in pixels, but this relation can be changed with the Sketch's `texture_mode()`
-        method.
-        """
-        pass
-
-    @overload
-    def vertex(self, v: npt.NDArray[np.floating], /) -> None:
-        """Add a new vertex to a shape.
-
-        Underlying Processing method: PApplet.vertex
-
-        Methods
-        -------
-
-        You can use any of the following signatures:
-
-         * vertex(v: npt.NDArray[np.floating], /) -> None
-         * vertex(x: float, y: float, /) -> None
-         * vertex(x: float, y: float, u: float, v: float, /) -> None
-         * vertex(x: float, y: float, z: float, /) -> None
-         * vertex(x: float, y: float, z: float, u: float, v: float, /) -> None
-
-        Parameters
-        ----------
-
-        u: float
-            horizontal coordinate for the texture mapping
-
-        v: float
-            vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex
@@ -21004,7 +20937,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         You can use any of the following signatures:
 
-         * vertex(v: npt.NDArray[np.floating], /) -> None
          * vertex(x: float, y: float, /) -> None
          * vertex(x: float, y: float, u: float, v: float, /) -> None
          * vertex(x: float, y: float, z: float, /) -> None
@@ -21018,9 +20950,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
         v: float
             vertical coordinate for the texture mapping
-
-        v: npt.NDArray[np.floating]
-            vertical coordinate data for the texture mapping
 
         x: float
             x-coordinate of the vertex

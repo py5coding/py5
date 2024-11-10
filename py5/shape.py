@@ -44,7 +44,10 @@ from .pmath import _get_pvector_wrapper  # noqa
 def _return_list_py5shapes(f):
     @functools.wraps(f)
     def decorated(self_, *args):
-        return [Py5Shape(s) for s in f(self_, *args)]
+        try:
+            return [Py5Shape(s) for s in f(self_, *args)]
+        except Exception as e:
+            return []
 
     return decorated
 
@@ -3978,8 +3981,8 @@ class Py5Shape:
 
         Boolean value reflecting if the shape is or is not a 3D shape.
 
-        If the shape is created in a Sketch using the `P3D` renderer, this will be
-        `True`, even if it only uses 2D coordinates.
+        This will be `True` if the shape is created in a Sketch using a 3D renderer such
+        as `P3D`, even if it only uses 2D coordinates.
         """
         return self._instance.is3D()
 

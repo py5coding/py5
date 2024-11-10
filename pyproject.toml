@@ -7,7 +7,7 @@ name = "py5"
 dynamic = ["version"]
 description = "Processing for CPython"
 readme = "README.md"
-license = ""
+license = "LGPL-2.1-only"
 requires-python = ">3.9"
 authors = [
     { name = "Jim Schmitz", email = "jim@ixora.io" },
@@ -56,12 +56,14 @@ extras = [
 ]
 
 [project.scripts]
-py5cmd = "py5_tools.tools.py5cmd:main"
-py5translate-imported2module = "py5_tools.tools.py5translate_imported2module:main"
-py5translate-module2imported = "py5_tools.tools.py5translate_module2imported:main"
-py5translate-processingpy2imported = "py5_tools.tools.py5translate_processingpy2imported:main"
-py5utils = "py5_tools.tools.py5utils:main"
+py5-cmd = "py5_tools.tools.py5cmd:main"
+py5-translate-imported2module = "py5_tools.tools.py5translate_imported2module:main"
+py5-translate-module2imported = "py5_tools.tools.py5translate_module2imported:main"
+py5-translate-processingpy2imported = "py5_tools.tools.py5translate_processingpy2imported:main"
+py5-utils = "py5_tools.tools.py5utils:main"
 run_sketch = "py5_tools.tools.run_sketch:main"
+py5-run-sketch = "py5_tools.tools.run_sketch:main"
+py5-live-coding = "py5_tools.tools.live_coding:main"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/py5coding/py5generator/issues"

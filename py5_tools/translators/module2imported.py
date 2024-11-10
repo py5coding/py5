@@ -47,8 +47,8 @@ def translate_dir(src: Union[str, Path], dest: Union[str, Path], ext=".py"):
     util.translate_dir(translate_token, src, dest, ext, post_translate=post_translate)
 
 
-__ALL__ = ["translate_token", "translate_code", "translate_file", "translate_dir"]
+__all__ = ["translate_token", "translate_code", "translate_file", "translate_dir"]
 
 
 def __dir__():
-    return __ALL__
+    return __all__

@@ -132,6 +132,7 @@ METHOD_SIGNATURES_LOOKUP = dict([(('Sketch', 'alpha'), ['(rgb: int, /) -> float'
     (('Sketch', 'hue'), ['(rgb: int, /) -> float']),
     (('Sketch', 'image'), ['(img: Py5Image, a: float, b: float, /) -> None', '(img: Py5Image, a: float, b: float, c: float, d: float, /) -> None', '(img: Py5Image, a: float, b: float, c: float, d: float, u1: int, v1: int, u2: int, v2: int, /) -> None']),
     (('Sketch', 'image_mode'), ['(mode: int, /) -> None']),
+    (('Sketch', 'intercept_escape'), ['() -> None']),
     (('Sketch', 'lerp_color'), ['(c1: int, c2: int, amt: float, /) -> int', '(c1: int, c2: int, amt: float, mode: int, /) -> int']),
     (('Sketch', 'light_falloff'), ['(constant: float, linear: float, quadratic: float, /) -> None']),
     (('Sketch', 'light_specular'), ['(v1: float, v2: float, v3: float, /) -> None']),

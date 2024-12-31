@@ -18,6 +18,7 @@
 #
 # *****************************************************************************
 import inspect
+import platform
 import re
 import sys
 import traceback
@@ -366,6 +367,26 @@ class Py5Bridge:
     @JOverride
     def py5_println(self, text, stderr):
         self._sketch.println(text, stderr=stderr)
+
+    @JOverride
+    def focus_window(self, handle):
+        try:
+            if platform.system() == "Windows":
+                import win32gui
+
+                # win32gui.ShowWindow(hwnd, 5)
+                win32gui.SetForegroundWindow(handle)
+
+            elif platform.system() == "Darwin":
+                # not yet implemented
+                pass
+
+            elif platform.system() == "Linux":
+                # not yet implemented
+                pass
+
+        except:
+            pass
 
     @JOverride
     def shutdown(self):

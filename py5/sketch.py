@@ -36,7 +36,6 @@ import jpype
 import numpy as np
 import numpy.typing as npt
 import py5_tools
-import py5_tools.environ as _environ
 from jpype.types import JArray, JClass, JException, JInt  # noqa
 from py5_tools.printstreams import _DefaultPrintlnStream, _DisplayPubPrintlnStream
 
@@ -55,6 +54,7 @@ from .font import Py5Font, _load_py5font, _return_list_str, _return_py5font  # n
 from .graphics import Py5Graphics, _return_py5graphics  # noqa
 from .image import Py5Image, _return_py5image  # noqa
 from .keyevent import Py5KeyEvent, _convert_jchar_to_chr, _convert_jint_to_int  # noqa
+from .macos_problem import _macos_safety_check
 from .mixins import DataMixin, MathMixin, PixelMixin, PrintlnStream, ThreadsMixin
 from .mixins.threads import Py5Promise  # noqa
 from .mouseevent import Py5MouseEvent  # noqa
@@ -76,23 +76,6 @@ except:
 
 _Sketch = jpype.JClass("py5.core.Sketch")
 _SketchBase = jpype.JClass("py5.core.SketchBase")
-
-
-try:
-    # be aware that __IPYTHON__ and get_ipython() are inserted into the user namespace late in the kernel startup process
-    __IPYTHON__  # type: ignore
-    # type: ignore
-    if (
-        sys.platform == "darwin"
-        and (_ipython_shell := get_ipython()).active_eventloop != "osx"
-    ):
-        print(
-            "Importing py5 on macOS but the necessary Jupyter macOS event loop has not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library."
-        )
-        _ipython_shell.run_line_magic("gui", "osx")
-except Exception:
-    pass
-
 
 _PY5_LAST_WINDOW_X = None
 _PY5_LAST_WINDOW_Y = None
@@ -263,7 +246,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         # must always keep the _py5_bridge reference count from hitting zero.
         # otherwise, it will be garbage collected and lead to segmentation faults!
         self._py5_bridge = None
-        self._environ = None
+        # TODO: shouldn't this be like the base_path variable in __init__.py?
         iconPath = Path(__file__).parent.parent / "py5_tools/resources/logo-64x64.png"
         if iconPath.exists() and hasattr(self._instance, "setPy5IconPath"):
             self._instance.setPy5IconPath(str(iconPath))
@@ -431,7 +414,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         _caller_globals: dict[str, Any] = None,
         _osx_alt_run_method: bool = True,
     ) -> None:
-        self._environ = _environ.Environment()
+        self._environ = py5_tools.environ.Environment()
         self.set_println_stream(
             _DisplayPubPrintlnStream()
             if self._environ.in_jupyter_zmq_shell
@@ -473,17 +456,26 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
                 def run():
                     Sketch._cls.runSketch(args, self._instance)
                     if not self._environ.in_ipython_session:
-                        while not self.is_dead:
-                            time.sleep(0.05)
-                        if self.is_dead_from_error:
-                            surface = self.get_surface()
-                            while not surface.is_stopped():
+                        # need to call System.exit() in Java to stop the sketch
+                        # would never get past runConsoleEventLoop() anyway
+                        # because that doesn't return
+                        try:
+                            self._instance.allowSystemExit()
+                            while not self.is_dead:
                                 time.sleep(0.05)
-                        AppHelper.stopEventLoop()
+                            if self.is_dead_from_error:
+                                surface = self.get_surface()
+                                while not surface.is_stopped():
+                                    time.sleep(0.05)
+                            AppHelper.stopEventLoop()
+                        except Exception as e:
+                            # exception might be thrown because the JVM gets
+                            # shut down forcefully
+                            pass
 
                 if block == False and not self._environ.in_ipython_session:
                     self.println(
-                        "On macOS, blocking is manditory when Sketch is not run through Jupyter. This applies to all renderers.",
+                        "On macOS, blocking is mandatory when Sketch is not run through Jupyter. This applies to all renderers.",
                         stderr=True,
                     )
 
@@ -4013,59 +4005,59 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_display_height(self) -> int:
-        """System variable that stores the height of the entire screen display.
+        """Variable that stores the height of the entire screen display.
 
         Underlying Processing field: PApplet.displayHeight
 
         Notes
         -----
 
-        System variable that stores the height of the entire screen display. This can be
-        used to run a full-screen program on any display size, but calling
-        `full_screen()` is usually a better choice.
+        Variable that stores the height of the entire screen display. This can be used
+        to run a full-screen program on any display size, but calling `full_screen()` is
+        usually a better choice.
         """
         return self._instance.displayHeight
 
     display_height: int = property(
         fget=_get_display_height,
-        doc="""System variable that stores the height of the entire screen display.
+        doc="""Variable that stores the height of the entire screen display.
 
         Underlying Processing field: PApplet.displayHeight
 
         Notes
         -----
 
-        System variable that stores the height of the entire screen display. This can be
-        used to run a full-screen program on any display size, but calling
-        `full_screen()` is usually a better choice.""",
+        Variable that stores the height of the entire screen display. This can be used
+        to run a full-screen program on any display size, but calling `full_screen()` is
+        usually a better choice.""",
     )
 
     def _get_display_width(self) -> int:
-        """System variable that stores the width of the entire screen display.
+        """Variable that stores the width of the entire screen display.
 
         Underlying Processing field: PApplet.displayWidth
 
         Notes
         -----
 
-        System variable that stores the width of the entire screen display. This can be
-        used to run a full-screen program on any display size, but calling
-        `full_screen()` is usually a better choice.
+        Variable that stores the width of the entire screen display. This can be used to
+        run a full-screen program on any display size, but calling `full_screen()` is
+        usually a better choice.
         """
         return self._instance.displayWidth
 
     display_width: int = property(
         fget=_get_display_width,
-        doc="""System variable that stores the width of the entire screen display.
+        doc="""Variable that stores the width of the entire screen display.
 
         Underlying Processing field: PApplet.displayWidth
 
         Notes
         -----
 
-        System variable that stores the width of the entire screen display. This can be
-        used to run a full-screen program on any display size, but calling
-        `full_screen()` is usually a better choice.""",
+        Variable that stores the width of the entire screen display. This can be used to
+        run a full-screen program on any display size, but calling `full_screen()` is
+        usually a better choice.""",
     )
 
     def _get_finished(self) -> bool:
@@ -4123,7 +4115,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_frame_count(self) -> int:
-        """The system variable `frame_count` contains the number of frames that have been
+        """The variable `frame_count` contains the number of frames that have been
         displayed since the program started.
 
         Underlying Processing field: PApplet.frameCount
@@ -4131,7 +4123,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         Notes
         -----
 
-        The system variable `frame_count` contains the number of frames that have been
+        The variable `frame_count` contains the number of frames that have been
         displayed since the program started. Inside `setup()` the value is 0. Inside the
         first execution of `draw()` it is 1, and it will increase by 1 for every
         execution of `draw()` after that.
@@ -4140,7 +4132,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     frame_count: int = property(
         fget=_get_frame_count,
-        doc="""The system variable `frame_count` contains the number of frames that have been
+        doc="""The variable `frame_count` contains the number of frames that have been
         displayed since the program started.
 
         Underlying Processing field: PApplet.frameCount
@@ -4148,22 +4140,22 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         Notes
         -----
 
-        The system variable `frame_count` contains the number of frames that have been
+        The variable `frame_count` contains the number of frames that have been
         displayed since the program started. Inside `setup()` the value is 0. Inside the
         first execution of `draw()` it is 1, and it will increase by 1 for every
         execution of `draw()` after that.""",
     )
 
     def _get_height(self) -> int:
-        """System variable that stores the height of the display window.
+        """Variable that stores the height of the display window.
 
         Underlying Processing field: PApplet.height
 
         Notes
         -----
 
-        System variable that stores the height of the display window. This value is set
-        by the second parameter of the `size()` function. For example, the function call
+        Variable that stores the height of the display window. This value is set by the
+        second parameter of the `size()` function. For example, the function call
         `size(320, 240)` sets the `height` variable to the value 240. The value of
         `height` defaults to 100 if `size()` is not used in a program.
         """
@@ -4171,15 +4163,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     height: int = property(
         fget=_get_height,
-        doc="""System variable that stores the height of the display window.
+        doc="""Variable that stores the height of the display window.
 
         Underlying Processing field: PApplet.height
 
         Notes
         -----
 
-        System variable that stores the height of the display window. This value is set
-        by the second parameter of the `size()` function. For example, the function call
+        Variable that stores the height of the display window. This value is set by the
+        second parameter of the `size()` function. For example, the function call
         `size(320, 240)` sets the `height` variable to the value 240. The value of
         `height` defaults to 100 if `size()` is not used in a program.""",
     )
@@ -4246,16 +4238,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     @_convert_jchar_to_chr
     def _get_key(self) -> chr:
-        """The system variable `key` always contains the value of the most recent key on
-        the keyboard that was used (either pressed or released).
+        """The variable `key` always contains the value of the most recent key on the
+        keyboard that was used (either pressed or released).
 
         Underlying Processing field: PApplet.key
 
         Notes
         -----
 
-        The system variable `key` always contains the value of the most recent key on
-        the keyboard that was used (either pressed or released).
+        The variable `key` always contains the value of the most recent key on the
+        keyboard that was used (either pressed or released).
 
         For non-ASCII keys, use the `key_code` variable. The keys included in the ASCII
         specification (`BACKSPACE`, `TAB`, `ENTER`, `RETURN`, `ESC`, and `DELETE`) do
@@ -4273,16 +4265,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     key: chr = property(
         fget=_get_key,
-        doc="""The system variable `key` always contains the value of the most recent key on
-        the keyboard that was used (either pressed or released).
+        doc="""The variable `key` always contains the value of the most recent key on the
+        keyboard that was used (either pressed or released).
 
         Underlying Processing field: PApplet.key
 
         Notes
         -----
 
-        The system variable `key` always contains the value of the most recent key on
-        the keyboard that was used (either pressed or released).
+        The variable `key` always contains the value of the most recent key on the
+        keyboard that was used (either pressed or released).
 
         For non-ASCII keys, use the `key_code` variable. The keys included in the ASCII
         specification (`BACKSPACE`, `TAB`, `ENTER`, `RETURN`, `ESC`, and `DELETE`) do
@@ -4375,54 +4367,50 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_mouse_button(self) -> int:
-        """When a mouse button is pressed, the value of the system variable `mouse_button`
-        is set to either `LEFT`, `RIGHT`, or `CENTER`, depending on which button is
-        pressed.
+        """When a mouse button is pressed, the variable `mouse_button` is set to either
+        `LEFT`, `RIGHT`, or `CENTER`, depending on which button is pressed.
 
         Underlying Processing field: PApplet.mouseButton
 
         Notes
         -----
 
-        When a mouse button is pressed, the value of the system variable `mouse_button`
-        is set to either `LEFT`, `RIGHT`, or `CENTER`, depending on which button is
-        pressed. (If no button is pressed, `mouse_button` may be reset to `0`. For that
-        reason, it's best to use `mouse_pressed` first to test if any button is being
-        pressed, and only then test the value of `mouse_button`, as shown in the
-        examples.)
+        When a mouse button is pressed, the variable `mouse_button` is set to either
+        `LEFT`, `RIGHT`, or `CENTER`, depending on which button is pressed. (If no
+        button is pressed, `mouse_button` may be reset to `0`. For that reason, it's
+        best to use `mouse_pressed` first to test if any button is being pressed, and
+        only then test the value of `mouse_button`, as shown in the examples.)
         """
         return self._instance.mouseButton
 
     mouse_button: int = property(
         fget=_get_mouse_button,
-        doc="""When a mouse button is pressed, the value of the system variable `mouse_button`
-        is set to either `LEFT`, `RIGHT`, or `CENTER`, depending on which button is
-        pressed.
+        doc="""When a mouse button is pressed, the variable `mouse_button` is set to either
+        `LEFT`, `RIGHT`, or `CENTER`, depending on which button is pressed.
 
         Underlying Processing field: PApplet.mouseButton
 
         Notes
         -----
 
-        When a mouse button is pressed, the value of the system variable `mouse_button`
-        is set to either `LEFT`, `RIGHT`, or `CENTER`, depending on which button is
-        pressed. (If no button is pressed, `mouse_button` may be reset to `0`. For that
-        reason, it's best to use `mouse_pressed` first to test if any button is being
-        pressed, and only then test the value of `mouse_button`, as shown in the
-        examples.)""",
+        When a mouse button is pressed, the variable `mouse_button` is set to either
+        `LEFT`, `RIGHT`, or `CENTER`, depending on which button is pressed. (If no
+        button is pressed, `mouse_button` may be reset to `0`. For that reason, it's
+        best to use `mouse_pressed` first to test if any button is being pressed, and
+        only then test the value of `mouse_button`, as shown in the examples.)""",
     )
 
     def _get_mouse_x(self) -> int:
-        """The system variable `mouse_x` always contains the current horizontal coordinate
-        of the mouse.
+        """The variable `mouse_x` always contains the current horizontal coordinate of the
+        mouse.
 
         Underlying Processing field: PApplet.mouseX
 
         Notes
         -----
 
-        The system variable `mouse_x` always contains the current horizontal coordinate
-        of the mouse.
+        The variable `mouse_x` always contains the current horizontal coordinate of the
+        mouse.
 
         Note that py5 can only track the mouse position when the pointer is over the
         current window. The default value of `mouse_x` is `0`, so `0` will be returned
@@ -4434,16 +4422,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     mouse_x: int = property(
         fget=_get_mouse_x,
-        doc="""The system variable `mouse_x` always contains the current horizontal coordinate
-        of the mouse.
+        doc="""The variable `mouse_x` always contains the current horizontal coordinate of the
+        mouse.
 
         Underlying Processing field: PApplet.mouseX
 
         Notes
         -----
 
-        The system variable `mouse_x` always contains the current horizontal coordinate
-        of the mouse.
+        The variable `mouse_x` always contains the current horizontal coordinate of the
+        mouse.
 
         Note that py5 can only track the mouse position when the pointer is over the
         current window. The default value of `mouse_x` is `0`, so `0` will be returned
@@ -4453,16 +4441,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_mouse_y(self) -> int:
-        """The system variable `mouse_y` always contains the current vertical coordinate of
-        the mouse.
+        """The variable `mouse_y` always contains the current vertical coordinate of the
+        mouse.
 
         Underlying Processing field: PApplet.mouseY
 
         Notes
         -----
 
-        The system variable `mouse_y` always contains the current vertical coordinate of
-        the mouse.
+        The variable `mouse_y` always contains the current vertical coordinate of the
+        mouse.
 
         Note that py5 can only track the mouse position when the pointer is over the
         current window. The default value of `mouse_y` is `0`, so `0` will be returned
@@ -4474,16 +4462,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     mouse_y: int = property(
         fget=_get_mouse_y,
-        doc="""The system variable `mouse_y` always contains the current vertical coordinate of
-        the mouse.
+        doc="""The variable `mouse_y` always contains the current vertical coordinate of the
+        mouse.
 
         Underlying Processing field: PApplet.mouseY
 
         Notes
         -----
 
-        The system variable `mouse_y` always contains the current vertical coordinate of
-        the mouse.
+        The variable `mouse_y` always contains the current vertical coordinate of the
+        mouse.
 
         Note that py5 can only track the mouse position when the pointer is over the
         current window. The default value of `mouse_y` is `0`, so `0` will be returned
@@ -4573,16 +4561,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_pmouse_x(self) -> int:
-        """The system variable `pmouse_x` always contains the horizontal position of the
-        mouse in the frame previous to the current frame.
+        """The variable `pmouse_x` always contains the horizontal position of the mouse in
+        the frame previous to the current frame.
 
         Underlying Processing field: PApplet.pmouseX
 
         Notes
         -----
 
-        The system variable `pmouse_x` always contains the horizontal position of the
-        mouse in the frame previous to the current frame.
+        The variable `pmouse_x` always contains the horizontal position of the mouse in
+        the frame previous to the current frame.
 
         You may find that `pmouse_x` and `pmouse_y` have different values when
         referenced inside of `draw()` and inside of mouse events like `mouse_pressed()`
@@ -4604,16 +4592,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     pmouse_x: int = property(
         fget=_get_pmouse_x,
-        doc="""The system variable `pmouse_x` always contains the horizontal position of the
-        mouse in the frame previous to the current frame.
+        doc="""The variable `pmouse_x` always contains the horizontal position of the mouse in
+        the frame previous to the current frame.
 
         Underlying Processing field: PApplet.pmouseX
 
         Notes
         -----
 
-        The system variable `pmouse_x` always contains the horizontal position of the
-        mouse in the frame previous to the current frame.
+        The variable `pmouse_x` always contains the horizontal position of the mouse in
+        the frame previous to the current frame.
 
         You may find that `pmouse_x` and `pmouse_y` have different values when
         referenced inside of `draw()` and inside of mouse events like `mouse_pressed()`
@@ -4633,16 +4621,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_pmouse_y(self) -> int:
-        """The system variable `pmouse_y` always contains the vertical position of the
-        mouse in the frame previous to the current frame.
+        """The variable `pmouse_y` always contains the vertical position of the mouse in
+        the frame previous to the current frame.
 
         Underlying Processing field: PApplet.pmouseY
 
         Notes
         -----
 
-        The system variable `pmouse_y` always contains the vertical position of the
-        mouse in the frame previous to the current frame.
+        The variable `pmouse_y` always contains the vertical position of the mouse in
+        the frame previous to the current frame.
 
         For more detail on how `pmouse_y` is updated inside of mouse events and
         `draw()`, see the reference for `pmouse_x`.
@@ -4651,16 +4639,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     pmouse_y: int = property(
         fget=_get_pmouse_y,
-        doc="""The system variable `pmouse_y` always contains the vertical position of the
-        mouse in the frame previous to the current frame.
+        doc="""The variable `pmouse_y` always contains the vertical position of the mouse in
+        the frame previous to the current frame.
 
         Underlying Processing field: PApplet.pmouseY
 
         Notes
         -----
 
-        The system variable `pmouse_y` always contains the vertical position of the
-        mouse in the frame previous to the current frame.
+        The variable `pmouse_y` always contains the vertical position of the mouse in
+        the frame previous to the current frame.
 
         For more detail on how `pmouse_y` is updated inside of mouse events and
         `draw()`, see the reference for `pmouse_x`.""",
@@ -4917,15 +4905,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     )
 
     def _get_width(self) -> int:
-        """System variable that stores the width of the display window.
+        """Variable that stores the width of the display window.
 
         Underlying Processing field: PApplet.width
 
         Notes
         -----
 
-        System variable that stores the width of the display window. This value is set
-        by the first parameter of the `size()` function. For example, the function call
+        Variable that stores the width of the display window. This value is set by the
+        first parameter of the `size()` function. For example, the function call
         `size(320, 240)` sets the `width` variable to the value 320. The value of
         `width` defaults to 100 if `size()` is not used in a program.
         """
@@ -4933,15 +4921,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     width: int = property(
         fget=_get_width,
-        doc="""System variable that stores the width of the display window.
+        doc="""Variable that stores the width of the display window.
 
         Underlying Processing field: PApplet.width
 
         Notes
         -----
 
-        System variable that stores the width of the display window. This value is set
-        by the first parameter of the `size()` function. For example, the function call
+        Variable that stores the width of the display window. This value is set by the
+        first parameter of the `size()` function. For example, the function call
         `size(320, 240)` sets the `width` variable to the value 320. The value of
         `width` defaults to 100 if `size()` is not used in a program.""",
     )
@@ -12638,6 +12626,31 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         """
         return self._instance.imageMode(mode)
 
+    def intercept_escape(self) -> None:
+        """Prevent the Escape key from causing the Sketch to exit.
+
+        Notes
+        -----
+
+        Prevent the Escape key from causing the Sketch to exit. Normally hitting the
+        Escape key (`ESC`) will cause the Sketch to exit. In Processing, one can write
+        code to change the Escape key's behavior by changing the `key` value to
+        something else, perhaps with code similar to `py5.key = 'x'`. That code won't
+        work in py5 because py5 does not allow the user to alter the value of `key` like
+        Processing does. The `intercept_escape()` method was created to allow users to
+        achieve the same goal of preventing the Escape key from causing the Sketch to
+        exit.
+
+        The `intercept_escape()` method will only do something when `key` already equals
+        `ESC`. This function should only be called from the user event functions
+        `key_pressed()`, `key_typed()`, and `key_released()`.
+
+        This method will not alter the value of `key`. This method cannot prevent a
+        Sketch from exiting when the exit is triggered by any other means, such as a
+        call to `exit_sketch()` or the user closes the window.
+        """
+        return self._instance.interceptEscape()
+
     @overload
     def lerp_color(self, c1: int, c2: int, amt: float, /) -> int:
         """Calculates a color between two colors at a specific increment.
@@ -16895,6 +16908,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         pass
 
     @_settings_only("size")
+    @_macos_safety_check
     def size(self, *args):
         """Defines the dimension of the display window width and height in units of pixels.
 

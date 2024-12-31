@@ -61,21 +61,21 @@ POM_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-processing4</artifactId>
-      <version>0.10.3a1</version>
+      <version>0.10.4a2</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/core.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5-jogl</artifactId>
-      <version>0.10.3a1</version>
+      <version>0.10.4a2</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/jogl-all.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>py5</groupId>
       <artifactId>py5</artifactId>
-      <version>0.10.3a1</version>
+      <version>0.10.4a2</version>
       <scope>system</scope>
       <systemPath>${{jarlocation}}/py5.jar</systemPath>
     </dependency>

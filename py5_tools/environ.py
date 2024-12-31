@@ -22,6 +22,8 @@
 class Environment:
     def __init__(self):
         try:
+            # be aware that __IPYTHON__ and get_ipython() are inserted into the
+            # user namespace late in the kernel startup process
             __IPYTHON__  # type: ignore
             from ipykernel.zmqshell import ZMQInteractiveShell
 

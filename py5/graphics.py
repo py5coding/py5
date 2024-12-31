@@ -1783,15 +1783,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     WHITESPACE = " \t\n\r\f\u00a0"
 
     def _get_height(self) -> int:
-        """System variable that stores the height of the Py5Graphics drawing surface.
+        """Variable that stores the height of the Py5Graphics drawing surface.
 
         Underlying Processing field: PGraphics.height
 
         Notes
         -----
 
-        System variable that stores the height of the Py5Graphics drawing surface. This
-        value is set when creating the `Py5Graphics` object with the `create_graphics()`
+        Variable that stores the height of the Py5Graphics drawing surface. This value
+        is set when creating the `Py5Graphics` object with the `create_graphics()`
         method. For example, `create_graphics(320, 240)` sets the `height` variable to
         the value 240.
 
@@ -1802,15 +1802,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     height: int = property(
         fget=_get_height,
-        doc="""System variable that stores the height of the Py5Graphics drawing surface.
+        doc="""Variable that stores the height of the Py5Graphics drawing surface.
 
         Underlying Processing field: PGraphics.height
 
         Notes
         -----
 
-        System variable that stores the height of the Py5Graphics drawing surface. This
-        value is set when creating the `Py5Graphics` object with the `create_graphics()`
+        Variable that stores the height of the Py5Graphics drawing surface. This value
+        is set when creating the `Py5Graphics` object with the `create_graphics()`
         method. For example, `create_graphics(320, 240)` sets the `height` variable to
         the value 240.
 
@@ -1963,17 +1963,17 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     )
 
     def _get_width(self) -> int:
-        """System variable that stores the width of the Py5Graphics drawing surface.
+        """Variable that stores the width of the Py5Graphics drawing surface.
 
         Underlying Processing field: PGraphics.width
 
         Notes
         -----
 
-        System variable that stores the width of the Py5Graphics drawing surface. This
-        value is set when creating the `Py5Graphics` object with the `create_graphics()`
-        method. For example, `create_graphics(320, 240)` sets the `width` variable to
-        the value 320.
+        Variable that stores the width of the Py5Graphics drawing surface. This value is
+        set when creating the `Py5Graphics` object with the `create_graphics()` method.
+        For example, `create_graphics(320, 240)` sets the `width` variable to the value
+        320.
 
         This field is the same as `width` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `width`.
@@ -1982,17 +1982,17 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     width: int = property(
         fget=_get_width,
-        doc="""System variable that stores the width of the Py5Graphics drawing surface.
+        doc="""Variable that stores the width of the Py5Graphics drawing surface.
 
         Underlying Processing field: PGraphics.width
 
         Notes
         -----
 
-        System variable that stores the width of the Py5Graphics drawing surface. This
-        value is set when creating the `Py5Graphics` object with the `create_graphics()`
-        method. For example, `create_graphics(320, 240)` sets the `width` variable to
-        the value 320.
+        Variable that stores the width of the Py5Graphics drawing surface. This value is
+        set when creating the `Py5Graphics` object with the `create_graphics()` method.
+        For example, `create_graphics(320, 240)` sets the `width` variable to the value
+        320.
 
         This field is the same as `width` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `width`.""",

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import inspect
 import os
+import platform
 import sys
 import warnings
 from io import BytesIO
@@ -35,9 +36,12 @@ import jpype.imports  # noqa
 import numpy as np  # noqa
 import numpy.typing as npt  # noqa
 import py5_tools
+import py5_tools.environ  # noqa
 from jpype import JClass  # noqa
 from jpype.types import JArray, JChar, JFloat, JInt, JString  # noqa
 from PIL import Image  # noqa
+
+_environ = py5_tools.environ.Environment()
 
 if not py5_tools.is_jvm_running():
     base_path = (
@@ -45,6 +49,51 @@ if not py5_tools.is_jvm_running():
         if hasattr(sys, "_MEIPASS")
         else Path(__file__).absolute().parent
     )
+
+    if platform.system() == "Darwin":
+        # Make sure Python appears on the MacOS Dock
+        # This is necessary, otherwise MacOS will not like to let JAVA2D Sketches get focus
+        try:
+            from AppKit import (
+                NSURL,
+                NSApplication,
+                NSApplicationActivationPolicyRegular,
+                NSImage,
+            )
+
+            # this adds a white square to the dock
+            app = NSApplication.sharedApplication()
+            app.setActivationPolicy_(NSApplicationActivationPolicyRegular)
+
+            # set the dock icon to the py5 logo
+            icon_path = base_path.parent / "py5_tools/resources/logo.icns"
+            icon_url = NSURL.fileURLWithPath_(str(icon_path))
+            icon_image = NSImage.alloc().initWithContentsOfURL_(icon_url)
+            app.setApplicationIconImage_(icon_image)
+
+            # cleanup
+            del app, icon_path, icon_url, icon_image
+            del NSURL, NSApplication, NSApplicationActivationPolicyRegular, NSImage
+        except:
+            pass
+
+    if platform.system() == "Windows":
+        # This code is here so that later win32gui code works correctly. The
+        # `focus_window(handle)` method in `Py5Bridge` is used to move Sketch
+        # windows to the foreground
+        try:
+            from win32com import client as win32com_client
+
+            shell = win32com_client.Dispatch("WScript.Shell")
+
+            # send the most benign key possible. this can't possibly do anything
+            shell.SendKeys(chr(0))
+
+            # cleanup
+            del win32com_client, shell
+        except:
+            pass
+
     # add py5 jars to the classpath first
     py5_tools.add_jars(str(base_path / "jars"))
     # if the cwd has a jars subdirectory, add that next
@@ -114,7 +163,7 @@ except ImportError:
     pass
 
 
-__version__ = "0.10.3a1"
+__version__ = "0.10.4a2"
 
 _PY5_USE_IMPORTED_MODE = py5_tools.get_imported_mode()
 py5_tools._lock_imported_mode()
@@ -8017,6 +8066,32 @@ def image_mode(mode: int, /) -> None:
     language.
     """
     return _py5sketch.image_mode(mode)
+
+
+def intercept_escape() -> None:
+    """Prevent the Escape key from causing the Sketch to exit.
+
+    Notes
+    -----
+
+    Prevent the Escape key from causing the Sketch to exit. Normally hitting the
+    Escape key (`ESC`) will cause the Sketch to exit. In Processing, one can write
+    code to change the Escape key's behavior by changing the `key` value to
+    something else, perhaps with code similar to `py5.key = 'x'`. That code won't
+    work in py5 because py5 does not allow the user to alter the value of `key` like
+    Processing does. The `intercept_escape()` method was created to allow users to
+    achieve the same goal of preventing the Escape key from causing the Sketch to
+    exit.
+
+    The `intercept_escape()` method will only do something when `key` already equals
+    `ESC`. This function should only be called from the user event functions
+    `key_pressed()`, `key_typed()`, and `key_released()`.
+
+    This method will not alter the value of `key`. This method cannot prevent a
+    Sketch from exiting when the exit is triggered by any other means, such as a
+    call to `exit_sketch()` or the user closes the window.
+    """
+    return _py5sketch.intercept_escape()
 
 
 @overload
@@ -23104,3 +23179,11 @@ def _prepare_dynamic_variables(caller_locals, caller_globals):
 
 
 _prepare_dynamic_variables(locals(), globals())
+
+
+if platform.system() == "Darwin" and _environ.in_ipython_session:
+    if _environ.ipython_shell.active_eventloop != "osx":
+        print(
+            "Importing py5 on macOS but the necessary Jupyter macOS event loop has not been activated. I'll activate it for you, but next time, execute `%gui osx` before importing this library."
+        )
+        _environ.ipython_shell.run_line_magic("gui", "osx")

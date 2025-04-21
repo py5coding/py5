@@ -54,7 +54,7 @@ __cached__ = None
 
 def init_namespace(filename, global_namespace):
     global_namespace.clear()
-    exec(STARTUP_CODE.format(Path(filename).absolute()), global_namespace)
+    exec(STARTUP_CODE.format(Path(filename).absolute().as_posix()), global_namespace)
 
 
 def is_subdirectory(d, f):

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,9 @@ from pathlib import Path
 
 import requests
 
-PROCESSING_LIBRARY_URL = "http://download.processing.org/contribs"
+from .constants import PROCESSING_BUILD_NUMBER
+
+PROCESSING_LIBRARY_URL = "https://contributions.processing.org/contribs.txt"
 
 PARAGRAPH_REGEX = re.compile("^paragraph=(.*?)^[a-z]*?=", re.DOTALL | re.MULTILINE)
 
@@ -36,9 +38,9 @@ class ProcessingLibraryInfo:
     def _load_data(self):
         response = requests.get(PROCESSING_LIBRARY_URL)
         if response.status_code != 200:
-            raise RuntimeError(
-                f"could not download data file at {PROCESSING_LIBRARY_URL}"
-            )
+            # Could not download data file. Perhaps the user is offline.
+            self._data = []
+            return
 
         blocks = [b for b in response.text.split("\n\n") if b.startswith("library")]
         data = [
@@ -54,6 +56,12 @@ class ProcessingLibraryInfo:
             libinfo["id"] = int(libinfo["id"])
             libinfo["minRevision"] = int(libinfo["minRevision"])
             libinfo["maxRevision"] = int(libinfo["maxRevision"])
+            libinfo["compatible"] = (
+                libinfo["maxRevision"] == 0
+                or libinfo["minRevision"]
+                <= PROCESSING_BUILD_NUMBER
+                <= libinfo["maxRevision"]
+            )
             libinfo["categories"] = libinfo["categories"].split(",")
             paragraph = PARAGRAPH_REGEX.findall(blocks[i])
             libinfo["paragraph"] = paragraph[0] if paragraph else ""
@@ -66,7 +74,6 @@ class ProcessingLibraryInfo:
         self._data = data
 
     def get_library_info(self, category=None, library_name=None, library_id=None):
-        # TODO: also make sure minRevision < version < maxRevision, but how?
         info = self._data
         if category:
             info = filter(lambda x: category in x.get("categories", []), info)
@@ -88,17 +95,27 @@ class ProcessingLibraryInfo:
         info = info[0]
         download_url = info["download"]
 
+        if not info["compatible"]:
+            raise RuntimeError(
+                f"Library {library_name} is not compatible with the version of Processing py5 is currently using."
+            )
+
         response = requests.get(download_url)
         if response.status_code != 200:
-            raise RuntimeError(f"could not download library at {download_url}")
+            raise RuntimeError(f"Could not download library at {download_url}")
 
         with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
             jars = []
+            parts0 = None
             for name in zf.namelist():
                 path = Path(name)
                 if len(path.parts) > 2 and path.parts[1] == "library":
                     jars.append(name)
+                    if parts0 is None:
+                        parts0 = path.parts[0]
             zf.extractall(dest, jars)
+
+            return parts0
 
 
 __all__ = ["ProcessingLibraryInfo"]

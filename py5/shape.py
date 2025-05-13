@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ import functools
 import types
 import weakref
 from pathlib import Path
-from typing import overload  # noqa
+from typing import Sequence, overload  # noqa
 
 import numpy as np
 import numpy.typing as npt  # noqa
@@ -259,13 +259,13 @@ class Py5Shape:
         `P3D` renderer. The value will be equal to 0 when using default renderer.""",
     )
 
-    def set_strokes(self, strokes: npt.NDArray[np.int32], /) -> None:
+    def set_strokes(self, strokes: Sequence[int], /) -> None:
         """Set the stroke color for each of the individual vertices of a `Py5Shape`.
 
         Parameters
         ----------
 
-        strokes: npt.NDArray[np.int32]
+        strokes: Sequence[int]
             array of stroke colors
 
         Notes
@@ -277,18 +277,19 @@ class Py5Shape:
         `Py5Shape.set_fill()` in a loop.
 
         This method can only be used after the shape has been created. Do not use this
-        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`."""
+        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`.
+        """
         if isinstance(strokes, types.GeneratorType):
             strokes = list(strokes)
         _Py5ShapeHelper.setStrokes(self._instance, strokes)
 
-    def set_fills(self, fills: npt.NDArray[np.int32], /) -> None:
+    def set_fills(self, fills: Sequence[int], /) -> None:
         """Set the fill color for each of the individual vertices of a `Py5Shape`.
 
         Parameters
         ----------
 
-        fills: npt.NDArray[np.int32]
+        fills: Sequence[int]
             array of fill colors
 
         Notes
@@ -300,18 +301,19 @@ class Py5Shape:
         `Py5Shape.set_fill()` in a loop.
 
         This method can only be used after the shape has been created. Do not use this
-        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`."""
+        method between the calls to `Py5Shape.begin_shape()` and `Py5Shape.end_shape()`.
+        """
         if isinstance(fills, types.GeneratorType):
             fills = list(fills)
         _Py5ShapeHelper.setFills(self._instance, fills)
 
-    def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of vertex coordinates and optional UV texture mapping values
 
         Notes
@@ -328,13 +330,13 @@ class Py5Shape:
             coordinates = list(coordinates)
         _Py5ShapeHelper.vertices(self._instance, coordinates)
 
-    def bezier_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def bezier_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of bezier vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
 
         Notes
@@ -361,13 +363,13 @@ class Py5Shape:
             coordinates = list(coordinates)
         _Py5ShapeHelper.bezierVertices(self._instance, coordinates)
 
-    def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def curve_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of curve vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
@@ -391,13 +393,13 @@ class Py5Shape:
             coordinates = list(coordinates)
         _Py5ShapeHelper.curveVertices(self._instance, coordinates)
 
-    def quadratic_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def quadratic_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of quadratic vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
@@ -3869,11 +3871,26 @@ class Py5Shape:
         """
         return self._instance.getVertexCodes()
 
+    @overload
     def get_vertex_count(self) -> int:
         """The `get_vertex_count()` method returns the number of vertices that make up a
         `Py5Shape`.
 
         Underlying Processing method: PShape.getVertexCount
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_vertex_count() -> int
+         * get_vertex_count(include_children: bool, /) -> int
+
+        Parameters
+        ----------
+
+        include_children: bool
+            include vertices in the shape's children
 
         Notes
         -----
@@ -3881,8 +3898,79 @@ class Py5Shape:
         The `get_vertex_count()` method returns the number of vertices that make up a
         `Py5Shape`. In the example, the value 4 is returned by the `get_vertex_count()`
         method because 4 vertices are defined in `setup()`.
+
+        Use the `include_children` parameter to include the shape's children if the
+        shape happens to be a `GROUP` shape. By default, a shape's children will not be
+        included in the count.
         """
-        return self._instance.getVertexCount()
+        pass
+
+    @overload
+    def get_vertex_count(self, include_children: bool, /) -> int:
+        """The `get_vertex_count()` method returns the number of vertices that make up a
+        `Py5Shape`.
+
+        Underlying Processing method: PShape.getVertexCount
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_vertex_count() -> int
+         * get_vertex_count(include_children: bool, /) -> int
+
+        Parameters
+        ----------
+
+        include_children: bool
+            include vertices in the shape's children
+
+        Notes
+        -----
+
+        The `get_vertex_count()` method returns the number of vertices that make up a
+        `Py5Shape`. In the example, the value 4 is returned by the `get_vertex_count()`
+        method because 4 vertices are defined in `setup()`.
+
+        Use the `include_children` parameter to include the shape's children if the
+        shape happens to be a `GROUP` shape. By default, a shape's children will not be
+        included in the count.
+        """
+        pass
+
+    def get_vertex_count(self, *args):
+        """The `get_vertex_count()` method returns the number of vertices that make up a
+        `Py5Shape`.
+
+        Underlying Processing method: PShape.getVertexCount
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * get_vertex_count() -> int
+         * get_vertex_count(include_children: bool, /) -> int
+
+        Parameters
+        ----------
+
+        include_children: bool
+            include vertices in the shape's children
+
+        Notes
+        -----
+
+        The `get_vertex_count()` method returns the number of vertices that make up a
+        `Py5Shape`. In the example, the value 4 is returned by the `get_vertex_count()`
+        method because 4 vertices are defined in `setup()`.
+
+        Use the `include_children` parameter to include the shape's children if the
+        shape happens to be a `GROUP` shape. By default, a shape's children will not be
+        included in the count.
+        """
+        return self._instance.getVertexCount(*args)
 
     def get_vertex_x(self, index: int, /) -> float:
         """Get the value of the x coordinate for the vertex `index`.
@@ -5163,7 +5251,7 @@ class Py5Shape:
         """
         return self._instance.setName(name)
 
-    def set_path(self, vcount: int, verts: npt.NDArray[np.floating], /) -> None:
+    def set_path(self, vcount: int, verts: Sequence[Sequence[float]], /) -> None:
         """Set many vertex points at the same time, using a numpy array.
 
         Underlying Processing method: PShape.setPath
@@ -5174,7 +5262,7 @@ class Py5Shape:
         vcount: int
             number of vertices
 
-        verts: npt.NDArray[np.floating]
+        verts: Sequence[Sequence[float]]
             2D array of vertex coordinates
 
         Notes

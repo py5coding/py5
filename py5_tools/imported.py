@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -286,7 +286,7 @@ def _run_code(
             parsing.transform_py5_code(sketch_ast), filename=sketch_path, mode="exec"
         )
 
-        sys.path.extend([str(sketch_path.absolute().parent), os.getcwd()])
+        sys.path.extend([(sketch_path.absolute().parent).as_posix(), os.getcwd()])
         py5_ns = dict()
         py5_ns.update(py5.__dict__)
         py5_ns["__file__"] = str(original_sketch_path)

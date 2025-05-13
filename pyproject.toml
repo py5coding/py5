@@ -34,7 +34,7 @@ classifiers = [
 ]
 dependencies = [
     "autopep8>=2.2",
-    "jpype1==1.5.0",
+    "jpype1>=1.5.2",
     "line_profiler>=4.1",
     "numpy>=1.26",
     "pillow>=10.2",
@@ -74,7 +74,7 @@ Homepage = "https://py5coding.org/"
 "Source Code" = "https://github.com/py5coding/py5"
 
 [tool.hatch.version]
-path = "py5/__init__.py"
+path = "py5_tools/constants.py"
 
 [tool.hatch.build]
 packages = [

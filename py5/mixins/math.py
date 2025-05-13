@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ import traceback
 import types
 import warnings
 from pathlib import Path
-from typing import Any, Union, overload
+from typing import Any, Sequence, Union, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -716,7 +716,7 @@ class MathMixin:
         complex before using the value. You can also extract the real and imaginary
         components of the complex value with `.real` and `.imag`. See the second example
         to learn how to do both of these things."""
-        return value ** 0.5
+        return value**0.5
 
     @classmethod
     def floor(cls, value: Union[float, npt.ArrayLike]) -> Union[int, npt.NDArray]:
@@ -1265,13 +1265,13 @@ class MathMixin:
         types = ",".join([type(a).__name__ for a in args])
         raise TypeError(f"No matching overloads found for Sketch.random_int({types})")
 
-    def random_choice(self, objects: list[Any]) -> Any:
+    def random_choice(self, seq: Sequence[Any]) -> Any:
         """Select a random item from a list.
 
         Parameters
         ----------
 
-        objects: list[Any]
+        seq: Sequence[Any]
             list of objects to choose from
 
         Notes
@@ -1282,24 +1282,24 @@ class MathMixin:
 
         This function's randomness can be influenced by `random_seed()`, and makes calls
         to numpy to select the random items."""
-        if len(objects):
-            return objects[self._rng.integers(0, len(objects))]
+        if len(seq):
+            return seq[self._rng.integers(0, len(seq))]
         else:
             return None
 
     def random_sample(
-        self, objects: list[Any], size: int = 1, replace: bool = True
-    ) -> list[Any]:
+        self, seq: Sequence[Any], size: int = 1, replace: bool = True
+    ) -> Sequence[Any]:
         """Select random items from a list.
 
         Parameters
         ----------
 
-        objects: list[Any]
-            list of objects to choose from
-
         replace: bool = True
             whether to select random items with or without replacement
+
+        seq: Sequence[Any]
+            list of objects to choose from
 
         size: int = 1
             number of random items to select
@@ -1319,18 +1319,49 @@ class MathMixin:
 
         This function's randomness can be influenced by `random_seed()`, and makes calls
         to numpy to select the random items."""
-        if len(objects):
-            if isinstance(objects, types.GeneratorType):
-                objects = list(objects)
-            indices = self._rng.choice(range(len(objects)), size=size, replace=replace)
-            if not isinstance(objects, list):
+        if len(seq):
+            if isinstance(seq, types.GeneratorType):
+                seq = list(seq)
+            indices = self._rng.choice(range(len(seq)), size=size, replace=replace)
+            if not isinstance(seq, list):
                 try:
-                    return objects[indices]
+                    return seq[indices]
                 except:
                     pass
-            return [objects[idx] for idx in indices]
+            return [seq[idx] for idx in indices]
         else:
             return []
+
+    def random_permutation(self, seq: Sequence[Any]) -> Sequence[Any]:
+        """Generates a random permutation for the given sequence.
+
+        Parameters
+        ----------
+
+        seq: Sequence[Any]
+            sequence of objects for which random permutation is required
+
+        Notes
+        -----
+
+        Generates a random permutation for the given sequence. Each time the
+        `random_permutation()` method is called, it generates and return a random
+        permuted sequence of the given sequence.
+
+        The returned value will always be a sequence such as a list. If the provided
+        sequence is empty, an empty list will be returned.
+
+        This function's randomness can be influenced by `random_seed()`, and makes calls
+        to numpy to select the random permutation."""
+        if isinstance(seq, types.GeneratorType):
+            seq = list(seq)
+        indices = self._rng.permutation(range(len(seq)))
+        if not isinstance(seq, list):
+            try:
+                return seq[indices]
+            except:
+                pass
+        return [seq[idx] for idx in indices]
 
     @overload
     def random_gaussian(self) -> float:

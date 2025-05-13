@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -370,6 +370,7 @@ PY5_DIR_STR = ['__version__',
     'random_choice',
     'random_gaussian',
     'random_int',
+    'random_permutation',
     'random_sample',
     'random_seed',
     'ratio_left',
@@ -829,6 +830,7 @@ PY5_ALL_STR = ['__version__',
     'random_choice',
     'random_gaussian',
     'random_int',
+    'random_permutation',
     'random_sample',
     'random_seed',
     'RECT',

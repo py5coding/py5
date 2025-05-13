@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,6 @@ import sys
 import zipfile
 from pathlib import Path
 
-import numpy as np
 import stackprinter
 
 from .import_hook import activate_py5_live_coding_import_hook
@@ -54,7 +53,7 @@ __cached__ = None
 
 def init_namespace(filename, global_namespace):
     global_namespace.clear()
-    exec(STARTUP_CODE.format(Path(filename).absolute()), global_namespace)
+    exec(STARTUP_CODE.format(Path(filename).absolute().as_posix()), global_namespace)
 
 
 def is_subdirectory(d, f):
@@ -487,12 +486,10 @@ class SyncDraw:
 
     def keep_functions_current_from_globals(self, s):
         try:
-            (
-                self.functions,
-                self.function_param_counts,
-                self.user_supplied_draw,
-            ) = retrieve_user_code(
-                s, self.global_namespace, self.activate_keyboard_shortcuts
+            self.functions, self.function_param_counts, self.user_supplied_draw = (
+                retrieve_user_code(
+                    s, self.global_namespace, self.activate_keyboard_shortcuts
+                )
             )
 
             self._process_new_functions(s)
@@ -536,16 +533,14 @@ class SyncDraw:
                 if self.import_hook is not None:
                     self.import_hook.flush_imported_modules()
 
-                (
-                    self.functions,
-                    self.function_param_counts,
-                    self.user_supplied_draw,
-                ) = exec_user_code(
-                    s,
-                    self.filename,
-                    self.global_namespace,
-                    self.mock_run_sketch,
-                    self.activate_keyboard_shortcuts,
+                self.functions, self.function_param_counts, self.user_supplied_draw = (
+                    exec_user_code(
+                        s,
+                        self.filename,
+                        self.global_namespace,
+                        self.mock_run_sketch,
+                        self.activate_keyboard_shortcuts,
+                    )
                 )
 
                 self._process_new_functions(s)

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -30,7 +30,7 @@ import uuid
 import warnings
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Callable, Union, overload  # noqa
+from typing import Any, Callable, Sequence, Union, overload  # noqa
 
 import jpype
 import numpy as np
@@ -81,17 +81,17 @@ _PY5_LAST_WINDOW_X = None
 _PY5_LAST_WINDOW_Y = None
 
 
-def _deprecated_g(f):
-    @functools.wraps(f)
-    def decorated(self_, *args):
-        warnings.warn(
-            "Accessing the primary Py5Graphics object with `g` is deprecated. Please use `get_graphics()` instead.",
-            category=DeprecationWarning,
-            stacklevel=3 if py5_tools.imported.get_imported_mode() else 4,
-        )
-        return f(self_, *args)
+# def _deprecated_g(f):
+#     @functools.wraps(f)
+#     def decorated(self_, *args):
+#         warnings.warn(
+#             "Accessing the primary Py5Graphics object with `g` is deprecated. Please use `get_graphics()` instead.",
+#             category=DeprecationWarning,
+#             stacklevel=3 if py5_tools.imported.get_imported_mode() else 4,
+#         )
+#         return f(self_, *args)
 
-    return decorated
+#     return decorated
 
 
 def _auto_convert_to_py5image(argnum):
@@ -817,7 +817,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         The `is_mouse_pressed` variable stores whether or not a mouse button is
         currently being pressed. The value is `True` when `any` mouse button is pressed,
         and `False` if no button is pressed. The `mouse_button` variable (see the
-        related reference entry) can be used to determine which button has been pressed."""
+        related reference entry) can be used to determine which button has been pressed.
+        """
         return self._instance.isMousePressed()
 
     is_mouse_pressed: bool = property(
@@ -3976,7 +3977,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     WHITESPACE = " \t\n\r\f\u00a0"
 
     @_return_list_str
-    def _get_pargs(self) -> list[str]:
+    def _get_pargs(self) -> JArray(JString):
         """List of strings passed to the Sketch through the call to `run_sketch()`.
 
         Underlying Processing field: PApplet.args
@@ -3990,7 +3991,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         """
         return self._instance.args
 
-    pargs: list[str] = property(
+    pargs: JArray(JString) = property(
         fget=_get_pargs,
         doc="""List of strings passed to the Sketch through the call to `run_sketch()`.
 
@@ -7568,13 +7569,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         return self._instance.bezierVertex(*args)
 
     @_generator_to_list
-    def bezier_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def bezier_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of bezier vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
 
         Notes
@@ -8609,13 +8610,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: Sequence[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: list[chr]
-            array containing characters to be generated
+        charset: Sequence[chr]
+            characters to be generated
 
         name: str
             name of the font to load
@@ -8671,13 +8672,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: Sequence[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: list[chr]
-            array containing characters to be generated
+        charset: Sequence[chr]
+            characters to be generated
 
         name: str
             name of the font to load
@@ -8720,7 +8721,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     @overload
     def create_font(
-        self, name: str, size: float, smooth: bool, charset: list[chr], /
+        self, name: str, size: float, smooth: bool, charset: Sequence[chr], /
     ) -> Py5Font:
         """Dynamically converts a font to the format used by py5 from a .ttf or .otf file
         inside the Sketch's "data" folder or a font that's installed elsewhere on the
@@ -8735,13 +8736,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: Sequence[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: list[chr]
-            array containing characters to be generated
+        charset: Sequence[chr]
+            characters to be generated
 
         name: str
             name of the font to load
@@ -8797,13 +8798,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * create_font(name: str, size: float, /) -> Py5Font
          * create_font(name: str, size: float, smooth: bool, /) -> Py5Font
-         * create_font(name: str, size: float, smooth: bool, charset: list[chr], /) -> Py5Font
+         * create_font(name: str, size: float, smooth: bool, charset: Sequence[chr], /) -> Py5Font
 
         Parameters
         ----------
 
-        charset: list[chr]
-            array containing characters to be generated
+        charset: Sequence[chr]
+            characters to be generated
 
         name: str
             name of the font to load
@@ -10081,13 +10082,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         return self._instance.curveVertex(*args)
 
     @_generator_to_list
-    def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def curve_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of curve vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
@@ -13028,13 +13029,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         return self._instance.line(*args)
 
     @_generator_to_list
-    def lines(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def lines(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Draw a collection of lines to the screen.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of line coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
@@ -14431,14 +14432,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         return self._instance.pointLight(v1, v2, v3, x, y, z)
 
     @_generator_to_list
-    def points(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def points(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Draw a collection of points, each a coordinate in space at the dimension of one
         pixel.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of point coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
@@ -14840,13 +14841,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         return self._instance.quadraticVertex(*args)
 
     @_generator_to_list
-    def quadratic_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def quadratic_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of quadratic vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
@@ -18232,8 +18233,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18248,7 +18249,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18322,8 +18323,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18338,7 +18339,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18401,7 +18402,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     @overload
     def text(
-        self, chars: list[chr], start: int, stop: int, x: float, y: float, /
+        self, chars: Sequence[chr], start: int, stop: int, x: float, y: float, /
     ) -> None:
         """Draws text to the screen.
 
@@ -18414,8 +18415,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18430,7 +18431,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18493,7 +18494,14 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     @overload
     def text(
-        self, chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /
+        self,
+        chars: Sequence[chr],
+        start: int,
+        stop: int,
+        x: float,
+        y: float,
+        z: float,
+        /,
     ) -> None:
         """Draws text to the screen.
 
@@ -18506,8 +18514,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18522,7 +18530,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18596,8 +18604,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18612,7 +18620,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18686,8 +18694,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18702,7 +18710,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18776,8 +18784,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18792,7 +18800,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18866,8 +18874,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18882,7 +18890,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -18956,8 +18964,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -18972,7 +18980,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -19046,8 +19054,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -19062,7 +19070,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -19136,8 +19144,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -19152,7 +19160,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -19226,8 +19234,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -19242,7 +19250,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -19685,7 +19693,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -19694,8 +19702,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -19714,7 +19722,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         pass
 
     @overload
-    def text_width(self, chars: list[chr], start: int, length: int, /) -> float:
+    def text_width(self, chars: Sequence[chr], start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
         Underlying Processing method: PApplet.textWidth
@@ -19725,7 +19733,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -19734,8 +19742,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -19765,7 +19773,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -19774,8 +19782,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -19805,7 +19813,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -19814,8 +19822,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -20995,13 +21003,13 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         return self._instance.vertex(*args)
 
     @_generator_to_list
-    def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of vertex coordinates and optional UV texture mapping values
 
         Notes

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -1484,7 +1484,8 @@ class PixelPy5ImageMixin(PixelMixin):
         The returned array will always be a copy of the data in `Py5Image.np_pixels[]`
         and not a view into that array or any other array. Use the `dst` parameter to
         provide the numpy array to copy the pixel data into. The provided array must be
-        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required."""
+        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+        """
         pass
 
     @overload
@@ -1550,7 +1551,8 @@ class PixelPy5ImageMixin(PixelMixin):
         The returned array will always be a copy of the data in `Py5Image.np_pixels[]`
         and not a view into that array or any other array. Use the `dst` parameter to
         provide the numpy array to copy the pixel data into. The provided array must be
-        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required."""
+        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+        """
         pass
 
     def get_np_pixels(self, *args, **kwargs) -> npt.NDArray[np.uint8]:
@@ -1605,7 +1607,8 @@ class PixelPy5ImageMixin(PixelMixin):
         The returned array will always be a copy of the data in `Py5Image.np_pixels[]`
         and not a view into that array or any other array. Use the `dst` parameter to
         provide the numpy array to copy the pixel data into. The provided array must be
-        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required."""
+        sized correctly. The array's `dtype` should `np.uint8`, but this isn't required.
+        """
         return super().get_np_pixels(*args, **kwargs)
 
     @overload

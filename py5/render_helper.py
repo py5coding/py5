@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -129,15 +129,16 @@ class RenderHelperGraphicsCanvas(Sketch):
 def _check_allowed_renderer(renderer):
     renderer_name = {
         Sketch.SVG: "SVG",
+        Sketch.FX2D: "FX2D",
         Sketch.PDF: "PDF",
         Sketch.DXF: "DXF",
         Sketch.P2D: "P2D",
         Sketch.P3D: "P3D",
     }.get(renderer, renderer)
     renderers = (
-        [Sketch.HIDDEN, Sketch.JAVA2D]
+        [Sketch.HIDDEN, Sketch.JAVA2D, Sketch.FX2D]
         if sys.platform == "darwin"
-        else [Sketch.HIDDEN, Sketch.JAVA2D, Sketch.P2D, Sketch.P3D]
+        else [Sketch.HIDDEN, Sketch.JAVA2D, Sketch.FX2D, Sketch.P2D, Sketch.P3D]
     )
     if renderer not in renderers:
         return (

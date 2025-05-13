@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,7 @@ from __future__ import annotations
 import functools
 import types
 import weakref
-from typing import overload  # noqa
+from typing import Sequence, overload  # noqa
 
 import numpy as np  # noqa
 import numpy.typing as npt  # noqa
@@ -156,14 +156,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     # *** BEGIN METHODS ***
 
-    def points(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def points(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Draw a collection of points, each a coordinate in space at the dimension of one
         pixel.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of point coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
@@ -183,13 +183,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.points(self._instance, coordinates)
 
-    def lines(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def lines(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Draw a collection of lines to the Py5Graphics drawing surface.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of line coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
@@ -211,13 +211,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.lines(self._instance, coordinates)
 
-    def vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of vertex coordinates and optional UV texture mapping values
 
         Notes
@@ -237,13 +237,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.vertices(self._instance, coordinates)
 
-    def bezier_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def bezier_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of bezier vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of bezier vertex coordinates with 6 or 9 columns for 2D or 3D points, respectively
 
         Notes
@@ -266,13 +266,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.bezierVertices(self._instance, coordinates)
 
-    def curve_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def curve_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of curve vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of curve vertex coordinates with 2 or 3 columns for 2D or 3D points, respectively
 
         Notes
@@ -292,13 +292,13 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.curveVertices(self._instance, coordinates)
 
-    def quadratic_vertices(self, coordinates: npt.NDArray[np.floating], /) -> None:
+    def quadratic_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
         """Create a collection of quadratic vertices.
 
         Parameters
         ----------
 
-        coordinates: npt.NDArray[np.floating]
+        coordinates: Sequence[Sequence[float]]
             2D array of quadratic vertex coordinates with 4 or 6 columns for 2D or 3D points, respectively
 
         Notes
@@ -315,7 +315,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         or 3D points, respectively.
 
         This method is the same as `quadratic_vertices()` but linked to a `Py5Graphics`
-        object. To see example code for how it can be used, see `quadratic_vertices()`."""
+        object. To see example code for how it can be used, see `quadratic_vertices()`.
+        """
         if isinstance(coordinates, types.GeneratorType):
             coordinates = list(coordinates)
         _Py5GraphicsHelper.quadraticVertices(self._instance, coordinates)
@@ -9193,7 +9194,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         return self._instance.loadShape(*args)
 
     @overload
-    def mask(self, mask_array: npt.NDArray[np.integer], /) -> None:
+    def mask(self, mask_array: Sequence[int], /) -> None:
         """Masks part of the Py5Graphics drawing surface from displaying by loading an
         image and using it as an alpha channel.
 
@@ -9205,7 +9206,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: npt.NDArray[np.integer], /) -> None
+         * mask(mask_array: Sequence[int], /) -> None
 
         Parameters
         ----------
@@ -9213,7 +9214,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: npt.NDArray[np.integer]
+        mask_array: Sequence[int]
             1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
@@ -9245,7 +9246,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: npt.NDArray[np.integer], /) -> None
+         * mask(mask_array: Sequence[int], /) -> None
 
         Parameters
         ----------
@@ -9253,7 +9254,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: npt.NDArray[np.integer]
+        mask_array: Sequence[int]
             1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
@@ -9284,7 +9285,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * mask(img: Py5Image, /) -> None
-         * mask(mask_array: npt.NDArray[np.integer], /) -> None
+         * mask(mask_array: Sequence[int], /) -> None
 
         Parameters
         ----------
@@ -9292,7 +9293,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         img: Py5Image
             image to use as the mask
 
-        mask_array: npt.NDArray[np.integer]
+        mask_array: Sequence[int]
             1D array of integers used as the alpha channel, needs to be the same length as the image's pixel array
 
         Notes
@@ -13664,8 +13665,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13680,7 +13681,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13758,8 +13759,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13774,7 +13775,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13841,7 +13842,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def text(
-        self, chars: list[chr], start: int, stop: int, x: float, y: float, /
+        self, chars: Sequence[chr], start: int, stop: int, x: float, y: float, /
     ) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
@@ -13854,8 +13855,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13870,7 +13871,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -13937,7 +13938,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
     @overload
     def text(
-        self, chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /
+        self,
+        chars: Sequence[chr],
+        start: int,
+        stop: int,
+        x: float,
+        y: float,
+        z: float,
+        /,
     ) -> None:
         """Draws text to the Py5Graphics drawing surface.
 
@@ -13950,8 +13958,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -13966,7 +13974,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14044,8 +14052,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14060,7 +14068,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14138,8 +14146,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14154,7 +14162,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14232,8 +14240,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14248,7 +14256,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14326,8 +14334,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14342,7 +14350,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14420,8 +14428,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14436,7 +14444,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14514,8 +14522,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14530,7 +14538,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14608,8 +14616,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14624,7 +14632,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -14702,8 +14710,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
          * text(c: chr, x: float, y: float, /) -> None
          * text(c: chr, x: float, y: float, z: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, /) -> None
-         * text(chars: list[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, /) -> None
+         * text(chars: Sequence[chr], start: int, stop: int, x: float, y: float, z: float, /) -> None
          * text(num: float, x: float, y: float, /) -> None
          * text(num: float, x: float, y: float, z: float, /) -> None
          * text(num: int, x: float, y: float, /) -> None
@@ -14718,7 +14726,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the alphanumeric character to be displayed
 
-        chars: list[chr]
+        chars: Sequence[chr]
             the alphanumberic symbols to be displayed
 
         num: float
@@ -15202,7 +15210,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -15211,8 +15219,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -15234,7 +15242,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         pass
 
     @overload
-    def text_width(self, chars: list[chr], start: int, length: int, /) -> float:
+    def text_width(self, chars: Sequence[chr], start: int, length: int, /) -> float:
         """Calculates and returns the width of any character or text string.
 
         Underlying Processing method: PGraphics.textWidth
@@ -15245,7 +15253,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -15254,8 +15262,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -15288,7 +15296,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -15297,8 +15305,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure
@@ -15331,7 +15339,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         You can use any of the following signatures:
 
          * text_width(c: chr, /) -> float
-         * text_width(chars: list[chr], start: int, length: int, /) -> float
+         * text_width(chars: Sequence[chr], start: int, length: int, /) -> float
          * text_width(str: str, /) -> float
 
         Parameters
@@ -15340,8 +15348,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         c: chr
             the character to measure
 
-        chars: list[chr]
-            the character to measure
+        chars: Sequence[chr]
+            the characters to measure
 
         length: int
             number of characters to measure

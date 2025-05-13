@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,7 @@ from .sketch import Sketch
 
 
 class RendererTest(Sketch):
+
     def __init__(self, renderer, renderer_name):
         super().__init__()
         self.renderer = renderer
@@ -55,6 +56,11 @@ def test_java2d():
     test.run_sketch()
 
 
+def test_fx2d():
+    test = RendererTest(Sketch.FX2D, "FX2D")
+    test.run_sketch()
+
+
 def test_p2d():
     test = RendererTest(Sketch.P2D, "P2D")
     test.run_sketch()
@@ -66,6 +72,7 @@ def test_p3d():
 
 
 class TestInteractivity(Sketch):
+
     def __init__(self, renderer, renderer_name):
         super().__init__()
         self.renderer = renderer
@@ -86,6 +93,11 @@ class TestInteractivity(Sketch):
 
 def test_interactivity_java2d():
     test = TestInteractivity(Sketch.JAVA2D, "JAVA2D")
+    test.run_sketch()
+
+
+def test_interactivity_fx2d():
+    test = TestInteractivity(Sketch.FX2D, "FX2D")
     test.run_sketch()
 
 

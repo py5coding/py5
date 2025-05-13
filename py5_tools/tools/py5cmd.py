@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2024 Jim Schmitz
+#   Copyright (C) 2020-2025 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -23,8 +23,8 @@ import glob
 import platform
 from pathlib import Path
 
-import py5_tools
 import py5_tools.imported
+from py5_tools.libraries import ProcessingLibraryInfo
 
 parser = argparse.ArgumentParser(description="py5 command tool")
 
@@ -32,12 +32,14 @@ parser = argparse.ArgumentParser(description="py5 command tool")
 SHORT_LIBRARY_TEMPLATE = """[{id}] Name: {name}
 Author: {authors}
 Summary: {sentence}
+Compatible: {compatible}
 Categories: {categories}
 Description: {paragraph}"""
 
 FULL_LIBRARY_TEMPLATE = """[{id}] Name: {name}
 Author: {authors}
 Summary: {sentence}
+Compatible: {compatible}
 Categories: {categories}
 Library version: {prettyVersion}
 Project URL: {url}
@@ -48,7 +50,7 @@ Description: {paragraph}"""
 class Py5Cmd(cmd.Cmd):
     def __init__(self):
         super().__init__()
-        self._libraries = py5_tools.ProcessingLibraryInfo()
+        self._libraries = ProcessingLibraryInfo()
         self._running_sketches = []
 
     prompt = "py5: "

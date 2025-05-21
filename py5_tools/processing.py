@@ -33,7 +33,16 @@ _library_manager = None
 class ProcessingLibraryManager:
 
     def __init__(self):
-        self._libraries = ProcessingLibraryInfo()
+        self._libraries = None
+
+    def _check_libraries(self):
+        try:
+            if self._libraries is None:
+                self._libraries = ProcessingLibraryInfo()
+        except:
+            raise RuntimeError(
+                "Processing library information not available. Your network connection might not be working."
+            ) from None
 
     def _store_library_info(self, library_name, info):
         info_file = STORAGE_DIR / f"{library_name}.txt"
@@ -66,7 +75,7 @@ class ProcessingLibraryManager:
         return info
 
     def installed_libraries(self):
-        return [f.stem for f in STORAGE_DIR.glob("*.txt")]
+        return {f.stem for f in STORAGE_DIR.glob("*.txt")}
 
     def check_library(self, library_name):
         """Check if a library is available and up to date.
@@ -77,6 +86,8 @@ class ProcessingLibraryManager:
         Returns:
             bool: True if the library is available and up to date, False otherwise.
         """
+        self._check_libraries()
+
         info = self._libraries.get_library_info(library_name=library_name)
 
         if len(info) == 0:
@@ -101,6 +112,8 @@ class ProcessingLibraryManager:
         Returns:
             dict: Information about the downloaded library.
         """
+        self._check_libraries()
+
         info = self._libraries.get_library_info(library_name=library_name)
 
         if len(info) == 0:
@@ -171,7 +184,7 @@ def library_storage_dir() -> Path:
     return STORAGE_DIR
 
 
-def installed_libraries() -> list[str]:
+def installed_libraries() -> set[str]:
     """List the Processing libraries stored in your computer's Processing library
     storage directory.
 

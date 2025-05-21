@@ -664,7 +664,7 @@ METHOD_SIGNATURES_LOOKUP = dict([(('Sketch', 'alpha'), ['(rgb: int, /) -> float'
     (('Py5Tools', 'live_coding_count'), ['() -> int']),
     (('Py5Tools', 'live_coding_activate'), ["(*, always_rerun_setup: bool = True, always_on_top: bool = True, activate_keyboard_shortcuts: bool = False, archive_dir: str = 'archive') -> None"]),
     (('Py5Tools', 'processing_library_storage_dir'), ['() -> Path']),
-    (('Py5Tools', 'processing_installed_libraries'), ['() -> list[str]']),
+    (('Py5Tools', 'processing_installed_libraries'), ['() -> set[str]']),
     (('Py5Tools', 'processing_check_library'), ['(library_name: str) -> bool']),
     (('Py5Tools', 'processing_download_library'), ['(library_name: str) -> dict']),
     (('Py5Tools', 'processing_remove_library'), ['(library_name: str) -> None']),])

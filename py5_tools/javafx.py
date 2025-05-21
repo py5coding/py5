@@ -22,7 +22,10 @@ import sys
 
 import py5_tools
 
-if not py5_tools.is_jvm_running() and py5_tools.processing.check_library("JavaFX"):
+if (
+    not py5_tools.is_jvm_running()
+    and "JavaFX" in py5_tools.processing.installed_libraries()
+):
     try:
         library_dir = None
 

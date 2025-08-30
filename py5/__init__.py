@@ -19,7 +19,7 @@
 # *****************************************************************************
 # -*- coding: utf-8 -*-
 """
-py5 is a version of Processing for Python 3.9+. It makes the Processing Java libraries available to the CPython interpreter using JPype.
+py5 is a version of Processing for Python. It makes the Processing Java libraries available to the CPython interpreter using JPype.
 """
 from __future__ import annotations
 
@@ -208,6 +208,8 @@ BACKSPACE = "\b"
 BASELINE = 0
 BEVEL = 32
 BEZIER_VERTEX = 1
+BICUBIC = 2
+BILINEAR = 1
 BLEND = 1
 BLUR = 11
 BOTTOM = 102
@@ -289,6 +291,7 @@ MITER = 8
 MODEL = 4
 MOVE = 13
 MULTIPLY = 128
+NEAREST_NEIGHBOR = 0
 NORMAL = 1
 OPAQUE = 14
 OPEN = 1
@@ -3792,6 +3795,10 @@ def copy() -> Py5Image:
     the source image has an alpha channel set, it will be copied as well.
 
     This function ignores `image_mode()`.
+
+    If you want to create a new image with the contents of a rectangular region of
+    the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+    dimensions of the area to be copied. It will return a `Py5Image` object.
     """
     pass
 
@@ -3856,6 +3863,10 @@ def copy(
     the source image has an alpha channel set, it will be copied as well.
 
     This function ignores `image_mode()`.
+
+    If you want to create a new image with the contents of a rectangular region of
+    the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+    dimensions of the area to be copied. It will return a `Py5Image` object.
     """
     pass
 
@@ -3929,6 +3940,10 @@ def copy(
     the source image has an alpha channel set, it will be copied as well.
 
     This function ignores `image_mode()`.
+
+    If you want to create a new image with the contents of a rectangular region of
+    the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+    dimensions of the area to be copied. It will return a `Py5Image` object.
     """
     pass
 
@@ -3990,6 +4005,10 @@ def copy(*args):
     the source image has an alpha channel set, it will be copied as well.
 
     This function ignores `image_mode()`.
+
+    If you want to create a new image with the contents of a rectangular region of
+    the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+    dimensions of the area to be copied. It will return a `Py5Image` object.
     """
     return _py5sketch.copy(*args)
 

@@ -103,6 +103,8 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     ALPHA = 4
     ALPHA_MASK = -16777216
     ARGB = 2
+    BICUBIC = 2
+    BILINEAR = 1
     BLEND = 1
     BLUE_MASK = 255
     BLUR = 11
@@ -120,6 +122,7 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
     INVERT = 13
     LIGHTEST = 8
     MULTIPLY = 128
+    NEAREST_NEIGHBOR = 0
     OPAQUE = 14
     OVERLAY = 512
     POSTERIZE = 15
@@ -591,6 +594,11 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Image` object, check out the `Py5Image.get_pixels()` method, where x, y, w,
+        h, are the position and dimensions of the area to be copied. It will return a
+        `Py5Image` object.
         """
         pass
 
@@ -651,6 +659,11 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Image` object, check out the `Py5Image.get_pixels()` method, where x, y, w,
+        h, are the position and dimensions of the area to be copied. It will return a
+        `Py5Image` object.
         """
         pass
 
@@ -721,6 +734,11 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Image` object, check out the `Py5Image.get_pixels()` method, where x, y, w,
+        h, are the position and dimensions of the area to be copied. It will return a
+        `Py5Image` object.
         """
         pass
 
@@ -779,6 +797,11 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Image` object, check out the `Py5Image.get_pixels()` method, where x, y, w,
+        h, are the position and dimensions of the area to be copied. It will return a
+        `Py5Image` object.
         """
         return self._instance.copy(*args)
 
@@ -1269,6 +1292,140 @@ class Py5Image(PixelPy5ImageMixin, Py5Base):
         0-255.
         """
         return self._instance.mask(*args)
+
+    @overload
+    def resize(self, w: int, h: int, /) -> None:
+        """Resize the Py5Image object to a new height and width.
+
+        Underlying Processing method: PImage.resize
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * resize(w: int, h: int, /) -> None
+         * resize(w: int, h: int, interpolation_mode: int, /) -> None
+
+        Parameters
+        ----------
+
+        h: int
+            height to size image to
+
+        interpolation_mode: int
+            interpolation method for resize operation
+
+        w: int
+            width to size image to
+
+        Notes
+        -----
+
+        Resize the Py5Image object to a new height and width. This will modify the
+        Py5Image object in place, meaning that rather than returning a resized copy, it
+        will modify your existing Py5Image object. If this isn't what you want, pair
+        this method with `Py5Image.copy()`, as shown in the example.
+
+        To make the image scale proportionally, use 0 as the value for either the `w` or
+        `h` parameter.
+
+        The default resize interpolation mode is `BILINEAR`. Alternatively you can use
+        the `interpolation_mode` parameter to interpolate using the `NEAREST_NEIGHBOR`
+        method, which is faster but yields lower quality results. You can also use
+        `BICUBIC` interpolation, which is the most computationally intensive but looks
+        the best, particularly for up-scaling operations.
+        """
+        pass
+
+    @overload
+    def resize(self, w: int, h: int, interpolation_mode: int, /) -> None:
+        """Resize the Py5Image object to a new height and width.
+
+        Underlying Processing method: PImage.resize
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * resize(w: int, h: int, /) -> None
+         * resize(w: int, h: int, interpolation_mode: int, /) -> None
+
+        Parameters
+        ----------
+
+        h: int
+            height to size image to
+
+        interpolation_mode: int
+            interpolation method for resize operation
+
+        w: int
+            width to size image to
+
+        Notes
+        -----
+
+        Resize the Py5Image object to a new height and width. This will modify the
+        Py5Image object in place, meaning that rather than returning a resized copy, it
+        will modify your existing Py5Image object. If this isn't what you want, pair
+        this method with `Py5Image.copy()`, as shown in the example.
+
+        To make the image scale proportionally, use 0 as the value for either the `w` or
+        `h` parameter.
+
+        The default resize interpolation mode is `BILINEAR`. Alternatively you can use
+        the `interpolation_mode` parameter to interpolate using the `NEAREST_NEIGHBOR`
+        method, which is faster but yields lower quality results. You can also use
+        `BICUBIC` interpolation, which is the most computationally intensive but looks
+        the best, particularly for up-scaling operations.
+        """
+        pass
+
+    def resize(self, *args):
+        """Resize the Py5Image object to a new height and width.
+
+        Underlying Processing method: PImage.resize
+
+        Methods
+        -------
+
+        You can use any of the following signatures:
+
+         * resize(w: int, h: int, /) -> None
+         * resize(w: int, h: int, interpolation_mode: int, /) -> None
+
+        Parameters
+        ----------
+
+        h: int
+            height to size image to
+
+        interpolation_mode: int
+            interpolation method for resize operation
+
+        w: int
+            width to size image to
+
+        Notes
+        -----
+
+        Resize the Py5Image object to a new height and width. This will modify the
+        Py5Image object in place, meaning that rather than returning a resized copy, it
+        will modify your existing Py5Image object. If this isn't what you want, pair
+        this method with `Py5Image.copy()`, as shown in the example.
+
+        To make the image scale proportionally, use 0 as the value for either the `w` or
+        `h` parameter.
+
+        The default resize interpolation mode is `BILINEAR`. Alternatively you can use
+        the `interpolation_mode` parameter to interpolate using the `NEAREST_NEIGHBOR`
+        method, which is faster but yields lower quality results. You can also use
+        `BICUBIC` interpolation, which is the most computationally intensive but looks
+        the best, particularly for up-scaling operations.
+        """
+        return self._instance.resize(*args)
 
     @overload
     def set_pixels(self, x: int, y: int, c: int, /) -> None:

@@ -578,6 +578,7 @@ METHOD_SIGNATURES_LOOKUP = dict([(('Sketch', 'alpha'), ['(rgb: int, /) -> float'
     (('Py5Image', 'get_pixels'), ['() -> Py5Image', '(x: int, y: int, /) -> int', '(x: int, y: int, w: int, h: int, /) -> Py5Image']),
     (('Py5Image', 'load_pixels'), ['() -> None']),
     (('Py5Image', 'mask'), ['(mask_array: Sequence[int], /) -> None', '(img: Py5Image, /) -> None']),
+    (('Py5Image', 'resize'), ['(w: int, h: int, /) -> None', '(w: int, h: int, interpolation_mode: int, /) -> None']),
     (('Py5Image', 'set_pixels'), ['(x: int, y: int, c: int, /) -> None', '(x: int, y: int, img: Py5Image, /) -> None']),
     (('Py5Image', 'update_pixels'), ['() -> None', '(x: int, y: int, w: int, h: int, /) -> None']),
     (('Py5KeyEvent', 'get_action'), ['() -> int']),

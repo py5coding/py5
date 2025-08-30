@@ -21,8 +21,8 @@ import os
 import platform
 from pathlib import Path
 
-VERSION = "0.10.6.a0"
-PROCESSING_BUILD_NUMBER = 1304
+VERSION = "0.10.7a0"
+PROCESSING_BUILD_NUMBER = 1306
 
 if not (PY5_HOME := os.environ.get("PY5_HOME")):
     if platform.system() == "Windows":

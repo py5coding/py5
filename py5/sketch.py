@@ -54,7 +54,6 @@ from .font import Py5Font, _load_py5font, _return_list_str, _return_py5font  # n
 from .graphics import Py5Graphics, _return_py5graphics  # noqa
 from .image import Py5Image, _return_py5image  # noqa
 from .keyevent import Py5KeyEvent, _convert_jchar_to_chr, _convert_jint_to_int  # noqa
-from .macos_problem import _macos_safety_check
 from .mixins import DataMixin, MathMixin, PixelMixin, PrintlnStream, ThreadsMixin
 from .mixins.threads import Py5Promise  # noqa
 from .mouseevent import Py5MouseEvent  # noqa
@@ -3844,6 +3843,8 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     BASELINE = 0
     BEVEL = 32
     BEZIER_VERTEX = 1
+    BICUBIC = 2
+    BILINEAR = 1
     BLEND = 1
     BLUR = 11
     BOTTOM = 102
@@ -3925,6 +3926,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
     MODEL = 4
     MOVE = 13
     MULTIPLY = 128
+    NEAREST_NEIGHBOR = 0
     NORMAL = 1
     OPAQUE = 14
     OPEN = 1
@@ -8394,6 +8396,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         the source image has an alpha channel set, it will be copied as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of
+        the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+        dimensions of the area to be copied. It will return a `Py5Image` object.
         """
         pass
 
@@ -8457,6 +8463,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         the source image has an alpha channel set, it will be copied as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of
+        the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+        dimensions of the area to be copied. It will return a `Py5Image` object.
         """
         pass
 
@@ -8530,6 +8540,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         the source image has an alpha channel set, it will be copied as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of
+        the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+        dimensions of the area to be copied. It will return a `Py5Image` object.
         """
         pass
 
@@ -8592,6 +8606,10 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         the source image has an alpha channel set, it will be copied as well.
 
         This function ignores `image_mode()`.
+
+        If you want to create a new image with the contents of a rectangular region of
+        the sketch, check out `get_pixels()` where x, y, w, h, are the position and
+        dimensions of the area to be copied. It will return a `Py5Image` object.
         """
         return self._instance.copy(*args)
 
@@ -16909,7 +16927,6 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         pass
 
     @_settings_only("size")
-    @_macos_safety_check
     def size(self, *args):
         """Defines the dimension of the display window width and height in units of pixels.
 

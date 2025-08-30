@@ -1651,6 +1651,8 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     BASELINE = 0
     BEVEL = 32
     BEZIER_VERTEX = 1
+    BICUBIC = 2
+    BILINEAR = 1
     BLEND = 1
     BLUE_MASK = 255
     BLUR = 11
@@ -1731,6 +1733,7 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
     MODEL = 4
     MOVE = 13
     MULTIPLY = 128
+    NEAREST_NEIGHBOR = 0
     NORMAL = 1
     OPAQUE = 14
     OPEN = 1
@@ -5581,6 +5584,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         This method is the same as `copy()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `copy()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Graphics` object, check out the `Py5Graphics.get_pixels()` method, where x,
+        y, w, h, are the position and dimensions of the area to be copied. It will
+        return a `Py5Image` object.
         """
         pass
 
@@ -5647,6 +5655,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         This method is the same as `copy()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `copy()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Graphics` object, check out the `Py5Graphics.get_pixels()` method, where x,
+        y, w, h, are the position and dimensions of the area to be copied. It will
+        return a `Py5Image` object.
         """
         pass
 
@@ -5723,6 +5736,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         This method is the same as `copy()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `copy()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Graphics` object, check out the `Py5Graphics.get_pixels()` method, where x,
+        y, w, h, are the position and dimensions of the area to be copied. It will
+        return a `Py5Image` object.
         """
         pass
 
@@ -5787,6 +5805,11 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         This method is the same as `copy()` but linked to a `Py5Graphics` object. To see
         example code for how it can be used, see `copy()`.
+
+        If you want to create a new image with the contents of a rectangular region of a
+        `Py5Graphics` object, check out the `Py5Graphics.get_pixels()` method, where x,
+        y, w, h, are the position and dimensions of the area to be copied. It will
+        return a `Py5Image` object.
         """
         return self._instance.copy(*args)
 

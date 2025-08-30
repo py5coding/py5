@@ -138,12 +138,16 @@ try:
                 shape.vertices(coords[:-1])
             return shape
         elif isinstance(obj, LineString):
+            coords = np.array(obj.coords)
             shape = sketch.create_shape()
-            with shape.begin_shape():
-                if not kwargs.get("lines_allow_fill", False):
-                    shape.no_fill()
-                coords = np.array(obj.coords)
-                shape.vertices(coords)
+            if coords.shape[0] == 2:
+                with shape.begin_shape(sketch.LINES):
+                    shape.vertices(coords)
+            elif coords.shape[0] > 2:
+                with shape.begin_shape():
+                    if not kwargs.get("lines_allow_fill", False):
+                        shape.no_fill()
+                    shape.vertices(coords)
             return shape
         elif isinstance(obj, MultiPoint):
             shape = sketch.create_shape()

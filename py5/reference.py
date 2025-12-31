@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -286,7 +286,7 @@ METHOD_SIGNATURES_LOOKUP = dict([(('Sketch', 'alpha'), ['(rgb: int, /) -> float'
     (('Sketch', 'to_pil'), ['() -> PIL_Image', '(x: int, y: int, w: int, h: int, /) -> PIL_Image']),
     (('Sketch', 'save'), ['(filename: Union[str, Path, BytesIO], *, format: str = None, drop_alpha: bool = True, use_thread: bool = False, **params, ) -> None']),
     (('Sketch', 'set_println_stream'), ['(println_stream: Any) -> None']),
-    (('Sketch', 'println'), ['(*args, sep: str = " ", end: str = "\\n", stderr: bool = False) -> None']),
+    (('Sketch', 'println'), ['(*args, sep: str = " ", end: str = "\\n", stderr: bool = False, flush: bool = False) -> None']),
     (('Sketch', 'launch_thread'), ['(f: Callable, name: str = None, *, daemon: bool = True, args: tuple = None, kwargs: dict = None, ) -> str']),
     (('Sketch', 'launch_promise_thread'), ['(f: Callable, name: str = None, *, daemon: bool = True, args: tuple = None, kwargs: dict = None, ) -> Py5Promise']),
     (('Sketch', 'launch_repeating_thread'), ['(f: Callable, name: str = None, *, time_delay: float = 0, daemon: bool = True, args: tuple = None, kwargs: dict = None, ) -> str']),

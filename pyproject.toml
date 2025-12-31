@@ -34,7 +34,7 @@ classifiers = [
 ]
 dependencies = [
     "autopep8>=2.3",
-    "jpype1>=1.6",
+    "jpype1>=1.6.0",
     "line_profiler>=4.2",
     "numpy>=2.2",
     "pillow>=11.0",
@@ -53,6 +53,7 @@ extras = [
     "matplotlib>=3.10",
     "py5jupyter>=0.2.0a0",
     "shapely>=2.0",
+    "svgpathtools>=1.7.0",
     "trimesh>=4.6",
 ]
 

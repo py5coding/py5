@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -21,8 +21,8 @@ import os
 import platform
 from pathlib import Path
 
-VERSION = "0.10.7a0"
-PROCESSING_BUILD_NUMBER = 1306
+VERSION = "0.10.8a4"
+PROCESSING_BUILD_NUMBER = 1310
 
 if not (PY5_HOME := os.environ.get("PY5_HOME")):
     if platform.system() == "Windows":

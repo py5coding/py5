@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -19716,7 +19716,9 @@ def set_println_stream(println_stream: Any) -> None:
     return _py5sketch.set_println_stream(println_stream)
 
 
-def println(*args, sep: str = " ", end: str = "\n", stderr: bool = False) -> None:
+def println(
+    *args, sep: str = " ", end: str = "\n", stderr: bool = False, flush: bool = False
+) -> None:
     """Print text or other values to the screen.
 
     Parameters
@@ -19727,6 +19729,9 @@ def println(*args, sep: str = " ", end: str = "\n", stderr: bool = False) -> Non
 
     end: str = "\\n"
         string appended after the last value, defaults to newline character
+
+    flush: bool = False
+        flush the print stream immediately
 
     sep: str = " "
         string inserted between values, defaults to a space
@@ -19749,9 +19754,15 @@ def println(*args, sep: str = " ", end: str = "\n", stderr: bool = False) -> Non
     method was created to provide users with print functionality in a Sketch without
     having to cope with output moving from one cell to the next.
 
+    The `end`, `flush`, `sep`, and `stderr` parameters behave the same as they do in
+    Python's builtin `print` function, with some minor limitations depending on the
+    specific print stream in use. For example, the `flush` parameter will be ignored
+    when running a Sketch through a Jupyter Notebook or an IPython terminal, but may
+    be very useful if your print stream writes to a file.
+
     Use `set_println_stream()` to customize the behavior of `println()`.
     """
-    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr)
+    return _py5sketch.println(*args, sep=sep, end=end, stderr=stderr, flush=flush)
 
 
 ##############################################################################
@@ -20807,6 +20818,15 @@ def color_mode(mode: int, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -20884,6 +20904,15 @@ def color_mode(mode: int, max1: float, max2: float, max3: float, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -20963,6 +20992,15 @@ def color_mode(
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21040,6 +21078,15 @@ def color_mode(mode: int, max: float, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21117,6 +21164,15 @@ def color_mode(colormap_mode: int, color_map: str, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21194,6 +21250,15 @@ def color_mode(colormap_mode: int, color_map_instance: Colormap, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21271,6 +21336,15 @@ def color_mode(colormap_mode: int, color_map: str, max_map: float, /) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21350,6 +21424,15 @@ def color_mode(
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21429,6 +21512,15 @@ def color_mode(
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21512,6 +21604,15 @@ def color_mode(
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     pass
 
@@ -21588,6 +21689,15 @@ def color_mode(mode: int, *args) -> None:
     range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
     when changing the color mode. For instance, instead of `color_mode(RGB)`, write
     `color_mode(RGB, 255, 255, 255)`.
+
+    If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+    short for colormap. The main idea is to map a range of values to a range of
+    colors in a matplotlib colormap palette. You can find the list of built-in
+    colormaps in matplotlib’s Colormap reference, which you can then select by
+    passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+    mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+    integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+    Mode section.
     """
     return _py5sketch.color_mode(mode, *args)
 
@@ -21692,6 +21802,14 @@ def color(fgray: float, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -21796,6 +21914,14 @@ def color(fgray: float, falpha: float, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -21900,6 +22026,14 @@ def color(gray: int, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22004,6 +22138,14 @@ def color(gray: int, alpha: int, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22108,6 +22250,14 @@ def color(v1: float, v2: float, v3: float, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22212,6 +22362,14 @@ def color(v1: float, v2: float, v3: float, alpha: float, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22316,6 +22474,14 @@ def color(v1: int, v2: int, v3: int, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22420,6 +22586,14 @@ def color(v1: int, v2: int, v3: int, alpha: int, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22524,6 +22698,14 @@ def color(cmap_input: float, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22628,6 +22810,14 @@ def color(cmap_input: float, alpha: int, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22732,6 +22922,14 @@ def color(hex_code: str, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22836,6 +23034,14 @@ def color(hex_code: str, alpha: int, /) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     pass
 
@@ -22939,6 +23145,14 @@ def color(*args) -> int:
     channel is last, which is consistent with CSS colors, and in hexadecimal
     notation the alpha channel is first, which is consistent with Processing color
     values.
+
+    If you have matplotlib installed, you can  create colors using matplotlib's
+    named colors by passing a color name as a string to this method. See the list of
+    named colors in the Matplotlib Named Colors reference. For more information, see
+    the Matplotlib Named Colors section in the All About Colors integration
+    documentation page. There's also other color related information on that page;
+    go read it to learn more about various ways py5 makes it easy for you to work
+    with color.
     """
     return _py5sketch.color(*args)
 

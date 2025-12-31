@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -246,6 +246,14 @@ def _start_jvm() -> None:
 
     if jpype_exception is not None:
         raise jpype_exception
+
+    # TODO: remove this when jpype drops support for Java 8
+    # https://github.com/jpype-project/jpype/issues/1310
+    if "--enable-native-access=ALL-UNNAMED" not in _options:
+        _options.append("--enable-native-access=ALL-UNNAMED")
+
+    if "--enable-native-access=javafx.graphics" not in _options:
+        _options.append("--enable-native-access=javafx.graphics")
 
     jpype.startJVM(default_jvm_path, *_options, convertStrings=False)
 

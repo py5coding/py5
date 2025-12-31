@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -26,8 +26,8 @@ class _DefaultPrintlnStream:
     def __init__(self):
         pass
 
-    def print(self, text, end="\n", stderr=False):
-        print(text, end=end, file=sys.stderr if stderr else sys.stdout)
+    def print(self, text, end="\n", stderr=False, flush=False):
+        print(text, end=end, file=sys.stderr if stderr else sys.stdout, flush=flush)
 
     def shutdown(self):
         pass
@@ -42,9 +42,9 @@ class _DisplayPubPrintlnStream:
             self.display_pub = None
             self.parent_header = None
 
-    def print(self, text, end="\n", stderr=False):
+    def print(self, text, end="\n", stderr=False, flush=False):
         if self.display_pub is None or self.parent_header is None:
-            print(text, end=end, file=sys.stderr if stderr else sys.stdout)
+            print(text, end=end, file=sys.stderr if stderr else sys.stdout, flush=flush)
         else:
             content = dict(name="stderr" if stderr else "stdout", text=text + end)
             msg = self.display_pub.session.msg(
@@ -69,9 +69,9 @@ class _WidgetPrintlnStream:
         except:
             self.out = None
 
-    def print(self, text, end="\n", stderr=False):
+    def print(self, text, end="\n", stderr=False, flush=False):
         if self.out is None:
-            print(text, end=end, file=sys.stderr if stderr else sys.stdout)
+            print(text, end=end, file=sys.stderr if stderr else sys.stdout, flush=flush)
         else:
             if stderr:
                 self.out.append_stderr(text + end)
@@ -88,11 +88,11 @@ class _PrintlnFileStream:
         self.filename = filename
         self.f = None
 
-    def print(self, text, end="\n", stderr=False):
+    def print(self, text, end="\n", stderr=False, flush=False):
         if self.f is None:
             self.f = open(self.filename, "w")
 
-        print(text, end=end, file=self.f)
+        print(text, end=end, file=self.f, flush=flush)
 
     def shutdown(self):
         if self.f is not None:

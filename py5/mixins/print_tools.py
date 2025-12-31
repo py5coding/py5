@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -61,7 +61,12 @@ class PrintlnStream:
         self._println_stream = println_stream
 
     def println(
-        self, *args, sep: str = " ", end: str = "\n", stderr: bool = False
+        self,
+        *args,
+        sep: str = " ",
+        end: str = "\n",
+        stderr: bool = False,
+        flush: bool = False
     ) -> None:
         """Print text or other values to the screen.
 
@@ -73,6 +78,9 @@ class PrintlnStream:
 
         end: str = "\\n"
             string appended after the last value, defaults to newline character
+
+        flush: bool = False
+            flush the print stream immediately
 
         sep: str = " "
             string inserted between values, defaults to a space
@@ -95,9 +103,15 @@ class PrintlnStream:
         method was created to provide users with print functionality in a Sketch without
         having to cope with output moving from one cell to the next.
 
+        The `end`, `flush`, `sep`, and `stderr` parameters behave the same as they do in
+        Python's builtin `print` function, with some minor limitations depending on the
+        specific print stream in use. For example, the `flush` parameter will be ignored
+        when running a Sketch through a Jupyter Notebook or an IPython terminal, but may
+        be very useful if your print stream writes to a file.
+
         Use `set_println_stream()` to customize the behavior of `println()`."""
         msg = sep.join(str(x) for x in args)
         if self._println_stream is None:
-            print(msg, end=end, file=sys.stderr if stderr else sys.stdout)
+            print(msg, end=end, file=sys.stderr if stderr else sys.stdout, flush=flush)
         else:
-            self._println_stream.print(msg, end=end, stderr=stderr)
+            self._println_stream.print(msg, end=end, stderr=stderr, flush=flush)

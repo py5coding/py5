@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -75,6 +75,8 @@ except:
 
 _Sketch = jpype.JClass("py5.core.Sketch")
 _SketchBase = jpype.JClass("py5.core.SketchBase")
+
+_py5_object_cache = set()
 
 _PY5_LAST_WINDOW_X = None
 _PY5_LAST_WINDOW_Y = None
@@ -194,20 +196,18 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
 
     For more information, look at the online "User Functions" documentation."""
 
-    _py5_object_cache = set()
     _cls = _Sketch
 
     def __new__(cls, *args, **kwargs):
         _instance = kwargs.get("_instance")
 
         # remove dead or malformed Sketch instances from the object cache
-        cls._py5_object_cache = set(
-            s
-            for s in cls._py5_object_cache
-            if hasattr(s, "_instance") and not s.is_dead
-        )
+        for s in list(_py5_object_cache):
+            if not hasattr(s, "_instance") or s.is_dead:
+                _py5_object_cache.remove(s)
+
         if _instance:
-            for s in cls._py5_object_cache:
+            for s in _py5_object_cache:
                 if _instance == s._instance:
                     return s
             else:
@@ -216,7 +216,7 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
                 )
         else:
             s = object.__new__(cls)
-            cls._py5_object_cache.add(s)
+            _py5_object_cache.add(s)
             return s
 
     def __init__(self, *args, **kwargs):
@@ -1651,7 +1651,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -1726,7 +1735,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -1803,7 +1821,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -1878,7 +1905,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -1953,7 +1989,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -2028,7 +2073,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -2103,7 +2157,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -2180,7 +2243,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -2257,7 +2329,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     @overload
@@ -2339,7 +2420,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         pass
 
     def color_mode(self, mode: int, *args) -> None:
@@ -2413,7 +2503,16 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         changing back to `color_mode(RGB)`, the range for R will be 0 to 360 and the
         range for G and B will be 0 to 100. To avoid this, be explicit about the ranges
         when changing the color mode. For instance, instead of `color_mode(RGB)`, write
-        `color_mode(RGB, 255, 255, 255)`."""
+        `color_mode(RGB, 255, 255, 255)`.
+
+        If you have the matplotlib package (library) installed, py5 adds a `CMAP` mode,
+        short for colormap. The main idea is to map a range of values to a range of
+        colors in a matplotlib colormap palette. You can find the list of built-in
+        colormaps in matplotlib’s Colormap reference, which you can then select by
+        passing a constant from `py5.mpl_cmaps` like this: `color_mode(CMAP,
+        mpl_cmaps.OCEAN)`. You can learn more about colormaps in the matplotlib
+        integrations documentation in the Charts, Plots, and Matplotlib - Colomap Color
+        Mode section."""
         # don't allow users to call this before the Sketch starts running
         if not self.is_running:
             raise RuntimeError(
@@ -2565,7 +2664,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -2667,7 +2774,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -2769,7 +2884,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -2871,7 +2994,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -2973,7 +3104,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3075,7 +3214,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3177,7 +3324,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3279,7 +3434,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3381,7 +3544,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3483,7 +3654,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3585,7 +3764,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -3687,7 +3874,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     def color(self, *args) -> int:
@@ -3788,7 +3983,15 @@ class Sketch(MathMixin, DataMixin, ThreadsMixin, PixelMixin, PrintlnStream, Py5B
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         args = list(args)
 
         if not isinstance(args[0], Py5Color):

@@ -1,7 +1,7 @@
 # *****************************************************************************
 #
 #   Part of the py5 library
-#   Copyright (C) 2020-2025 Jim Schmitz
+#   Copyright (C) 2020-2026 Jim Schmitz
 #
 #   This library is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU Lesser General Public License as published by
@@ -640,6 +640,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
 
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
+
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
         pass
@@ -726,6 +734,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
 
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
@@ -814,6 +830,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
 
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
+
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
         pass
@@ -900,6 +924,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
 
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
@@ -988,6 +1020,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
 
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
+
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
         pass
@@ -1074,6 +1114,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
 
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
@@ -1162,6 +1210,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
 
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
+
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
         pass
@@ -1249,6 +1305,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
 
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
+
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
         pass
@@ -1335,6 +1399,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
 
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""
@@ -1439,7 +1511,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     @overload
@@ -1541,7 +1621,15 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
         (in that order) for the color. Notice that in web color notation the alpha
         channel is last, which is consistent with CSS colors, and in hexadecimal
         notation the alpha channel is first, which is consistent with Processing color
-        values."""
+        values.
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color."""
         pass
 
     def color(self, *args) -> int:
@@ -1625,6 +1713,14 @@ class Py5Graphics(PixelPy5GraphicsMixin, Py5Base):
 
         Note that when using hexadecimal notation, it is not necessary to use `color()`,
         as in: `c = 0x006699`
+
+        If you have matplotlib installed, you can  create colors using matplotlib's
+        named colors by passing a color name as a string to this method. See the list of
+        named colors in the Matplotlib Named Colors reference. For more information, see
+        the Matplotlib Named Colors section in the All About Colors integration
+        documentation page. There's also other color related information on that page;
+        go read it to learn more about various ways py5 makes it easy for you to work
+        with color.
 
         This method is the same as `color()` but linked to a `Py5Graphics` object. To
         see example code for how it can be used, see `color()`."""

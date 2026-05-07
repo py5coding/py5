@@ -34,7 +34,8 @@ classifiers = [
 ]
 dependencies = [
     "autopep8>=2.3",
-    "jpype1>=1.6.0",
+    "jpype1>=1.6.0,!=1.7.0; sys_platform == 'darwin'",
+    "jpype1>=1.6.0; sys_platform != 'darwin'",
     "line_profiler>=4.2",
     "numpy>=2.2",
     "pillow>=11.0",
@@ -50,7 +51,9 @@ jupyter = [
 ]
 extras = [
     "colour>=0.1.5",
+    "install-jdk>=1.1.0",
     "matplotlib>=3.10",
+    "pip-system-certs>=5.3",
     "py5jupyter>=0.2.0a0",
     "shapely>=2.0",
     "svgpathtools>=1.7.0",
@@ -66,6 +69,7 @@ py5-utils = "py5_tools.tools.py5utils:main"
 run_sketch = "py5_tools.tools.run_sketch:main"
 py5-run-sketch = "py5_tools.tools.run_sketch:main"
 py5-live-coding = "py5_tools.tools.live_coding:main"
+py5-install-jdk = "py5_tools.tools.install_jdk:main"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/py5coding/py5generator/issues"
@@ -75,10 +79,7 @@ Homepage = "https://py5coding.org/"
 "Source Code" = "https://github.com/py5coding/py5"
 
 [tool.hatch.version]
-path = "py5_tools/constants.py"
+path = "src/py5_tools/constants.py"
 
-[tool.hatch.build]
-packages = [
-    "/py5",
-    "/py5_tools",
-]
+[tool.hatch.build.targets.wheel]
+packages = ["src/py5", "src/py5_tools"]

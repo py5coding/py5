@@ -43,6 +43,7 @@ from jpype import JClass  # noqa
 from jpype.types import JArray, JChar, JFloat, JInt, JString  # noqa
 from PIL import Image  # noqa
 from py5_tools import javafx as _javafx  # noqa
+from py5_tools.constants import PROCESSING_VERSION as __processing_version__
 from py5_tools.constants import VERSION as __version__
 
 _environ = py5_tools.environ.Environment()
@@ -80,9 +81,9 @@ if not py5_tools.is_jvm_running():
                 NSImage,
             )
             from Foundation import (
-                NSProcessInfo,
-                NSActivityUserInitiated,
                 NSActivityLatencyCritical,
+                NSActivityUserInitiated,
+                NSProcessInfo,
             )
 
             # this adds a white square to the dock

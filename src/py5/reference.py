@@ -634,6 +634,8 @@ METHOD_SIGNATURES_LOOKUP = dict([(('Sketch', 'alpha'), ['(rgb: int, /) -> float'
     (('Py5Shape', 'bezier_vertices'), ['(coordinates: Sequence[Sequence[float]], /) -> None']),
     (('Py5Shape', 'curve_vertices'), ['(coordinates: Sequence[Sequence[float]], /) -> None']),
     (('Py5Shape', 'quadratic_vertices'), ['(coordinates: Sequence[Sequence[float]], /) -> None']),
+    (('Py5Shape', 'set_vertices'), ['(coordinates: Sequence[Sequence[float]], /) -> None']),
+    (('Py5Shape', 'set_texture_uvs'), ['(uvs: Sequence[Sequence[float]], /) -> None']),
     (('Sketch', 'run_sketch'), ['(block: bool = None, *, py5_options: list[str] = None, sketch_args: list[str] = None, sketch_functions: dict[str, Callable] = None, jclassname: str = None, jclass_params: tuple[Any] = ()) -> None']),
     (('Py5Functions', 'create_font_file'), ['(font_name: str, font_size: int, filename: str = None, characters: str = None, pause: bool = True) -> None']),
     (('Py5Functions', 'get_current_sketch'), ['() -> Sketch']),

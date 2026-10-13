@@ -89,8 +89,11 @@ class MockMethods:
         UserFunctionWrapper.freeze_frame_count = self.sketch.frame_count
 
     def mock_redraw(self):
-        UserFunctionWrapper.looping_state = ANIMATION_REDRAW
-        UserFunctionWrapper.freeze_frame_count += 1
+        if UserFunctionWrapper.looping_state == ANIMATION_NO_LOOPING and isinstance(
+            UserFunctionWrapper.freeze_frame_count, int
+        ):
+            UserFunctionWrapper.looping_state = ANIMATION_REDRAW
+            UserFunctionWrapper.freeze_frame_count += 1
 
     def mock_exit_sketch(self):
         raise Py5ExitSketchException(
@@ -197,7 +200,7 @@ def exec_user_code(
     # execute user code and put new functions into the global namespace
 
     try:
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding="utf8") as f:
             exec(compile(f.read(), filename=filename, mode="exec"), global_namespace)
     except Py5RunSketchBlockException:
         # MockRunSketch instance has replaced run_sketch() in the py5 module
@@ -476,7 +479,7 @@ class SyncDraw:
                 )
                 return
 
-            with open(self.filename, "r") as f:
+            with open(self.filename, "r", encoding="utf8") as f:
                 with open(copy_filename, "w") as f2:
                     f2.write(f.read())
 

@@ -579,6 +579,54 @@ class Py5Shape:
             coordinates = list(coordinates)
         _Py5ShapeHelper.quadraticVertices(self._instance, coordinates)
 
+    def set_vertices(self, coordinates: Sequence[Sequence[float]], /) -> None:
+        """The `set_vertices()` method sets the vertex coordinates for all vertices in a
+        `Py5Shape` object.
+
+        Parameters
+        ----------
+
+        coordinates: Sequence[Sequence[float]]
+            2D array of vertex coordinates
+
+        Notes
+        -----
+
+        The `set_vertices()` method sets the vertex coordinates for all vertices in a
+        `Py5Shape` object. This method is similar to but much faster than
+        `Py5Shape.set_vertex()` when used in a `for` loop.
+
+        This method can only be used outside the `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` methods."""
+        if isinstance(coordinates, types.GeneratorType):
+            coordinates = list(coordinates)
+        _Py5ShapeHelper.setVertices(self._instance, coordinates)
+
+    def set_texture_uvs(self, uvs: Sequence[Sequence[float]], /) -> None:
+        """Set all of the uv texture mapping coordinates for a `Py5Shape` object.
+
+        Parameters
+        ----------
+
+        uvs: Sequence[Sequence[float]]
+            horizontal and vertical coordinates for the texture mapping
+
+        Notes
+        -----
+
+        Set all of the uv texture mapping coordinates for a `Py5Shape` object. This
+        method can only be used outside the `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` methods. This method is similar to but much faster than
+        `Py5Shape.set_texture_uv()` when used in a `for` loop.
+
+        The uv texture coordinates define the mapping of a `Py5Shape` object's texture
+        to the form. By default, the coordinates used for `u` and `v` are specified in
+        relation to the image's size in pixels, but this relation can be changed with
+        the `Py5Shape` object's `Py5Shape.set_texture_mode()` method."""
+        if isinstance(uvs, types.GeneratorType):
+            uvs = list(uvs)
+        _Py5ShapeHelper.setTextureUVs(self._instance, uvs)
+
     ARC = 32
     BEVEL = 32
     BEZIER_VERTEX = 1
@@ -6097,6 +6145,9 @@ class Py5Shape:
         the position defined by the `index` parameter. This method works when shapes are
         created as shown in the example, but won't work properly when a shape is defined
         explicitly (e.g. `create_shape(RECT, 20, 20, 80, 80)`.
+
+        This method can only be used outside the `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` methods.
         """
         pass
 
@@ -6141,6 +6192,9 @@ class Py5Shape:
         the position defined by the `index` parameter. This method works when shapes are
         created as shown in the example, but won't work properly when a shape is defined
         explicitly (e.g. `create_shape(RECT, 20, 20, 80, 80)`.
+
+        This method can only be used outside the `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` methods.
         """
         pass
 
@@ -6185,6 +6239,9 @@ class Py5Shape:
         the position defined by the `index` parameter. This method works when shapes are
         created as shown in the example, but won't work properly when a shape is defined
         explicitly (e.g. `create_shape(RECT, 20, 20, 80, 80)`.
+
+        This method can only be used outside the `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` methods.
         """
         pass
 
@@ -6228,6 +6285,9 @@ class Py5Shape:
         the position defined by the `index` parameter. This method works when shapes are
         created as shown in the example, but won't work properly when a shape is defined
         explicitly (e.g. `create_shape(RECT, 20, 20, 80, 80)`.
+
+        This method can only be used outside the `Py5Shape.begin_shape()` and
+        `Py5Shape.end_shape()` methods.
         """
         return self._instance.setVertex(*args)
 

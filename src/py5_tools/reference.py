@@ -24,7 +24,8 @@
 
 
 
-PY5_DIR_STR = ['__version__',
+PY5_DIR_STR = ['__processing_version__',
+    '__version__',
     'acos',
     'ADD',
     'ALPHA',
@@ -513,7 +514,8 @@ PY5_DIR_STR = ['__version__',
     'xkcd_colors',
     'year']
 
-PY5_ALL_STR = ['__version__',
+PY5_ALL_STR = ['__processing_version__',
+    '__version__',
     'acos',
     'ADD',
     'ALPHA',
